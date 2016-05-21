@@ -1,3 +1,14 @@
+/*
+ * JQ simplified grammar extracted from the files 'parser.y' and 'lexer.l'
+ */
+
+/*
+ * IDENT:	([a-zA-Z_][a-zA-Z_0-9]*::)*[a-zA-Z_][a-zA-Z_0-9]*
+ * FIELD:	\.[a-zA-Z_][a-zA-Z_0-9]* 
+ * LITERAL:	[0-9.]+([eE][+-]?[0-9]+)?
+ * FORMAT:	"@"[a-zA-Z0-9_]+
+ */
+
 TopLevel:
 	Module Imports Exp  |
 	Module Imports FuncDefs 
@@ -15,41 +26,39 @@ FuncDefs:
 	FuncDef FuncDefs 
 
 Exp:
-	FuncDef Exp %prec FUNCDEF  |
+	FuncDef Exp |
 	Term "as" Pattern '|' Exp  |
 	"reduce" Term "as" Pattern '(' Exp ';' Exp ')'  |
 	"foreach" Term "as" Pattern '(' Exp ';' Exp ';' Exp ')'  |
 	"foreach" Term "as" Pattern '(' Exp ';' Exp ')'  |
 	"if" Exp "then" Exp ElseBody  |
-	"if" Exp "then" error  |
 	"try" Exp "catch" Exp  |
 	"try" Exp  |
-	"try" Exp "catch" error  |
 	"label" '$' IDENT '|' Exp  |
-	Exp '?'  |
-	Exp '=' Exp  |
+	Exp '?'       |
+	Exp '=' Exp   |
 	Exp "or" Exp  |
-	Exp "and" Exp  |
+	Exp "and" Exp |
 	Exp "//" Exp  |
-	Exp "//=" Exp  |
+	Exp "//=" Exp |
 	Exp "|=" Exp  |
-	Exp '|' Exp  |
-	Exp ',' Exp  |
-	Exp '+' Exp  |
+	Exp '|' Exp   |
+	Exp ',' Exp   |
+	Exp '+' Exp   |
 	Exp "+=" Exp  |
-	'-' Exp  |
-	Exp '-' Exp  |
+	'-' Exp       |
+	Exp '-' Exp   |
 	Exp "-=" Exp  |
-	Exp '*' Exp  |
+	Exp '*' Exp   |
 	Exp "*=" Exp  |
-	Exp '/' Exp  |
-	Exp '%' Exp  |
+	Exp '/' Exp   |
+	Exp '%' Exp   |
 	Exp "/=" Exp  |
-	Exp SETMOD Exp  |
+	Exp "%=" Exp  |
 	Exp "==" Exp  |
 	Exp "!=" Exp  |
-	Exp '<' Exp  |
-	Exp '>' Exp  |
+	Exp '<' Exp   |
+	Exp '>' Exp   |
 	Exp "<=" Exp  |
 	Exp ">=" Exp  |
 	Term 
@@ -79,13 +88,13 @@ Param:
 	IDENT 
 
 String:
-	QQSTRING_START  QQString QQSTRING_END  |
-	FORMAT QQSTRING_START  QQString QQSTRING_END 
+	"\""  QQString "\""  |
+	FORMAT "\""  QQString "\"" 
 
 QQString:
 	%empty  |
-	QQString QQSTRING_TEXT  |
-	QQString QQSTRING_INTERP_START Exp QQSTRING_INTERP_END 
+	QQString [^\\\"]+ | \\[^u(]|\\u[a-zA-Z0-9]{0,4})+  |
+	QQString "\\(" Exp ")"
 
 ElseBody:
 	"elif" Exp "then" Exp ElseBody  |
@@ -97,46 +106,38 @@ ExpD:
 	Term 
 
 Term:
-	'.'  |
-	REC  |
-	BREAK '$' IDENT  |
-	BREAK error  |
+	'.'   |
+	".."  |
+	"break" '$' IDENT  |
 	Term FIELD '?'  |
 	FIELD '?'  |
 	Term '.' String '?'  |
 	'.' String '?'  |
-	Term FIELD %prec NONOPT  |
-	FIELD %prec NONOPT  |
-	Term '.' String %prec NONOPT  |
-	'.' String %prec NONOPT  |
-	'.' error  |
-	'.' IDENT error  |
-	/* FIXME: string literals */
+	Term FIELD |
+	FIELD |
+	Term '.' String |
+	'.' String |
 	Term '[' Exp ']' '?'  |
-	Term '[' Exp ']' %prec NONOPT  |
+	Term '[' Exp ']' |
 	Term '[' ']' '?'  |
-	Term '[' ']' %prec NONOPT  |
+	Term '[' ']' |
 	Term '[' Exp ':' Exp ']' '?'  |
 	Term '[' Exp ':' ']' '?'  |
 	Term '[' ':' Exp ']' '?'  |
-	Term '[' Exp ':' Exp ']' %prec NONOPT  |
-	Term '[' Exp ':' ']' %prec NONOPT  |
-	Term '[' ':' Exp ']' %prec NONOPT  |
-	LITERAL  |
+	Term '[' Exp ':' Exp ']' |
+	Term '[' Exp ':' ']' |
+	Term '[' ':' Exp ']' |
+	LITERAL |
 	String  |
 	FORMAT  |
 	'(' Exp ')'  |
 	'[' Exp ']'  |
-	'[' ']'  |
+	'[' ']'      |
 	'{' MkDict '}'  |
-	'$' LOC  |
+	'$' "__loc__"   |
 	'$' IDENT  |
 	IDENT  |
-	IDENT '(' Args ')'  |
-	'(' error ')'  |
-	'[' error ']'  |
-	Term '[' error ']'  |
-	'{' error '}' 
+	IDENT '(' Args ')'
 
 Args:
 	Arg  |
@@ -160,38 +161,36 @@ ObjPats:
 
 ObjPat:
 	'$' IDENT  |
-	IDENT ':' Pattern  |
-	Keyword ':' Pattern  |
+	IDENT ':' Pattern   |
+	Keyword ':' Pattern |
 	String ':' Pattern  |
-	'(' Exp ')' ':' Pattern  |
-	error ':' Pattern 
+	'(' Exp ')' ':' Pattern
 
 Keyword:
-	"as"  |
-	"def"  |
+	"as"      |
+	"def"     |
 	"module"  |
 	"import"  |
-	"include"  |
-	"if"  |
-	"then"  |
-	"else"  |
-	"elif"  |
+	"include" |
+	"if"      |
+	"then"    |
+	"else"    |
+	"elif"    |
 	"reduce"  |
-	"foreach"  |
-	"end"  |
-	"and"  |
-	"or"  |
-	"try"  |
-	"catch"  |
-	"label"  |
-	"break"  |
+	"foreach" |
+	"end"     |
+	"and"     |
+	"or"      |
+	"try"     |
+	"catch"   |
+	"label"   |
+	"break"   |
 	"__loc__" 
 
 MkDict:
 	%empty  |
 	MkDictPair 
 	| MkDictPair ',' MkDict 
-	| error ',' MkDict 
 
 MkDictPair:
 	IDENT ':' ExpD 
@@ -201,4 +200,7 @@ MkDictPair:
 	| '$' IDENT 
 	| IDENT 
 	| '(' Exp ')' ':' ExpD 
-	| error ':' ExpD 
+
+/*
+vim:syntax=yacc
+*/
