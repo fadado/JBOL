@@ -1,0 +1,136 @@
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+
+#########################################################################
+# Streams
+#########################################################################
+
+#
+# cut, take, drop, nth
+#
+
+include "lib/stream"; cut([][])
+null
+# empty
+
+include "lib/stream"; cut(range(5;100))
+null
+5
+
+include "lib/stream"; nth(0; range(5;100))
+null
+5
+
+include "lib/stream"; cut(range(5;100)) == first(range(5;100))
+null
+true
+
+include "lib/stream"; [take(4;range(100))] == [limit(4; range(77))]
+null
+true
+
+include "lib/stream"; [take(4;range(10))] == [0,1,2,3]
+null
+true
+
+include "lib/stream"; drop(5; range(8))
+null
+5
+6
+7
+
+include "lib/stream"; drop(1000; range(1002))
+null
+1000
+1001
+
+include "lib/stream"; drop(10; range(1))
+null
+# empty
+
+include "lib/stream"; drop(10; range(10))
+null
+# empty
+
+#
+# cycle, replicate
+#
+
+include "lib/stream"; [take(6; cycle(range(3)))]
+null
+[0,1,2,0,1,2]
+
+include "lib/stream"; [take(6; repeat(range(3)))]
+null
+[0,1,2,0,1,2]
+
+include "lib/stream"; [take(6; repeat([0,1,2][]))]
+null
+[0,1,2,0,1,2]
+
+include "lib/stream"; replicate(4; 8)
+null
+[8,8,8,8]
+
+include "lib/stream"; 8|replicate(4)
+null
+[8,8,8,8]
+
+include "lib/stream"; [take(4; repeat(8))]
+null
+[8,8,8,8]
+
+include "lib/stream"; replicate(4; "a")|join("")
+null
+"aaaa"
+
+#
+# enum
+#
+
+include "lib/stream"; enum(split("")[])
+"ae"
+[0,"a"]
+[1,"e"]
+
+include "lib/stream"; last(enum(split("")[]))
+"aeiou"
+[4,"u"]
+
+include "lib/stream";  nth(11; enum(split("")[]))
+"abcdefghijklmnopqrstuvwxyz"
+[11,"l"]
+
+#
+# zip
+#
+
+include "lib/stream";  zip(range(1); range(0))
+null
+[0,null]
+
+include "lib/stream";  zip(range(0); range(0))
+null
+# empty
+
+include "lib/stream";  [] | zipN
+null
+# empty
+
+include "lib/stream";  cut(zip(range(10); range(20;30)))
+null
+[0,20]
+
+include "lib/stream";  last(zip(range(5); range(20;23)))
+null
+[4,null]
+
+include "lib/stream";  last([[range(5)], [range(20;23)]] | zipN)
+null
+[4,null]
+
+include "lib/stream";  nth(5; zip(range(5); range(100); range(20;23)))
+null
+[null,5,null]
+
+# vim:ai:sw=2:ts=2:et:syntax=python

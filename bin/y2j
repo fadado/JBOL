@@ -1,0 +1,37 @@
+#!/usr/bin/python
+
+# Simple YAML to JSON conversor
+
+import sys
+import yaml
+import json
+
+def error(e):
+    sys.stderr.write(type(e).__name__ + ': ' + str(e) + '\n')
+    sys.exit(1)
+
+def load_yaml():
+    if len(sys.argv) > 1:
+        with open(sys.argv[1]) as f:
+            data = yaml.load(f)
+    else:
+        data = yaml.load(sys.stdin)
+    return data
+
+def dump_json(data):
+    json.dump(data, sys.stdout, indent=4)
+    sys.stdout.write('\n')
+
+#
+# Main
+#
+
+try:
+    data = load_yaml()
+    dump_json(data)
+except Exception as e:
+    error(e)
+
+sys.exit(0);
+
+# vim:ai:sw=4:ts=4:et:fileencoding=utf-8:syntax=python

@@ -1,0 +1,204 @@
+TopLevel:
+	Module Imports Exp  |
+	Module Imports FuncDefs 
+
+Module:
+	%empty  |
+	"module" Exp ';' 
+
+Imports:
+	%empty  |
+	Import Imports 
+
+FuncDefs:
+	%empty  |
+	FuncDef FuncDefs 
+
+Exp:
+	FuncDef Exp %prec FUNCDEF  |
+	Term "as" Pattern '|' Exp  |
+	"reduce" Term "as" Pattern '(' Exp ';' Exp ')'  |
+	"foreach" Term "as" Pattern '(' Exp ';' Exp ';' Exp ')'  |
+	"foreach" Term "as" Pattern '(' Exp ';' Exp ')'  |
+	"if" Exp "then" Exp ElseBody  |
+	"if" Exp "then" error  |
+	"try" Exp "catch" Exp  |
+	"try" Exp  |
+	"try" Exp "catch" error  |
+	"label" '$' IDENT '|' Exp  |
+	Exp '?'  |
+	Exp '=' Exp  |
+	Exp "or" Exp  |
+	Exp "and" Exp  |
+	Exp "//" Exp  |
+	Exp "//=" Exp  |
+	Exp "|=" Exp  |
+	Exp '|' Exp  |
+	Exp ',' Exp  |
+	Exp '+' Exp  |
+	Exp "+=" Exp  |
+	'-' Exp  |
+	Exp '-' Exp  |
+	Exp "-=" Exp  |
+	Exp '*' Exp  |
+	Exp "*=" Exp  |
+	Exp '/' Exp  |
+	Exp '%' Exp  |
+	Exp "/=" Exp  |
+	Exp SETMOD Exp  |
+	Exp "==" Exp  |
+	Exp "!=" Exp  |
+	Exp '<' Exp  |
+	Exp '>' Exp  |
+	Exp "<=" Exp  |
+	Exp ">=" Exp  |
+	Term 
+
+Import:
+	ImportWhat ';'  |
+	ImportWhat Exp ';' 
+
+ImportWhat:
+	"import" ImportFrom "as" '$' IDENT  |
+	"import" ImportFrom "as" IDENT  |
+	"include" ImportFrom 
+
+ImportFrom:
+	  String 
+
+FuncDef:
+	"def" IDENT ':' Exp ';'  |
+	"def" IDENT '(' Params ')' ':' Exp ';' 
+
+Params:
+	Param  |
+	Params ';' Param 
+
+Param:
+	'$' IDENT  |
+	IDENT 
+
+String:
+	QQSTRING_START  QQString QQSTRING_END  |
+	FORMAT QQSTRING_START  QQString QQSTRING_END 
+
+QQString:
+	%empty  |
+	QQString QQSTRING_TEXT  |
+	QQString QQSTRING_INTERP_START Exp QQSTRING_INTERP_END 
+
+ElseBody:
+	"elif" Exp "then" Exp ElseBody  |
+	"else" Exp "end" 
+
+ExpD:
+	ExpD '|' ExpD  |
+	'-' ExpD  |
+	Term 
+
+Term:
+	'.'  |
+	REC  |
+	BREAK '$' IDENT  |
+	BREAK error  |
+	Term FIELD '?'  |
+	FIELD '?'  |
+	Term '.' String '?'  |
+	'.' String '?'  |
+	Term FIELD %prec NONOPT  |
+	FIELD %prec NONOPT  |
+	Term '.' String %prec NONOPT  |
+	'.' String %prec NONOPT  |
+	'.' error  |
+	'.' IDENT error  |
+	/* FIXME: string literals */
+	Term '[' Exp ']' '?'  |
+	Term '[' Exp ']' %prec NONOPT  |
+	Term '[' ']' '?'  |
+	Term '[' ']' %prec NONOPT  |
+	Term '[' Exp ':' Exp ']' '?'  |
+	Term '[' Exp ':' ']' '?'  |
+	Term '[' ':' Exp ']' '?'  |
+	Term '[' Exp ':' Exp ']' %prec NONOPT  |
+	Term '[' Exp ':' ']' %prec NONOPT  |
+	Term '[' ':' Exp ']' %prec NONOPT  |
+	LITERAL  |
+	String  |
+	FORMAT  |
+	'(' Exp ')'  |
+	'[' Exp ']'  |
+	'[' ']'  |
+	'{' MkDict '}'  |
+	'$' LOC  |
+	'$' IDENT  |
+	IDENT  |
+	IDENT '(' Args ')'  |
+	'(' error ')'  |
+	'[' error ']'  |
+	Term '[' error ']'  |
+	'{' error '}' 
+
+Args:
+	Arg  |
+	Args ';' Arg 
+
+Arg:
+	Exp 
+
+Pattern:
+       '$' IDENT  |
+	'[' ArrayPats ']'  |
+	'{' ObjPats '}' 
+
+ArrayPats:
+	 Pattern  |
+	ArrayPats ',' Pattern 
+
+ObjPats:
+	ObjPat  |
+	ObjPats ',' ObjPat 
+
+ObjPat:
+	'$' IDENT  |
+	IDENT ':' Pattern  |
+	Keyword ':' Pattern  |
+	String ':' Pattern  |
+	'(' Exp ')' ':' Pattern  |
+	error ':' Pattern 
+
+Keyword:
+	"as"  |
+	"def"  |
+	"module"  |
+	"import"  |
+	"include"  |
+	"if"  |
+	"then"  |
+	"else"  |
+	"elif"  |
+	"reduce"  |
+	"foreach"  |
+	"end"  |
+	"and"  |
+	"or"  |
+	"try"  |
+	"catch"  |
+	"label"  |
+	"break"  |
+	"__loc__" 
+
+MkDict:
+	%empty  |
+	MkDictPair 
+	| MkDictPair ',' MkDict 
+	| error ',' MkDict 
+
+MkDictPair:
+	IDENT ':' ExpD 
+	| Keyword ':' ExpD 
+	| String ':' ExpD 
+	| String 
+	| '$' IDENT 
+	| IDENT 
+	| '(' Exp ')' ':' ExpD 
+	| error ':' ExpD 

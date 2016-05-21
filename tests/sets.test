@@ -1,0 +1,212 @@
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+
+#########################################################################
+# Set functions
+#
+# JSON has no a set data type, but objects are good enought in most cases.
+# The most common operations on sets are primitive in JQ or easy to implement
+# (see lib/sets.jq).
+#########################################################################
+
+#
+# Set construction
+#
+
+# The empty set: ∅
+length
+{ }
+0
+
+# Build sets from arrays or strings
+include "lib/sets"; set(.)
+[3,2,1,"k"]
+{"1":true,"2":true,"3":true,"k":true}
+
+include "lib/sets"; cset(.)
+"aeiuo"
+{"a":true,"e":true,"i":true,"o":true,"u":true}
+
+include "lib/sets"; cset(.)
+"uioaaeiouoaeiouae"
+{"a":true,"e":true,"i":true,"o":true,"u":true}
+
+# Set members as a list
+include "lib/sets"; cset(.) | keys
+"aeiuo"
+["a","e","i","o","u"]
+
+# Set cardinality
+include "lib/sets"; cset(.) | length
+"aeiuo"
+5
+
+#
+# Adding and deleting members
+#
+
+include "lib/sets"; cset(.) | del(.e)
+"aeiuo"
+{"a":true,"i":true,"o":true,"u":true}
+
+include "lib/sets"; cset(.) | del(.e) | .e = true
+"aeiuo"
+{"a":true,"e":true,"i":true,"o":true,"u":true}
+
+include "lib/sets"; cset(.) | (.o,.u) = true
+"aei"
+{"a":true,"e":true,"i":true,"o":true,"u":true}
+
+include "lib/sets"; cset(.) | del(.e,.a,.u)
+"aeiuo"
+{"i":true,"o":true}
+
+include "lib/sets"; cset(.) | del(.e) | . += {e:true}
+"aeiuo"
+{"a":true,"e":true,"i":true,"o":true,"u":true}
+
+include "lib/sets"; cset(.) | del(.e,.a,.u) | . += {u:true,a:true,e:true}
+"aeiuo"
+{"a":true,"e":true,"i":true,"o":true,"u":true}
+
+include "lib/sets"; cset(.) | del(.e,.a,.u) | (.e,.a,.u) = true
+"aeiuo"
+{"a":true,"e":true,"i":true,"o":true,"u":true}
+
+include "lib/sets"; cset(.) | .x = true
+"abc"
+{"a":true,"b":true,"c":true,"x":true}
+
+#
+# Set membership
+#
+
+# ∋
+include "lib/sets"; set(.) | has("k")
+[3,2,1,"k"]
+true
+
+# ∋
+include "lib/sets"; set(.) | .k
+[3,2,1,"k"]
+true
+
+# ∋
+include "lib/sets"; set(.) | has("h")
+[3,2,1,"k"]
+false
+
+# ∋
+include "lib/sets"; set(.) | if .h then true else false end
+[3,2,1,"k"]
+false
+
+# ∋
+include "lib/sets"; set(.) | .h
+[3,2,1,"k"]
+null
+
+# ∌
+include "lib/sets"; set(.) | .h|not
+[3,2,1,"k"]
+true
+
+# ∌
+include "lib/sets"; set(.) | .h==null
+[3,2,1,"k"]
+true
+
+# ∈
+include "lib/sets"; set(.) as $s | "k" | in($s)
+[3,2,1,"k"]
+true
+
+# ∈
+include "lib/sets"; set(.) as $s | "h" | in($s)
+[3,2,1,"k"]
+false
+
+# ∈
+include "lib/sets"; set(.) as $s | "h" | in($s)
+[3,2,1,"k"]
+false
+
+# ∉
+include "lib/sets"; set(.) as $s | "h" | in($s)|not
+[3,2,1,"k"]
+true
+
+# null => false
+include "lib/sets"; set(.) | .h//false
+[3,2,1,"k"]
+false
+
+#
+# Common sets operations
+#
+
+# ∪
+include "lib/sets"; cset("aiu") + cset("eo")
+null
+{"a":true,"e":true,"i":true,"o":true,"u":true}
+
+# ∪
+include "lib/sets"; cset("aiu") * cset("eo")
+null
+{"a":true,"e":true,"i":true,"o":true,"u":true}
+
+# ∩
+include "lib/sets"; cset("aeiouxyz") | intersection(cset("xyz12345"))
+null
+{"x":true,"y":true,"z":true}
+
+# ∩ ∅
+include "lib/sets"; (cset("xyz") | intersection(cset("abc"))) == {}
+null
+true
+
+# ∩ ∪
+include "lib/sets"; cset("aiu") + cset("eo") | intersection(cset("eo"))
+null
+{"o":true,"e":true}
+
+include "lib/sets"; cset("aeiou") | intersection(cset("eo")) + cset("aiu")
+null
+{"a":true,"e":true,"i":true,"o":true,"u":true}
+
+# –
+include "lib/sets"; cset("aeiou") | difference(cset("abc"))
+null
+{"e":true,"i":true,"o":true,"u":true}
+
+# ⊂
+include "lib/sets"; cset("xyz") as $a | cset("xyz12345") as $b | $a != $b and ($a | intersection($b)) == $a
+null
+true
+
+# ⊂
+include "lib/sets"; cset("xyz") | subset(cset("xyz12345"))
+null
+true
+
+# ⊃ 
+include "lib/sets"; cset("xyz123") as $a | cset("xyz") as $b | $a != $b and ($a | intersection($b)) == $b
+null
+true
+
+# ≡ ∅
+. == { }
+{ }
+true
+
+# ≡
+include "lib/sets"; cset("xyz") == {"y":true,"x":true,"z":true}
+null
+true
+
+# ≢ ∅
+include "lib/sets"; cset("xyz") != { }
+null
+true
+
+# vim:ai:sw=2:ts=2:et:syntax=python

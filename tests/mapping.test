@@ -1,0 +1,64 @@
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+
+#########################################################################
+# Variations on mapping
+#########################################################################
+
+#
+# 10 first integers squared
+#
+
+# lists
+
+[range(10)] | map(.*.)
+null
+[0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+
+[range(10)] | [.[] | .*.]
+null
+[0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+
+[range(10)] | .[] |= .*.
+null
+[0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+
+# streams
+
+range(10) | .*.
+null
+0
+1
+4
+9
+16
+25
+36
+49
+64
+81
+
+[range(10)] | .[] | .*.
+null
+0
+1
+4
+9
+16
+25
+36
+49
+64
+81
+
+# reverse implemented using reduce
+def rev: reduce .[] as $x ([]; [$x] + .); (.|rev) == (.|reverse)
+[1,2,3,4,5]
+true
+
+# length implemented using reduce
+def len: reduce .[] as $x (0; . + 1); (.|len) == (.|length)
+[1,2,3,4,5]
+true
+
+# vim:ai:sw=2:ts=2:et:syntax=python

@@ -1,0 +1,145 @@
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+
+#########################################################################
+# Goal-directed programming
+#
+# JQ has a strong influence of Icon. Backtracking, "empty" as a no-value,
+# generators, etc. Programming in this style is a new paradigm that requires
+# practice.
+#########################################################################
+
+#
+# Uses of empty
+#
+
+empty | 2
+null
+# empty
+
+2 | empty
+null
+# empty
+
+empty + 2
+null
+# empty
+
+2 + empty
+null
+# empty
+
+empty , 2
+null
+2
+
+2 , empty
+null
+2
+
+empty or true
+null
+# empty
+
+true or empty
+null
+true
+
+true and empty
+null
+# empty
+
+try empty catch 0
+null
+# empty
+
+empty // 0
+null
+0
+
+try empty catch error("Die")
+null
+# empty
+
+empty|not
+null
+# empty
+
+try error("Die") catch empty
+null
+# empty
+
+error("Die")?
+null
+# empty
+
+#
+# Multiple values
+#
+
+("0","1") + ("0","1")
+null
+"00"
+"10"
+"01"
+"11"
+
+("0","1") as $a | ("0","1") as $b | $a+$b
+null
+"00"
+"01"
+"10"
+"11"
+
+limit(3; (./"")[] + (./"")[])
+"0123456789ABCDEF"
+"00"
+"10"
+"20"
+
+limit(3; (./"")[] as $a | (./"")[] as $b | $a+$b)
+"0123456789ABCDEF"
+"00"
+"01"
+"02"
+
+last((./"")[] + (./"")[])
+"0123456789ABCDEF"
+"FF"
+
+limit(3; (range(.) + range(.)))
+1000000000
+0
+1
+2
+
+pow(range(1;6); 2)
+null
+1
+4
+9
+16
+25
+
+pow(1,2,3,4,5; 2)
+null
+1
+4
+9
+16
+25
+
+pow(range(1;6); 2,3)
+null
+1
+4
+9
+16
+25
+1
+8
+27
+64
+125
+
+# vim:ai:sw=2:ts=2:et:syntax=python
