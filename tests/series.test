@@ -1,10 +1,10 @@
-# Tests are groups of three lines: program, input, expected output.
-# Blank lines and lines starting with # are ignored.
-
 #########################################################################
-# Series
+# Arithmetic series
 #
 # Some basic arithmetic series as infinite streams.
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
 #########################################################################
 
 # Fibonacci

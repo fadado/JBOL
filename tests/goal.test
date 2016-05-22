@@ -1,12 +1,12 @@
-# Tests are groups of three lines: program, input, expected output.
-# Blank lines and lines starting with # are ignored.
-
 #########################################################################
 # Goal-directed programming
 #
-# JQ has a strong influence of Icon. Backtracking, "empty" as a no-value,
-# generators, etc. Programming in this style is a new paradigm that requires
-# practice.
+# JQ has a strong influence of the Icon language. Backtracking, "empty"
+# as a no-value, generators, etc. Programming in this style is a new
+# paradigm that requires practice.
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
 #########################################################################
 
 #

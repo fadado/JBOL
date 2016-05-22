@@ -1,12 +1,12 @@
-# Tests are groups of three lines: program, input, expected output.
-# Blank lines and lines starting with # are ignored.
-
 #########################################################################
 # Set functions
 #
-# JSON has no a set data type, but objects are good enought in most cases.
-# The most common operations on sets are primitive in JQ or easy to implement
-# (see lib/sets.jq).
+# JSON has no a set data type, but objects are good enought in most
+# cases.  The most common operations on sets are primitive in JQ or easy
+# to implement (see lib/sets.jq).
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
 #########################################################################
 
 #

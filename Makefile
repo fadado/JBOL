@@ -37,10 +37,10 @@ $(LogDir)/%.log: tests/%.test
 	echo
 
 # Other dependencies
-$(LogDir)/series.log: lib/series.jq lib/stream.jq lib/control.jq
-$(LogDir)/sets.log:   lib/sets.jq
-$(LogDir)/stream.log: lib/stream.jq lib/control.jq
-$(LogDir)/string.log: lib/string.jq
+$(LogDir)/series.log:  lib/series.jq lib/stream.jq lib/control.jq
+$(LogDir)/sets.log:    lib/sets.jq
+$(LogDir)/streams.log: lib/stream.jq lib/control.jq
+$(LogDir)/strings.log: lib/string.jq
 
 # Default target
 all: $(Logs)
