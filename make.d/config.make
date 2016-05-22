@@ -40,7 +40,7 @@ SHELL := /bin/bash
 
 # Make will delete the target of a rule if it has changed and its recipe exits
 # with a nonzero exit status.
-.DELETE_ON_ERROR:
+#.DELETE_ON_ERROR:
 
 ########################################################################
 # Undefine predefined variables
