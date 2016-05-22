@@ -64,7 +64,8 @@ install:
 		$(addprefix bin/,$(Scripts)) $(InstallPrefix)/bin
 
 uninstall:
-	sudo rm --force --verbose $(addprefix $(InstallPrefix)/bin/,$(Scripts))
+	sudo rm --force --verbose \
+		$(addprefix $(InstallPrefix)/bin/,$(Scripts))
 
 ########################################################################
 # Examples
@@ -84,8 +85,10 @@ script:
 	./examples/script.sh 'on' 'one motion is optional'
 
 star:
-	./examples/star.jq --arg alphabet '01' --argjson ordered true  | head --lines 20 >/tmp/star1.tmp || true
-	./examples/star.jq --arg alphabet '01' --argjson ordered false | head --lines 20 >/tmp/star2.tmp || true
+	./examples/star.jq --arg alphabet '01' --argjson ordered true  \
+		| head --lines 20 >/tmp/star1.tmp || true
+	./examples/star.jq --arg alphabet '01' --argjson ordered false \
+		| head --lines 20 >/tmp/star2.tmp || true
 	echo '=======+==========='
 	echo 'ORDERED|NOT ORDERED'
 	echo '=======+==========='
@@ -98,7 +101,10 @@ yaml:
 	jq --null-input --raw-output \
 		--slurpfile j1 data/hardware.json \
 		--slurpfile j2 <($(J2Y) data/hardware.json | $(Y2J)) \
-		'if $$j1 == $$j2 then empty else "Failed conversion JSON <==> YAML" end'
+		'if $$j1 == $$j2
+		 then empty
+	 	 else "Failed conversion JSON <==> YAML"
+		 end'
 # jq q JSON == yq q YAML
 	diff <(jq --sort-keys '.store.book[1]' data/store.json | bin/j2y) \
 		 <($(YQ) --sort-keys '.store.book[1]' data/store.yaml)
