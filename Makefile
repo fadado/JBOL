@@ -92,13 +92,18 @@ star:
 	paste /tmp/star[12].tmp
 
 yaml:
+# Several tests using yq (no output is expected)
 	echo 'No news is good news...'
+# data/hardware.json == ($(J2Y) data/hardware.json | $(Y2J))
 	jq --null-input --raw-output \
 		--slurpfile j1 data/hardware.json \
 		--slurpfile j2 <($(J2Y) data/hardware.json | $(Y2J)) \
 		'if $$j1 == $$j2 then empty else "Failed conversion JSON <==> YAML" end'
-	diff <(< data/store.json jq --sort-keys '.store.book[1]' | bin/j2y) \
-		 <(< data/store.yaml $(YQ) --sort-keys '.store.book[1]')
-	[[ $$($(YQ) -J -r .store.bicycle.color < data/store.yaml) == red ]] || echo 1>&2 Error using yq
+# jq q JSON == yq q YAML
+	diff <(jq --sort-keys '.store.book[1]' data/store.json | bin/j2y) \
+		 <($(YQ) --sort-keys '.store.book[1]' data/store.yaml)
+# yq q YAML == s
+	[[ $$($(YQ) -J -r .store.bicycle.color data/store.yaml) == red ]] \
+		|| echo 1>&2 'Error using yq'
 
 # vim:ai:sw=4:ts=4:noet:syntax=make

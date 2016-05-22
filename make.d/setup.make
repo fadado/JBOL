@@ -3,7 +3,7 @@
 ########################################################################
 
 #
-# Check global variables
+# Check global variables used in this module
 #
 ifndef Logs
 $(error Variable 'Logs' is not defined)
@@ -15,7 +15,7 @@ endif
 #
 # Hidden directory for logs
 #
-$(firstword $(Logs)): | $(LogDir)
+$(Logs): | $(LogDir)
 
 $(LogDir): ; mkdir --parents $@
 

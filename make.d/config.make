@@ -42,4 +42,71 @@ SHELL := /bin/bash
 # with a nonzero exit status.
 .DELETE_ON_ERROR:
 
+########################################################################
+# Undefine predefined variables
+########################################################################
+
+undefine AR
+undefine ARFLAGS
+undefine AS
+undefine CC
+undefine CHECKOUT,v
+undefine CO
+undefine COFLAGS
+undefine COMPILE.C
+undefine COMPILE.F
+undefine COMPILE.S
+undefine COMPILE.c
+undefine COMPILE.cc
+undefine COMPILE.cpp
+undefine COMPILE.def
+undefine COMPILE.f
+undefine COMPILE.m
+undefine COMPILE.mod
+undefine COMPILE.p
+undefine COMPILE.r
+undefine COMPILE.s
+undefine CPP
+undefine CTANGLE
+undefine CWEAVE
+undefine CXX
+undefine F77
+undefine F77FLAGS
+undefine FC
+undefine GET
+undefine LD
+undefine LEX
+undefine LEX.l
+undefine LEX.m
+undefine LINK.C
+undefine LINK.F
+undefine LINK.S
+undefine LINK.c
+undefine LINK.cc
+undefine LINK.cpp
+undefine LINK.f
+undefine LINK.m
+undefine LINK.o
+undefine LINK.p
+undefine LINK.r
+undefine LINK.s
+undefine LINT
+undefine LINT.c
+undefine M2C
+undefine OBJC
+undefine OUTPUT_OPTION
+undefine PC
+undefine PREPROCESS.F
+undefine PREPROCESS.S
+undefine PREPROCESS.r
+undefine RM
+undefine SUFFIXES
+undefine TANGLE
+undefine TEX
+undefine TEXI2DVI
+undefine WEAVE
+undefine YACC
+undefine YACC.m
+undefine YACC.y
+
 # vim:ai:sw=4:ts=4:noet:syntax=make
