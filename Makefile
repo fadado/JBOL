@@ -87,31 +87,12 @@ script:
 	./examples/script.sh 'on' 'one motion is optional'
 
 star:
-	./examples/star.jq --arg alphabet '01' --argjson ordered true  \
-		| head --lines 20 >/tmp/star1.tmp || true
-	./examples/star.jq --arg alphabet '01' --argjson ordered false \
-		| head --lines 20 >/tmp/star2.tmp || true
-	echo '=======+==========='
-	echo 'ORDERED|NOT ORDERED'
-	echo '=======+==========='
-	paste /tmp/star[12].tmp
+	$(SHELL) examples/star.sh
 
 yaml:
-	# Several tests using yq (no output is expected)
 	echo 'No news is good news...'
-	# data/hardware.json == ($(J2Y) data/hardware.json | $(Y2J))
-	jq --null-input --raw-output \
-		--slurpfile j1 data/hardware.json \
-		--slurpfile j2 <($(J2Y) data/hardware.json | $(Y2J)) \
-		'if $$j1 == $$j2
-		 then empty
-	 	 else "Failed conversion JSON <==> YAML"
-		 end'
-	# jq q JSON == yq q YAML
-	diff <(jq --sort-keys '.store.book[1]' data/store.json | bin/j2y) \
-		 <($(YQ) --sort-keys '.store.book[1]' data/store.yaml)
-	# yq q YAML == s
-	[[ $$($(YQ) -J -r .store.bicycle.color data/store.yaml) == red ]] \
-		|| echo 1>&2 'Error using yq'
+	for e in examples/yaml-[0-9][0-9].sh; do \
+		echo $$e; $(SHELL) $$e; \
+	done
 
 # vim:ai:sw=4:ts=4:noet:syntax=make
