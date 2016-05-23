@@ -1,22 +1,16 @@
 #!/bin/bash
-
 #
-# Wraps jq to be able to process YAML
+# Wraps jq to be able to process YAML.
 #
 
 # Options
 set -o errexit -o noglob -o nounset -o pipefail
-shopt -s expand_aliases
 
 # Script name
-declare -r SELF=${0##*/}
-
-# Format conversors
-alias y2j=$(dirname $0)/y2j
-alias j2y=$(dirname $0)/j2y
+declare -r SELF="$(basename "$0")"
 
 # Show help
-function help {
+help() {
     cat <<EOF
 ${SELF} - commandline YAML processor
 Usage: ${SELF} [options] <jq filter> [file]
@@ -30,7 +24,7 @@ Usage: ${SELF} [options] <jq filter> [file]
      -h     Show this help
      -J     Preserve JSON output format
      -V     Output the jq version
-    
+
     Some of the jq options include:
      -e     set the exit status code based on the output
      -f     Read filter from the file f
@@ -48,39 +42,58 @@ EOF
 }
 
 # Entry point
-function main {
-    local -i json=0
-
+main() {
+    local -i json="0"
     local opt
+    local last
+
     while getopts :hJKV-: opt; do
         case $opt in
-            h) help ;; 
-            J) json=1 ;; 
-            V) exec jq --version ;;
-            -) case $OPTARG in
-                   help) help ;;
-                   JSON|json) json=1 ;;
-                   *) OPTIND=$((OPTIND-1)) 
-                      break ;; # assume jq option
-               esac
-               ;;
-            ?) OPTIND=$((OPTIND-1)) 
-               break ;; # assume jq option
+            h)
+                help
+                ;;
+            J)
+                json=1
+                ;;
+            V)
+                exec jq --version
+                ;;
+            -)
+                case $OPTARG in
+                    help)
+                        help
+                        ;;
+                    JSON|json)
+                        json=1
+                        ;;
+                    *)
+                        # Assume jq option
+                        OPTIND="$((OPTIND - 1))"
+                        break
+                        ;;
+                esac
+                ;;
+            ?)
+                # Assume jq option
+                OPTIND="$((OPTIND - 1))"
+                break
+                ;;
         esac
     done
 
-    shift $((OPTIND-1))
-    (( $# > 0 )) || help
-    [[ $1 == '--version' ]] && exec jq --version
+    shift "$((OPTIND - 1))"
 
-    # is stdin a TTY?
+    (( $# > 0 )) || help
+    [[ $1 == "--version" ]] && exec jq --version
+
+    # Is stdin a TTY?
     if [[ -t 0 ]]; then
         if (( $# >= 2 )); then
-            # is the last parameter a regular file?
-            local last="${!#}"
-            if [[ -f $last ]]; then
+            # Is the last parameter a regular file?
+            last="${!#}"
+            if [[ -f "$last" ]]; then
                 exec 0< "$last"
-                set -- "${@:1:$(($#-1))}"
+                set -- "${@:1:$(($# - 1))}"
             fi
         fi
     fi
@@ -88,9 +101,9 @@ function main {
     # Wrap jq
     if (( json )); then
         # Preserve JSON output
-        y2j | jq "$@"
+        "${SELF}/y2j" | jq "$@"
     else
-        y2j | jq "$@" | j2y
+        "${SELF}/y2j" | jq "$@" | "${SELF}/j2y"
     fi
 
     # Exit status is that of the last command executed.
