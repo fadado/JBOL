@@ -32,8 +32,10 @@ include make.d/setup.make
 # Tests output is saved in a log file
 $(LogDir)/%.log: tests/%.test
 	echo '>>>' $< '<<<' | tee $@
-	jq --run-tests $< | tee --append $@ | grep --invert-match '^Testing'
-	grep --quiet '^\*\*\*' $@ && touch $< || true
+	jq --run-tests $< \
+		| tee --append $@ \
+		| grep --invert-match '^Testing' || true
+	grep --quiet '^\*\*\*' $@ && touch $<
 	echo
 
 # Other dependencies
@@ -49,22 +51,22 @@ all: $(Logs)
 # Utilities
 ########################################################################
 
-.PHONY: clean clobber build check install uninstall
+.PHONY: clean clobber check test install uninstall
 
 clean:
-	rm --force $(LogDir)/*.log
+	rm --force -- $(LogDir)/*.log
 
 clobber: clean
-	[[ -d $(LogDir) ]] && rmdir --parents $(LogDir) || true
+	-[[ -d $(LogDir) ]] && rmdir --parents $(LogDir)
 
-build check: clean all
+check test: clean all
 
 install:
 	sudo install --verbose --compare --mode 555 \
 		$(addprefix bin/,$(Scripts)) $(InstallPrefix)/bin
 
 uninstall:
-	sudo rm --force --verbose \
+	sudo rm --force --verbose -- \
 		$(addprefix $(InstallPrefix)/bin/,$(Scripts))
 
 ########################################################################
@@ -95,9 +97,9 @@ star:
 	paste /tmp/star[12].tmp
 
 yaml:
-# Several tests using yq (no output is expected)
+	# Several tests using yq (no output is expected)
 	echo 'No news is good news...'
-# data/hardware.json == ($(J2Y) data/hardware.json | $(Y2J))
+	# data/hardware.json == ($(J2Y) data/hardware.json | $(Y2J))
 	jq --null-input --raw-output \
 		--slurpfile j1 data/hardware.json \
 		--slurpfile j2 <($(J2Y) data/hardware.json | $(Y2J)) \
@@ -105,10 +107,10 @@ yaml:
 		 then empty
 	 	 else "Failed conversion JSON <==> YAML"
 		 end'
-# jq q JSON == yq q YAML
+	# jq q JSON == yq q YAML
 	diff <(jq --sort-keys '.store.book[1]' data/store.json | bin/j2y) \
 		 <($(YQ) --sort-keys '.store.book[1]' data/store.yaml)
-# yq q YAML == s
+	# yq q YAML == s
 	[[ $$($(YQ) -J -r .store.bicycle.color data/store.yaml) == red ]] \
 		|| echo 1>&2 'Error using yq'
 

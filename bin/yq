@@ -4,30 +4,28 @@
 # Wraps jq to be able to process YAML
 #
 
+# Options
+set -o errexit -o noglob -o nounset -o pipefail
+shopt -s expand_aliases
+
 # Script name
 declare -r SELF=${0##*/}
-
-# Options
-set -o pipefail
-set -o errexit
-set -o noglob
-set -o nounset
-shopt -s expand_aliases
 
 # Format conversors
 alias y2j=$(dirname $0)/y2j
 alias j2y=$(dirname $0)/j2y
 
+# Show help
 function help {
-    cat <<\EOF
-yq - commandline YAML processor
-Usage: yq [options] <jq filter> [file]
+    cat <<EOF
+${SELF} - commandline YAML processor
+Usage: ${SELF} [options] <jq filter> [file]
 
-    yq is a wrapper to jq for processing YAML input, applying the given
+    ${SELF} is a wrapper to jq for processing YAML input, applying the given
     filter to it YAML text input and producing the filter's results as
     YAML or JSON on standard output.
 
-    The options available are yq specific and also from jq. The yq
+    The options available are ${SELF} specific and also from jq. The ${SELF}
     options are:
      -h     Show this help
      -J     Preserve JSON output format
@@ -38,10 +36,10 @@ Usage: yq [options] <jq filter> [file]
      -f     Read filter from the file f
      -s     read (slurp) all inputs into an array; apply filter to it
      -S     sort keys of objects on output
-     --arg a v          set variable $a to value v
-     --argjson a v      set variable $a to JSON value v
-     --slurpfile a f    set variable $a to an array of values read from f
-    Not all jq options have sense using yq.
+     --arg a v          set variable \$a to value v
+     --argjson a v      set variable \$a to JSON value v
+     --slurpfile a f    set variable \$a to an array of values read from f
+    Not all jq options have sense using ${SELF}.
 
     For more advanced filters see the jq(1) manpage and
     https://stedolan.github.io/jq
@@ -49,11 +47,7 @@ EOF
     exit $(( $# == 0 ))
 }
 
-function die {
-    echo 1>&2 "${SELF}: $@"
-    exit 1
-}
-
+# Entry point
 function main {
     local -i json=0
 
@@ -98,14 +92,12 @@ function main {
     else
         y2j | jq "$@" | j2y
     fi
+
+    # Exit status is that of the last command executed.
+    exit
 }
 
-#
 # Call main
-#
-
 main "$@"
-
-exit $?
 
 # vim:ai:sw=4:ts=4:et:syntax=sh

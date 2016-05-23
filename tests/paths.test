@@ -2,6 +2,7 @@
 # Exploration of jq paths
 #
 # Paths are a dificult area of jq...
+# TODO: add a lot of tests!!!
 #
 # Tests are groups of three lines: program, input, expected output.
 # Blank lines and lines starting with # are ignored.
