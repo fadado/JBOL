@@ -1,0 +1,80 @@
+#########################################################################
+# ISO-8859-1 encoding
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+#########################################################################
+
+include "string/latin1"; isascii
+"AbCdE\t"
+true
+
+include "string/latin1"; islatin1
+"Ñç"
+true
+
+include "string/latin1"; isvacant
+"\u0080\u009F"
+true
+
+include "string/latin1"; iscntrl
+"\t\n\r"
+true
+
+include "string/latin1"; isspace
+" \t\r\n"
+true
+
+include "string/latin1"; isblank
+" \t "
+true
+
+include "string/latin1"; isupper
+"ÀBCÑÇDE"
+true
+
+include "string/latin1"; islower
+"áñèiço"
+true
+
+include "string/latin1"; isdigit
+"123"
+true
+
+include "string/latin1"; isxdigit
+"A123"
+true
+
+include "string/latin1"; ispunct
+"[],¶."
+true
+
+include "string/latin1"; isalpha
+"Niña"
+true
+
+include "string/latin1"; isalnum
+"Ço12"
+true
+
+include "string/latin1"; isgraph
+"A[]Ñ"
+true
+
+include "string/latin1"; isprint
+"A []Ç"
+true
+
+include "string/latin1"; isword
+"A_l·l1"
+true
+
+include "string/latin1"; tolower
+"NIÑO"
+"niño"
+
+include "string/latin1"; toupper
+"niño"
+"NIÑO"
+
+# vim:ai:sw=2:ts=2:et:syntax=jq

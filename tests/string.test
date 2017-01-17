@@ -1,0 +1,152 @@
+#########################################################################
+# Text functions
+#
+# Classic string functions are easy to implement. Also functions
+# inspired in the Icon Language, like `find`.
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+#########################################################################
+
+#
+# chr, ord
+#
+
+include "string"; ord("A")
+null
+65
+
+include "string"; chr(65) == "A"
+null
+true
+
+include "string"; ord(chr(65)) == 65 and chr(ord("A")) == "A"
+null
+true
+
+include "string"; [ord("€"), chr(8364)]
+null
+[8364, "€"]
+
+#
+# find
+#
+
+include "string"; indices("on")
+"one motion is optional"
+[0, 8, 18]
+
+include "string"; indices("ma")
+"mi mama me mima"
+[3, 5, 13]
+
+include "string"; indices("ab")
+"abaabbaaabbbaaaabbbb" 
+[0, 3, 8, 15]
+
+#
+# upto
+#
+
+include "string"; [upto("on")]
+"one motion is optional"
+[0, 1, 5, 8, 9, 14, 18, 19]
+
+include "string"; [upto("aeiou")]
+"kaleidoscope"
+[1, 3, 4, 6, 9, 11]
+
+#
+# translate
+#
+
+include "string"; import "string/ascii" as ascii; translate(ascii::ttupper)
+"kaleidoscope"
+"KALEIDOSCOPE"
+
+include "string"; import "string/ascii" as ascii; translate(ascii::ttlower)
+"KALEIDOSCOPE"
+"kaleidoscope"
+
+# rot13
+include "string"; import "string/ascii" as ascii; def R: translate(rot13); . == (R|R)
+"Joan"
+true
+
+# flip
+include "string"; import "string/ascii" as ascii; translate(table(ascii::alpha; ascii::ALPHA))
+"Una Casa"
+"uNA cASA"
+
+# remove
+include "string"; translate("01234567890"; "")
+"asdhaisd867asd876asiduhakjdshads8a08d60asdioahsdasd89a0sd"
+"asdhaisdasdasiduhakjdshadsadasdioahsdasdasd"
+
+include "string"; import "string/ascii" as ascii; translate(ascii::cntrl; "")
+"a\ne\rg\tl"
+"aegl"
+
+# preserve
+include "string"; import "string/ascii" as ascii; translate(ptable(.; ascii::lower))
+"XXa\nUUe\rg\tlZZ"
+"aegl"
+
+include "string"; import "string/ascii" as ascii; translate(translate(ascii::lower; ""); "")
+"XXa\nUUe\rg\tlZZ"
+"aegl"
+
+# trim
+include "string"; ltrim
+""
+""
+
+include "string"; rtrim
+""
+""
+
+include "string"; ltrim
+"        "
+""
+
+include "string"; rtrim
+"         "
+""
+
+include "string"; ltrim
+"aaaaa"
+"aaaaa"
+
+include "string"; rtrim
+"aaaaa"
+"aaaaa"
+
+include "string"; ltrim
+"      aaaaa"
+"aaaaa"
+
+include "string"; rtrim
+"aaaaa        "
+"aaaaa"
+
+include "string"; trim
+"      aaaaa        "
+"aaaaa"
+
+include "string"; trim
+"a b c"
+"a b c"
+
+include "string"; ltrim
+" a b c"
+"a b c"
+
+include "string"; rtrim
+"a b c "
+"a b c"
+
+include "string"; trim
+" a b c "
+"a b c"
+
+# vim:ai:sw=2:ts=2:et:syntax=jq

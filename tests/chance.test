@@ -1,0 +1,20 @@
+#########################################################################
+# Chance
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+#########################################################################
+
+include "generator/chance"; first(rnd(randomize)) | 0 < . and . < 1
+null
+true
+
+include "generator/chance"; first(rand(randomize)) | 0 < . and . < pow(2; 15)
+null
+true
+
+include "generator/chance"; . as $n | first(random($n; randomize)) | 0 <= . and . < $n
+10
+true
+
+# vim:ai:sw=2:ts=2:et:syntax=jq

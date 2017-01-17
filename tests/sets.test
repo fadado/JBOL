@@ -1,0 +1,247 @@
+#########################################################################
+# Sets
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+#########################################################################
+
+#########################################################################
+# Set functions
+
+#
+# Set construction
+#
+
+# The empty set: ∅
+length
+{ }
+0
+
+length
+[ ]
+0
+
+# Build sets from arrays or strings
+include "types"; set(.)
+[3,2,1,"k"]
+{"1":true,"2":true,"3":true,"k":true}
+
+include "types"; set(.)
+"aeiuo"
+{"a":true,"e":true,"i":true,"o":true,"u":true}
+
+include "types"; set(.)
+"uioaaeiouoaeiouae"
+{"a":true,"e":true,"i":true,"o":true,"u":true}
+
+# Set members as a list
+include "types"; set(.) | keys
+"aeiuo"
+["a","e","i","o","u"]
+
+# Set cardinality
+include "types"; set(.) | length
+"aeiuo"
+5
+
+#
+# Adding and deleting members
+#
+
+include "types"; set(.) | del(.e)
+"aeiuo"
+{"a":true,"i":true,"o":true,"u":true}
+
+include "types"; set(.) | del(.e) | .e = true
+"aeiuo"
+{"a":true,"e":true,"i":true,"o":true,"u":true}
+
+include "types"; set(.) | (.o,.u) = true
+"aei"
+{"a":true,"e":true,"i":true,"o":true,"u":true}
+
+include "types"; set(.) | del(.e,.a,.u)
+"aeiuo"
+{"i":true,"o":true}
+
+include "types"; set(.) | del(.e) | . += {e:true}
+"aeiuo"
+{"a":true,"e":true,"i":true,"o":true,"u":true}
+
+include "types"; set(.) | del(.e,.a,.u) | . += {u:true,a:true,e:true}
+"aeiuo"
+{"a":true,"e":true,"i":true,"o":true,"u":true}
+
+include "types"; set(.) | del(.e,.a,.u) | (.e,.a,.u) = true
+"aeiuo"
+{"a":true,"e":true,"i":true,"o":true,"u":true}
+
+include "types"; set(.) | .x = true
+"abc"
+{"a":true,"b":true,"c":true,"x":true}
+
+#
+# Set membership
+#
+
+# ∋
+include "types"; set(.) | has("k")
+[3,2,1,"k"]
+true
+
+contains(["k"])
+[3,2,1,"k"]
+true
+
+# ∋
+include "types"; set(.) | .k
+[3,2,1,"k"]
+true
+
+# ∋
+include "types"; set(.) | has("h")
+[3,2,1,"k"]
+false
+
+contains(["h"])
+[3,2,1,"k"]
+false
+
+# ∋
+include "types"; set(.) | if .h then true else false end
+[3,2,1,"k"]
+false
+
+# ∋
+include "types"; set(.) | .h
+[3,2,1,"k"]
+null
+
+# ∌
+include "types"; set(.) | .h|not
+[3,2,1,"k"]
+true
+
+contains(["h"])|not
+[3,2,1,"k"]
+true
+
+# ∌
+include "types"; set(.) | .h==null
+[3,2,1,"k"]
+true
+
+# ∈
+include "types"; set(.) as $s | "k" | in($s)
+[3,2,1,"k"]
+true
+
+inside([3,2,1,"k"])
+["k"] 
+true
+
+# ∈
+include "types"; set(.) as $s | "h" | in($s)
+[3,2,1,"k"]
+false
+
+inside([3,2,1,"k"])
+["h"] 
+false
+
+# ∈
+include "types"; set(.) as $s | "h" | in($s)
+[3,2,1,"k"]
+false
+
+# ∉
+include "types"; set(.) as $s | "h" | in($s)|not
+[3,2,1,"k"]
+true
+
+inside([3,2,1,"k"])|not
+["h"] 
+true
+
+# null => false
+include "types"; set(.) | .h//false
+[3,2,1,"k"]
+false
+
+#
+# Common sets operations
+#
+
+# ∪
+include "types"; set("aiu") + set("eo")
+null
+{"a":true,"e":true,"i":true,"o":true,"u":true}
+
+# ∪
+include "types"; set("aiu") * set("eo")
+null
+{"a":true,"e":true,"i":true,"o":true,"u":true}
+
+# ∩
+include "types"; set("aeiouxyz") | intersection(set("xyz12345"))
+null
+{"x":true,"y":true,"z":true}
+
+# ∩ ∅
+include "types"; (set("xyz") | intersection(set("abc"))) == {}
+null
+true
+
+# ∩ ∪
+include "types"; set("aiu") + set("eo") | intersection(set("eo"))
+null
+{"o":true,"e":true}
+
+include "types"; set("aeiou") | intersection(set("eo")) + set("aiu")
+null
+{"a":true,"e":true,"i":true,"o":true,"u":true}
+
+# –
+include "types"; set("aeiou") | difference(set("abc"))
+null
+{"e":true,"i":true,"o":true,"u":true}
+
+["a","e","i","o","c","u"] - ["a","b","c"]
+null
+["e","i","o","u"]
+
+# ⊂
+include "types"; set("xyz") as $a | set("xyz12345") as $b | $a != $b and ($a | intersection($b)) == $a
+null
+true
+
+# ⊂
+include "types"; set("xyz") | inside(set("xyz12345"))
+null
+true
+
+["x","y","z"] | inside(["x","1","z","y","2","3","4","5"])
+null
+true
+
+# ⊃ 
+include "types"; set("xyz123") as $a | set("xyz") as $b | $a != $b and ($a | intersection($b)) == $b
+null
+true
+
+# ≡ ∅
+. == { }
+{ }
+true
+
+# ≡
+include "types"; set("xyz") == {"y":true,"x":true,"z":true}
+null
+true
+
+# ≢ ∅
+include "types"; set("xyz") != { }
+null
+true
+
+# vim:ai:sw=2:ts=2:et:syntax=jq

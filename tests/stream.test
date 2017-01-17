@@ -1,0 +1,232 @@
+#########################################################################
+# Generators
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+#########################################################################
+
+[empty, range(8)] == [range(8), empty]
+null
+true
+
+[empty, range(8), empty] == [range(8)]
+null
+true
+
+[(range(2), range(3)), range(4)] == [range(2), (range(3), range(4))]
+null
+true
+
+include "generator"; isempty(empty)
+null
+true
+
+include "generator"; isempty(range(0))
+null
+true
+
+include "generator"; isempty(true)
+null
+false
+
+include "generator"; isempty(false)
+null
+false
+
+include "generator"; isempty(null)
+null
+false
+
+include "generator"; isempty(range(8))
+null
+false
+
+include "generator"; isempty(1,2,3)
+null
+false
+
+include "generator"; isempty(0)
+null
+false
+
+include "generator"; isempty(infinite)
+null
+false
+
+include "generator"; isempty(nan)
+null
+false
+
+include "generator"; count(range(3)) == 3
+null
+true
+
+include "generator"; count(empty) == 0
+null
+true
+
+include "generator"; count(range(3;10)) == 9-3+1
+null
+true
+
+include "generator"; count(range(8), range(4;11)) == count(range(8)) + count(range(4;11))
+null
+true
+
+#
+# all, any
+#
+include "generator"; []|all
+null
+true
+
+include "generator"; [true]|all
+null
+true
+
+include "generator"; [true,false]|all
+null
+false
+
+include "generator"; [range(10)]|all(.<10)
+null
+true
+
+include "generator"; []|any
+null
+false
+
+include "generator"; [true]|any
+null
+true
+
+include "generator"; [1,2,3]|any(.>2)
+null
+true
+
+include "generator"; [1,2,3]|any(.>3)
+null
+false
+
+#
+# first, take, drop, nth
+#
+
+include "generator"; first([][])
+null
+# empty
+
+include "generator"; first(range(5;100))
+null
+5
+
+include "generator"; nth(0; range(5;100))
+null
+5
+
+include "generator"; [take(4;range(100))] == [limit(4; range(77))]
+null
+true
+
+include "generator"; [take(4;range(10))] == [0,1,2,3]
+null
+true
+
+include "generator"; [takeWhile(.<10; range(0;1000))] == [range(0;10)]
+null
+true
+
+include "generator"; drop(5; range(8))
+null
+5
+6
+7
+
+include "generator"; drop(1000; range(1002))
+null
+1000
+1001
+
+include "generator"; drop(10; range(1))
+null
+# empty
+
+include "generator"; drop(10; range(10))
+null
+# empty
+
+
+include "generator"; [slice(10; 13; range(1002))]
+null
+[10,11,12]
+
+#
+# repeat
+#
+
+include "generator"; [take(6; repeat(range(3)))]
+null
+[0,1,2,0,1,2]
+
+include "generator"; [take(6; repeat(range(3)))]
+null
+[0,1,2,0,1,2]
+
+include "generator"; [take(6; repeat([0,1,2][]))]
+null
+[0,1,2,0,1,2]
+
+include "generator"; [take(4; repeat(8))]
+null
+[8,8,8,8]
+
+#
+# enum
+#
+
+include "generator"; enum(split("")[])
+"ae"
+[0,"a"]
+[1,"e"]
+
+include "generator"; last(enum(split("")[]))
+"aeiou"
+[4,"u"]
+
+include "generator";  nth(11; enum(split("")[]))
+"abcdefghijklmnopqrstuvwxyz"
+[11,"l"]
+
+#
+# zip
+#
+
+include "generator";  zip(range(1); range(0))
+null
+[0,null]
+
+include "generator";  zip(range(0); range(0))
+null
+# empty
+
+include "generator";  [] | zip
+null
+# empty
+
+include "generator";  first(zip(range(10); range(20;30)))
+null
+[0,20]
+
+include "generator";  last(zip(range(5); range(20;23)))
+null
+[4,null]
+
+include "generator";  last([[range(5)], [range(20;23)]] | zip)
+null
+[4,null]
+
+include "generator";  nth(5; zip(range(5); range(100); range(20;23)))
+null
+[null,5,null]
+
+# vim:ai:sw=2:ts=2:et:syntax=jq

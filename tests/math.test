@@ -1,0 +1,76 @@
+#########################################################################
+# Math utilities
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+#########################################################################
+
+include "math"; gcd(.[0];.[1])
+[24,60]
+12
+
+include "math"; gcd(0;0)
+null
+0
+
+include "math"; gcd(-12;6)
+null
+6
+
+include "math"; abs(.)
+-3
+3
+
+include "math"; abs(-3.3)
+null
+3.3
+
+# reductions ###########################################################
+
+include "math"; sum(range(0)) == 0
+null
+true
+
+include "math"; [range(10)]|add == sum(range(10))
+null
+true
+
+include "math"; product(range(0)) == 1
+null
+true
+
+include "math"; product(range(2;10)) == (2*3*4*5*6*7*8*9)
+null
+true
+
+include "math"; minimum(empty) == infinite
+null
+true
+
+include "math"; maximum(empty) == 0-infinite
+null
+true
+
+include "math"; maximum(range(2;10)) == 9
+null
+true
+
+include "math"; maximum(-1,-2,-3) == -1
+null
+true
+
+include "math"; maximum(0-infinite, 9) == 9
+null
+true
+
+# reverse implemented using reduce
+def rev: reduce .[] as $x ([]; [$x] + .); (.|rev) == (.|reverse)
+[1,2,3,4,5]
+true
+
+# length implemented using reduce
+def len: reduce .[] as $x (0; . + 1); (.|len) == (.|length)
+[1,2,3,4,5]
+true
+
+# vim:ai:sw=2:ts=2:et:syntax=jq

@@ -1,0 +1,72 @@
+#########################################################################
+# ASCII encoding
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+#########################################################################
+
+include "string/ascii"; isascii
+"AbCdE\t"
+true
+
+include "string/ascii"; iscntrl
+"\t\n\r"
+true
+
+include "string/ascii"; isspace
+" \t\r\n"
+true
+
+include "string/ascii"; isblank
+" \t"
+true
+
+include "string/ascii"; isupper
+"ABCDE"
+true
+
+include "string/ascii"; islower
+"abcde"
+true
+
+include "string/ascii"; isdigit
+"123"
+true
+
+include "string/ascii"; isxdigit
+"A123"
+true
+
+include "string/ascii"; ispunct
+"[],."
+true
+
+include "string/ascii"; isalpha
+"aA"
+true
+
+include "string/ascii"; isalnum
+"Aa12"
+true
+
+include "string/ascii"; isgraph
+"A[]"
+true
+
+include "string/ascii"; isprint
+"A []"
+true
+
+include "string/ascii"; isword
+"A_1"
+true
+
+include "string/ascii"; tolower
+"AbCdE"
+"abcde"
+
+include "string/ascii"; toupper
+"AbCdE"
+"ABCDE"
+
+# vim:ai:sw=2:ts=2:et:syntax=jq

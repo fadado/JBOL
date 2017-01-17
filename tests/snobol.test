@@ -1,0 +1,393 @@
+#########################################################################
+# SNOBOL tests
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+#########################################################################
+
+include "string/snobol"; U | 1 as $n | (EQ($n;1)|L("FOX")) , (EQ($n;2)|L("WOLF")) | M
+"THE FOX SAY 'Hi'"
+"FOX"
+
+include "string/snobol"; U | 2 as $n | (EQ($n;1)|L("FOX")) , (EQ($n;2)|L("WOLF")) | M
+"THE WOLF SAY 'Hi'"
+"WOLF"
+
+include "string/snobol"; U | L("COMP") | L("AT") , ((L("RE")|L("HEN") , L("S")) | L("S")) | L("IBLE") | "Success"
+"COMPATIBLE"
+"Success"
+
+include "string/snobol"; U | L("COMP") | L("AT") , ((L("RE")|L("HEN") , L("S")) | L("S")) | L("IBLE") | "Success"
+"COMPREHENSIBLE"
+"Success"
+
+include "string/snobol"; U | L("COMP") | L("AT") , (L("RE")|(L("HEN") , L("S")) | L("S")) | L("IBLE") | "Success"
+"COMPRESSIBLE"
+"Success"
+
+include "string/snobol"; U | L("BIRD") | "Success"
+"BLUEBIRD"
+"Success"
+
+include "string/snobol"; U | L("bird") | "Success"
+"BLUEBIRD"
+# Failure
+
+include "string/snobol"; U | L("FISH") | "Success"
+"THE BLUEBIRD"
+# Failure
+
+include "string/snobol"; U | L("FISH") , L("BIRD") | "Success"
+"THE BLUEBIRD"
+"Success"
+
+include "string/snobol"; U | L("GOLD") , L("BLUE") | L("FISH"), L("BIRD") | "Success"
+"THE BLUEBIRD"
+"Success"
+
+include "string/snobol"; U | L("GOLD") , L("BLUE") | N as $shade | L("FISH"), L("BIRD") | N as $animal | [$shade, $animal]
+"THE BLUEBIRD"
+["BLUE", "BIRD"]
+
+include "string/snobol"; U | (L("B") , L("F") , L("N")) | N as $f | L("EA") | (L("R") , L("T")) | N as $l | M as $w | [$f,$l,$w]
+"BEAR"
+["B","R","BEAR"]
+
+include "string/snobol"; U | (L("B") , L("F") , L("N")) | N as $f | L("EA") | (L("R") , L("T")) | N as $l | M as $w | [$f,$l,$w]
+"FEAR"
+["F","R","FEAR"]
+
+include "string/snobol"; U | (L("B") , L("F") , L("N")) | N as $f | L("EA") | (L("R") , L("T")) | N as $l | M as $w | [$f,$l,$w]
+"NEAR"
+["N","R","NEAR"]
+
+include "string/snobol"; U | (L("B") , L("F") , L("N")) | N as $f | L("EA") | (L("R") , L("T")) | N as $l | M as $w | [$f,$l,$w]
+"BEAT"
+["B","T","BEAT"]
+
+include "string/snobol"; U | (L("B") , L("F") , L("N")) | N as $f | L("EA") | (L("R") , L("T")) | N as $l | M as $w | [$f,$l,$w]
+"FEAT"
+["F","T","FEAT"]
+
+include "string/snobol"; U | (L("B") , L("F") , L("N")) | N as $f | L("EA") | (L("R") , L("T")) | N as $l | M as $w | [$f,$l,$w]
+"NEAT"
+["N","T","NEAT"]
+
+include "string/snobol"; U | L("WIN") | S
+"THE WINTER WINDS"
+"TER WINDS"
+"DS"
+
+include "string/snobol"; U | L("O") | ARB | N as $s | L("A") | $s
+"MOUNTAIN"
+"UNT"
+
+include "string/snobol"; U | L("A") | AT as $m  | ARB | L("E") | AT as $n | [$m,$n]
+"VALLEY"
+[2,5]
+
+include "string/snobol"; first(A | LEN(3) | M)
+"ABCDA"
+"ABC"
+
+include "string/snobol"; U | LEN(2) | N as $s | L("A") | $s
+"ABCDA"
+"CD"
+
+include "string/snobol"; A | LEN(2) | TAB(6) | N
+"SNOBOL4"
+"OBOL"
+
+include "string/snobol"; A | LEN(2) | RTAB(1) | N
+"SNOBOL4"
+"OBOL"
+
+include "string/snobol"; A | RTAB(8) | REM | N
+"0123456789"
+"23456789"
+
+include "string/snobol"; A | LEN(5) | TAB(4)
+"0123456789"
+# Failure
+
+include "string/snobol"; first(U | ANY("AEIOU") | M)
+"VACUUM"
+"A"
+
+include "string/snobol"; first(U | ANY("AEIOU") | ANY("AEIOU") | M)
+"VACUUM"
+"UU"
+
+include "string/snobol"; first(U | ANY("AEIOU") | NOTANY("AEIOU") | M)
+"VACUUM"
+"AC"
+
+include "string/snobol"; "ABCDEFGHIJKLMNOPQRSTUVWXYZ’-" as $letters | A | SPAN($letters) | M
+"SAMPLE LINE"
+"SAMPLE"
+
+include "string/snobol"; "ABCDEFGHIJKLMNOPQRSTUVWXYZ’-" as $letters | U | L(" ") | SPAN($letters) | N
+"PLUS TEN DEGREES"
+"TEN"
+"DEGREES"
+
+include "string/snobol"; U | L("4") | BREAK(",") | N
+"0ZERO,1ONE,2TWO,3THREE,4FOUR,5FIVE,"
+"FOUR"
+
+include "string/snobol"; U | ANY("AB") | L("+") | M
+"1AB+"
+"B+"
+
+include "string/snobol"; try (U | ANY("AB") | FENCE | L("+") | M) catch FAIL
+"1AB+"
+# Failure
+
+include "string/snobol"; A | SPAN(" ") | POS(7) | true
+"       XXXX"
+true
+
+include "string/snobol"; A | SPAN(" ") | POS(7) | true
+"               "
+# Failure
+
+include "string/snobol"; A | POS(0) | SPAN(" ") | RPOS(0) | true
+"             "
+true
+
+include "string/snobol"; A | POS(0) | SPAN(" ") | RPOS(0) | true
+"x             "
+# Failure
+
+include "string/snobol"; def entire(p): POS(0) | p | RPOS(0); A | entire(SPAN(" ")) | true
+"               "
+true
+
+include "string/snobol"; def entire(p): POS(0) | p | RPOS(0); A | entire(SPAN(" ")) | true
+"x             "
+# Failure
+
+include "string/snobol"; def entire(p): POS(0) | p | RPOS(0); A | entire(L("CAR"),L("CART"),L("CARTE")) | M
+"CARTE"
+"CARTE"
+
+include "string/snobol"; U | (L("IS"),L("SI"),L("IP"),L("PI")) | M
+"MISSISSIPPI"
+"IS"
+"SI"
+"IS"
+"SI"
+"IP"
+"PI"
+
+include "string/snobol"; def P: (L("IS"),L("SI"),L("IP"),L("PI")); U | P | M
+"MISSISSIPPI"
+"IS"
+"SI"
+"IS"
+"SI"
+"IP"
+"PI"
+
+include "string/snobol"; def parens: G(L("(") | parens | L(")") | parens), NULL; U|parens|select(.start!=null)|M
+"(())()"
+"(())()"
+"(())"
+"()"
+"()"
+
+include "string/snobol"; U | BAL | M
+"((A+(B*C))+D)"
+"((A+(B*C))+D)"
+"(A+(B*C))"
+"(A+(B*C))+"
+"(A+(B*C))+D"
+"A"
+"A+"
+"A+(B*C)"
+"+"
+"+(B*C)"
+"(B*C)"
+"B"
+"B*"
+"B*C"
+"*"
+"*C"
+"C"
+"+"
+"+D"
+"D"
+
+# Like replace
+include "string/snobol"; U | L("ADO") | P+"FUSS"+S
+"MUCH ADO ABOUT NOTHING"
+"MUCH FUSS ABOUT NOTHING"
+
+include "string/snobol"; def delA: (U | L("A") | P+S | delA) , NULL; first(delA)
+"MUCH ADO ABOUT NOTHING"
+"MUCH DO BOUT NOTHING"
+
+include "string/snobol"; U | LEN(1) | N # implicit FAIL
+"AEIOU"
+"A"
+"E"
+"I"
+"O"
+"U"
+
+#       --- [AB] --
+#      /           \
+# U---,             --> N
+#      \            
+#       --- 1 -- ^ ;
+#
+#  [AB] , (1 | ^)
+#
+include "string/snobol"; label $ABORT | U | ANY("AB") , (L("1") | break $ABORT) | N
+"==1B=A="
+# Failure
+
+include "string/snobol"; try (U | (ANY("AB") , (L("1") | ABORT)) | N) catch FAIL
+"==1B=A="
+# Failure
+
+#  [^1]*(?'n'[AB])
+include "string/snobol"; first(U | ANY("AB") , (L("1") | ABORT) | N)
+"==AB=1="
+"A"
+
+include "string/snobol"; label $once | U | ANY("AB") , (L("1") | ABORT) | (N, break $once)
+"==AB=1="
+"A"
+
+# "1B-A+" <--> ANY("AB") <--> # ==> "+" <--> M
+include "string/snobol"; try (U | ANY("AB") | FENCE | L("+") | M) catch FAIL
+"1B-A+"
+# Failure
+
+# "1B-A+" <--> ANY("AB") <--> "+" <--> M
+include "string/snobol"; U | ANY("AB") | L("+") | M
+"1B-A+"
+"A+"
+
+# "1B+A-" <--> ANY("AB") <--> # ==> "+" <--> M
+include "string/snobol"; try (U | ANY("AB") | FENCE | L("+") | M) catch FAIL
+"1B+A-"
+"B+"
+
+# U("ABC") ==> # <--> "B" <--> M
+include "string/snobol"; try (U("ABC") | FENCE | L("B") | M) catch FAIL
+null
+# Failure
+
+include "string/snobol"; U | L("B") | M
+"ABC"
+"B"
+
+include "string/snobol"; def OPT(pattern): . , pattern; label $once | U | OPT(L("A")) | L("B") | M , break $once
+"ABC"
+"AB"
+
+include "string/snobol"; def OPT(pattern): . , pattern; label $once | U | OPT(L("A")) | L("B") | M , break $once
+"xBC"
+"B"
+
+include "string/snobol"; A | LEN(3) | M
+"ABC"
+"ABC"
+
+include "string/snobol"; U | POS(0) | NOT(LEN(3)) | M
+"ABC"
+#
+
+include "string/snobol"; U | IF(LEN(3)) | M
+"AB"
+#
+
+include "string/snobol"; label $once | (U | BREAK("E") | N , break $once)
+"INTEGERS"
+"INT"
+
+include "string/snobol"; A | BREAKX("E") | M
+"INTEGERS"
+"INT"
+"INTEG"
+"INTEGERS"
+
+include "string/snobol"; A | BREAKX(",") | N
+"a,bc,def,ghij,"
+"a"
+"bc"
+"def"
+"ghij"
+
+include "string/snobol"; INTEGER(.) | true
+"123"
+true
+
+include "string/snobol"; INTEGER(.) | true
+123
+true
+
+include "string/snobol"; INTEGER(.) | true
+"kk"
+# Failure
+
+# pairs
+include "string/snobol"; U | LEN(1) | N as $x | L($x) | M
+"aBBcDDe"
+"BB"
+"DD"
+
+include "string/snobol"; def list: def number: SPAN("0123456789"); def item: number , list; L("(") | item | ARBNO(L(",")|item) | L(")"); U|list|M
+"(12,34,(2,3,4))"
+"(12,34,(2,3,4))"
+"(2,3,4)"
+
+include "string/snobol"; def list: def number: SPAN("0123456789"); def item: number , list; L("(") | item | ARBNO(L(",")|item) | L(")"); U|list|M
+"(1,(2,3),(5,6))"
+"(1,(2,3),(5,6))"
+"(2,3)"
+"(5,6)"
+
+include "string/snobol"; A | BREAK(",") | N as $item | LEN(1) | REM | N as $rest | $rest+$item+","
+"RED,ORANGE,YELLOW,GREEN,BLUE,INDIGO,VIOLET,"
+"ORANGE,YELLOW,GREEN,BLUE,INDIGO,VIOLET,RED,"
+
+include "string/snobol"; A | NULL | true
+""
+true
+
+include "string/snobol"; DUPL(.; 2)
+"AEIOU"
+"AEIOUAEIOU"
+
+include "string/snobol"; LPAD(.; 10)
+"AEIOU"
+"     AEIOU"
+
+include "string/snobol"; RPAD(.; 10)
+"AEIOU"
+"AEIOU     "
+
+include "string/snobol"; REVERSE(.)
+"AEIOU"
+"UOIEA"
+
+include "string/snobol"; def vertical: LEN(1) | N as $c | ($c , vertical); A | vertical
+"AEIOU"
+"A"
+"E"
+"I"
+"O"
+"U"
+
+include "string/snobol"; A(.) | LEN(1,2,3,4,5) | N
+"AEIOU"
+"A"
+"AE"
+"AEI"
+"AEIO"
+"AEIOU"
+
+# vim:ai:sw=2:ts=2:et:syntax=jq
