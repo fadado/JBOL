@@ -12,6 +12,7 @@ include "fadado.github.io/prelude";
 include "fadado.github.io/types";
 
 import "fadado.github.io/string" as str;
+import "fadado.github.io/generator" as stream;
 
 ########################################################################
 # Patterns implementation
@@ -229,17 +230,26 @@ def NOTANY($s): #:: CURSOR|(string) -> CURSOR
 ;
 
 def BREAK($s): #:: CURSOR|(string) -> CURSOR
-   assert($s != ""; "BREAK requires a non empty string as argument")
-   | select(.position != .slen)
-   | select(.subject[.position:.position+1] | inside($s) | not)
-   | G(reduce (NOTANY($s)|iterate(NOTANY($s))) as $c (null; $c))
+    assert($s != ""; "BREAK requires a non empty string as argument")
+    | select(.position != .slen)
+    | select(.subject[.position:.position+1] | inside($s) | not)
+    | G(stream::last(iterate(NOTANY($s))))
+#   | . as $cursor
+#   | label $found
+#   | range(.position; .slen) as $i
+#   | if .subject[$i:$i+1] | inside($s) 
+#     then empty
+#     elif $i==.position
+#     then .
+#     else (.start=.position|.position=$i+1 , break $found)
+#     end
 ;
 
 def SPAN($s): #:: CURSOR|(string) -> CURSOR
     assert($s != ""; "SPAN requires a non empty string as argument")
     | select(.position != .slen)
     | select(.subject[.position:.position+1] | inside($s))
-    | G(reduce (ANY($s)|iterate(ANY($s))) as $c (null; $c))
+    | G(stream::last(ANY($s)|iterate(ANY($s))))
 ;
 
 #

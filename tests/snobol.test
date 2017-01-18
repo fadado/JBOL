@@ -5,6 +5,19 @@
 # Blank lines and lines starting with # are ignored.
 #########################################################################
 
+include "string/snobol"; A | SPAN("ASDFGHJKLQWERTYUIOPZXCVBNM") | N
+"AZ"
+"AZ"
+
+include "string/snobol"; A | ARB | SPAN("ASDFGHJKLQWERTYUIOPZXCVBNM") | N as $s | RTAB(0) | $s
+"AZ"
+"AZ"
+"Z"
+
+#include "string/snobol"; A | BREAK("123") | SPAN("ASDFGHJKLQWERTYUIOPZXCVBNM") | N as $s | RTAB(0) | $s
+#"AZ"
+#"AZ"
+
 include "string/snobol"; A | L("A") | ARB | L("Z") | RPOS(0) | true
 "Asdfsdiuhw ijsdfipuhspifuh Zozo"
 # empty

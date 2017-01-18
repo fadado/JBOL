@@ -87,6 +87,7 @@ $(LogDir)/latin1.log: $(STR)/latin1.jq $(STR)/latin1.json $(LIB)/prelude.jq
 $(LogDir)/re.log: $(STR)/re.jq $(LIB)/prelude.jq $(STR)/string.jq
 $(LogDir)/string.log: $(STR)/string.jq $(LIB)/prelude.jq $(STR)/ascii.jq $(STR)/ascii.json
 $(LogDir)/snobol.log: $(LIB)/prelude.jq $(STR)/snobol.jq
+$(LogDir)/xsnobol.log: $(LIB)/prelude.jq $(STR)/snobol.jq
 
 # Default target
 all: $(Logs)

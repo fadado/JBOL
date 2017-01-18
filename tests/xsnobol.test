@@ -1,0 +1,22 @@
+#########################################################################
+# Bugs in SNOBOL!!!!!!!!!!
+#########################################################################
+
+include "string/snobol"; A | L("A") | BREAK("123") | L("Z") | M
+"AZ"
+"AZ"
+
+include "string/snobol"; A | SPAN("ASDFGHJKLQWERTYUIOPZXCVBNM") | N
+"AZ"
+"AZ"
+
+include "string/snobol"; A | ARB | SPAN("ASDFGHJKLQWERTYUIOPZXCVBNM") | N as $s | RTAB(0) | $s
+"AZ"
+"AZ"
+"Z"
+
+include "string/snobol"; A | BREAK("123") | SPAN("ASDFGHJKLQWERTYUIOPZXCVBNM") | N as $s | RTAB(0) | $s
+"AZ"
+"AZ"
+
+# vim:ai:sw=2:ts=2:et:syntax=jq
