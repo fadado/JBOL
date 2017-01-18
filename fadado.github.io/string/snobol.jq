@@ -170,10 +170,11 @@ def SIZE($s):               $s|length;
 #
 
 def ARBNO(pattern): #:: CURSOR|(CURSOR|->CURSOR) -> <CURSOR>
-    def _arbno:
-        . , (pattern | _arbno)
-    ;
-    _arbno
+#   def _arbno:
+#       . , (pattern | _arbno)
+#   ;
+#   _arbno
+    iterate(pattern)
 ;
 
 #
@@ -235,14 +236,14 @@ def BREAK($s): #:: CURSOR|(string) -> CURSOR
    assert($s != ""; "BREAK requires a non empty string as argument")
    | select(.position != .slen)
    | select(.subject[.position:.position+1] | inside($s) | not)
-   | G(reduce (NOTANY($s)|ARBNO(NOTANY($s))) as $c (null; $c))
+   | G(reduce (NOTANY($s)|iterate(NOTANY($s))) as $c (null; $c))
 ;
 
 def SPAN($s): #:: CURSOR|(string) -> CURSOR
     assert($s != ""; "SPAN requires a non empty string as argument")
     | select(.position != .slen)
     | select(.subject[.position:.position+1] | inside($s))
-    | G(reduce (ANY($s)|ARBNO(ANY($s))) as $c (null; $c))
+    | G(reduce (ANY($s)|iterate(ANY($s))) as $c (null; $c))
 ;
 
 #
@@ -258,9 +259,9 @@ def ARB: #:: CURSOR| -> <CURSOR>
 def BAL: #:: CURSOR| -> <CURSOR>
     def _bal:
         NOTANY("()")
-        , (L("(") | ARBNO(_bal) | L(")"))
+        , (L("(") | iterate(_bal) | L(")"))
     ;
-    G(_bal | ARBNO(_bal))
+    G(_bal | iterate(_bal))
 ;
 
 def REM: #:: CURSOR| -> CURSOR
@@ -289,8 +290,9 @@ def FENCE: # CURSOR| -> CURSOR
 ;
 
 def SUCCEED: #::CURSOR| -> <CURSOR>
-    def r: . , r;
-    r
+#   def r: . , r;
+#   r
+    iterate(.)
 ;
 
 # By default SNOBOL tries only once to match, but by default jq tries all
@@ -303,7 +305,7 @@ def SUCCEED: #::CURSOR| -> <CURSOR>
 ########################################################################
 
 def BREAKX($s): #:: CURSOR|(string) -> <CURSOR>
-    BREAK($s) | ARBNO(LEN(1)|BREAK($s))
+    BREAK($s) | iterate(LEN(1)|BREAK($s))
 ;
 
 def LEQ($a; $b):    select(isstring($a) and $a==$b);

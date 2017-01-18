@@ -78,13 +78,10 @@ def assert($p; $msg): #:: (boolean;string) -> α
 #;
 
 def unfold(f; $seed): #:: (α|->[β,α];α) -> <β>
-    def r:
-        f|if . # not null
-        then .[0], (.[1]|r)
-        else empty end
-    ;
+    def r: f | .[0] , (.[1]|r);
     $seed|r
 ;
+
 def unfold(f): #:: α|(α|->[β,α]) -> <β>
     # . as $seed
     unfold(f; .)

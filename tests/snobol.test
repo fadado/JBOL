@@ -5,6 +5,14 @@
 # Blank lines and lines starting with # are ignored.
 #########################################################################
 
+include "prelude"; include "string/snobol"; A(.) | unfold(LEN(1) | [N, .])
+"AEIOU"
+"A"
+"E"
+"I"
+"O"
+"U"
+
 include "string/snobol"; U | 1 as $n | (EQ($n;1)|L("FOX")) , (EQ($n;2)|L("WOLF")) | M
 "THE FOX SAY 'Hi'"
 "FOX"
