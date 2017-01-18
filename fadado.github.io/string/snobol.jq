@@ -170,10 +170,6 @@ def SIZE($s):               $s|length;
 #
 
 def ARBNO(pattern): #:: CURSOR|(CURSOR|->CURSOR) -> <CURSOR>
-#   def _arbno:
-#       . , (pattern | _arbno)
-#   ;
-#   _arbno
     iterate(pattern)
 ;
 
@@ -251,9 +247,10 @@ def SPAN($s): #:: CURSOR|(string) -> CURSOR
 #
 
 def ARB: #:: CURSOR| -> <CURSOR>
-    range(0; .slen-.position) as $n
+    # equivalent to TAB(range(.position; .slen))
+    range(.position; .slen) as $n
     | .start=.position
-    | .position+=$n # equivalent to TAB(AT+0), TAB(AT+1)...
+    | .position=$n
 ;
 
 def BAL: #:: CURSOR| -> <CURSOR>
@@ -265,8 +262,9 @@ def BAL: #:: CURSOR| -> <CURSOR>
 ;
 
 def REM: #:: CURSOR| -> CURSOR
+    # equivalent to RTAB(0)
     .start=.position
-    | .position=.slen # equivalent to RTAB(0)
+    | .position=.slen
 ;
 
 #
@@ -290,8 +288,6 @@ def FENCE: # CURSOR| -> CURSOR
 ;
 
 def SUCCEED: #::CURSOR| -> <CURSOR>
-#   def r: . , r;
-#   r
     iterate(.)
 ;
 
