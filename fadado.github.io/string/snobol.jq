@@ -12,7 +12,7 @@ include "fadado.github.io/prelude";
 include "fadado.github.io/types";
 
 import "fadado.github.io/string" as str;
-import "fadado.github.io/generator" as stream;
+import "fadado.github.io/generator" as gen;
 
 ########################################################################
 # Patterns implementation
@@ -27,24 +27,26 @@ import "fadado.github.io/generator" as stream;
 
 # Anchored subject
 def A($subject): #:: (string)| -> CURSOR
-    { $subject,                 # string to scan
-      slen:($subject|length),   # subject length
-      offset:0,                 # subject start scanning position
-      start:null,               # current pattern start scanning position
-      position:0 }              # current cursor position
-;
+{
+    $subject,               # string to scan
+    slen:($subject|length), # subject length
+    offset:0,               # subject start scanning position
+    start:null,             # current pattern start scanning position
+    position:0              # current cursor position
+};
 def A: A(.);
 
 # Unanchored subject
 def U($subject): #:: (string)| -> <CURSOR>
     ($subject|length) as $slen
     | range(0; $slen+1) as $offset
-    | { $subject,               # string to scan
-        $slen,                  # subject length
-        $offset,                # subject start scanning position
-        start:null,             # current pattern start scanning position
-        position:$offset }      # current cursor position
-;
+| {
+    $subject,           # string to scan
+    $slen,              # subject length
+    $offset,            # subject start scanning position
+    start:null,         # current pattern start scanning position
+    position:$offset    # current cursor position
+};
 def U: U(.);
 
 #
@@ -87,11 +89,11 @@ def NULL: #:: CURSOR -> CURSOR
 
 # Match a literal, necessary to "wrap" all string literals
 def L($t): #:: CURSOR|(string) -> CURSOR
-    ($t|length) as $slen
-    | select(.position+($t|length) <= .slen)
-    | select(.subject[.position:.position+$slen] == $t)
+    ($t|length) as $tlen
+    | select(.position+$tlen <= .slen)
+    | select(.subject[.position:.position+$tlen] == $t)
     | .start=.position
-    | .position+=$slen
+    | .position+=$tlen
 ;
 
 # Group patterns; blend a composite pattern into an atomic pattern
@@ -140,18 +142,18 @@ def G(pattern): #:: CURSOR|(CURSOR|->CURSOR) -> CURSOR
 # Predicates
 #
 
-def EQ($a; $b):     select($a==$b);
-def NE($a; $b):     select($a!=$b);
-def GE($a; $b):     select($a>=$b);
-def GT($a; $b):     select($a>$b);
-def LE($a; $b):     select($a>=$b);
-def LT($a; $b):     select($a>$b);
+def EQ($a; $b):     select($a == $b);
+def NE($a; $b):     select($a != $b);
+def GE($a; $b):     select($a >= $b);
+def GT($a; $b):     select($a >  $b);
+def LE($a; $b):     select($a >= $b);
+def LT($a; $b):     select($a >  $b);
 
-def LGT($a; $b):    select(isstring($a) and $a>$b);
-def IDENT($a; $b):  select($a==$b);
-def IDENT($a):      select($a=="");
-def DIFFER($a; $b): select($a!=$b);
-def DIFFER($a):     select($a!="");
+def LGT($a; $b):    select(isstring($a) and $a > $b);
+def IDENT($a; $b):  select($a == $b);
+def IDENT($a):      select($a == "");
+def DIFFER($a; $b): select($a != $b);
+def DIFFER($a):     select($a != "");
 def INTEGER($x):
     select((($x|isnumber) and ($x|length)==$x)
         or (tonumber//false and ("."|inside($x)|not))
@@ -232,25 +234,17 @@ def NOTANY($s): #:: CURSOR|(string) -> CURSOR
 def BREAK($s): #:: CURSOR|(string) -> CURSOR
     assert($s != ""; "BREAK requires a non empty string as argument")
     | select(.position != .slen)
-#   | select(.subject[.position:.position+1] | inside($s) | not)
-    | G(stream::last(iterate(NOTANY($s))))
-#   | G(iterate(NOTANY($s)))
-#   | . as $cursor
-#   | label $found
-#   | range(.position; .slen) as $i
-#   | if .subject[$i:$i+1] | inside($s) 
-#     then empty
-#     elif $i==.position
-#     then .
-#     else (.start=.position|.position=$i+1 , break $found)
-#     end
+    | if .position==0 # optimize substring
+      then TAB(gen::first(.subject | str::upto($s)))
+      else TAB(.position + gen::first(.subject[.position:] | str::upto($s)))
+      end // .
 ;
 
 def SPAN($s): #:: CURSOR|(string) -> CURSOR
     assert($s != ""; "SPAN requires a non empty string as argument")
     | select(.position != .slen)
     | select(.subject[.position:.position+1] | inside($s))
-    | G(stream::last(ANY($s)|iterate(ANY($s))))
+    | G(gen::last(ANY($s)|iterate(ANY($s))))
 ;
 
 #
@@ -312,14 +306,17 @@ def SUCCEED: #::CURSOR| -> <CURSOR>
 ########################################################################
 
 def BREAKX($s): #:: CURSOR|(string) -> <CURSOR>
-    BREAK($s) | iterate(LEN(1)|BREAK($s))
+    if .position==0 # optimize substring
+    then TAB(.subject | str::upto($s))
+    else TAB(.position + (.subject[.position:] | str::upto($s)))
+    end // .
 ;
 
-def LEQ($a; $b):    select(isstring($a) and $a==$b);
-def LGE($a; $b):    select(isstring($a) and $a>=$b);
-def LLE($a; $b):    select(isstring($a) and $a>=$b);
-def LLT($a; $b):    select(isstring($a) and $a>$b);
-def LNE($a; $b):    select(isstring($a) and $a!=$b);
+def LEQ($a; $b):    select(isstring($a) and $a == $b);
+def LGE($a; $b):    select(isstring($a) and $a >= $b);
+def LLE($a; $b):    select(isstring($a) and $a >= $b);
+def LLT($a; $b):    select(isstring($a) and $a >  $b);
+def LNE($a; $b):    select(isstring($a) and $a != $b);
 
 def CHAR($n):           str::chr($n);
 def LPAD($s; $n):       str::lpad($s; $n; " ");

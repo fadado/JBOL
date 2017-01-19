@@ -5,6 +5,18 @@
 # Blank lines and lines starting with # are ignored.
 #########################################################################
 
+include "string/snobol"; A | BREAK(",") | M
+"AZ"
+""
+
+include "string/snobol"; A | BREAK(",") | AT 
+"AZ"
+0
+
+include "string/snobol"; A | BREAK(",") | AT 
+"A,Z"
+1
+
 include "string/snobol"; A | SPAN("ASDFGHJKLQWERTYUIOPZXCVBNM") | N
 "AZ"
 "AZ"
@@ -13,10 +25,6 @@ include "string/snobol"; A | ARB | SPAN("ASDFGHJKLQWERTYUIOPZXCVBNM") | N as $s 
 "AZ"
 "AZ"
 "Z"
-
-#include "string/snobol"; A | BREAK("123") | SPAN("ASDFGHJKLQWERTYUIOPZXCVBNM") | N as $s | RTAB(0) | $s
-#"AZ"
-#"AZ"
 
 include "string/snobol"; A | L("A") | ARB | L("Z") | RPOS(0) | true
 "Asdfsdiuhw ijsdfipuhspifuh Zozo"
@@ -163,10 +171,6 @@ include "string/snobol"; "ABCDEFGHIJKLMNOPQRSTUVWXYZ’-" as $letters | U | L(" 
 "PLUS TEN DEGREES"
 "TEN"
 "DEGREES"
-
-include "string/snobol"; U | L("4") | BREAK(",") | N
-"0ZERO,1ONE,2TWO,3THREE,4FOUR,5FIVE,"
-"FOUR"
 
 include "string/snobol"; U | ANY("AB") | L("+") | M
 "1AB+"
@@ -337,23 +341,6 @@ include "string/snobol"; U | IF(LEN(3)) | M
 "AB"
 #
 
-include "string/snobol"; label $once | (U | BREAK("E") | N , break $once)
-"INTEGERS"
-"INT"
-
-include "string/snobol"; A | BREAKX("E") | M
-"INTEGERS"
-"INT"
-"INTEG"
-"INTEGERS"
-
-include "string/snobol"; A | BREAKX(",") | N
-"a,bc,def,ghij,"
-"a"
-"bc"
-"def"
-"ghij"
-
 include "string/snobol"; INTEGER(.) | true
 "123"
 true
@@ -382,10 +369,6 @@ include "string/snobol"; def list: def number: SPAN("0123456789"); def item: num
 "(1,(2,3),(5,6))"
 "(2,3)"
 "(5,6)"
-
-include "string/snobol"; A | BREAK(",") | N as $item | LEN(1) | REM | N as $rest | $rest+$item+","
-"RED,ORANGE,YELLOW,GREEN,BLUE,INDIGO,VIOLET,"
-"ORANGE,YELLOW,GREEN,BLUE,INDIGO,VIOLET,RED,"
 
 include "string/snobol"; A | NULL | true
 ""
@@ -422,5 +405,59 @@ include "string/snobol"; A(.) | LEN(1,2,3,4,5) | N
 "AEI"
 "AEIO"
 "AEIOU"
+
+include "string/snobol"; U | L("4") | BREAK(",") | N
+"0ZERO,1ONE,2TWO,3THREE,4FOUR,5FIVE,"
+"FOUR"
+
+include "string/snobol"; A | BREAK("A") | L("AS")
+"EXCEPTIONS ARE AS TRUE AS RULES"
+# Failure
+
+include "string/snobol"; A | BREAKX("A") | M as $s | L("AS") | $s
+"EXCEPTIONS ARE AS TRUE AS RULES"
+"EXCEPTIONS ARE "
+"EXCEPTIONS ARE AS TRUE "
+
+include "string/snobol"; A | BREAKX(",") | N
+"a,bc,def,ghij,"
+"a"
+"a,bc"
+"a,bc,def"
+"a,bc,def,ghij"
+
+include "string/snobol"; A | BREAKX("E") | M
+"INTEGERS"
+"INT"
+"INTEG"
+
+include "string/snobol"; A | BREAK("123") | SPAN("ASDFGHJKLQWERTYUIOPZXCVBNM") | N as $s | RTAB(0) | $s
+"AZ"
+"AZ"
+
+include "string/snobol"; A | BREAK(",") | N as $item | LEN(1) | REM | N as $rest | $rest+$item+","
+"RED,ORANGE,YELLOW,GREEN,BLUE,INDIGO,VIOLET,"
+"ORANGE,YELLOW,GREEN,BLUE,INDIGO,VIOLET,RED,"
+
+include "string/snobol"; label $once | (U | BREAK("E") | N , break $once)
+"INTEGERS"
+"INT"
+
+include "string/snobol"; A | L("A") | BREAK("AHSGDREZ") | L("Z") | M
+"AZ"
+"AZ"
+
+include "string/snobol"; A | SPAN("ASDFGHJKLQWERTYUIOPZXCVBNM") | N
+"AZ"
+"AZ"
+
+include "string/snobol"; A | ARB | SPAN("ASDFGHJKLQWERTYUIOPZXCVBNM") | N as $s | RTAB(0) | $s
+"AZ"
+"AZ"
+"Z"
+
+include "string/snobol"; A | BREAK("ANSGDRFZW") | SPAN("ASDFGHJKLQWERTYUIOPZXCVBNM") | N as $s | RTAB(0) | $s
+"AZ"
+"AZ"
 
 # vim:ai:sw=2:ts=2:et:syntax=jq
