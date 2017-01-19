@@ -30,8 +30,8 @@ def A($subject): #:: (string)| -> CURSOR
     { $subject,                 # string to scan
       slen:($subject|length),   # subject length
       offset:0,                 # subject start scanning position
-      position:0,               # current cursor position
-      start:null }              # current pattern start scanning position
+      start:null,               # current pattern start scanning position
+      position:0 }              # current cursor position
 ;
 def A: A(.);
 
@@ -42,8 +42,8 @@ def U($subject): #:: (string)| -> <CURSOR>
     | { $subject,               # string to scan
         $slen,                  # subject length
         $offset,                # subject start scanning position
-        position:$offset,       # current cursor position
-        start:null }            # current pattern start scanning position
+        start:null,             # current pattern start scanning position
+        position:$offset }      # current cursor position
 ;
 def U: U(.);
 
@@ -96,7 +96,7 @@ def L($t): #:: CURSOR|(string) -> CURSOR
 
 # Group patterns; blend a composite pattern into an atomic pattern
 def G(pattern): #:: CURSOR|(CURSOR|->CURSOR) -> CURSOR
-    .position as $p
+    (.position//0) as $p
     | pattern   # any expression using `,` and/or `|` if necessary
     | .start=$p
 ;
@@ -232,8 +232,9 @@ def NOTANY($s): #:: CURSOR|(string) -> CURSOR
 def BREAK($s): #:: CURSOR|(string) -> CURSOR
     assert($s != ""; "BREAK requires a non empty string as argument")
     | select(.position != .slen)
-    | select(.subject[.position:.position+1] | inside($s) | not)
+#   | select(.subject[.position:.position+1] | inside($s) | not)
     | G(stream::last(iterate(NOTANY($s))))
+#   | G(iterate(NOTANY($s)))
 #   | . as $cursor
 #   | label $found
 #   | range(.position; .slen) as $i
