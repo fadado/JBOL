@@ -5,6 +5,14 @@
 # Blank lines and lines starting with # are ignored.
 #########################################################################
 
+# split defining constituents, not separators
+include "string/snobol"; include "prelude"; "abcdefghijklmnoprstuvwxyz" as $a |A|unfold(BREAK($a)|SPAN($a)|[N,.])| .
+"one or tree words"
+"one"
+"or"
+"tree"
+"words"
+
 include "string/snobol"; A | BREAK(",") | M
 "AZ"
 ""

@@ -243,7 +243,7 @@ def SPAN($s): #:: CURSOR|(string) -> CURSOR
     assert($s != ""; "SPAN requires a non empty string as argument")
     | select(.position != .slen)
     | select(.subject[.position:.position+1] | inside($s))
-    | G(gen::last(ANY($s)|iterate(ANY($s))))
+    | G(gen::last(loop(ANY($s))))
 ;
 
 #
@@ -262,7 +262,7 @@ def BAL: #:: CURSOR| -> <CURSOR>
         NOTANY("()")
         , (L("(") | iterate(_bal) | L(")"))
     ;
-    G(_bal | iterate(_bal))
+    G(loop(_bal))
 ;
 
 def REM: #:: CURSOR| -> CURSOR
@@ -319,12 +319,12 @@ def LLT($a; $b):    select(isstring($a) and $a >  $b);
 def LNE($a; $b):    select(isstring($a) and $a != $b);
 
 def CHAR($n):           str::chr($n);
-def LPAD($s; $n):       str::lpad($s; $n; " ");
-def LPAD($s; $n; $t):   str::lpad($s; $n; $t);
+def LPAD($s; $n):       $s|str::left($n; " ");
+def LPAD($s; $n; $t):   $s|str::left($n; $t);
 def ORD($n):            str::ord($n);
 def REVERSE($s):        str::reverse($s);
-def RPAD($s; $n):       str::rpad($s; $n; " ");
-def RPAD($s; $n; $t):   str::rpad($s; $n; $t);
+def RPAD($s; $n):       $s|str::right($n; " ");
+def RPAD($s; $n; $t):   $s|str::right($n; $t);
 def SUBSTR($s; $i):     $s[$i:];
 def SUBSTR($s; $i; $j): $s[$i:$j];
 def TRIM($s):           $s|str::strip(" \t\r\n\f");

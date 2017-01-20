@@ -9,44 +9,83 @@
 #########################################################################
 
 #
-# chr, ord
+# Icon style
 #
+include "string"; center(8)
+"AEI"
+"  AEI   "
 
-include "string"; ord("A")
-null
-65
+include "string"; center(8)
+"AE"
+"   AE   "
 
-include "string"; chr(65) == "A"
-null
-true
+include "string"; center(9)
+"AEI"
+"   AEI   "
 
-include "string"; ord(chr(65)) == 65 and chr(ord("A")) == "A"
-null
-true
+include "string"; center(9)
+"AE"
+"   AE    "
 
-include "string"; [ord("€"), chr(8364)]
-null
-[8364, "€"]
+include "string"; left(10)
+"AEIOU"
+"     AEIOU"
 
-#
-# find
-#
+include "string"; right(10)
+"AEIOU"
+"AEIOU     "
 
-include "string"; indices("on")
+include "string"; none("aeiou")
+"xxoops"
+2
+
+include "string"; none("aeiou")
+"axixo"
+# empty
+
+include "string"; many("aeiou")
+"oops"
+2
+
+include "string"; many("aeiou")
+"xixo"
+# empty
+
+include "string"; notany("aeiou")
+"Asperger"
+1
+
+include "string"; notany("aeiou")
+"Asperger"
+1
+
+include "string"; any("aeiou")
+"asperger"
+1
+
+include "string"; any("aeiou")
+"Asperger"
+# empty
+
+include "string"; match("mi ma")
+"mi mama me mima"
+5
+
+include "string"; match("mi ma"; 9)
+"no se si mi mama me mima"
+14
+
+include "string"; [find("on")]
 "one motion is optional"
 [0, 8, 18]
 
-include "string"; indices("ma")
+include "string"; [find("ma")]
 "mi mama me mima"
 [3, 5, 13]
 
-include "string"; indices("ab")
+include "string"; [find("ab")]
 "abaabbaaabbbaaaabbbb" 
 [0, 3, 8, 15]
-
-#
-# upto
-#
 
 include "string"; [upto("on")]
 "one motion is optional"
@@ -148,5 +187,25 @@ include "string"; rtrim
 include "string"; trim
 " a b c "
 "a b c"
+
+#
+# chr, ord
+#
+
+include "string"; ord("A")
+null
+65
+
+include "string"; chr(65) == "A"
+null
+true
+
+include "string"; ord(chr(65)) == 65 and chr(ord("A")) == "A"
+null
+true
+
+include "string"; [ord("€"), chr(8364)]
+null
+[8364, "€"]
 
 # vim:ai:sw=2:ts=2:et:syntax=jq

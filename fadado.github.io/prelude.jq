@@ -87,9 +87,15 @@ def unfold(f): #:: α|(α|->[β,α]) -> <β>
     unfold(f; .)
 ;
 
+# f*
 def iterate(f): #:: α|(α|->α) -> <α>
     def r: ., (f|r);
     r
+;
+
+# f+
+def loop(f): #:: α|(α|->α) -> <α>
+    f | iterate(f)
 ;
 
 def tabulate($from; f): #:: (number;number|->α) -> <α>

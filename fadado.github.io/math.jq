@@ -11,6 +11,14 @@ module {
 ########################################################################
 # Simple utilities
 
+def even($n):
+    $n%2 == 0
+;
+
+def odd($n):
+    $n%2 != 0
+;
+
 # Absolute value
 def abs($n): #:: (number) -> number
     $n|length
