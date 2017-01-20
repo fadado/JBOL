@@ -234,10 +234,9 @@ def NOTANY($s): #:: CURSOR|(string) -> CURSOR
 def BREAK($s): #:: CURSOR|(string) -> CURSOR
     assert($s != ""; "BREAK requires a non empty string as argument")
     | select(.position != .slen)
-    | if .position==0 # optimize substring
-      then TAB(gen::first(.subject | str::upto($s)))
-      else TAB(.position + gen::first(.subject[.position:] | str::upto($s)))
-      end // .
+    | .position as $p
+    | TAB(gen::first(.subject|str::upto($s; $p)))
+      // .
 ;
 
 def SPAN($s): #:: CURSOR|(string) -> CURSOR
@@ -306,10 +305,11 @@ def SUCCEED: #::CURSOR| -> <CURSOR>
 ########################################################################
 
 def BREAKX($s): #:: CURSOR|(string) -> <CURSOR>
-    if .position==0 # optimize substring
-    then TAB(.subject | str::upto($s))
-    else TAB(.position + (.subject[.position:] | str::upto($s)))
-    end // .
+    assert($s != ""; "BREAKX requires a non empty string as argument")
+    | select(.position != .slen)
+    .position as $p
+    | TAB(.subject|str::upto($s; $p))
+      // .
 ;
 
 def LEQ($a; $b):    select(isstring($a) and $a == $b);

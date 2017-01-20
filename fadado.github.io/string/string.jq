@@ -24,16 +24,19 @@ def find($needle): #:: string|(string) -> <number>
     indices($needle)[]
 ;
 
-# Generates the stream of integer positions in the input string preceding a
-# character of `characters`, or nothing if there is no such position.
-#
-def upto($characters): #:: string|(string) -> <number>
-    range(length) as $i
-    | if .[$i:$i+1] | inside($characters)
-      then $i
+# Generates the sequence of integer positions in the input string preceding a
+# character of `c` in `.[i:j]`. It fails if there is no such
+# position.
+def upto($c; $i; $j): #:: string|(string; number;number) -> <number>
+    select($i < length and $j <= length and $i < $j)
+    | range($i; $j) as $p
+    | if .[$p:$p+1] | inside($c)
+      then $p
       else empty
       end
 ;
+def upto($c; $i): upto($c; $i; length);
+def upto($c):     upto($c;  0; length);
 
 def lpad($s; $n; $t): #:: (string;number;string) -> string
     ($s|length) as $len
