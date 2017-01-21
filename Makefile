@@ -84,7 +84,7 @@ $(LogDir)/chance.log: $(GEN)/chance.jq $(LIB)/prelude.jq
 # string
 $(LogDir)/ascii.log: $(STR)/ascii.jq $(STR)/ascii.json $(LIB)/prelude.jq
 $(LogDir)/latin1.log: $(STR)/latin1.jq $(STR)/latin1.json $(LIB)/prelude.jq
-$(LogDir)/re.log: $(STR)/re.jq $(LIB)/prelude.jq $(STR)/string.jq
+$(LogDir)/regexp.log: $(STR)/regexp.jq $(LIB)/prelude.jq $(STR)/string.jq
 $(LogDir)/string.log: $(STR)/string.jq $(LIB)/prelude.jq $(STR)/ascii.jq $(STR)/ascii.json
 $(LogDir)/snobol.log: $(STR)/snobol.jq $(LIB)/prelude.jq  $(STR)/string.jq
 

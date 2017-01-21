@@ -135,46 +135,12 @@ def center($n; $t): #:: string|(number;string) -> string
 ;
 def center($n): center($n; " ");
 
-########################################################################
-# Classical conversions
-
-# Produces an integer (ordinal) that is the internal representation of the
-# first character in `s`
-#
-def ord: #:: string| -> number
-    .[0:1]|explode[0]
-;
 def ord($s): #:: (string) -> number
     $s[0:1]|explode[0]
 ;
 
-# Produces a string of length 1 consisting of the character whose internal
-# representation is `n`
-#
-def chr: #:: number| -> string
-    [.]|implode
-;
-def chr($n): #:: (number) -> string
+def char($n): #:: (number) -> string
     [$n]|implode
-;
-
-########################################################################
-# Positional manipulations
-
-# Rotate strings in both directions
-#
-def rotate($s; $n): #:: (string; number) -> string
-    $s[$n:] + $s[:$n]
-;
-
-def rotate($n): #:: string|(number) -> string
-    rotate(.; $n)
-;
-
-# Reverse characters in string
-#
-def reverse($s): #:: (string) -> string
-    $s|explode|reverse|implode
 ;
 
 ########################################################################
@@ -187,6 +153,16 @@ def table($from; $to): #:: (string;string) -> TABLE
    | ($to/"") as $t
    | reduce range($s|length) as $i
         ({}; . += {($s[$i]):($t[$i]//"")})
+;
+
+# Rotate strings in both directions
+#
+def rotate($s; $n): #:: (string; number) -> string
+    $s[$n:] + $s[:$n]
+;
+
+def rotate($n): #:: string|(number) -> string
+    rotate(.; $n)
 ;
 
 # Translation table for rotate by 13 places
@@ -222,7 +198,7 @@ def translate($from; $to): #:: string|(string:string) -> string
 # preserve: s|translate(ptable(s; "to preserve"))
 
 ########################################################################
-# Classical BASIC trim and Python strip
+# Classical trim and strip
 
 def _lndx(p): # left index or empty if not found
     label $found
@@ -274,16 +250,8 @@ def strip($t): #:: string|(string) -> string
     end
 ;
 
-def ltrim: #:: string| -> string
-    lstrip(" \t\r\n\f")
-;
-
-def rtrim: #:: string| -> string
-    rstrip(" \t\r\n\f")
-;
-
-def trim: #:: string| -> string
-   strip(" \t\r\n\f")
-;
+def trim:  strip(" \t\r\n\f");
+def ltrim: lstrip(" \t\r\n\f");
+def rtrim: rstrip(" \t\r\n\f");
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

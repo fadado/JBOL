@@ -189,22 +189,22 @@ include "string"; trim
 "a b c"
 
 #
-# chr, ord
+# char, ord
 #
 
 include "string"; ord("A")
 null
 65
 
-include "string"; chr(65) == "A"
+include "string"; char(65) == "A"
 null
 true
 
-include "string"; ord(chr(65)) == 65 and chr(ord("A")) == "A"
+include "string"; ord(char(65)) == 65 and char(ord("A")) == "A"
 null
 true
 
-include "string"; [ord("€"), chr(8364)]
+include "string"; [ord("€"), char(8364)]
 null
 [8364, "€"]
 

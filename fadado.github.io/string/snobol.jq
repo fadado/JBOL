@@ -318,11 +318,11 @@ def LLE($a; $b):    select(isstring($a) and $a >= $b);
 def LLT($a; $b):    select(isstring($a) and $a >  $b);
 def LNE($a; $b):    select(isstring($a) and $a != $b);
 
-def CHAR($n):           str::chr($n);
+def CHAR($n):           str::char($n);
 def LPAD($s; $n):       $s|str::left($n; " ");
 def LPAD($s; $n; $t):   $s|str::left($n; $t);
 def ORD($n):            str::ord($n);
-def REVERSE($s):        str::reverse($s);
+def REVERSE($s):        $s|explode|reverse|implode;
 def RPAD($s; $n):       $s|str::right($n; " ");
 def RPAD($s; $n; $t):   $s|str::right($n; $t);
 def SUBSTR($s; $i):     $s[$i:];

@@ -1,0 +1,181 @@
+#########################################################################
+# Regex functions
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+#########################################################################
+
+# search
+include "string/regexp"; match("a")|tostr
+"----a---"
+"a"
+
+include "string/regexp"; search("a")|tostr
+"----a---"
+"a"
+
+include "string/regexp"; [match("a";"g")|tostr]
+"-a-a-a-a-"
+["a","a","a","a"]
+
+include "string/regexp"; [search("a";"g")|tostr]
+"-a-a-a-a-"
+["a","a","a","a"]
+
+include "string/regexp"; match("([abc])";"g")|tolist
+"abc"
+["a","a"]
+["b","b"]
+["c","c"]
+
+include "string/regexp"; search("([abc])";"g")|tolist
+"abc"
+["a","a"]
+["b","b"]
+["c","c"]
+
+include "string/regexp"; match("(?<p>[abc])";"g")|tomap
+"-a-"
+{"p":"a"}
+
+# split
+include "string/regexp"; [split]
+"a   b  \tc"
+["a","b","c"]
+
+include "string/regexp"; [split]
+"  a b c  "
+["a","b","c"]
+
+include "string/regexp"; [split("b")]
+"abc"
+["a","c"]
+
+include "string/regexp"; ./""
+"abc"
+["a","b","c"]
+
+include "string/regexp"; ./","
+"a,b,c"
+["a","b","c"]
+
+include "string/regexp"; ./","
+",a,b,c,"
+["","a","b","c",""]
+
+include "string/regexp"; [split(",")]
+",,a,b,c,"
+["","","a","b","c",""]
+
+include "string/regexp"; [split(",")]
+"a,b,c"
+["a","b","c"]
+
+include "string/regexp"; split(",";-1)
+"a,b,c"
+# empty
+
+include "string/regexp"; [split(",";0)]
+"a,b,c"
+["a,b,c"]
+
+include "string/regexp"; [split(",";1)]
+"a,b,c"
+["a","b,c"]
+
+include "string/regexp"; [split(",";2)]
+"a,b,c"
+["a","b","c"]
+
+include "string/regexp"; [split(",";3)]
+"a,b,c"
+["a","b","c"]
+
+include "string/regexp"; [split(",";4)]
+"a,b,c"
+["a","b","c"]
+
+include "string/regexp"; [split(",")]
+"a,b,c"
+["a","b","c"]
+
+include "string/regexp"; include "string"; [rstrip(",")|split(",")]
+"a,b,c,,,"
+["a","b","c"]
+
+include "string/regexp"; [split(",")]
+"a,b,c,,,"
+["a","b","c","","",""]
+
+include "string/regexp"; [split("")]!=(./"")
+"abc"
+true
+
+include "string/regexp"; [split("-|,"; 3)]
+"1-10,20"
+["1","10","20"]
+
+include "string/regexp"; [split("(-|,)"; 3)]
+"1-10,20"
+["1","-","10",",","20"]
+
+include "string/regexp"; [split("-|(,)")]
+"1-10,20"
+["1",null,"10",",","20"]
+
+include "string/regexp"; [split("(-)|,"; 3)]
+"1-10,20"
+["1","-","10",null,"20"]
+
+include "string/regexp"; [split("(-)|(,)")]
+"1-10,20"
+["1","-",null,"10",null,",","20"]
+
+# sub
+
+include "string/regexp"; sub("a";"b")
+"aeiouae"
+"beiouae"
+
+include "string/regexp"; gsub("a";"b")
+"aeiouae"
+"beioube"
+
+include "string/regexp"; gsub("(?<n>\\d+)";"\(.n)1")
+"12a34b56"
+"121a341b561"
+
+include "string/regexp"; sub("\\d+";"\((.["&"]|tonumber)*2)")
+"abc123xyz"
+"abc246xyz"
+
+include "string/regexp"; sub("[Ll][Oo][Nn][Dd][Oo][Nn]";"London")
+"londOn"
+"London"
+
+include "string/regexp"; gsub("(?<c>[A-Z])";":\(.c):")
+"Lord Whopper of Fibbing"
+":L:ord :W:hopper of :F:ibbing"
+
+include "string/regexp"; gsub("(?<f>.)(?<m>.*)(?<l>.)";"\(.l)\(.m)\(.f)")
+"Aasdfas iao sdjladsj asjdZ"
+"Zasdfas iao sdjladsj asjdA"
+
+# BREAK(",")
+include "string/regexp"; [match("([^,]+)(?:,|)";"g")|tostr]
+"a,b,cde,f,gh,i"
+["a","b","cde","f","gh","i"]
+
+include "string/regexp"; [match("([^,]+),?";"g")|tostr]
+"a,b,cde,f,gh,i,"
+["a","b","cde","f","gh","i"]
+
+include "string/regexp"; [match("([^,]+),|([^,]+)";"g")|tostr]
+"a,b,cde,f,gh,i,"
+["a","b","cde","f","gh","i"]
+
+include "string/regexp"; [match("([^,]+),|([^,]+)";"g")|tostr]
+"a,b,cde,f,gh,i"
+["a","b","cde","f","gh","i"]
+
+# vim:ai:sw=2:ts=2:et:syntax=jq
