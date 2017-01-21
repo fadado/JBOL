@@ -1,9 +1,5 @@
 #!/usr/local/bin/jq -cnrf
 
-# Usage:
-#   ./nonded.jq
-#
-
 import "fadado.github.io/generator/choice" as choice;
 
 ########################################################################

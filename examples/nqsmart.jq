@@ -3,10 +3,6 @@
 include "fadado.github.io/prelude";
 
 # Smart N-Queens
-#
-# Usage:
-#   ./nqsmart.jq --argjson N n
-#
 
 def queens($n):
     def safe($i; $j):

@@ -2,10 +2,6 @@
 
 import "fadado.github.io/generator/choice" as choice;
 
-# Usage:
-#   ./shuffle.jq --argjson N n
-#
-
 # test
 def main($N):
     range(10) as $i

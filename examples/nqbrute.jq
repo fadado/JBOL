@@ -4,10 +4,6 @@ include "fadado.github.io/prelude";
 import "fadado.github.io/generator/choice" as choice;
 
 # N-Queens by brute force
-#
-# Usage:
-#   ./nqbrute.jq --argjson N n
-#
 
 def queens($n):
     def generate:

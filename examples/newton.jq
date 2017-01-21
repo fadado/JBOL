@@ -1,12 +1,8 @@
 #!/usr/local/bin/jq -cnRrf
 
 include "fadado.github.io/prelude";
+
 import "fadado.github.io/generator" as stream;
-
-# Usage:
-#   ./newton.jq
-#
-
 import "fadado.github.io/math" as math;
 
 def nrsqrt:

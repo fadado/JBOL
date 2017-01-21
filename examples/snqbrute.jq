@@ -5,10 +5,6 @@ import "fadado.github.io/math" as math;
 import "fadado.github.io/generator/choice" as choice;
 
 # Streams based N-Queens by brute force
-#
-# Usage:
-#   ./snqbrute.jq --argjson N n
-#
 
 def queens($n):
     def generate:

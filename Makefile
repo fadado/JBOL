@@ -1,7 +1,12 @@
-# Easy management of tests and examples
+# Easy management for the JBOL project
+
+project := jbol
+
+# jq used to run tests and examples if called from this makefile.
+JQ=/usr/local/bin/jq
 
 ########################################################################
-# Configuration
+# Prerequisites
 ########################################################################
 
 # We are using some of the newest GNU Make features... so require GNU
@@ -11,25 +16,63 @@ ifndef version_test
 $(error GNU Make version $(MAKE_VERSION); version >= 3.82 is needed)
 endif
 
-# Remove defaults
+########################################################################
+# Parameters (redefine as you like)
+########################################################################
+
+prefix	?= /usr/local
+datadir	?= $(prefix)/share
+
+########################################################################
+# Paranoia
+########################################################################
+
+ifeq (,$(filter install uninstall,$(MAKECMDGOALS)))
+ifeq (0,$(shell id --user))
+$(error  Root only can make "(un)install" targets)
+endif
+SUDO := 
+else
+SUDO := sudo
+endif
+
+########################################################################
+# Configuration
+########################################################################
+
+# Disable builtins.
 MAKEFLAGS += --no-builtin-rules
 MAKEFLAGS += --no-builtin-variables
+
+# Warn when an undefined variable is referenced.
 MAKEFLAGS += --warn-undefined-variables
-.SUFFIXES:
-
-# Entry point
-.DEFAULT_GOAL := all
-.PHONY: all
-
-# Shell and shell options
-SHELL := /bin/bash
-.SHELLFLAGS := -o errexit -o pipefail -o nounset -c
-
-# Don't leave incomplete targets
-.DELETE_ON_ERROR:
 
 # Make will not print the recipe used to remake files.
 .SILENT:
+
+# Eliminate use of the built-in implicit rules. Also clear out the
+# default list of suffixes for suffix rules.
+.SUFFIXES:
+
+# Sets the default goal to be used if no targets were specified on the
+# command line.
+.DEFAULT_GOAL := all
+
+# When it is time to consider phony targets, make will run its recipe
+# unconditionally, regardless of whether a file with that name exists or
+# what its last-modification time is.
+.PHONY: all
+
+# Default shell: if we require GNU Make, why not require Bash?
+SHELL := /bin/bash
+
+# The argument(s) passed to the shell are taken from the variable
+# .SHELLFLAGS.
+.SHELLFLAGS := -o errexit -o pipefail -o nounset -c
+
+# Make will delete the target of a rule if it has changed and its recipe
+# exits with a nonzero exit status.
+.DELETE_ON_ERROR:
 
 ########################################################################
 # Targets and files
@@ -42,6 +85,7 @@ Tests := $(wildcard tests/*.test)
 LogDir := .logs
 Logs := $(subst tests/,$(LogDir)/,$(Tests:.test=.log))
 
+# Packages
 LIB=fadado.github.io
 STR=$(LIB)/string
 GEN=$(LIB)/generator
@@ -50,13 +94,8 @@ GEN=$(LIB)/generator
 # Rules
 ########################################################################
 
-#JQ=/usr/bin/jq
-JQ=/usr/local/bin/jq
-
-# Warning: only `dnf`!
-setup:
-	sudo dnf -y install jq
-	sudo dnf -y install PyYAML
+# Default target
+all: $(Logs)
 
 # Hidden directory for logs
 $(Logs): | $(LogDir)
@@ -70,32 +109,29 @@ $(LogDir)/%.log: tests/%.test
 		| grep --invert-match '^Testing'
 	grep --quiet '^\*\*\*' $@ && touch $< || true
 
-# Other dependencies
+# Common tests
 $(LogDir)/prelude.log: $(LIB)/prelude.jq
 $(LogDir)/sets.log: $(LIB)/prelude.jq $(LIB)/types.jq
 $(LogDir)/math.log: $(LIB)/math.jq
 
-# generators
+# Generator tests
 $(LogDir)/stream.log: $(GEN)/generator.jq
 $(LogDir)/choice.log: $(GEN)/choice.jq $(GEN)/generator.jq $(GEN)/chance.jq 
 $(LogDir)/sequence.log: $(GEN)/sequence.jq $(LIB)/prelude.jq
 $(LogDir)/chance.log: $(GEN)/chance.jq $(LIB)/prelude.jq
 
-# string
+# String tests
 $(LogDir)/ascii.log: $(STR)/ascii.jq $(STR)/ascii.json $(LIB)/prelude.jq
 $(LogDir)/latin1.log: $(STR)/latin1.jq $(STR)/latin1.json $(LIB)/prelude.jq
 $(LogDir)/regexp.log: $(STR)/regexp.jq $(LIB)/prelude.jq $(STR)/string.jq
 $(LogDir)/string.log: $(STR)/string.jq $(LIB)/prelude.jq $(STR)/ascii.jq $(STR)/ascii.json
 $(LogDir)/snobol.log: $(STR)/snobol.jq $(LIB)/prelude.jq  $(STR)/string.jq
 
-# Default target
-all: $(Logs)
-
 ########################################################################
 # Utilities
 ########################################################################
 
-.PHONY: clean clobber check help
+.PHONY: clean clobber check help install uninstall
 
 clean:
 	rm --force -- $(LogDir)/*.log
@@ -105,8 +141,17 @@ clobber: clean
 
 check: clean all
 
+install:
+	test -d $(datadir)/$(project) \
+	|| $(SUDO) mkdir -v --parents $(datadir)/$(project)
+	$(SUDO) cp -v -u -r fadado.github.io $(datadir)/$(project)
+
+uninstall:
+	test -d $(datadir)/$(project)					  \
+	&& $(SUDO) rm --verbose --force --recursive $(datadir)/$(project) \
+	|| true
+
 # Show targets
-.PHONY: help
 help:
 	echo 'Targets:';					\
 	$(MAKE) --print-data-base --just-print 2>&1		\
@@ -120,24 +165,24 @@ help:
 # Examples
 ########################################################################
 
-.PHONY: bogussort cross cut dice newton nondet nqbrute nqsmart octcode script seconds sendmoremoney series shuffle snqbrute triple
-EE: bogussort cross cut dice newton nondet nqbrute nqsmart octcode script seconds sendmoremoney series shuffle snqbrute triple
+.PHONY: bogussort cross cut dice newton nondet nqbrute nqsmart octcode \
+	script seconds sendmoremoney series shuffle snqbrute triple
 
-bogussort: ; @examples/$@.jq
-cross: ; @examples/$@.jq
-cut: ; @examples/$@.jq
-dice: ; @examples/$@.jq
-newton: ; @examples/$@.jq
-nondet: ; @examples/$@.jq
-nqbrute: ; @examples/$@.jq
-nqsmart: ; @examples/$@.jq
-octcode: ; @examples/$@.jq
-script: ; @examples/$@.jq
-seconds: ; @examples/$@.jq
-sendmoremoney: ; @examples/$@.jq
-series: ; @examples/$@.jq
-shuffle: ; @examples/$@.jq
-snqbrute: ; @examples/$@.jq
-triple: ; @examples/$@.jq
+bogussort: ; $(JQ) -cnRrf examples/$@.jq
+cross: ; $(JQ) -nRrf examples/$@.jq
+cut: ; $(JQ) -cnRrf examples/$@.jq
+dice: ; $(JQ) -cnRrf examples/$@.jq
+newton: ; $(JQ) -cnRrf examples/$@.jq
+nondet: ; $(JQ) -cnrf examples/$@.jq
+nqbrute: ; $(JQ) -cnRrf examples/$@.jq
+nqsmart: ; $(JQ) -cnRrf examples/$@.jq
+octcode: ; $(JQ) -nRrf examples/$@.jq
+script: ; $(JQ) -cnrf examples/$@.jq
+seconds: ; $(JQ) -nRrf examples/$@.jq
+sendmoremoney: ; $(JQ) -cnRrf examples/$@.jq
+series: ; $(JQ) -cnRrf examples/$@.jq
+shuffle: ; $(JQ) -cnRrf examples/$@.jq
+snqbrute: ; $(JQ) -cnRrf examples/$@.jq
+triple: ; $(JQ) -cnrf examples/$@.jq
 
 # vim:ai:sw=8:ts=8:noet:syntax=make

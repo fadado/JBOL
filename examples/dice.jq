@@ -3,10 +3,6 @@
 import "fadado.github.io/generator" as stream;
 import "fadado.github.io/generator/chance" as chance;
 
-# Usage:
-#   ./dice.jq --argjson N n
-#
-
 def dice:
     1+chance::random(6; chance::randomize)
 ;

@@ -2,10 +2,6 @@
 
 # Panintervalic dodecaphonic series
 # https://en.wikipedia.org/wiki/Twelve-tone_technique
-#
-# Usage:
-#   ./series.jq --argjson N n
-#
 
 # Generates all panintervalic dodecaphonic series
 def series($n): #:: number -> <[number]>
