@@ -9,36 +9,76 @@ module {
 };
 
 # Data type predicates
-def isnull: type=="null";
-def isboolean: type=="boolean";
-def isnumber: type=="number";
-def isstring: type=="string";
-def isarray: type=="array";
-def isobject: type=="object";
-def isscalar: type| .=="null" or .=="boolean" or .=="number" or .=="string";
-def isiterable: type| .=="array" or .=="object";
-def isvoid: isiterable and length==0;
-def isleaf: isscalar or isvoid;
+def isnull: #:: α| -> boolean
+    type=="null"
+;
+def isboolean: #:: α| -> boolean
+    type=="boolean"
+;
+def isnumber: #:: α| -> boolean
+    type=="number"
+;
+def isstring: #:: α| -> boolean
+    type=="string"
+;
+def isarray: #:: α| -> boolean
+    type=="array"
+;
+def isobject: #:: α| -> boolean
+    type=="object"
+;
+def isscalar: #:: α| -> boolean
+    type| .=="null" or .=="boolean" or .=="number" or .=="string"
+;
+def isiterable: #:: α| -> boolean
+    type| .=="array" or .=="object"
+;
+def isvoid: #:: α| -> boolean
+    isiterable and length==0
+;
+def isleaf: #:: α| -> boolean
+    isscalar or isvoid
+;
 
-def isnull($x): $x|isnull;
-def isboolean($x): $x|isboolean;
-def isnumber($x): $x|isnumber;
-def isstring($x): $x|isstring;
-def isarray($x): $x|isarray;
-def isobject($x): $x|isobject;
-def isscalar($x): $x|isscalar;
-def isiterable($x): $x|isiterable;
-def isvoid($x): $x|isvoid;
-def isleaf($x): $x|isleaf;
+def isnull($a): #:: (α) -> boolean
+    $a|isnull
+;
+def isboolean($a): #:: (α) -> boolean
+    $a|isboolean
+;
+def isnumber($a): #:: (α) -> boolean
+    $a|isnumber
+;
+def isstring($a): #:: (α) -> boolean
+    $a|isstring
+;
+def isarray($a): #:: (α) -> boolean
+    $a|isarray
+;
+def isobject($a): #:: (α) -> boolean
+    $a|isobject
+;
+def isscalar($a): #:: (α) -> boolean
+    $a|isscalar
+;
+def isiterable($a): #:: (α) -> boolean
+    $a|isiterable
+;
+def isvoid($a): #:: (α) -> boolean
+    $a|isvoid
+;
+def isleaf($a): #:: (α) -> boolean
+    $a|isleaf
+;
 
 # Variation on `with_entries`
 #
 # PAIR: {"name":string, "value":value}
 #
-def mapobj(f): #:: object|(PAIR->PAIR) -> object
+def mapobj(filter): #:: object|(PAIR->PAIR) -> object
     reduce (keys_unsorted[] as $k
             | {name: $k, value: .[$k]}
-            | f
+            | filter
             | {(.name): .value})
             as $pair
         ({}; . + $pair)
@@ -46,16 +86,16 @@ def mapobj(f): #:: object|(PAIR->PAIR) -> object
 
 # Variation on `walk`
 #
-def mapdoc(f): #:: value|(α->β) -> value
+def mapdoc(filter): #:: α|(β->γ) -> α
     . as $doc |
     if isobject then
         reduce keys_unsorted[] as $k
-            ({}; . + {($k): ($doc[$k]|mapdoc(f))})
-        | f
+            ({}; . + {($k): ($doc[$k]|mapdoc(filter))})
+        | filter
     elif isarray then
-        [.[] | mapdoc(f)]
-        | f
-    else f
+        [.[] | mapdoc(filter)]
+        | filter
+    else filter
     end
 ;
 
@@ -63,23 +103,23 @@ def mapdoc(f): #:: value|(α->β) -> value
 #
 # SET: {"name": boolean, ...}
 #
-def set($a): #:: ([α]+string) -> SET
-    if $a|isstring
-    then
-        reduce ($a/"")[] as $element ({}; . += {($element):true})
-    else
-        reduce $a[] as $element ({}; . += {($element|tostring):true})
+def set($elements): #:: (α) -> {boolean}
+    if $elements|isstring
+    then # string
+        reduce ($elements/"")[] as $element ({}; . += {($element):true})
+    else # array
+        reduce $elements[] as $element ({}; . += {($element|tostring):true})
     end
 ;
 
 # Common sets operations
 #
-def intersection($s): #:: SET|(SET) -> SET
-    mapobj(select(.name | in($s)))
+def intersection($other): #:: {boolean}|({boolean}) -> {boolean} 
+    mapobj(select(.name | in($other)))
 ;
 
-def difference($s): #:: SET|(SET) -> SET
-    mapobj(select(.name | in($s) | not))
+def difference($other): #:: {boolean}|({boolean}) -> {boolean} 
+    mapobj(select(.name | in($other) | not))
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

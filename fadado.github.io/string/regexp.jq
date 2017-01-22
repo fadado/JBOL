@@ -162,13 +162,13 @@ def split($regex; $flags; $limit): #:: string|(string;string;number) -> <string>
 # Fully compatible with `splits/2`, and replaces `split/2` in a non compatible
 # way (use [pm::split(r;f)] for compatible behavior)
 # 
-def split($regex; $x): #:: string|(string;number+string) -> <string>
+def split($regex; $a): #:: string|(string;α) -> <string>
     # . as $subject
-    if $x|isnumber
-    then split($regex; ""; $x)     # $x = limit
-    elif $x|isstring
-    then split($regex; $x; infinite) # $x = flags
-    else error($x|type|"Type error: expected number or string, not \(.)")
+    if $a|isnumber
+    then split($regex; ""; $a)     # $a = limit
+    elif $a|isstring
+    then split($regex; $a; infinite) # $a = flags
+    else error($a|type|"Type error: expected number or string, not \(.)")
     end
 ;
 
@@ -185,20 +185,6 @@ def split($regex): #:: string|(string) -> <string>
 def split: #:: string| -> <string>
     # . as $subject
     str::trim | split("\\s+"; ""; infinite)
-;
-
-# Fast join, only for string arrays
-#
-def fuse($x): #:: [string]|(string) -> string
-    def sep:
-        if .==null
-        then ""
-        else .+$x
-        end
-    ;
-    reduce .[] as $s
-        (null; sep + $s)
-    // ""
 ;
 
 ########################################################################
@@ -246,6 +232,5 @@ def gsub($regex; template; $flags): #:: string|(string;string;string) -> string
 def gsub($regex; template): #:: string|(string;string) -> string
     sub($regex; template; "g")
 ;
-
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

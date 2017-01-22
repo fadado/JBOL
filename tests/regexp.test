@@ -5,6 +5,10 @@
 # Blank lines and lines starting with # are ignored.
 #########################################################################
 
+include "string/regexp"; include "string"; [split] | join(" ")
+"     la le      li       "
+"la le li"
+
 # search
 include "string/regexp"; match("a")|tostr
 "----a---"

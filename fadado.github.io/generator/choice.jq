@@ -306,7 +306,7 @@ def shuffle: #:: [α] -> [α]
 
 # Choose in order k random elements from the input array.
 #
-def take($k; $seed): #:: [α]|(number; number) -> <α>
+def take($k; $seed): #:: [α]|(number;number) -> <α>
     # Print in order k random elements from A[1]..A[n]
     # for (i=1; n>0; i++)
     #     if (rand() < k/n--) {

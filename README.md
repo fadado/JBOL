@@ -1,24 +1,35 @@
-# ≋ JBOL ≋
+# ≈ JBOL ≈
 
-JBOL is a collection of modules for the **jq** language.
+**JBOL** is a collection of modules for the **JQ** language.
 
 ## Installation and usage
 
-All the provided modules are under the `fadado.github.io` directory. Copy this
-directory to your toplevel **jq** modules path with a command equivalent to
+All modules provided are in the `fadado.github.io` directory. Copy this
+directory to your top-level **JQ** modules path with a command equivalent to
 
 ```sh
 $ cp -r fadado.github.io TOP-PATH
 ```
 
-In your **jq** scripts include or import modules with directives like
+In your **JQ** scripts include or import modules with directives like
 
 ```jq
-include "fadado.github.io/prelude";
+import "fadado.github.io/regexp" as re;
 import "fadado.github.io/string" as str;
 ```
 
-And finally run your script with the appropriated `-L` option:
+and then use the modules services in your code:
+
+```jq
+def remove_digits($s):
+    $s | str::translate("01234567890"; "")
+;
+def normalize_space($s):
+    $s | [re::split] | str::join(" ")
+;
+```
+
+Finally, run your script with the `jq` appropriated `-L` option:
 
 ```sh
 $ jq -LTOP-PATH -f script.jq

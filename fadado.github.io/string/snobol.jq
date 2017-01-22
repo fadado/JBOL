@@ -26,7 +26,7 @@ import "fadado.github.io/generator" as gen;
 # &ANCHOR keyword.
 
 # Anchored subject
-def A($subject): #:: (string)| -> CURSOR
+def A($subject): #:: (string) -> CURSOR
 {
     $subject,               # string to scan
     slen:($subject|length), # subject length
@@ -34,10 +34,12 @@ def A($subject): #:: (string)| -> CURSOR
     start:null,             # current pattern start scanning position
     position:0              # current cursor position
 };
-def A: A(.);
+def A: #:: string| -> CURSOR
+    A(.)
+;
 
 # Unanchored subject
-def U($subject): #:: (string)| -> <CURSOR>
+def U($subject): #:: (string) -> <CURSOR>
     ($subject|length) as $slen
     | range(0; $slen+1) as $offset
 | {
@@ -47,7 +49,9 @@ def U($subject): #:: (string)| -> <CURSOR>
     start:null,         # current pattern start scanning position
     position:$offset    # current cursor position
 };
-def U: U(.);
+def U: #:: string| -> <CURSOR>
+    U(.)
+;
 
 #
 # Access to cursor state
@@ -88,10 +92,10 @@ def NULL: #:: CURSOR -> CURSOR
 ;
 
 # Match a literal, necessary to "wrap" all string literals
-def L($t): #:: CURSOR|(string) -> CURSOR
-    ($t|length) as $tlen
+def L($literal): #:: CURSOR|(string) -> CURSOR
+    ($literal|length) as $tlen
     | select(.position+$tlen <= .slen)
-    | select(.subject[.position:.position+$tlen] == $t)
+    | select(.subject[.position:.position+$tlen] == $literal)
     | .start=.position
     | .position+=$tlen
 ;
@@ -142,21 +146,43 @@ def G(pattern): #:: CURSOR|(CURSOR|->CURSOR) -> CURSOR
 # Predicates
 #
 
-def EQ($a; $b):     select($a == $b);
-def NE($a; $b):     select($a != $b);
-def GE($a; $b):     select($a >= $b);
-def GT($a; $b):     select($a >  $b);
-def LE($a; $b):     select($a >= $b);
-def LT($a; $b):     select($a >  $b);
+def EQ($m; $n): #:: (number;number) -> boolean
+    select($m == $n)
+;
+def NE($m; $n): #:: (number;number) -> boolean
+    select($m != $n)
+;
+def GE($m; $n): #:: (number;number) -> boolean
+    select($m >= $n)
+;
+def GT($m; $n): #:: (number;number) -> boolean
+    select($m >  $n)
+;
+def LE($m; $n): #:: (number;number) -> boolean
+    select($m >= $n)
+;
+def LT($m; $n): #:: (number;number) -> boolean
+    select($m >  $n)
+;
 
-def LGT($a; $b):    select(isstring($a) and $a > $b);
-def IDENT($a; $b):  select($a == $b);
-def IDENT($a):      select($a == "");
-def DIFFER($a; $b): select($a != $b);
-def DIFFER($a):     select($a != "");
-def INTEGER($x):
-    select((($x|isnumber) and ($x|length)==$x)
-        or (tonumber//false and ("."|inside($x)|not))
+def LGT($s; $t): #:: (string;string) -> boolean
+    select(isstring($s) and $s > $t)
+;
+def IDENT($s; $t): #:: (string;string) -> boolean
+    select($s == $t)
+;
+def IDENT($s): #:: (string;string) -> boolean
+    select($s == "")
+;
+def DIFFER($s; $t): #:: (string;string) -> boolean
+    select($s != $t)
+;
+def DIFFER($s): #:: (string;string) -> boolean
+    select($s != "")
+;
+def INTEGER($a): #:: (α) -> boolean
+    select((($a|isnumber) and ($a|length)==$a)
+        or (tonumber//false and ("."|inside($a)|not))
     )
 ;
 
@@ -164,9 +190,15 @@ def INTEGER($x):
 # String functions
 #
 
-def DUPL($s; $n):           select($n >= 0)|if $n==0 then "" else $s*$n end;
-def REPLACE($s; $f; $t):    $s|str::translate($f; $t);
-def SIZE($s):               $s|length;
+def DUPL($s; $n): #:: (string;number) -> string
+    select($n >= 0)|if $n==0 then "" else $s*$n end
+;
+def REPLACE($s; $t; $u): #:: (string;string;string) -> string
+    $s|str::translate($t; $u)
+;
+def SIZE($s): #:: (string) -> number
+    $s|length
+;
 
 #
 # Patterns that control the application of other patterns 
@@ -285,7 +317,7 @@ def FAIL: #:: CURSOR| -> CURSOR
     empty
 ;
 
-def FENCE: # CURSOR| -> CURSOR
+def FENCE: #:: CURSOR| -> CURSOR
     . , error("ABORT")
     # With label/break:
     #   label $FENCE | P | (NULL , break $FENCE) | Q;
@@ -312,22 +344,52 @@ def BREAKX($s): #:: CURSOR|(string) -> <CURSOR>
       // .
 ;
 
-def LEQ($a; $b):    select(isstring($a) and $a == $b);
-def LGE($a; $b):    select(isstring($a) and $a >= $b);
-def LLE($a; $b):    select(isstring($a) and $a >= $b);
-def LLT($a; $b):    select(isstring($a) and $a >  $b);
-def LNE($a; $b):    select(isstring($a) and $a != $b);
+def LEQ($s; $t): #:: (string;string) -> boolean
+    select(isstring($s) and $s == $t)
+;
+def LGE($s; $t): #:: (string;string) -> boolean
+    select(isstring($s) and $s >= $t)
+;
+def LLE($s; $t): #:: (string;string) -> boolean
+    select(isstring($s) and $s >= $t)
+;
+def LLT($s; $t): #:: (string;string) -> boolean
+    select(isstring($s) and $s >  $t)
+;
+def LNE($s; $t): #:: (string;string) -> boolean
+    select(isstring($s) and $s != $t)
+;
 
-def CHAR($n):           str::char($n);
-def LPAD($s; $n):       $s|str::left($n; " ");
-def LPAD($s; $n; $t):   $s|str::left($n; $t);
-def ORD($n):            str::ord($n);
-def REVERSE($s):        $s|explode|reverse|implode;
-def RPAD($s; $n):       $s|str::right($n; " ");
-def RPAD($s; $n; $t):   $s|str::right($n; $t);
-def SUBSTR($s; $i):     $s[$i:];
-def SUBSTR($s; $i; $j): $s[$i:$j];
-def TRIM($s):           $s|str::strip(" \t\r\n\f");
+def CHAR($n): #:: (number) -> string
+    str::char($n)
+;
+def LPAD($s; $n): #:: (string;number) -> string
+    $s|str::left($n; " ")
+;
+def LPAD($s; $n; $t): #:: (string;number;string) -> string
+    $s|str::left($n; $t)
+;
+def ORD($s): #:: (string) -> number
+    str::ord($s)
+;
+def REVERSE($s): #:: (string) -> string
+    $s|explode|reverse|implode
+;
+def RPAD($s; $n): #:: (string;number) -> string
+    $s|str::right($n; " ")
+;
+def RPAD($s; $n; $t): #:: (string;number;string) -> string
+    $s|str::right($n; $t)
+;
+def SUBSTR($s; $n): #:: (string;number) -> string
+    $s[$n:]
+;
+def SUBSTR($s; $n; $m):  #:: (string;number;number) -> string
+    $s[$n:$m]
+;
+def TRIM($s): #:: (string) -> string
+    $s|str::strip(" \t\r\n\f")
+;
 
 #
 # Extensions presented in the James F. Gimpel book

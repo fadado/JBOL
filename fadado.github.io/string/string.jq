@@ -23,21 +23,29 @@ def find($s; $i; $j): #:: string|(string;number;number) -> <number>
     select($i >= 0 and $i < $j and $i < length and $j <= length)
     | indices($s[$i:$j])[]
 ;
-def find($s; $i): find($s; $i; length);
-def find($s):     find($s;  0; length);
+def find($s; $i): #:: string|(string;number) -> <number>
+    find($s; $i; length)
+;
+def find($s): #:: string|(string) -> <number>
+    find($s;  0; length)
+;
 
 # Locate characters
-def upto($c; $i; $j): #:: string|(string; number;number) -> <number>
-    assert($c != ""; "upto requires a non empty string as argument")
+def upto($s; $i; $j): #:: string|(string;number;number) -> <number>
+    assert($s != ""; "upto requires a non empty string as argument")
     | select($i >= 0 and $i < $j and $i < length and $j <= length)
     | range($i; $j) as $p
-    | if .[$p:$p+1] | inside($c)
+    | if .[$p:$p+1] | inside($s)
       then $p
       else empty
       end
 ;
-def upto($c; $i): upto($c; $i; length);
-def upto($c):     upto($c;  0; length);
+def upto($s; $i): #:: string|(string;number) -> <number>
+    upto($s; $i; length)
+;
+def upto($s): #:: string|(string) -> <number>
+    upto($s;  0; length)
+;
 
 # Match initial string
 def match($s; $i): #:: string|(string;number) -> number
@@ -47,34 +55,40 @@ def match($s; $i): #:: string|(string;number) -> number
       else empty
       end
 ;
-def match($s): match($s; 0);
+def match($s): #:: string|(string) -> number
+    match($s; 0)
+;
 
 # Locate initial character
-def any($c; $i): #:: string|(string;number) -> number
+def any($s; $i): #:: string|(string;number) -> number
     select($i >= 0 and $i < length)
-    | if .[$i:$i+1] | inside($c)
+    | if .[$i:$i+1] | inside($s)
       then $i+1
       else empty
       end
 ;
-def any($c): any($c; 0);
+def any($s): #:: string|(string) -> number
+    any($s; 0)
+;
 
-def notany($c; $i): #:: string|(string;number) -> number
+def notany($s; $i): #:: string|(string;number) -> number
     select($i >= 0 and $i < length)
-    | if .[$i:$i+1] | inside($c) | not
+    | if .[$i:$i+1] | inside($s) | not
       then $i+1
       else empty
       end
 ;
-def notany($c): notany($c; 0);
+def notany($s): #:: string|(string) -> number
+    notany($s; 0)
+;
 
 # Locate many characters
-def many($c; $i): #:: string|(string;number) -> number
-    def _many($s; $n):
+def many($s; $i): #:: string|(string;number) -> number
+    def _many($t; $n):
         def r:
             if .==$n    # all matched
             then $n
-            elif $s[.:.+1]|inside($c)
+            elif $t[.:.+1]|inside($s)
             then .+1|r
             elif .==$i  # none matched
             then empty
@@ -86,14 +100,16 @@ def many($c; $i): #:: string|(string;number) -> number
     select($i >= 0 and $i < length)
     | _many(.; length)
 ;
-def many($c): many($c; 0);
+def many($s): #:: string|(string) -> number
+    many($s; 0)
+;
 
-def none($c; $i): #:: string|(string;number) -> number
-    def _none($s; $n):
+def none($s; $i): #:: string|(string;number) -> number
+    def _none($t; $n):
         def r:
             if .==$n
             then $n
-            elif $s[.:.+1]|inside($c)|not
+            elif $t[.:.+1]|inside($s)|not
             then .+1|r
             elif .==$i
             then empty
@@ -105,7 +121,9 @@ def none($c; $i): #:: string|(string;number) -> number
     select($i >= 0 and $i < length)
     | _none(.; length)
 ;
-def none($c): none($c; 0);
+def none($s): #:: string|(string) -> number
+    none($s; 0)
+;
 
 # Pad strings
 def left($n; $t): #:: string|(number;string) -> string
@@ -114,7 +132,9 @@ def left($n; $t): #:: string|(number;string) -> string
     else ($t*($n-length)) + .
     end
 ;
-def left($n): left($n; " ");
+def left($n): #:: string|(number) -> string
+    left($n; " ")
+;
 
 def right($n; $t): #:: string|(number;string) -> string
     if $n <= length
@@ -122,7 +142,9 @@ def right($n; $t): #:: string|(number;string) -> string
     else . + ($t*($n-length))
     end
 ;
-def right($n): right($n; " ");
+def right($n): #:: string|(number) -> string
+    right($n; " ")
+;
 
 def center($n; $t): #:: string|(number;string) -> string
     if $n <= length
@@ -133,7 +155,9 @@ def center($n; $t): #:: string|(number;string) -> string
         | if length==$n then . else .+$t end
     end
 ;
-def center($n): center($n; " ");
+def center($n): #:: string|(number) -> string
+    center($n; " ")
+;
 
 def ord($s): #:: (string) -> number
     $s[0:1]|explode[0]
@@ -167,7 +191,7 @@ def rotate($n): #:: string|(number) -> string
 
 # Translation table for rotate by 13 places
 #
-def rot13:
+def rot13: #:: TABLE
     table(ascii::ALPHA; rotate(ascii::upper; 13)+rotate(ascii::lower; 13))
 ;
 
@@ -181,8 +205,8 @@ def ptable($from; $preserve): #:: (string;string) -> TABLE
 
 # Translate characters in input string using translation table
 #
-def translate($tt): #:: string|(TABLE) -> string
-    [ (./"")[] | $tt[.]//. ] | join("")
+def translate($table): #:: string|(TABLE) -> string
+    [ (./"")[] | $table[.]//. ] | join("")
 ;
 
 def translate($from; $to): #:: string|(string:string) -> string
@@ -200,48 +224,48 @@ def translate($from; $to): #:: string|(string:string) -> string
 ########################################################################
 # Classical trim and strip
 
-def _lndx(p): # left index or empty if not found
+def _lndx(predicate): # left index or empty if not found
     label $found
     | range(length-1) as $i
-    | if .[$i:$i+1]|p
+    | if .[$i:$i+1]|predicate
         then empty
         else $i , break $found
         end
 ;
 
-def _rndx(p): # rigth index or empty if not found
+def _rndx(predicate): # rigth index or empty if not found
     label $found
     | range(length-1; 0; -1) as $i
-    | if .[$i:$i+1]|p
+    | if .[$i:$i+1]|predicate
         then empty
         else $i+1 , break $found
         end
 ;
 
-def lstrip($t): #:: string|(string) -> string
-    if length==0 or (.[0:1]|inside($t)|not)
+def lstrip($s): #:: string|(string) -> string
+    if length==0 or (.[0:1]|inside($s)|not)
     then .
     else
-        (_lndx(inside($t))//-1) as $i
+        (_lndx(inside($s))//-1) as $i
         | if $i < 0 then "" else .[$i:] end
     end
 ;
 
-def rstrip($t): #:: string|(string) -> string
-    if length==0 or (.[-1:length]|inside($t)|not)
+def rstrip($s): #:: string|(string) -> string
+    if length==0 or (.[-1:length]|inside($s)|not)
     then .
     else
-        (_rndx(inside($t))//-1) as $i
+        (_rndx(inside($s))//-1) as $i
         | if $i < 0 then "" else .[0:$i] end
     end
 ;
 
-def strip($t): #:: string|(string) -> string
-    if length==0 or ((.[0:1]|inside($t)) or (.[-1:length]|inside($t)) | not)
+def strip($s): #:: string|(string) -> string
+    if length==0 or ((.[0:1]|inside($s)) or (.[-1:length]|inside($s)) | not)
     then .
     else
-        (_lndx(inside($t))//-1) as $i |
-        (_rndx(inside($t))//-1) as $j |
+        (_lndx(inside($s))//-1) as $i |
+        (_rndx(inside($s))//-1) as $j |
         if $i < 0 and $j < 0 then ""
         elif $j < 0          then .[$i:]
         elif $i < 0          then .[:$j]
@@ -250,8 +274,30 @@ def strip($t): #:: string|(string) -> string
     end
 ;
 
-def trim:  strip(" \t\r\n\f");
-def ltrim: lstrip(" \t\r\n\f");
-def rtrim: rstrip(" \t\r\n\f");
+def trim: #:: string| -> string
+    strip(" \t\r\n\f")
+;
+def ltrim: #:: string| -> string
+    lstrip(" \t\r\n\f")
+;
+def rtrim: #:: string| -> string
+    rstrip(" \t\r\n\f")
+;
+
+########################################################################
+
+# Fast join, only for string arrays
+#
+def join($separator): #:: [string]|(string) -> string
+    def sep:
+        if .==null
+        then ""
+        else .+$separator
+        end
+    ;
+    reduce .[] as $s
+        (null; sep + $s)
+    // ""
+;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

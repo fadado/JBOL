@@ -21,48 +21,48 @@ module {
 #
 # By default `jq` tries all alternatives. This is the reverse of  *Icon*.
 #
-def once(g): #:: (<α>) -> α|
+def once(generator): #:: (<α>) -> α|
     label $pipe
-    | g
+    | generator
     | ., break $pipe
 ;
 
 # Boolean context for goal-directed expression evaluation.
-def success(g): #:: (<α>) -> boolean
-    (label $block | g | 1 , break $block)//0
+def success(generator): #:: (<α>) -> boolean
+    (label $block | generator | 1 , break $block)//0
     | .==1  # computation generates results
 ;
 
-def failure(g): #:: (<α>) -> boolean
-    (label $block | g | 1 , break $block)//0
+def failure(generator): #:: (<α>) -> boolean
+    (label $block | generator | 1 , break $block)//0
     | .==0  # computation does not generate results
 ;
 
 # All true? None false?
-def every(g): #:: (<boolean> -> boolean)
-    failure(g | if . then empty else . end)
+def every(generator): #:: (<boolean> -> boolean)
+    failure(generator | if . then empty else . end)
 ;
 
 # Some true? Not all false?
-def some(g): #:: (<boolean> -> boolean)
-    success(g | if . then . else empty end)
+def some(generator): #:: (<boolean> -> boolean)
+    success(generator | if . then . else empty end)
 ;
 
 # Assertions
-def assert($p; $loc; $msg): #:: (boolean;object;string) -> α
-    if $p
+def assert($predicate; $location; $message): #:: (boolean;object;string) -> α
+    if $predicate
     then .
     else
-        $loc
-        | "Assertion failed: "+$msg+", file \(.file), line \(.line)"
+        $location
+        | "Assertion failed: "+$message+", file \(.file), line \(.line)"
         | error
     end
 ;
 
-def assert($p; $msg): #:: (boolean;string) -> α
-    if $p
+def assert($predicate; $message): #:: (boolean;string) -> α
+    if $predicate
     then .
-    else error("Assertion failed: "+$msg)
+    else error("Assertion failed: "+$message)
     end
 ;
 
@@ -70,47 +70,49 @@ def assert($p; $msg): #:: (boolean;string) -> α
 # Recursion schemata
 ########################################################################
 
-#def fold(f; $b; g): #:: (α|->β;β;<α>) -> <β>
-#    reduce g as $a ($b; [.,$a]|f)
+#def fold(filter; $b; generator): #:: (α|->β;β;<α>) -> <β>
+#    reduce generator as $a ($b; [.,$a]|filter)
 #;
-#def scan(f; $b; g): #:: (α|->β;β;<α>) -> <β>
-#    foreach g as $a ($b; [.,$a]|f)
+#def scan(filter; $b; generator): #:: (α|->β;β;<α>) -> <β>
+#    foreach generator as $a ($b; [.,$a]|filter)
 #;
 
-def unfold(f; $seed): #:: (α|->[β,α];α) -> <β>
-    def r: f | .[0] , (.[1]|r);
+def unfold(filter; $seed): #:: (α|->[β,α];α) -> <β>
+    def r: filter | .[0] , (.[1]|r);
     $seed|r
 ;
 
-def unfold(f): #:: α|(α|->[β,α]) -> <β>
+def unfold(filter): #:: α|(α|->[β,α]) -> <β>
     # . as $seed
-    unfold(f; .)
+    unfold(filter; .)
 ;
 
-# f*
-def iterate(f): #:: α|(α|->α) -> <α>
-    def r: ., (f|r);
+# filter*
+def iterate(filter): #:: α|(α|->α) -> <α>
+    def r: ., (filter|r);
     r
 ;
 
-# f+
-def loop(f): #:: α|(α|->α) -> <α>
-    f | iterate(f)
+# filter+
+def loop(filter): #:: α|(α|->α) -> <α>
+    filter | iterate(filter)
 ;
 
-def tabulate($from; f): #:: (number;number|->α) -> <α>
-    def r: .|f, (.+1|r);
-    $from|r
+def tabulate($start; filter): #:: (number;number|->α) -> <α>
+    def r: .|filter, (.+1|r);
+    $start|r
 ;
-def tabulate(f): #:: (number|->α) -> <α>
+def tabulate(filter): #:: (number|->α) -> <α>
     # tabulate from 0
-    def r: .|f, (.+1|r);
+    def r: .|filter, (.+1|r);
     0|r
 ;
 
 ########################################################################
 # IO
 ########################################################################
+
+# Experimental, not yet typed
 
 def EOF:  infinite;
 def read: try input catch EOF;

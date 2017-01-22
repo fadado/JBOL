@@ -131,7 +131,7 @@ $(LogDir)/snobol.log: $(STR)/snobol.jq $(LIB)/prelude.jq  $(STR)/string.jq
 # Utilities
 ########################################################################
 
-.PHONY: clean clobber check help install uninstall
+.PHONY: clean clobber check help install uninstall prototypes
 
 clean:
 	rm --force -- $(LogDir)/*.log
@@ -161,12 +161,25 @@ help:
 	| sed 's/:\+$$//'					\
 	| pr --omit-pagination --indent=4 --width=80 --columns=4
 
+define make_prototypes
+  find fadado.github.io -name '*.jq' -print | while read m; do	\
+    M=$${m##*/};						\
+    P=$${M%.jq};						\
+    <$$m grep '^def  *[^_].*\#::'	 			\
+    | sed -e 's/^def  *//' -e 's/:  *\#/ /'			\
+    | sort >|/tmp/$$P.md ;					\
+  done
+endef
+
+prototypes:
+	$(call make_prototypes)
+
 ########################################################################
 # Examples
 ########################################################################
 
 .PHONY: bogussort cross cut dice newton nondet nqbrute nqsmart octcode \
-	script seconds sendmoremoney series shuffle snqbrute triple
+	script seconds sendmoremoney series shuffle nqsbrute triple
 
 bogussort: ; $(JQ) -cnRrf examples/$@.jq
 cross: ; $(JQ) -nRrf examples/$@.jq
@@ -182,7 +195,7 @@ seconds: ; $(JQ) -nRrf examples/$@.jq
 sendmoremoney: ; $(JQ) -cnRrf examples/$@.jq
 series: ; $(JQ) -cnRrf examples/$@.jq
 shuffle: ; $(JQ) -cnRrf examples/$@.jq
-snqbrute: ; $(JQ) -cnRrf examples/$@.jq
+nqsbrute: ; $(JQ) -cnRrf examples/$@.jq
 triple: ; $(JQ) -cnrf examples/$@.jq
 
 # vim:ai:sw=8:ts=8:noet:syntax=make

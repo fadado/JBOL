@@ -11,11 +11,11 @@ module {
 ########################################################################
 # Simple utilities
 
-def even($n):
+def even($n): #:: (number) -> boolean
     $n%2 == 0
 ;
 
-def odd($n):
+def odd($n): #:: (number) -> boolean
     $n%2 != 0
 ;
 
@@ -25,29 +25,29 @@ def abs($n): #:: (number) -> number
 ;
 
 # Greatest common divisor
-def gcd($a; $b): #:: (number;number) -> number
-    if $b == 0
-    then $a
-    else gcd($b; $a % $b)
+def gcd($m; $n): #:: (number;number) -> number
+    if $n == 0
+    then $m
+    else gcd($n; $m % $n)
     end
 ;
 
 # Reductions ###########################################################
 
-def sum(g): #:: (<number>) -> number
-    reduce g as $item (0; .+$item)
+def sum(generator): #:: (<number>) -> number
+    reduce generator as $item (0; .+$item)
 ;
 
-def product(g): #:: (<number>) -> number
-    reduce g as $item (1; .*$item)
+def product(generator): #:: (<number>) -> number
+    reduce generator as $item (1; .*$item)
 ;
 
-def maximum(g): #:: (<number>) -> number
-    reduce g as $item (-(infinite); if $item > . then $item else . end)
+def maximum(generator): #:: (<number>) -> number
+    reduce generator as $item (-(infinite); if $item > . then $item else . end)
 ;
 
-def minimum(g): #:: (<number>) -> number
-    reduce g as $item (infinite; if $item < . then $item else . end)
+def minimum(generator): #:: (<number>) -> number
+    reduce generator as $item (infinite; if $item < . then $item else . end)
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq
