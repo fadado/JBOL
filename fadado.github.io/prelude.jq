@@ -9,8 +9,6 @@ module {
 };
 
 # α β γ δ   Types: alpha, beta, gamma, delta
-# ⦵         The empty stream (empty, fail...)
-# ⦺         Error, abort
 # ⊥         Bottom: 
 
 ########################################################################
@@ -21,7 +19,7 @@ module {
 #
 # By default `jq` tries all alternatives. This is the reverse of  *Icon*.
 #
-def once(generator): #:: (<α>) -> α|
+def once(generator): #:: (<α>) -> α
     label $pipe
     | generator
     | ., break $pipe
@@ -74,7 +72,7 @@ def assert($predicate; $message): #:: (boolean;string) -> α
 #    reduce generator as $a ($b; [.,$a]|filter)
 #;
 #def scan(filter; $b; generator): #:: (α|->β;β;<α>) -> <β>
-#    foreach generator as $a ($b; [.,$a]|filter)
+#    foreach generator as $a ($b; [.,$a]|filter; .)
 #;
 
 def unfold(filter; $seed): #:: (α|->[β,α];α) -> <β>

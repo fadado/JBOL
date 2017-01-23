@@ -1,5 +1,6 @@
 #!/usr/local/bin/jq -cnRrf
 
+include "fadado.github.io/prelude";
 import "fadado.github.io/generator/choice" as choice;
 
 def issorted:
@@ -18,12 +19,11 @@ def issorted:
 ;
 
 def bogussort:
-    label $pipe
-    | choice::shuffle
-    | choice::permutation
-    | if issorted
-      then ., break $pipe
-      else empty end
+    choice::shuffle
+    | once(
+        choice::permutation
+        | if issorted then . else empty end
+    )
 ;
 
 def main:
