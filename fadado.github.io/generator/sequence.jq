@@ -9,6 +9,7 @@ module {
 };
 
 include "fadado.github.io/prelude";
+include "fadado.github.io/math";
 
 # Arithmetic sequences #################################################
 
@@ -161,7 +162,7 @@ def harmonic: #:: -> <number>
 #   a(n) = 0 if a(n-1)+1 = m else a(n-1)+1
 #
 def modules($m): #:: (number)-> <number>
-    0|iterate(.+1|if . == $m then 0 else . end)
+    0|iterate(.+1|when (. == $m; 0))
 #   repeat(range(0; $m))
 #   tabulate(.%$m)
 ;
@@ -236,7 +237,6 @@ def leibniz: #:: -> <number>
 # All integer partitions ###############################################
 #
 def partition($i): #:: (number) -> <[number]>
-	def min(a; b): if a < b then a else b end;
 	def choose(a; b): range(a; 1+b);
     #
 	def pmax(n; mx):

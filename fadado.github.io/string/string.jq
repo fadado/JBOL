@@ -35,10 +35,7 @@ def upto($s; $i; $j): #:: string|(string;number;number) -> <number>
     assert($s != ""; "upto requires a non empty string as argument")
     | select($i >= 0 and $i < $j and $i < length and $j <= length)
     | range($i; $j) as $p
-    | if .[$p:$p+1] | inside($s)
-      then $p
-      else empty
-      end
+    | keep ($p; .[$p:$p+1]|inside($s))
 ;
 def upto($s; $i): #:: string|(string;number) -> <number>
     upto($s; $i; length)
@@ -50,10 +47,7 @@ def upto($s): #:: string|(string) -> <number>
 # Match initial string
 def match($s; $i): #:: string|(string;number) -> number
     select($i >= 0 and $i < length)
-    | if .[$i:]|startswith($s)
-      then $i+($s|length)
-      else empty
-      end
+    | keep ($i+($s|length); .[$i:]|startswith($s))
 ;
 def match($s): #:: string|(string) -> number
     match($s; 0)
@@ -62,10 +56,7 @@ def match($s): #:: string|(string) -> number
 # Locate initial character
 def any($s; $i): #:: string|(string;number) -> number
     select($i >= 0 and $i < length)
-    | if .[$i:$i+1] | inside($s)
-      then $i+1
-      else empty
-      end
+    | keep ($i+1; .[$i:$i+1]|inside($s))
 ;
 def any($s): #:: string|(string) -> number
     any($s; 0)
@@ -73,10 +64,7 @@ def any($s): #:: string|(string) -> number
 
 def notany($s; $i): #:: string|(string;number) -> number
     select($i >= 0 and $i < length)
-    | if .[$i:$i+1] | inside($s) | not
-      then $i+1
-      else empty
-      end
+    | keep ($i+1; .[$i:$i+1]|inside($s)|not)
 ;
 def notany($s): #:: string|(string) -> number
     notany($s; 0)
@@ -127,33 +115,25 @@ def none($s): #:: string|(string) -> number
 
 # Pad strings
 def left($n; $t): #:: string|(number;string) -> string
-    if $n <= length
-    then .
-    else ($t*($n-length)) + .
-    end
+    when ($n > length; ($t*($n-length)) + .)
 ;
 def left($n): #:: string|(number) -> string
     left($n; " ")
 ;
 
 def right($n; $t): #:: string|(number;string) -> string
-    if $n <= length
-    then .
-    else . + ($t*($n-length))
-    end
+    when ($n > length; . + ($t*($n-length)))
 ;
 def right($n): #:: string|(number) -> string
     right($n; " ")
 ;
 
 def center($n; $t): #:: string|(number;string) -> string
-    if $n <= length
-    then .
-    else
+    when ($n > length;
         ((($n-length)/2)|floor) as $i
         | ($t*$i) + . + ($t*$i)
-        | if length==$n then . else .+$t end
-    end
+        | when (length!=$n; .+$t)
+    )
 ;
 def center($n): #:: string|(number) -> string
     center($n; " ")
@@ -228,18 +208,18 @@ def _lndx(predicate): # left index or empty if not found
     label $found
     | range(length-1) as $i
     | if .[$i:$i+1]|predicate
-        then empty
-        else $i , break $found
-        end
+      then empty
+      else $i , break $found
+      end
 ;
 
 def _rndx(predicate): # rigth index or empty if not found
     label $found
     | range(length-1; 0; -1) as $i
     | if .[$i:$i+1]|predicate
-        then empty
-        else $i+1 , break $found
-        end
+      then empty
+      else $i+1 , break $found
+      end
 ;
 
 def lstrip($s): #:: string|(string) -> string

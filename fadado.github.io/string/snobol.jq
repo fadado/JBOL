@@ -146,44 +146,50 @@ def G(pattern): #:: CURSOR|(CURSOR|->CURSOR) -> CURSOR
 # Predicates
 #
 
-def EQ($m; $n): #:: (number;number) -> boolean
+def EQ($m; $n): #:: (number;number) -> CURSOR
     select($m == $n)
 ;
-def NE($m; $n): #:: (number;number) -> boolean
+def NE($m; $n): #:: (number;number) -> CURSOR
     select($m != $n)
 ;
-def GE($m; $n): #:: (number;number) -> boolean
+def GE($m; $n): #:: (number;number) -> CURSOR
     select($m >= $n)
 ;
-def GT($m; $n): #:: (number;number) -> boolean
+def GT($m; $n): #:: (number;number) -> CURSOR
     select($m >  $n)
 ;
-def LE($m; $n): #:: (number;number) -> boolean
+def LE($m; $n): #:: (number;number) -> CURSOR
     select($m >= $n)
 ;
-def LT($m; $n): #:: (number;number) -> boolean
+def LT($m; $n): #:: (number;number) -> CURSOR
     select($m >  $n)
 ;
 
-def LGT($s; $t): #:: (string;string) -> boolean
+def LGT($s; $t): #:: (string;string) -> CURSOR
     select(isstring($s) and $s > $t)
 ;
-def IDENT($s; $t): #:: (string;string) -> boolean
+def IDENT($s; $t): #:: (string;string) -> CURSOR
     select($s == $t)
 ;
-def IDENT($s): #:: (string;string) -> boolean
+def IDENT($s): #:: (string;string) -> CURSOR
     select($s == "")
 ;
-def DIFFER($s; $t): #:: (string;string) -> boolean
+def DIFFER($s; $t): #:: (string;string) -> CURSOR
     select($s != $t)
 ;
-def DIFFER($s): #:: (string;string) -> boolean
+def DIFFER($s): #:: (string;string) -> CURSOR
     select($s != "")
 ;
-def INTEGER($a): #:: (α) -> boolean
-    select((($a|isnumber) and ($a|length)==$a)
-        or (tonumber//false and ("."|inside($a)|not))
-    )
+def INTEGER($a): #:: (α) -> CURSOR
+    def test:
+       if isnumber and floor==.
+       then true
+       elif (tonumber?//false) and (contains(".")|not)
+       then true
+       else false
+       end
+    ;
+    select(test)
 ;
 
 #
@@ -344,19 +350,19 @@ def BREAKX($s): #:: CURSOR|(string) -> <CURSOR>
       // .
 ;
 
-def LEQ($s; $t): #:: (string;string) -> boolean
+def LEQ($s; $t): #:: (string;string) -> CURSOR
     select(isstring($s) and $s == $t)
 ;
-def LGE($s; $t): #:: (string;string) -> boolean
+def LGE($s; $t): #:: (string;string) -> CURSOR
     select(isstring($s) and $s >= $t)
 ;
-def LLE($s; $t): #:: (string;string) -> boolean
+def LLE($s; $t): #:: (string;string) -> CURSOR
     select(isstring($s) and $s >= $t)
 ;
-def LLT($s; $t): #:: (string;string) -> boolean
+def LLT($s; $t): #:: (string;string) -> CURSOR
     select(isstring($s) and $s >  $t)
 ;
-def LNE($s; $t): #:: (string;string) -> boolean
+def LNE($s; $t): #:: (string;string) -> CURSOR
     select(isstring($s) and $s != $t)
 ;
 

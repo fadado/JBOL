@@ -8,26 +8,14 @@ module {
     }
 };
 
+include "fadado.github.io/prelude";
+
 ########################################################################
 # Predicates
 
-def isempty(generator): #:: (<α>) -> boolean
-    (label $block | generator | 1, break $block)//0
-    | .==0  # count is 0
-;
-
-def nonempty(generator): #:: (<α>) -> boolean
-    (label $block | generator | 1 , break $block)//0
-    | .==1  # count is > 0
-;
-
-def count(generator): #:: (<α>) -> number
-    reduce generator as $_ (0; .+1)
-;
-
 # Redefine some jq primitives
 def all(generator; predicate): #:: (<α>;α->boolean) -> boolean
-    isempty(generator | if predicate then empty else . end)
+    failure(generator | predicate and empty)
 ;
 def all: #:: [boolean]| -> boolean
     all(.[]; .)
@@ -37,7 +25,7 @@ def all(predicate): #:: [α]|(α->boolean) -> boolean
 ;
 
 def any(generator; predicate): #:: (<α>;α->boolean) -> boolean
-    nonempty(generator | if predicate then . else empty end)
+    success(generator | predicate or empty)
 ;
 def any: #:: [boolean]| -> boolean
     any(.[]; .)
@@ -55,6 +43,12 @@ def any(predicate): #:: [α]|(α->boolean) -> boolean
 # filter:      filter p g   g|select(p)
 # apply:       f a          a|f
 # compose:     f·g          g|f
+
+# Count stream items.
+#
+def count(generator): #:: (<α>) -> number
+    reduce generator as $_ (0; .+1)
+;
 
 # Extract the first element of a stream.
 #
@@ -104,8 +98,8 @@ def drop($n; generator): #:: (number;<α>) -> <α>
     if $n == 0
     then generator
     else
-        foreach generator as $item ($n; .-1;
-            if . < 0 then $item else empty end)
+        foreach generator as $item
+            ($n; .-1; keep ($item; . < 0))
     end
 ;
 
@@ -117,8 +111,8 @@ def drop($n; generator): #:: (number;<α>) -> <α>
 # Remove the first element of a stream.
 #
 def rest(generator): #:: (<α>) -> <α>
-    foreach generator as $item (1; .-1;
-        if . < 0 then $item else empty end)
+    foreach generator as $item
+        (1; .-1; keep ($item; . < 0))
 ;
 
 # Returns the prefix of `generator` of length `n`.

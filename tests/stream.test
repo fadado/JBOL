@@ -17,46 +17,6 @@ true
 null
 true
 
-include "generator"; isempty(empty)
-null
-true
-
-include "generator"; isempty(range(0))
-null
-true
-
-include "generator"; isempty(true)
-null
-false
-
-include "generator"; isempty(false)
-null
-false
-
-include "generator"; isempty(null)
-null
-false
-
-include "generator"; isempty(range(8))
-null
-false
-
-include "generator"; isempty(1,2,3)
-null
-false
-
-include "generator"; isempty(0)
-null
-false
-
-include "generator"; isempty(infinite)
-null
-false
-
-include "generator"; isempty(nan)
-null
-false
-
 include "generator"; count(range(3)) == 3
 null
 true

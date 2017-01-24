@@ -38,12 +38,21 @@ def failure(generator): #:: (<α>) -> boolean
 
 # All true? None false?
 def every(generator): #:: (<boolean> -> boolean)
-    failure(generator | if . then empty else . end)
+    failure(generator | . and empty)
 ;
 
 # Some true? Not all false?
 def some(generator): #:: (<boolean> -> boolean)
-    success(generator | if . then . else empty end)
+    success(generator | . or empty)
+;
+
+# Experimental conditionals
+#
+def keep(item; predicate): #:: (α;boolean) -> α
+    if predicate//false then item else empty end
+;
+def when(predicate; action): #:: α|(boolean;β) -> γ
+    if predicate//false then action else . end
 ;
 
 # Assertions

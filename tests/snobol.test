@@ -357,6 +357,10 @@ include "string/snobol"; INTEGER(.) | true
 true
 
 include "string/snobol"; INTEGER(.) | true
+123.22
+# Failure
+
+include "string/snobol"; INTEGER(.) | true
 123
 true
 

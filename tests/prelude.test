@@ -5,9 +5,6 @@
 # Blank lines and lines starting with # are ignored.
 #########################################################################
 
-#########################################################################
-# Recursion schemata
-
 #include "prelude"; reduce .[] as $n (0; .+$n) == fold(.[0]+.[1]; 0; .[])
 #[1,2,3,4]
 #true
@@ -15,5 +12,46 @@
 include "prelude"; [limit(6; tabulate(pow(.;2)))]
 null
 [0,1,4,9,16,25]
+
+
+include "prelude"; failure(empty)
+null
+true
+
+include "prelude"; failure(range(0))
+null
+true
+
+include "prelude"; failure(true)
+null
+false
+
+include "prelude"; failure(false)
+null
+false
+
+include "prelude"; failure(null)
+null
+false
+
+include "prelude"; failure(range(8))
+null
+false
+
+include "prelude"; failure(1,2,3)
+null
+false
+
+include "prelude"; failure(0)
+null
+false
+
+include "prelude"; failure(infinite)
+null
+false
+
+include "prelude"; failure(nan)
+null
+false
 
 # vim:ai:sw=2:ts=2:et:syntax=jq

@@ -9,6 +9,7 @@ module {
     description: "Non-deterministic choice generators"
 };
 
+include "fadado.github.io/prelude";
 import "fadado.github.io/generator" as stream;
 import "fadado.github.io/generator/chance" as chance;
 
@@ -248,10 +249,7 @@ def circle_u: #:: [α]| -> <[α]>
 #
 def circle: #:: [α]| -> <[α]>
     def rotate($min): #:: [α]| -> [α]
-        if .[0] ==  $min
-        then .
-        else (.[-1:]+.[0:-1]) | rotate($min)
-        end
+        when (.[0] != $min; .[-1:]+.[0:-1]|rotate($min))
     ;
     # expect sorted input
     .[0] as $first
@@ -283,10 +281,8 @@ def disposition: #:: [α]| -> <[α]>
 def shuffle($seed): #:: [α]|(number) -> [α]
     # Swaps two array positions
     def swap($i; $j): #:: [α]|(number;number) -> [α]
-        if $i == $j
-        then .
-        else .[$i] as $t | .[$i]=.[$j] | .[$j]=$t
-        end
+        when ($i != $j;
+              .[$i] as $t | .[$i]=.[$j] | .[$j]=$t)
     ;
     . as $array
     | length as $len

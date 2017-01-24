@@ -32,6 +32,14 @@ def gcd($m; $n): #:: (number;number) -> number
     end
 ;
 
+# Min and max
+def min($a; $b): #:: (number;number) -> number
+    if $a < $b then $a else $b end
+;
+def max($a; $b): #:: (number;number) -> number
+    if $a > $b then $a else $b end
+;
+
 # Reductions ###########################################################
 
 def sum(generator): #:: (<number>) -> number
@@ -43,11 +51,11 @@ def product(generator): #:: (<number>) -> number
 ;
 
 def maximum(generator): #:: (<number>) -> number
-    reduce generator as $item (-(infinite); if $item > . then $item else . end)
+    reduce generator as $item (-(infinite); max($item; .))
 ;
 
 def minimum(generator): #:: (<number>) -> number
-    reduce generator as $item (infinite; if $item < . then $item else . end)
+    reduce generator as $item (infinite; min($item; .))
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq
