@@ -60,16 +60,20 @@ def unless(predicate; action): #:: α|(boolean;β) -> αβ
 
 # Assertions
 def assert($predicate; $location; $message): #:: (boolean;object;string) -> α
-    unless($predicate;
+    if $predicate
+    then .
+    else
         $location
         | "Assertion failed: "+$message+", file \(.file), line \(.line)"
         | error
-    )
+    end
 ;
 
 def assert($predicate; $message): #:: (boolean;string) -> α
-    unless($predicate;
-        error("Assertion failed: "+$message))
+    if $predicate
+    then .
+    else error("Assertion failed: "+$message)
+    end
 ;
 
 ########################################################################

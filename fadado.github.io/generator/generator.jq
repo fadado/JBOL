@@ -94,11 +94,12 @@ def repeat(generator): #:: (<α>) -> <α>, (α) -> <α>
 # `empty` after all elements are dropped
 #
 def drop($n; generator): #:: (number;<α>) -> <α>
-    select($n >= 0) | # not defined for n<0 and n>=#generator
+    select($n >= 0) | # not defined for n < 0 or n >= #generator
     if $n == 0
     then generator
     else
         foreach generator as $item
+        # . will never reach -(infinity), I hope!
             ($n; .-1; keep($item; . < 0))
     end
 ;
@@ -112,6 +113,7 @@ def drop($n; generator): #:: (number;<α>) -> <α>
 #
 def rest(generator): #:: (<α>) -> <α>
     foreach generator as $item
+    # . will never reach -(infinity), I hope!
         (1; .-1; keep($item; . < 0))
 ;
 

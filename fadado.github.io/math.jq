@@ -11,6 +11,10 @@ module {
 ########################################################################
 # Simple utilities
 
+def abs($n): #:: (number) -> number
+    $n|length
+;
+
 def even($n): #:: (number) -> boolean
     $n%2 == 0
 ;
@@ -19,20 +23,6 @@ def odd($n): #:: (number) -> boolean
     $n%2 != 0
 ;
 
-# Absolute value
-def abs($n): #:: (number) -> number
-    $n|length
-;
-
-# Greatest common divisor
-def gcd($m; $n): #:: (number;number) -> number
-    if $n == 0
-    then $m
-    else gcd($n; $m % $n)
-    end
-;
-
-# Min and max
 def min($a; $b): #:: (number;number) -> number
     if $a < $b then $a else $b end
 ;
@@ -40,7 +30,15 @@ def max($a; $b): #:: (number;number) -> number
     if $a > $b then $a else $b end
 ;
 
-# Reductions ###########################################################
+def gcd($m; $n): #:: (number;number) -> number
+    if $n == 0
+    then $m
+    else gcd($n; $m % $n)
+    end
+;
+
+########################################################################
+# Reductions
 
 def sum(generator): #:: (<number>) -> number
     reduce generator as $item
