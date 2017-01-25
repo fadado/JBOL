@@ -106,9 +106,11 @@ def mapdoc(filter): #:: α|(β->γ) -> α
 def set($elements): #:: (α) -> {boolean}
     if $elements|isstring
     then # string
-        reduce ($elements/"")[] as $element ({}; . += {($element):true})
+        reduce ($elements/"")[] as $element
+            ({}; . += {($element):true})
     else # array
-        reduce $elements[] as $element ({}; . += {($element|tostring):true})
+        reduce $elements[] as $element
+            ({}; . += {($element|tostring):true})
     end
 ;
 

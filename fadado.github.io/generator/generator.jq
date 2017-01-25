@@ -99,20 +99,20 @@ def drop($n; generator): #:: (number;<α>) -> <α>
     then generator
     else
         foreach generator as $item
-            ($n; .-1; keep ($item; . < 0))
+            ($n; .-1; keep($item; . < 0))
     end
 ;
 
 #!def dropWhile(predicate; generator):
 #!# Warning: is in fact `filter`
-#!    generator | if predicate then empty else . end
+#!    generator | keep(.; predicate)
 #!;
 
 # Remove the first element of a stream.
 #
 def rest(generator): #:: (<α>) -> <α>
     foreach generator as $item
-        (1; .-1; keep ($item; . < 0))
+        (1; .-1; keep($item; . < 0))
 ;
 
 # Returns the prefix of `generator` of length `n`.
@@ -134,10 +134,7 @@ def take($n; generator): #:: (number;<α>) -> <α>
 def takeWhile(predicate; generator): #:: (α->boolean;<α>) -> <α>
     label $pipe
     | generator
-    | if predicate
-      then .
-      else break $pipe
-      end
+    | unless(predicate; break $pipe)
 ;
 
 # Analogous to array[start; stop] applied to streams.

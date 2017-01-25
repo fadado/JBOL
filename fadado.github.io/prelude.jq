@@ -51,8 +51,11 @@ def some(generator): #:: (<boolean> -> boolean)
 def keep(item; predicate): #:: (α;boolean) -> α
     if predicate//false then item else empty end
 ;
-def when(predicate; action): #:: α|(boolean;β) -> γ
+def when(predicate; action): #:: α|(boolean;β) -> αβ
     if predicate//false then action else . end
+;
+def unless(predicate; action): #:: α|(boolean;β) -> αβ
+    if predicate//false then . else action end
 ;
 
 # Assertions

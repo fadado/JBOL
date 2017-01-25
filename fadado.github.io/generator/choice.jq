@@ -249,7 +249,8 @@ def circle_u: #:: [α]| -> <[α]>
 #
 def circle: #:: [α]| -> <[α]>
     def rotate($min): #:: [α]| -> [α]
-        when (.[0] != $min; .[-1:]+.[0:-1]|rotate($min))
+        when(.[0] != $min;
+             .[-1:]+.[0:-1]|rotate($min))
     ;
     # expect sorted input
     .[0] as $first
@@ -281,8 +282,8 @@ def disposition: #:: [α]| -> <[α]>
 def shuffle($seed): #:: [α]|(number) -> [α]
     # Swaps two array positions
     def swap($i; $j): #:: [α]|(number;number) -> [α]
-        when ($i != $j;
-              .[$i] as $t | .[$i]=.[$j] | .[$j]=$t)
+        when($i != $j;
+             .[$i] as $t | .[$i]=.[$j] | .[$j]=$t)
     ;
     . as $array
     | length as $len
