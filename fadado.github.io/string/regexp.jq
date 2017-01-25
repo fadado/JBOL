@@ -112,7 +112,7 @@ def tostr: #:: MATCH -> string
       else (
         label $nonnull
         | range($len) as $i
-        | if .captures[$i].string | isnull
+        | if .captures[$i].string|isnull
           then empty # next
           else (.captures[$i].string , break $nonnull)
           end

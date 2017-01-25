@@ -53,10 +53,7 @@ def negatives: #:: -> <number>
 #def to($m; $n): #:: (number;number) -> <number>
 #    label $exit # range($m; $n+1)
 #    | arithmetic($m; 1)
-#    | if . <= $n
-#      then .
-#      else break $exit
-#      end
+#    | when(. > $n; break $exit)
 #;
 
 # CF:

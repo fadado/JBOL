@@ -43,19 +43,23 @@ def max($a; $b): #:: (number;number) -> number
 # Reductions ###########################################################
 
 def sum(generator): #:: (<number>) -> number
-    reduce generator as $item (0; .+$item)
+    reduce generator as $item
+        (0; .+$item)
 ;
 
 def product(generator): #:: (<number>) -> number
-    reduce generator as $item (1; .*$item)
+    reduce generator as $item
+        (1; .*$item)
 ;
 
 def maximum(generator): #:: (<number>) -> number
-    reduce generator as $item (-(infinite); max($item; .))
+    reduce generator as $item
+        (-(infinite); max($item; .))
 ;
 
 def minimum(generator): #:: (<number>) -> number
-    reduce generator as $item (infinite; min($item; .))
+    reduce generator as $item
+        (infinite; min($item; .))
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

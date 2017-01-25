@@ -235,18 +235,14 @@ def lstrip($s): #:: string|(string) -> string
 ;
 
 def rstrip($s): #:: string|(string) -> string
-    if length==0 or (.[-1:length]|inside($s)|not)
-    then .
-    else
-        (_rndx(inside($s))//-1) as $i
-        | if $i < 0 then "" else .[0:$i] end
-    end
+    when(length!=0 and (.[-1:length]|inside($s));
+         (_rndx(inside($s))//-1) as $i
+         | if $i < 0 then "" else .[0:$i] end
+    )
 ;
 
 def strip($s): #:: string|(string) -> string
-    if length==0 or ((.[0:1]|inside($s)) or (.[-1:length]|inside($s)) | not)
-    then .
-    else
+    when(length!=0 and ((.[0:1]|inside($s)) or (.[-1:length]|inside($s)));
         (_lndx(inside($s))//-1) as $i |
         (_rndx(inside($s))//-1) as $j |
         if $i < 0 and $j < 0 then ""
@@ -254,7 +250,7 @@ def strip($s): #:: string|(string) -> string
         elif $i < 0          then .[:$j]
                              else .[$i:$j]
         end
-    end
+    )
 ;
 
 def trim: #:: string| -> string

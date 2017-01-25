@@ -60,20 +60,16 @@ def unless(predicate; action): #:: α|(boolean;β) -> αβ
 
 # Assertions
 def assert($predicate; $location; $message): #:: (boolean;object;string) -> α
-    if $predicate
-    then .
-    else
+    unless($predicate;
         $location
         | "Assertion failed: "+$message+", file \(.file), line \(.line)"
         | error
-    end
+    )
 ;
 
 def assert($predicate; $message): #:: (boolean;string) -> α
-    if $predicate
-    then .
-    else error("Assertion failed: "+$message)
-    end
+    unless($predicate;
+        error("Assertion failed: "+$message))
 ;
 
 ########################################################################
@@ -93,7 +89,6 @@ def unfold(filter; $seed): #:: (α|->[β,α];α) -> <β>
 ;
 
 def unfold(filter): #:: α|(α|->[β,α]) -> <β>
-    # . as $seed
     unfold(filter; .)
 ;
 
@@ -113,7 +108,7 @@ def tabulate($start; filter): #:: (number;number|->α) -> <α>
     $start|r
 ;
 def tabulate(filter): #:: (number|->α) -> <α>
-    # tabulate from 0
+    # tabulate starting at 0
     def r: .|filter, (.+1|r);
     0|r
 ;

@@ -212,10 +212,7 @@ def mulseq($k): #:: [α]|(number) <[α]>
 def derangement: #:: [α]| -> <[α]>
     def choose($i): #:: [α]|(number) -> [[number,α]]
         range(length) as $j
-        | if .[$j][0] == $i
-          then empty
-          else [$j, .[$j][1]]
-          end
+        | keep([$j, .[$j][1]]; .[$j][0] != $i)
     ;
     def _derange($i): #:: [α]|(number) -> <[α]>
         if length == 0
