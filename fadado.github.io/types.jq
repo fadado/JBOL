@@ -99,29 +99,4 @@ def mapdoc(filter): #:: α|(β->γ) -> α
     end
 ;
 
-# Set construction from strings and arrays
-#
-# SET: {"name": boolean, ...}
-#
-def set($elements): #:: (α) -> {boolean}
-    if $elements|isstring
-    then # string
-        reduce ($elements/"")[] as $element
-            ({}; . += {($element):true})
-    else # array
-        reduce $elements[] as $element
-            ({}; . += {($element|tostring):true})
-    end
-;
-
-# Common sets operations
-#
-def intersection($other): #:: {boolean}|({boolean}) -> {boolean} 
-    mapobj(select(.name | in($other)))
-;
-
-def difference($other): #:: {boolean}|({boolean}) -> {boolean} 
-    mapobj(select(.name | in($other) | not))
-;
-
 # vim:ai:sw=4:ts=4:et:syntax=jq

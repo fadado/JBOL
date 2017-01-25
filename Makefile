@@ -111,7 +111,7 @@ $(LogDir)/%.log: tests/%.test
 
 # Common tests
 $(LogDir)/prelude.log: $(LIB)/prelude.jq
-$(LogDir)/sets.log: $(LIB)/prelude.jq $(LIB)/types.jq
+$(LogDir)/sets.log: $(LIB)/set.jq
 $(LogDir)/math.log: $(LIB)/math.jq
 
 # Generator tests
