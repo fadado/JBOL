@@ -110,11 +110,11 @@ def tostr: #:: MATCH -> string
     | if $len == 0
       then .string//""
       else (
-        label $nonnull
+        label $exit
         | range($len) as $i
         | if .captures[$i].string|isnull
           then empty # next
-          else (.captures[$i].string , break $nonnull)
+          else .captures[$i].string , break $exit
           end
         )//""
       end
@@ -138,7 +138,7 @@ def split($regex; $flags; $limit): #:: string|(string;string;number) -> <string>
     else
         . as $subject
         | [ 0, # first index
-            (label $loop
+            (label $exit
                 | foreach match($regex; $flags+"g") as $m
                     # init
                     ($limit;
@@ -146,7 +146,7 @@ def split($regex; $flags; $limit): #:: string|(string;string;number) -> <string>
                     .-1;
                     # yield if conditions are ok
                     if . < 0
-                    then break $loop
+                    then break $exit
                     else $m.offset, $m.captures, $m.offset+$m.length
                     end)),
             ($subject|length), # last index

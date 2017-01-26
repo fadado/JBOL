@@ -211,7 +211,7 @@ def fibstr: #:: -> <number>
 def primes: #:: -> <number>
     def sieve(g): #:: (<number>) -> <number>
         # first(g) as $n
-        (label $pipe | g | . , break $pipe) as $n
+        (label $exit | g | . , break $exit) as $n
         | $n, sieve(g|select((. % $n) != 0))
     ;
     sieve(range(2; infinite))

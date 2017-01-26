@@ -53,9 +53,9 @@ def count(generator): #:: (<α>) -> number
 # Extract the first element of a stream.
 #
 def first(generator): #:: (<α>) ->α
-    label $pipe
+    label $exit
     | generator
-    | . , break $pipe
+    | . , break $exit
 ;
 
 # Extract the last element of a stream.
@@ -69,9 +69,9 @@ def last(generator): #:: (<α>) ->α
 #
 def nth($n; generator): #:: (number;<α>-> α
     select($n >= 0) | # not defined for n<0 and n>=#generator
-    label $loop
+    label $exit
     | foreach generator as $item ($n; .-1;
-        if . == -1 then $item , break $loop else empty end)
+        if . == -1 then $item , break $exit else empty end)
 ;
 
 # Produces enumerated items from `generator`.
@@ -124,9 +124,9 @@ def take($n; generator): #:: (number;<α>) -> <α>
     if $n == 0
     then generator
     else
-        label $loop
+        label $exit
         | foreach generator as $item ($n;
-            if . < 1 then break $loop else .-1 end;
+            if . < 1 then break $exit else .-1 end;
             $item)
     end
 ;
@@ -134,9 +134,9 @@ def take($n; generator): #:: (number;<α>) -> <α>
 # Returns the prefix of `generator` while `predicate` is true.
 #
 def takeWhile(predicate; generator): #:: (α->boolean;<α>) -> <α>
-    label $pipe
+    label $exit
     | generator
-    | unless(predicate; break $pipe)
+    | unless(predicate; break $exit)
 ;
 
 # Analogous to array[start; stop] applied to streams.

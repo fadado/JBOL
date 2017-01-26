@@ -5,6 +5,11 @@
 # Blank lines and lines starting with # are ignored.
 #########################################################################
 
+include "string/snobol"; A | FIND("o") | AT
+"kaleidoscope"
+6
+9
+
 include "string/snobol"; include "prelude"; "abcdefghijklmnoprstuvwxyz" as $a |A|unfold(BREAK($a)|SPAN($a)|[N,.])| .
 "one or tree words"
 "one"

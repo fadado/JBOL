@@ -229,6 +229,10 @@ include "set"; set("xyz123") as $a | set("xyz") as $b | $a != $b and ($a | inter
 null
 true
 
+include "set"; set(.) | contains(set("k"))
+[3,2,1,"k"]
+true
+
 # ≡ ∅
 . == { }
 { }

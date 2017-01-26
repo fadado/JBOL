@@ -20,19 +20,19 @@ module {
 # By default `jq` tries all alternatives. This is the reverse of  *Icon*.
 #
 def once(generator): #:: (<α>) -> α
-    label $pipe
+    label $exit
     | generator
-    | ., break $pipe
+    | ., break $exit
 ;
 
 # Boolean context for goal-directed expression evaluation.
 def success(generator): #:: (<α>) -> boolean
-    (label $block | generator | 1 , break $block)//0
+    (label $exit | generator | 1 , break $exit)//0
     | .==1  # computation generates results
 ;
 
 def failure(generator): #:: (<α>) -> boolean
-    (label $block | generator | 1 , break $block)//0
+    (label $exit | generator | 1 , break $exit)//0
     | .==0  # computation does not generate results
 ;
 

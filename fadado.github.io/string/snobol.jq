@@ -316,7 +316,7 @@ def REM: #:: CURSOR| -> CURSOR
 def ABORT: #:: CURSOR| -> CURSOR
     error("ABORT")
     # With label/break:
-    #   label $ABORT | P | Q , break $ABORT | R;
+    #   label $abort | P | Q , break $abort | R;
 ;
 
 def FAIL: #:: CURSOR| -> CURSOR
@@ -326,7 +326,7 @@ def FAIL: #:: CURSOR| -> CURSOR
 def FENCE: #:: CURSOR| -> CURSOR
     . , error("ABORT")
     # With label/break:
-    #   label $FENCE | P | (NULL , break $FENCE) | Q;
+    #   label $abort | P | NULL , break $abort | Q;
 ;
 
 def SUCCEED: #::CURSOR| -> <CURSOR>
@@ -336,11 +336,15 @@ def SUCCEED: #::CURSOR| -> <CURSOR>
 # By default SNOBOL tries only once to match, but by default jq tries all
 # alternatives. To restrict evaluation to one value use the function `first` or
 # this construct:
-#   label $once | P | Q | NULL , break $once;
+#   label $exit | P | Q | NULL , break $exit;
 
 ########################################################################
-# Popular extensions
+# Extensions
 ########################################################################
+
+#
+# SPITBOL extensions
+#
 
 def BREAKX($s): #:: CURSOR|(string) -> <CURSOR>
     assert($s != ""; "BREAKX requires a non empty string as argument")
@@ -369,23 +373,23 @@ def LNE($s; $t): #:: (string;string) -> CURSOR
 def CHAR($n): #:: (number) -> string
     str::char($n)
 ;
+def ORD($s): #:: (string) -> number
+    str::ord($s)
+;
 def LPAD($s; $n): #:: (string;number) -> string
     $s|str::left($n; " ")
 ;
 def LPAD($s; $n; $t): #:: (string;number;string) -> string
     $s|str::left($n; $t)
 ;
-def ORD($s): #:: (string) -> number
-    str::ord($s)
-;
-def REVERSE($s): #:: (string) -> string
-    $s|explode|reverse|implode
-;
 def RPAD($s; $n): #:: (string;number) -> string
     $s|str::right($n; " ")
 ;
 def RPAD($s; $n; $t): #:: (string;number;string) -> string
     $s|str::right($n; $t)
+;
+def REVERSE($s): #:: (string) -> string
+    $s|explode|reverse|implode
 ;
 def SUBSTR($s; $n): #:: (string;number) -> string
     $s[$n:]
@@ -407,6 +411,15 @@ def IF(pattern): #::CURSOR|(CURSOR|->CURSOR) -> CURSOR
 
 def NOT(pattern): #::CURSOR|(CURSOR|->CURSOR) -> CURSOR
     select(failure(pattern))
+;
+
+#
+# Extensions found in the literature
+#
+
+def FIND($s): #::CURSOR|(pattern) -> <CURSOR>
+    .position as $p | .slen as $n
+    | TAB(.subject | str::find($s; $p; $n))
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

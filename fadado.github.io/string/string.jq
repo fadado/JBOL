@@ -9,9 +9,8 @@ module {
 };
 
 include "fadado.github.io/prelude";
-include "fadado.github.io/types";
-include "fadado.github.io/math";
 
+import "fadado.github.io/set" as set;
 import "fadado.github.io/string/ascii" as ascii;
 
 ########################################################################
@@ -21,7 +20,8 @@ import "fadado.github.io/string/ascii" as ascii;
 # Find string
 def find($s; $i; $j): #:: string|(string;number;number) -> <number>
     select($i >= 0 and $i < $j and $i < length and $j <= length)
-    | indices($s[$i:$j])[]
+    | .[$i:$j]
+    | indices($s)[]
 ;
 def find($s; $i): #:: string|(string;number) -> <number>
     find($s; $i; length)
@@ -181,7 +181,7 @@ def rot13: #:: TABLE
 # Preserve tables
 #
 def ptable($from; $preserve): #:: (string;string) -> TABLE
-   set($preserve) as $t
+   set::set($preserve) as $t
    | reduce (($from/"")|unique)[] as $c
         ({}; . += (if $t[$c] then null else {($c):""} end))
 ;
@@ -208,20 +208,20 @@ def translate($from; $to): #:: string|(string:string) -> string
 # Classical trim and strip
 
 def _lndx(predicate): # left index or empty if not found
-    label $found
+    label $exit
     | range(length-1) as $i
     | if .[$i:$i+1]|predicate
       then empty
-      else $i , break $found
+      else $i , break $exit
       end
 ;
 
 def _rndx(predicate): # rigth index or empty if not found
-    label $found
+    label $exit
     | range(length-1; 0; -1) as $i
     | if .[$i:$i+1]|predicate
       then empty
-      else $i+1 , break $found
+      else $i+1 , break $exit
       end
 ;
 
