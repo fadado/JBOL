@@ -9,7 +9,7 @@ module {
 };
 
 # α β γ δ   Types: alpha, beta, gamma, delta
-# ⊥         Bottom: 
+# ⊥         Bottom
 
 ########################################################################
 # Control operators

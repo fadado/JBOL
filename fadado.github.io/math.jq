@@ -37,6 +37,17 @@ def gcd($m; $n): #:: (number;number) -> number
     end
 ;
 
+def sign($n): #:: (number) -> number
+    if isnan or type!="number"
+    then nan
+    elif $n == 0 # or -0
+    then $n
+    elif $n > 0
+    then 1
+    else -1
+    end
+;
+
 ########################################################################
 # Reductions
 

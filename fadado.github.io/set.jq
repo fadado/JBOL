@@ -50,11 +50,11 @@ def set($elements): #:: (α) -> {boolean}
 
 # Common sets operations
 #
-def intersection($other): #:: {boolean}|({boolean}) -> {boolean} 
+def intersection($other): #:: {boolean}|({boolean}) -> {boolean}
     mapobj(select(.name | in($other)))
 ;
 
-def difference($other): #:: {boolean}|({boolean}) -> {boolean} 
+def difference($other): #:: {boolean}|({boolean}) -> {boolean}
     mapobj(select(.name | in($other) | not))
 ;
 
