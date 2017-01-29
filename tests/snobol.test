@@ -5,9 +5,13 @@
 # Blank lines and lines starting with # are ignored.
 #########################################################################
 
+include "string/snobol"; REMOVE("aeiou")
+"loquenomesabiayo"
+"lqnmsby"
+
 include "string/snobol"; A | L("abc. ") | MOVE(-2) | REM | N
 "abc. Y"
-". "
+". Y"
 
 include "string/snobol"; A | FIND("o") | AT
 "kaleidoscope"

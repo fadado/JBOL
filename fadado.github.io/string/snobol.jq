@@ -425,6 +425,14 @@ def FIND($s): #::CURSOR|(pattern) -> <CURSOR>
 def MOVE($n): #:: CURSOR|(number) -> CURSOR
 # TODO: not really tested!!!
     .position+=$n
+    # ???
+    # if .position < .start then .start=.position else . end
+;
+# TODO: from SNOBOL4+, define ATB, ARTAB...
+
+def REMOVE($s): #:: (string) -> string
+    reduce ((./"")[] | select(inside($s)|not)) as $c
+        (""; . + $c)
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq
