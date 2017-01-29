@@ -8,8 +8,10 @@ module {
     }
 };
 
-# α β γ δ   Types: alpha, beta, gamma, delta
-# ⊥         Bottom
+# α β γ δ   alpha, beta, gamma, delta
+# ⊥         bottom
+# ¦         broken bar
+# ε         epsilon
 
 ########################################################################
 # Control operators

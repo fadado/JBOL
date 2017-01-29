@@ -16,7 +16,7 @@ include "fadado.github.io/types";
 # SET: {"element": boolean, ...}
 #
 # ∅         {}
-# |s|       length
+# ¦s¦       length
 # {e...}    set([e...])
 # s + e     s|.e=true
 # s + e     s+={e:true}

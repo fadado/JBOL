@@ -88,7 +88,7 @@ def S: #:: CURSOR| -> string
 
 # Matches the empty string (always matches), like the empty pattern in SNOBOL
 def NULL: #:: CURSOR -> CURSOR
-    .
+    . # ε
 ;
 
 # Match a literal, necessary to "wrap" all string literals
@@ -402,24 +402,29 @@ def TRIM($s): #:: (string) -> string
 ;
 
 #
-# Extensions presented in the James F. Gimpel book
-#
-
-def IF(pattern): #::CURSOR|(CURSOR|->CURSOR) -> CURSOR
-    select(success(pattern))
-;
-
-def NOT(pattern): #::CURSOR|(CURSOR|->CURSOR) -> CURSOR
-    select(failure(pattern))
-;
-
-#
 # Extensions found in the literature
 #
 
+# also called NOT...
+def NO(pattern): #::CURSOR|(CURSOR|->CURSOR) -> CURSOR
+    select(failure(pattern))
+;
+
+# also called IF, NEXT...
+def YES(pattern): #::CURSOR|(CURSOR|->CURSOR) -> CURSOR
+    select(success(pattern))
+;
+
+# retrofitted from Icon
 def FIND($s): #::CURSOR|(pattern) -> <CURSOR>
     .position as $p | .slen as $n
     | TAB(.subject | str::find($s; $p; $n))
+;
+
+# retrofitted from Icon
+def MOVE($n): #:: CURSOR|(number) -> CURSOR
+# TODO: not really tested!!!
+    .position+=$n
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

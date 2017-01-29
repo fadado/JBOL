@@ -5,6 +5,10 @@
 # Blank lines and lines starting with # are ignored.
 #########################################################################
 
+include "string/snobol"; A | L("abc. ") | MOVE(-2) | REM | N
+"abc. Y"
+". "
+
 include "string/snobol"; A | FIND("o") | AT
 "kaleidoscope"
 6
@@ -349,11 +353,11 @@ include "string/snobol"; A | LEN(3) | M
 "ABC"
 "ABC"
 
-include "string/snobol"; U | POS(0) | NOT(LEN(3)) | M
+include "string/snobol"; U | POS(0) | NO(LEN(3)) | M
 "ABC"
 #
 
-include "string/snobol"; U | IF(LEN(3)) | M
+include "string/snobol"; U | YES(LEN(3)) | M
 "AB"
 #
 
