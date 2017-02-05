@@ -182,12 +182,8 @@ def DIFFER($s): #:: (string;string) -> CURSOR
 ;
 def INTEGER($a): #:: (α) -> CURSOR
     def test:
-       if isnumber and floor==.
-       then true
-       elif (tonumber?//false) and (contains(".")|not)
-       then true
-       else false
-       end
+       (isnumber and floor==.)
+       or (tonumber?//false) and (contains(".")|not)
     ;
     select(test)
 ;

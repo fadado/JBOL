@@ -71,7 +71,7 @@ def nth($n; generator): #:: (number;<α>-> α
     select($n >= 0) | # not defined for n<0 and n>=#generator
     label $exit
     | foreach generator as $item ($n; .-1;
-        if . == -1 then $item , break $exit else empty end)
+        keep(. == -1; $item , break $exit))
 ;
 
 # Produces enumerated items from `generator`.
@@ -100,13 +100,13 @@ def drop($n; generator): #:: (number;<α>) -> <α>
     else
         foreach generator as $item
         # . will never reach -(infinity), I hope!
-            ($n; .-1; keep($item; . < 0))
+            ($n; .-1; keep(. < 0; $item))
     end
 ;
 
 #!def dropWhile(predicate; generator):
 #!# Warning: is in fact `filter`
-#!    generator | keep(.; predicate)
+#!    generator | keep(predicate; .)
 #!;
 
 # Remove the first element of a stream.
@@ -114,7 +114,7 @@ def drop($n; generator): #:: (number;<α>) -> <α>
 def rest(generator): #:: (<α>) -> <α>
     foreach generator as $item
     # . will never reach -(infinity), I hope!
-        (1; .-1; keep($item; . < 0))
+        (1; .-1; keep(. < 0; $item))
 ;
 
 # Returns the prefix of `generator` of length `n`.

@@ -43,14 +43,12 @@ def _left($i): #:: [α]|(number) -> [α]
 # Subsets with one element removed (unsorted output)
 #
 def subset1_u: #:: [α]| -> <[α]>
-    if length==0
-    then empty
-    else
+    keep(length != 0; 
         # either what's _left after picking one,
         _left
         # or this one with what's _left with one removed
         , _pick + (_left|subset1_u)
-    end
+    )
 ;
 
 # Size k subsets
@@ -60,13 +58,12 @@ def subset($k): #:: [α]|(number) -> <[α]>
     def _subset($k):
         if $k == 0
         then []
-        elif length==0  # no results for k > n
-        then empty
-        else
-            # either _pick one and add to what's _left subsets
-            _pick + (_left|_subset($k-1))
-            # or what's _left combined
-            , (_left|_subset($k))
+        else keep(length > 0;  # no results for k > n
+                # either _pick one and add to what's _left subsets
+                _pick + (_left|_subset($k-1))
+                # or what's _left combined
+                , (_left|_subset($k))
+            )
         end
     ;
     select(0 <= $k and $k <= length) # not defined for all $k
@@ -104,13 +101,12 @@ def mulset($k): #:: [α]|(number) -> <[α]>
     def _mulset($k):
         if $k == 0
         then []
-        elif length==0
-        then empty
-        else
-            # either _pick one and add to other multisets minus one
-            _pick + _mulset($k-1)
-            # or what's _left multisets
-            , (_left|_mulset($k))
+        else keep(length > 0;
+                # either _pick one and add to other multisets minus one
+                _pick + _mulset($k-1)
+                # or what's _left multisets
+                , (_left|_mulset($k))
+            )
         end
     ;
     select(0 <= $k) # not defined for all $k
@@ -212,7 +208,7 @@ def mulseq($k): #:: [α]|(number) <[α]>
 def derangement: #:: [α]| -> <[α]>
     def choose($i): #:: [α]|(number) -> [[number,α]]
         range(length) as $j
-        | keep([$j, .[$j][1]]; .[$j][0] != $i)
+        | keep(.[$j][0] != $i; [$j, .[$j][1]])
     ;
     def _derange($i): #:: [α]|(number) -> <[α]>
         if length == 0
@@ -224,13 +220,11 @@ def derangement: #:: [α]| -> <[α]>
             | [$x] + (_left($j)|_derange($i+1))
         end
     ;
-    if length < 2
-    then empty  # no derangements for less than 2 elements
-    else
+    keep(length >= 2; # no derangements for less than 2 elements
         # . (dot) for _derange has still available enumerated elements
         [range(length) as $i | [$i,.[$i]]]
         | _derange(0)
-    end
+    )
 ;
 
 # Circular permutations (necklaces)
@@ -310,12 +304,12 @@ def take($k; $seed): #:: [α]|(number;number) -> <α>
     def _take($a; $r; $m):
         def t($n; $k):
             ($m-$n) as $i
-            | if $n < 1
-              then empty
-              elif $r[$i] < ($k/$n)
-              then $a[$i] , t($n-1; $k-1)
-              else t($n-1; $k)
-              end
+            | keep($n >= 1;
+                if $r[$i] < ($k/$n)
+                then $a[$i] , t($n-1; $k-1)
+                else t($n-1; $k)
+                end
+              )
         ;
         t($m; $k)
     ;
