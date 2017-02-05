@@ -10,6 +10,8 @@ module {
 
 include "fadado.github.io/prelude";
 
+# TODO: adapt to future jq builtins (expected in jq 1.6)
+
 ########################################################################
 # Random
 ########################################################################

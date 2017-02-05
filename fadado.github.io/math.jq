@@ -26,6 +26,7 @@ def odd($n): #:: (number) -> boolean
 def min($a; $b): #:: (number;number) -> number
     if $a < $b then $a else $b end
 ;
+
 def max($a; $b): #:: (number;number) -> number
     if $a > $b then $a else $b end
 ;

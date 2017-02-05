@@ -16,24 +16,24 @@ include "fadado.github.io/types";
 # SET: {"element": boolean, ...}
 #
 # ∅         {}
-# ¦s¦       length
+# |s|       length
 # {e...}    set([e...])
-# s + e     s|.e=true
-# s + e     s+={e:true}
-# s – e     s|del(.e)
-# s ≡ t     s==t
-# s ≢ t     s!=t
-# e ∈ s     e|in(s)
-# e ∉ s     e|in(s)|not
-# s ∋ e     s|has(e)
-# s ∋ e     s|.e
-# s ∌ e     s|.e==null
-# s ∪ t     s+t
-# s ∪ t     s*t
-# s ∩ t     s|intersection(t)
-# s – t     s|difference(t)
-# s ⊂ t     s|contains(t)
-# s ⊃ t     s|inside(t)
+# s + e     s | .e=true
+# s + e     s += {e: true}
+# s – e     s | del(.e)
+# s ≡ t     s == t
+# s ≢ t     s != t
+# e ∈ s     e | in(s)
+# e ∉ s     e | in(s) | not
+# s ∋ e     s | has(e)
+# s ∋ e     s | .e
+# s ∌ e     s | .e == null
+# s ∪ t     s + t
+# s ∪ t     s * t
+# s ⊂ t     s | contains(t)
+# s ⊃ t     s | inside(t)
+# s ∩ t     s | intersection(t)
+# s – t     s | difference(t)
 
 # Set construction from strings and arrays
 #

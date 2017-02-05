@@ -247,7 +247,7 @@ def circle_u: #:: [α]| -> <[α]>
 def circle: #:: [α]| -> <[α]>
     def rotate($min): #:: [α]| -> [α]
         when(.[0] != $min;
-             .[-1:]+.[0:-1]|rotate($min))
+             .[-1:]+.[0:-1] | rotate($min))
     ;
     # expect sorted input
     .[0] as $first

@@ -35,7 +35,7 @@ def upto($s; $i; $j): #:: string|(string;number;number) -> <number>
     assert($s != ""; "upto requires a non empty string as argument")
     | select($i >= 0 and $i < $j and $i < length and $j <= length)
     | range($i; $j) as $p
-    | keep($p; .[$p:$p+1]|inside($s))
+    | keep($p; .[$p:$p+1] | inside($s))
 ;
 def upto($s; $i): #:: string|(string;number) -> <number>
     upto($s; $i; length)
@@ -47,8 +47,7 @@ def upto($s): #:: string|(string) -> <number>
 # Match initial string
 def match($s; $i): #:: string|(string;number) -> number
     select($i >= 0 and $i < length)
-    | keep($i+($s|length);
-           .[$i:]|startswith($s))
+    | keep($i+($s|length); .[$i:] | startswith($s))
 ;
 def match($s): #:: string|(string) -> number
     match($s; 0)
@@ -57,7 +56,7 @@ def match($s): #:: string|(string) -> number
 # Locate initial character
 def any($s; $i): #:: string|(string;number) -> number
     select($i >= 0 and $i < length)
-    | keep($i+1; .[$i:$i+1]|inside($s))
+    | keep($i+1; .[$i:$i+1] | inside($s))
 ;
 def any($s): #:: string|(string) -> number
     any($s; 0)
@@ -65,7 +64,7 @@ def any($s): #:: string|(string) -> number
 
 def notany($s; $i): #:: string|(string;number) -> number
     select($i >= 0 and $i < length)
-    | keep($i+1; .[$i:$i+1]|inside($s)|not)
+    | keep($i+1; .[$i:$i+1] | inside($s) | not)
 ;
 def notany($s): #:: string|(string) -> number
     notany($s; 0)
@@ -242,7 +241,7 @@ def rstrip($s): #:: string|(string) -> string
 ;
 
 def strip($s): #:: string|(string) -> string
-    when(length!=0 and ((.[0:1]|inside($s)) or (.[-1:length]|inside($s)));
+    when(length!=0 and ((.[0:1] | inside($s)) or (.[-1:length] | inside($s)));
         (_lndx(inside($s))//-1) as $i |
         (_rndx(inside($s))//-1) as $j |
         if $i < 0 and $j < 0 then ""

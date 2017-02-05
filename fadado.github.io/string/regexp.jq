@@ -129,7 +129,7 @@ def tostr: #:: MATCH -> string
 def split($regex; $flags; $limit): #:: string|(string;string;number) -> <string>
     def segment:
         when(length > 3;
-             .[0:3], (.[3:]|segment))
+             .[0:3] , (.[3:] | segment))
     ;
     if $limit < 0
     then empty

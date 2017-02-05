@@ -37,12 +37,12 @@ def any(predicate): #:: [α]|(α->boolean) -> boolean
 ########################################################################
 # Generators as streams
 
-# concat:      g++h         g,h
-# id:          id x         x|.
-# map:         map f g      g|f
-# filter:      filter p g   g|select(p)
-# apply:       f a          a|f
-# compose:     f·g          g|f
+# concat:      g ++ h         g , h
+# id:          id x           x | .
+# map:         map f g        g | f
+# filter:      filter p g     g | select(p)
+# apply:       f a            a | f
+# compose:     f · g          g | f
 
 # Count stream items.
 #
@@ -142,8 +142,8 @@ def takeWhile(predicate; generator): #:: (α->boolean;<α>) -> <α>
 # Analogous to array[start; stop] applied to streams.
 #
 def slice($i; $j; generator): #:: (number;number;<α>) -> <α>
-    select($i < $j) |
-    take($j-$i; drop($i; generator))
+    select($i < $j)
+    | take($j-$i; drop($i; generator))
 ;
 
 #
