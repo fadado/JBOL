@@ -40,9 +40,9 @@ def A: #:: string| -> CURSOR
 
 # Unanchored subject
 def U($subject): #:: (string) -> <CURSOR>
-    ($subject|length) as $slen
-    | range(0; $slen+1) as $offset
-| {
+    ($subject|length) as $slen   |
+    range(0; $slen+1) as $offset |
+{
     $subject,           # string to scan
     $slen,              # subject length
     $offset,            # subject start scanning position

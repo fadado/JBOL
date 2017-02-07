@@ -60,6 +60,7 @@ def unless(predicate; action): #:: α|(boolean;β) -> αβ
 def keep(predicate; item): #:: (boolean;α) -> α
     if predicate//false then item else empty end
 ;
+# TODO: explore
 #def keep(p1; i1; p2; i2):
 #    keep(p1; i1)
 #    , keep(p2; i2)
@@ -90,6 +91,7 @@ def assert($predicate; $message): #:: (boolean;string) -> α
 #def fold(filter; $b; generator): #:: (α|->β;β;<α>) -> <β>
 #    reduce generator as $a ($b; [.,$a]|filter)
 #;
+
 #def scan(filter; $b; generator): #:: (α|->β;β;<α>) -> <β>
 #    foreach generator as $a ($b; [.,$a]|filter; .)
 #;

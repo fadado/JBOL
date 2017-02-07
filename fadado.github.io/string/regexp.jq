@@ -157,7 +157,7 @@ def split($regex; $flags; $limit): #:: string|(string;string;number) -> <string>
 ;
 
 # Fully compatible with `splits/2`, and replaces `split/2` in a non compatible
-# way (use [pm::split(r;f)] for compatible behavior)
+# way (use [regexp::split(r;f)] for compatible behavior)
 # 
 def split($regex; $a): #:: string|(string;α) -> <string>
     # . as $subject
