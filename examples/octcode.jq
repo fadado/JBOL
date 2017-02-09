@@ -1,4 +1,4 @@
-#!/usr/local/bin/jq -nRrf
+#!/usr/local/bin/jq -cnRrf
 
 import "fadado.github.io/generator" as stream;
 

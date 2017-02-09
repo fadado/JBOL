@@ -179,7 +179,8 @@ prototypes:
 ########################################################################
 
 .PHONY: bogussort cross cut dice newton nondet nqbrute nqsmart octcode \
-	script seconds sendmoremoney series shuffle nqsbrute triple
+	script seconds sendmoremoney series shuffle nqsbrute triple \
+	prolog
 
 bogussort: ; $(JQ) -cnRrf examples/$@.jq
 cross: ; $(JQ) -nRrf examples/$@.jq
@@ -189,7 +190,8 @@ newton: ; $(JQ) -cnRrf examples/$@.jq
 nondet: ; $(JQ) -cnrf examples/$@.jq
 nqbrute: ; $(JQ) -cnRrf examples/$@.jq
 nqsmart: ; $(JQ) -cnRrf examples/$@.jq
-octcode: ; $(JQ) -nRrf examples/$@.jq
+octcode: ; $(JQ) -cnRrf examples/$@.jq
+prolog: ; $(JQ) -cnRrf examples/$@.jq
 script: ; $(JQ) -cnrf examples/$@.jq
 seconds: ; $(JQ) -nRrf examples/$@.jq
 sendmoremoney: ; $(JQ) -cnRrf examples/$@.jq
