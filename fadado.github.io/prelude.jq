@@ -57,16 +57,16 @@ def unless(predicate; action): #:: α|(boolean;β) -> αβ
     if predicate//false then . else action end
 ;
 
-def keep(predicate; item): #:: (boolean;α) -> α
+def keep_if(predicate; item): #:: (boolean;α) -> α
     if predicate//false then item else empty end
 ;
-def keep(predicate): #:: α|(boolean) -> α
+def keep_if(predicate): #:: α|(boolean) -> α
     if predicate//false then . else empty end
 ;
 # TODO: explore
-#def keep(p1; i1; p2; i2):
-#    keep(p1; i1)
-#    , keep(p2; i2)
+#def keep_if(p1; i1; p2; i2):
+#    keep_if(p1; i1)
+#    , keep_if(p2; i2)
 #;
 
 # Assertions

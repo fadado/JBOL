@@ -22,7 +22,7 @@ def bogussort:
     choice::shuffle
     | once(
         choice::permutation
-        | keep(issorted)
+        | keep_if(issorted)
     )
 ;
 

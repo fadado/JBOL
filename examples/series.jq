@@ -18,8 +18,9 @@ def series($n): #:: number -> <[number]>
         else
             ($notes-.)[] as $note # choose notes not used
             | [$note-.[-1]|length] as $i
-            | keep($intervals|contains($i)|not; # interval is in use?
-                   .[length]=$note | _series($notes-[$note]; $intervals+$i))
+            | keep_if($intervals|contains($i)|not; # interval is in use?
+                .[length]=$note
+                | _series($notes-[$note]; $intervals+$i))
         end
     ;
     #

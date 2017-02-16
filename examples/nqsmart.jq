@@ -17,8 +17,8 @@ def queens($n):
         then .
         else
             $avail[] as $col # choose a column
-            | keep(safe($row; $col);
-                   .[$row]=$col | qput($row+1; $avail-[$col]))
+            | keep_if(safe($row; $col);
+                .[$row]=$col | qput($row+1; $avail-[$col]))
         end
     ;
     #
