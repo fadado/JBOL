@@ -158,13 +158,13 @@ def harmonic: #:: -> <number>
 #   a(0) = 0
 #   a(n) = 0 if a(n-1)+1 = m else a(n-1)+1
 #
-def modules($m): #:: (number)-> <number>
+def moduli($m): #:: (number)-> <number>
     0|iterate(.+1|when(. == $m; 0))
 #   repeat(range(0; $m))
 #   tabulate(.%$m)
 ;
-def modules: #:: number| -> <number>
-    modules(.)
+def moduli: #:: number| -> <number>
+    moduli(.)
 ;
 
 # RR:
