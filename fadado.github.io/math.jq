@@ -40,10 +40,20 @@ def gcd($m; $n): #:: (number;number) -> number
 
 def sign($n): #:: (number) -> number
     if isnan or type!="number" then nan
-    elif $n == 0               then $n
     elif $n > 0                then 1
+    elif $n == 0               then 0
                                else -1
     end
+;
+
+def tobase($b): #:: number|(number) -> string
+    def digit: "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"[.:.+1];
+    def div: (. / $b)|floor;
+    def mod: . % $b;
+    def r: if . < $b then digit else (div|r)+(mod|digit) end;
+    #
+    select(2 <= $b and $b <= 36)
+    | r
 ;
 
 ########################################################################

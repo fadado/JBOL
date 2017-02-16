@@ -5,6 +5,18 @@
 # Blank lines and lines starting with # are ignored.
 #########################################################################
 
+include "math"; tobase(16)
+32
+"20"
+
+include "math"; tobase(2)
+128
+"10000000"
+
+include "math"; tobase(16)
+255
+"FF"
+
 include "math"; sign(.)
 -3
 -1

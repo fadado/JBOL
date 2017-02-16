@@ -19,7 +19,7 @@ import "fadado.github.io/string/ascii" as ascii;
 
 # Find string
 def find($s; $i; $j): #:: string|(string;number;number) -> <number>
-    select($i >= 0 and $i < $j and $i < length and $j <= length)
+    select(0 <= $i and $i < $j and $j <= length)
     | .[$i:$j]
     | indices($s)[]
 ;
@@ -33,7 +33,7 @@ def find($s): #:: string|(string) -> <number>
 # Locate characters
 def upto($s; $i; $j): #:: string|(string;number;number) -> <number>
     assert($s != ""; "upto requires a non empty string as argument")
-    | select($i >= 0 and $i < $j and $i < length and $j <= length)
+    | select(0 <= $i and $i < $j and $j <= length)
     | range($i; $j) as $p
     | keep_if(.[$p:$p+1] | inside($s); $p)
 ;
@@ -46,7 +46,7 @@ def upto($s): #:: string|(string) -> <number>
 
 # Match initial string
 def match($s; $i): #:: string|(string;number) -> number
-    select($i >= 0 and $i < length)
+    select(0 <= $i and $i < length)
     | keep_if(.[$i:] | startswith($s); $i+($s|length))
 ;
 def match($s): #:: string|(string) -> number
@@ -55,7 +55,7 @@ def match($s): #:: string|(string) -> number
 
 # Locate initial character
 def any($s; $i): #:: string|(string;number) -> number
-    select($i >= 0 and $i < length)
+    select(0 <= $i and $i < length)
     | keep_if(.[$i:$i+1] | inside($s); $i+1)
 ;
 def any($s): #:: string|(string) -> number
@@ -63,7 +63,7 @@ def any($s): #:: string|(string) -> number
 ;
 
 def notany($s; $i): #:: string|(string;number) -> number
-    select($i >= 0 and $i < length)
+    select(0 <= $i and $i < length)
     | keep_if(.[$i:$i+1] | inside($s) | not; $i+1)
 ;
 def notany($s): #:: string|(string) -> number
@@ -82,7 +82,7 @@ def many($s; $i): #:: string|(string;number) -> number
         ;
         $i|r
     ;
-    select($i >= 0 and $i < length)
+    select(0 <= $i and $i < length)
     | _many(.; length)
 ;
 def many($s): #:: string|(string) -> number
@@ -100,7 +100,7 @@ def none($s; $i): #:: string|(string;number) -> number
         ;
         $i|r
     ;
-    select($i >= 0 and $i < length)
+    select(0 <= $i and $i < length)
     | _none(.; length)
 ;
 def none($s): #:: string|(string) -> number

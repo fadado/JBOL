@@ -220,11 +220,10 @@ def derangement: #:: [α]| -> <[α]>
             | [$x] + (_left($j)|_derange($i+1))
         end
     ;
-    keep_if(length >= 2; # no derangements for less than 2 elements
-        # . (dot) for _derange has still available enumerated elements
-        [range(length) as $i | [$i,.[$i]]]
-        | _derange(0)
-    )
+    select(length >= 2) # no derangements for less than 2 elements
+    # . (dot) for _derange has still available enumerated elements
+    | [range(length) as $i | [$i,.[$i]]]
+    | _derange(0)
 ;
 
 # Circular permutations (necklaces)
