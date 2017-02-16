@@ -1,13 +1,10 @@
 #!/usr/local/bin/jq -cnRrf
 
-def set($elements):
-    reduce $elements[] as $element
-        ({}; . += {($element|tostring):true})
-;
+include "fadado.github.io/prelude";
+import "fadado.github.io/set" as set;
 
 def query(generator):
-    (label $exit | generator | 1 , break $exit)//0
-    | .==1  # computation generates results
+    success(generator)
 ;
 
 # Database
@@ -15,15 +12,15 @@ def query(generator):
 def biblical_family:
     {
         father: {
-            terach: set(["abraham","nachor","haran"]),
-            abraham: set(["isaac"]),
-            haran: set(["lot","milcah","yiscah"])
+            terach: set::set(["abraham","nachor","haran"]),
+            abraham: set::set(["isaac"]),
+            haran: set::set(["lot","milcah","yiscah"])
         },
         mother: {
-            sarah: set(["isaac"])
+            sarah: set::set(["isaac"])
         },
-        male: set(["terach","abraham","nachor","haran","isaac","lot"]),
-        female: set(["sarah","milcah","yiscah"])
+        male: set::set(["terach","abraham","nachor","haran","isaac","lot"]),
+        female: set::set(["sarah","milcah","yiscah"])
     }
 ;
 
@@ -34,7 +31,7 @@ def father($x):
 ;
 
 def father($x; $y):
-    if .father[$x][$y] then . else empty end
+    keep(.father[$x][$y])
 ;
 
 def mother($x):
@@ -42,15 +39,15 @@ def mother($x):
 ;
 
 def mother($x; $y):
-    if .mother[$x][$y] then . else empty end
+    keep(.mother[$x][$y])
 ;
 
 def male($x):
-    if .male[$x] then . else empty end
+    keep(.male[$x])
 ;
 
 def female($x):
-    if .female[$x] then . else empty end
+    keep(.female[$x])
 ;
 
 # Rules
