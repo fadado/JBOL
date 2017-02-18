@@ -129,13 +129,4 @@ def tabulate(filter): #:: (number|->α) -> <α>
     0|r
 ;
 
-########################################################################
-# IO
-########################################################################
-
-# Experimental, not yet typed
-
-def EOF:  infinite;
-def read: try input catch EOF;
-
 # vim:ai:sw=4:ts=4:et:syntax=jq
