@@ -108,13 +108,11 @@ def unfold(filter): #:: α|(α|->[β,α]) -> <β>
     unfold(filter; .)
 ;
 
-# filter*
 def iterate(filter): #:: α|(α|->α) -> <α>
     def r: ., (filter|r);
     r
 ;
 
-# filter+
 def loop(filter): #:: α|(α|->α) -> <α>
     filter | iterate(filter)
 ;

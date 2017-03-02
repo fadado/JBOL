@@ -217,12 +217,10 @@ def _rndx(predicate): # rigth index or empty if not found
 ;
 
 def lstrip($s): #:: string|(string) -> string
-    if length==0 or (.[0:1]|inside($s)|not)
-    then .
-    else
+    when(length!=0 and (.[0:1]|inside($s));
         (_lndx(inside($s))//-1) as $i
         | if $i < 0 then "" else .[$i:] end
-    end
+    )
 ;
 
 def rstrip($s): #:: string|(string) -> string
