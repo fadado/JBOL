@@ -51,7 +51,7 @@ def tobase($b): #:: number|(number) -> string
     def div: (. / $b)|floor;
     def mod: . % $b;
     def r: if . < $b then digit else (div|r)+(mod|digit) end;
-    #
+    # do nothing if base out of range
     select(2 <= $b and $b <= 36)
     | r
 ;

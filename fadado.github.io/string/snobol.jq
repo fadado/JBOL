@@ -67,7 +67,7 @@ def M: #:: CURSOR| -> string
     .subject[.offset:.position]
 ;
 
-# Return a string with the last (nearer) pattern match
+# Return a string with the last (nearest) pattern match
 def N: #:: CURSOR| -> string
     .subject[.start:.position]
 ;

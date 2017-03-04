@@ -126,7 +126,7 @@ def right($n): #:: string|(number) -> string
 
 def center($n; $t): #:: string|(number;string) -> string
     when($n > length;
-        ((($n-length)/2)|floor) as $i
+        ((($n-length)/2) | floor) as $i
         | ($t*$i) + . + ($t*$i)
         | when(length!=$n; .+$t)
     )
@@ -136,11 +136,11 @@ def center($n): #:: string|(number) -> string
 ;
 
 def ord($s): #:: (string) -> number
-    $s[0:1]|explode[0]
+    $s[0:1] | explode[0]
 ;
 
 def char($n): #:: (number) -> string
-    [$n]|implode
+    [$n] | implode
 ;
 
 ########################################################################
@@ -175,7 +175,7 @@ def rot13: #:: TABLE
 #
 def ptable($from; $preserve): #:: (string;string) -> TABLE
    set::set($preserve) as $t
-   | reduce (($from/"")|unique)[] as $c
+   | reduce (($from/"") | unique)[] as $c
         ({}; . += (if $t[$c] then null else {($c):""} end))
 ;
 
@@ -203,7 +203,7 @@ def translate($from; $to): #:: string|(string:string) -> string
 def _lndx(predicate): # left index or empty if not found
     label $exit
     | range(length-1) as $i
-    | keep_if(.[$i:$i+1]|predicate|not;
+    | keep_if(.[$i:$i+1] | predicate |not;
         $i , break $exit
       )
 ;
@@ -211,20 +211,20 @@ def _lndx(predicate): # left index or empty if not found
 def _rndx(predicate): # rigth index or empty if not found
     label $exit
     | range(length-1; 0; -1) as $i
-    | keep_if(.[$i:$i+1]|predicate|not;
+    | keep_if(.[$i:$i+1] | predicate | not;
         $i+1 , break $exit
       )
 ;
 
 def lstrip($s): #:: string|(string) -> string
-    when(length!=0 and (.[0:1]|inside($s));
+    when(length!=0 and (.[0:1] | inside($s));
         (_lndx(inside($s))//-1) as $i
         | if $i < 0 then "" else .[$i:] end
     )
 ;
 
 def rstrip($s): #:: string|(string) -> string
-    when(length!=0 and (.[-1:length]|inside($s));
+    when(length!=0 and (.[-1:length] | inside($s));
          (_rndx(inside($s))//-1) as $i
          | if $i < 0 then "" else .[0:$i] end
     )

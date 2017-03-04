@@ -14,7 +14,7 @@ include "fadado.github.io/types";
 import "fadado.github.io/string" as str;
 
 ########################################################################
-# Module based on builtin `match(regex; flags)`
+# Module based on builtin `_match_impl`.
 #
 # `match` outputs an object for each match it finds. Matches have the following
 # fields:
@@ -50,42 +50,40 @@ import "fadado.github.io/string" as str;
 ########################################################################
 
 ########################################################################
-# Synonim for `test`
+# Copy of builtin `test`
 #
 # Only to provide all pattern matching services in this module.
 #
-def like($regex): #:: string|(string) -> boolean
-    # . as $subject
-    test($regex)
+def test($regex; $flags): #:: string|(string;string) -> boolean
+    _match_impl($regex; $flags; true)
 ;
-def like($regex; $flags): #:: string|(string;string) -> boolean
-    # . as $subject
-    test($regex; $flags)
+def test($regex): #:: string|(string) -> boolean
+    test($regex; null)
 ;
 
 ########################################################################
 # Enhanced match
 #
-# Call `match` and add to the match object some strings for context (like
-# Perl $`, $& and $').
+# Like builtin `match` but add to the match object some strings for context
+# (like Perl $`, $& and $').
 #
-def search($regex; $flags): #:: string|(string;string) -> <MATCH>
+def match($regex; $flags): #:: string|(string;string) -> <MATCH>
     . as $subject
-    | match($regex; $flags)
+    | _match_impl($regex; $flags; false)[]
     | . + { "&": .string,
             "`": $subject[:.offset],
             "'": $subject[.offset+.length:] }
 ;
 
-def search($regex): #:: string|(string) -> <MATCH>
-    search($regex; "")
+def match($regex): #:: string|(string) -> <MATCH>
+    match($regex; "")
 ;
 
 ########################################################################
 # Some filters to use instead of `capture` and `scan`. Typical usage:
 #   match(re; m)  | tomap as $d ...
 #   match(re; m)  | tolist as $a ...
-#   [match(re; m) | tostr as $a ...
+#   match(re; m)  | tostr as $a ...
 
 # Extract named groups from a MATCH object as a map (object)
 #
@@ -100,7 +98,7 @@ def tomap: #:: MATCH -> object
 # Extract matched string and all groups from a MATCH object as a list (array)
 #
 def tolist: #:: MATCH -> [string]
-    [.string, (.captures[]|.string)]
+    [.string, (.captures[] | .string)]
 ;
 
 # Extract matched string or first non null group from a MATCH object
@@ -152,15 +150,14 @@ def split($regex; $flags; $limit): #:: string|(string;string;number) -> <string>
             [] # empty captures for last segment
         ]
         | segment as [$i, $j, $groups]
-        | $subject[$i:$j], ($groups[]|.string)
+        | $subject[$i:$j], ($groups[] | .string)
     end
 ;
 
 # Fully compatible with `splits/2`, and replaces `split/2` in a non compatible
 # way (use [regexp::split(r;f)] for compatible behavior)
-# 
+#
 def split($regex; $a): #:: string|(string;α) -> <string>
-    # . as $subject
     if $a|isnumber
     then split($regex; ""; $a)     # $a = limit
     elif $a|isstring
@@ -173,14 +170,12 @@ def split($regex; $a): #:: string|(string;α) -> <string>
 # way (use "s"/"d" instead for full compatibility)
 #
 def split($regex): #:: string|(string) -> <string>
-    # . as $subject
     split($regex; "g"; infinite)
 ;
 
 # Splits its input on white space breaks, trimming space around
 #
 def split: #:: string| -> <string>
-    # . as $subject
     str::trim | split("\\s+"; ""; infinite)
 ;
 
@@ -191,7 +186,7 @@ def sub($regex; template; $flags): #:: string|(string;string;string) -> string
     def sub1($flags; $gs):
         def _sub1:
             . as $subject
-            | [search($regex; $flags)] # only one match (or empty)
+            | [match($regex; $flags)] # only one match (or empty)
             | if length == 0
               then $subject
               else
@@ -211,9 +206,9 @@ def sub($regex; template; $flags): #:: string|(string;string;string) -> string
         _sub1
     ;
     ($flags|contains("g")) as $gs
-    | ($flags 
+    | ($flags
        | if $gs
-         then [explode[]|select(.!=103)] | implode  # ord("g") == 103
+         then [explode[] | select(.!=103)] | implode  # ord("g") == 103
          else . end) as $fs
     | sub1($fs; $gs)
 ;

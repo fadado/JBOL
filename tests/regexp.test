@@ -9,12 +9,12 @@ include "string/regexp"; include "string"; [split] | join(" ")
 "     la le      li       "
 "la le li"
 
-# search
+# match
 include "string/regexp"; match("a")|tostr
 "----a---"
 "a"
 
-include "string/regexp"; search("a")|tostr
+include "string/regexp"; match("a")|tostr
 "----a---"
 "a"
 
@@ -22,7 +22,7 @@ include "string/regexp"; [match("a";"g")|tostr]
 "-a-a-a-a-"
 ["a","a","a","a"]
 
-include "string/regexp"; [search("a";"g")|tostr]
+include "string/regexp"; [match("a";"g")|tostr]
 "-a-a-a-a-"
 ["a","a","a","a"]
 
@@ -32,7 +32,7 @@ include "string/regexp"; match("([abc])";"g")|tolist
 ["b","b"]
 ["c","c"]
 
-include "string/regexp"; search("([abc])";"g")|tolist
+include "string/regexp"; match("([abc])";"g")|tolist
 "abc"
 ["a","a"]
 ["b","b"]
@@ -40,7 +40,7 @@ include "string/regexp"; search("([abc])";"g")|tolist
 
 include "string/regexp"; match("(?<p>[abc])";"g")|tomap
 "-a-"
-{"p":"a"}
+{"&":"a","`":"-","'":"-","p":"a"}
 
 # split
 include "string/regexp"; [split]

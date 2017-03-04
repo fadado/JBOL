@@ -10,7 +10,6 @@ module {
 
 # α β γ δ   alpha, beta, gamma, delta
 # ⊥         bottom
-# ¦         broken bar
 # ε         epsilon
 
 ########################################################################
@@ -48,7 +47,7 @@ def some(generator): #:: (<boolean> -> boolean)
     success(generator | . or empty)
 ;
 
-# Experimental conditionals
+# Conditionals
 #
 def when(predicate; action): #:: α|(boolean;β) -> αβ
     if predicate//false then action else . end
@@ -63,11 +62,6 @@ def keep_if(predicate; item): #:: (boolean;α) -> α
 def keep_if(predicate): #:: α|(boolean) -> α
     if predicate//false then . else empty end
 ;
-# TODO: explore
-#def keep_if(p1; i1; p2; i2):
-#    keep_if(p1; i1)
-#    , keep_if(p2; i2)
-#;
 
 # Assertions
 def assert($predicate; $location; $message): #:: (boolean;object;string) -> α
