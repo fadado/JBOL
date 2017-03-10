@@ -5,6 +5,22 @@
 # Blank lines and lines starting with # are ignored.
 #########################################################################
 
+include "math"; even(.)
+2
+true
+
+include "math"; odd(.)
+2
+false
+
+include "math"; even(.)
+3
+false
+
+include "math"; odd(.)
+3
+true
+
 include "math"; tobase(16)
 32
 "20"

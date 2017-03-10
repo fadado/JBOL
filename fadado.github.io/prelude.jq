@@ -23,7 +23,7 @@ module {
 def once(generator): #:: (<α>) -> α
     label $exit
     | generator
-    | ., break $exit
+    | . , break $exit
 ;
 
 # Boolean context for goal-directed expression evaluation.
@@ -103,21 +103,21 @@ def unfold(filter): #:: α|(α|->[β,α]) -> <β>
 ;
 
 def iterate(filter): #:: α|(α|->α) -> <α>
-    def r: ., (filter|r);
+    def r: . , (filter|r);
     r
 ;
 
 def loop(filter): #:: α|(α|->α) -> <α>
-    filter | iterate(filter)
+    filter|iterate(filter)
 ;
 
 def tabulate($start; filter): #:: (number;number|->α) -> <α>
-    def r: .|filter, (.+1|r);
+    def r: filter , (.+1|r);
     $start|r
 ;
 def tabulate(filter): #:: (number|->α) -> <α>
     # tabulate starting at 0
-    def r: .|filter, (.+1|r);
+    def r: filter , (.+1|r);
     0|r
 ;
 

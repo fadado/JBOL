@@ -90,7 +90,7 @@ def mapdoc(filter): #:: α|(β->γ) -> α
     . as $doc |
     if isobject then
         reduce keys_unsorted[] as $k
-            ({}; . + {($k): ($doc[$k]|mapdoc(filter))})
+            ({}; . + {($k): ($doc[$k] | mapdoc(filter))})
         | filter
     elif isarray then
         [.[] | mapdoc(filter)]

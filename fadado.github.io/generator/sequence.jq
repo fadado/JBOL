@@ -20,7 +20,7 @@ include "fadado.github.io/math";
 #   a(n) = a(n-1)+d
 #
 def arithmetic($a; $d): #:: (number;number) -> <number>
-    $a|iterate(.+$d) # range($a; infinite; $d)
+    $a|iterate(. + $d) # range($a; infinite; $d)
 ;
 
 # CF:
@@ -98,7 +98,7 @@ def multiples: #:: number| -> <number>
 #   a(n) = a(n-1)*r
 #
 def geometric($a; $r): #:: (number;number) -> <number>
-    $a|iterate(.*$r)
+    $a|iterate(. * $r)
 ;
 
 # CF:
@@ -159,7 +159,7 @@ def harmonic: #:: -> <number>
 #   a(n) = 0 if a(n-1)+1 = m else a(n-1)+1
 #
 def moduli($m): #:: (number)-> <number>
-    0|iterate(.+1|when(. == $m; 0))
+    0|iterate(. + 1 | when(. == $m; 0))
 #   repeat(range(0; $m))
 #   tabulate(.%$m)
 ;
@@ -172,7 +172,7 @@ def moduli: #:: number| -> <number>
 #   a(n) = a(n-1)*n
 #
 def factorials: #:: -> <number>
-    1, foreach positives as $n (1; .*$n)
+    1, foreach positives as $n (1; . * $n)
 #   1, scan(.[0]*.[1]; 1; positives)
 ;
 
@@ -181,7 +181,7 @@ def factorials: #:: -> <number>
 #   a(n) = a(n-1)+n
 #
 def triangulars: #:: -> <number>
-    0, foreach positives as $n (0; .+$n)
+    0, foreach positives as $n (0; . + $n)
 ;
 
 # RR:
@@ -227,7 +227,7 @@ def primes: #:: -> <number>
 #   a(2n) = a(n)
 #
 def leibniz: #:: -> <number>
-    def r(g): (g|.+1), r(g , (g|.+1));
+    def r(g): (g | .+1), r(g , (g | .+1));
     0, 1,  r(0 , 1)
 ;
 

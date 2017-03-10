@@ -20,7 +20,7 @@ def even($n): #:: (number) -> boolean
 ;
 
 def odd($n): #:: (number) -> boolean
-    $n%2 != 0
+    $n%2 == 1
 ;
 
 def min($a; $b): #:: (number;number) -> number
@@ -61,12 +61,12 @@ def tobase($b): #:: number|(number) -> string
 
 def sum(generator): #:: (<number>) -> number
     reduce generator as $item
-        (0; .+$item)
+        (0; . + $item)
 ;
 
 def product(generator): #:: (<number>) -> number
     reduce generator as $item
-        (1; .*$item)
+        (1; . * $item)
 ;
 
 def maximum(generator): #:: (<number>) -> number
