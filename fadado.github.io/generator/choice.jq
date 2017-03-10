@@ -80,7 +80,7 @@ def subset: #:: [α]| -> <[α]>
 # All subsets (unsorted output)
 #
 def subset_u: #:: [α]| -> <[α]>
-    if length==0
+    if length == 0
     then []
     else
         # either what's _left after picking one,
@@ -128,7 +128,7 @@ def mulset: #:: [α]| -> <[α]>
 def permutation: #:: [α]| -> <[α]>
     def choose: range(0; length); #:: -> <number>
     #
-    if length==0
+    if length == 0
     then []
     else
         # choose one and add to what's _left permuted

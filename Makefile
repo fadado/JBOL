@@ -111,8 +111,9 @@ $(LogDir)/%.log: tests/%.test
 
 # Common tests
 $(LogDir)/prelude.log: $(LIB)/prelude.jq
-$(LogDir)/sets.log: $(LIB)/set.jq
+$(LogDir)/types.log: $(LIB)/types.jq
 $(LogDir)/math.log: $(LIB)/math.jq
+$(LogDir)/sets.log: $(LIB)/set.jq
 
 # Generator tests
 $(LogDir)/stream.log: $(GEN)/generator.jq
@@ -199,5 +200,6 @@ series: ; $(JQ) -cnRrf examples/$@.jq
 shuffle: ; $(JQ) -cnRrf examples/$@.jq
 nqsbrute: ; $(JQ) -cnRrf examples/$@.jq
 triple: ; $(JQ) -cnrf examples/$@.jq
+schema: ; $(JQ) -f examples/$@.jq
 
 # vim:ai:sw=8:ts=8:noet:syntax=make

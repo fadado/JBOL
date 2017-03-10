@@ -74,9 +74,9 @@ def notany($s): #:: string|(string) -> number
 def many($s; $i): #:: string|(string;number) -> number
     def _many($t; $n):
         def r:
-            if .==$n                  then $n
+            if . == $n                then $n
             elif $t[.:.+1]|inside($s) then .+1|r
-            elif .!=$i                then .
+            elif . != $i              then .
                                       else empty
             end
         ;
@@ -92,9 +92,9 @@ def many($s): #:: string|(string) -> number
 def none($s; $i): #:: string|(string;number) -> number
     def _none($t; $n):
         def r:
-            if .==$n                      then $n
+            if . == $n                    then $n
             elif $t[.:.+1]|inside($s)|not then .+1|r
-            elif .!=$i                    then .
+            elif . != $i                  then .
                                           else empty
             end
         ;
@@ -128,7 +128,7 @@ def center($n; $t): #:: string|(number;string) -> string
     when($n > length;
         ((($n-length)/2) | floor) as $i
         | ($t*$i) + . + ($t*$i)
-        | when(length!=$n; .+$t)
+        | when(length != $n; .+$t)
     )
 ;
 def center($n): #:: string|(number) -> string
@@ -217,21 +217,21 @@ def _rndx(predicate): # rigth index or empty if not found
 ;
 
 def lstrip($s): #:: string|(string) -> string
-    when(length!=0 and (.[0:1] | inside($s));
+    when(length != 0 and (.[0:1] | inside($s));
         (_lndx(inside($s))//-1) as $i
         | if $i < 0 then "" else .[$i:] end
     )
 ;
 
 def rstrip($s): #:: string|(string) -> string
-    when(length!=0 and (.[-1:length] | inside($s));
+    when(length != 0 and (.[-1:length] | inside($s));
          (_rndx(inside($s))//-1) as $i
          | if $i < 0 then "" else .[0:$i] end
     )
 ;
 
 def strip($s): #:: string|(string) -> string
-    when(length!=0 and ((.[0:1] | inside($s)) or (.[-1:length] | inside($s)));
+    when(length != 0 and ((.[0:1] | inside($s)) or (.[-1:length] | inside($s)));
         (_lndx(inside($s))//-1) as $i |
         (_rndx(inside($s))//-1) as $j |
         if $i < 0 and $j < 0 then ""
@@ -258,7 +258,7 @@ def rtrim: #:: string| -> string
 #
 def join($separator): #:: [string]|(string) -> string
     def sep:
-        if .==null
+        if . == null
         then ""
         else .+$separator
         end

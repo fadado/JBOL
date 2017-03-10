@@ -8,33 +8,35 @@ module {
     }
 };
 
+include "fadado.github.io/prelude";
+
 # Data type predicates
 def isnull: #:: α| -> boolean
-    type=="null"
+    type == "null"
 ;
 def isboolean: #:: α| -> boolean
-    type=="boolean"
+    type == "boolean"
 ;
 def isnumber: #:: α| -> boolean
-    type=="number"
+    type == "number"
 ;
 def isstring: #:: α| -> boolean
-    type=="string"
+    type == "string"
 ;
 def isarray: #:: α| -> boolean
-    type=="array"
+    type == "array"
 ;
 def isobject: #:: α| -> boolean
-    type=="object"
+    type == "object"
 ;
 def isscalar: #:: α| -> boolean
-    type| .=="null" or .=="boolean" or .=="number" or .=="string"
+    type| . == "null" or . == "boolean" or . == "number" or . == "string"
 ;
 def isiterable: #:: α| -> boolean
-    type| .=="array" or .=="object"
+    type| . == "array" or . == "object"
 ;
 def isvoid: #:: α| -> boolean
-    isiterable and length==0
+    isiterable and length == 0
 ;
 def isleaf: #:: α| -> boolean
     isscalar or isvoid
@@ -96,6 +98,43 @@ def mapdoc(filter): #:: α|(β->γ) -> α
         [.[] | mapdoc(filter)]
         | filter
     else filter
+    end
+;
+
+# Generates a document schema
+#
+def schema: #:: α| -> SCHEMA
+    if isobject then
+        if length == 0 then
+            {"type": "object"}  # properties: null?
+        else
+            . as $object |
+            {"type": "object"}
+            + {"properties": (
+                reduce keys_unsorted[] as $name ({};
+                    . + {($name): ($object[$name] | schema)}
+                )
+              )
+            }
+        end
+    elif isarray then
+        if length == 0 then
+            {"type": "array"}   # items: null?
+        else
+            {"type": "array"}
+            + {"items": (
+                if all(isscalar) and (map(type)|unique|length) == 1 then
+                    {"type": (.[0] | type)}
+                else
+                    reduce .[] as $item ([];
+                        .[length] = ($item | schema)
+                    )
+                end
+              )
+            }
+        end
+    else # scalar
+        {"type": type}
     end
 ;
 

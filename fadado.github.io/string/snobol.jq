@@ -182,7 +182,7 @@ def DIFFER($s): #:: (string;string) -> CURSOR
 ;
 def INTEGER($a): #:: (α) -> CURSOR
     def test:
-       (isnumber and floor==.)
+       (isnumber and . == floor)
        or (tonumber?//false) and (contains(".")|not)
     ;
     select(test)
@@ -193,7 +193,7 @@ def INTEGER($a): #:: (α) -> CURSOR
 #
 
 def DUPL($s; $n): #:: (string;number) -> string
-    select($n >= 0)|if $n==0 then "" else $s*$n end
+    select($n >= 0)|if $n == 0 then "" else $s*$n end
 ;
 def REPLACE($s; $t; $u): #:: (string;string;string) -> string
     $s|str::translate($t; $u)

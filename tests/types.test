@@ -1,0 +1,56 @@
+#########################################################################
+# Types
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+#########################################################################
+
+include "types"; isscalar
+null
+true
+
+include "types"; schema
+null
+{"type": "null"}
+
+include "types"; schema
+false
+{"type": "boolean"}
+
+include "types"; schema
+12.3
+{"type": "number"}
+
+include "types"; schema
+"Hello"
+{"type": "string"}
+
+include "types"; schema
+[]
+{"type": "array"}
+
+include "types"; schema
+[1]
+{"type": "array", "items": {"type": "number"}}
+
+include "types"; schema
+[1, false]
+{"type": "array", "items": [{"type": "number"},{"type": "boolean"}]}
+
+include "types"; schema
+{}
+{"type": "object"}
+
+include "types"; schema
+{"p": 1}
+{"type": "object", "properties": {"p": {"type": "number"}}}
+
+include "types"; schema
+{"p": 1, "q": [1]}
+{"type": "object", "properties": {"p": {"type": "number"}, "q": {"type": "array", "items": {"type": "number"}}}}
+
+include "types"; schema
+{"id": 1, "name": "A green door", "price": 12.50, "tags": ["home","green"]}
+{"type":"object","properties":{"id":{"type":"number"},"name":{"type":"string"},"price":{"type":"number"},"tags":{"type":"array","items":{"type":"string"}}}}
+
+# vim:ai:sw=2:ts=2:et:syntax=jq

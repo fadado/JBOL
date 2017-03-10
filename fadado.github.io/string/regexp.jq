@@ -89,9 +89,9 @@ def match($regex): #:: string|(string) -> <MATCH>
 #
 def tomap: #:: MATCH -> object
     reduce (.captures[]
-            | select(.name!=null)
+            | select(.name != null)
             | {(.name):.string}) as $pair
-        (if ."&"==null then {} else {"&":."&", "`":."`", "'":."'"} end;
+        (if ."&" == null then {} else {"&":."&", "`":."`", "'":."'"} end;
          . + $pair)
 ;
 
@@ -208,7 +208,7 @@ def sub($regex; template; $flags): #:: string|(string;string;string) -> string
     ($flags|contains("g")) as $gs
     | ($flags
        | if $gs
-         then [explode[] | select(.!=103)] | implode  # ord("g") == 103
+         then [explode[] | select(. != 103)] | implode  # ord("g") == 103
          else . end) as $fs
     | sub1($fs; $gs)
 ;
