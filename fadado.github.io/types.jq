@@ -104,29 +104,28 @@ def mapdoc(filter): #:: α|(β->γ) -> α
 # Generates a document schema
 #
 def schema: #:: α| -> SCHEMA
+    { "type": type } +
     if isobject then
-        if length == 0 then
-            {"type": "object"}  # properties: null?
+        if length == 0 then null
         else
             . as $object |
-            {"type": "object"}
-            + {"properties": (
-                reduce keys_unsorted[] as $name ({};
+            { "properties": (
+                reduce keys_unsorted[] as $name (
+                    {};
                     . + {($name): ($object[$name] | schema)}
                 )
               )
             }
         end
     elif isarray then
-        if length == 0 then
-            {"type": "array"}   # items: null?
+        if length == 0 then null
         else
-            {"type": "array"}
-            + {"items": (
-                if all(isscalar) and (map(type)|unique|length) == 1 then
-                    {"type": (.[0] | type)}
+            { "items": (
+                if every(.[]|isscalar) and ([.[]|type]|unique|length) == 1 then
+                    { "type": (.[0] | type) }
                 else
-                    reduce .[] as $item ([];
+                    reduce .[] as $item (
+                        [];
                         .[length] = ($item | schema)
                     )
                 end
@@ -134,7 +133,7 @@ def schema: #:: α| -> SCHEMA
             }
         end
     else # scalar
-        {"type": type}
+        null
     end
 ;
 

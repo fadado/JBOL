@@ -1,0 +1,100 @@
+#!/bin/bash
+
+#
+# Generates JSON schema for an instance document
+#
+
+# JBOL modules
+JBOL='-L/usr/local/share/jbol'
+
+# Options
+set -o errexit -o noglob -o nounset -o pipefail
+shopt -s expand_aliases
+
+# Script name
+declare -r SELF=${0##*/}
+
+# Show help
+function help {
+    cat <<EOF
+${SELF} - generates a JSON schema
+Usage: ${SELF} [options] [file]
+
+${SELF} generates a JSON schema for an instance document read from a file or
+the standard input.
+
+Options:
+    -h, --help              Show this help
+    -c, --compact           Compact output
+    -k, --sort-keys         Sort output keys 
+    -r, --required          Add list for required members
+    -a, --verbose-array     Add array constraints
+    -n, --verbose-number    Add number constraints
+    -o, --verbose-object    Add object constraints
+    -s, verbose-string      Add string constraints
+EOF
+    exit $(( $# == 0 ))
+}
+
+# Entry point
+function main {
+    local required='false' compact='false' vnumber='false' vstring='false' varray='false' vobject='false'
+    local -i compact=0 skeys=0
+
+    local opt
+    while getopts :hacknors-: opt; do
+        case $opt in
+            h) help ;;
+            a) varray='true' ;;
+            c) compact=1 ;;
+            k) skeys=1 ;;
+            n) vnumber='true' ;;
+            o) vobject='true' ;;
+            r) required='true' ;;
+            s) vstring='true' ;;
+            -) case $OPTARG in
+                   help) help ;;
+                   compact) compact=1 ;;
+                   required) required='true' ;;
+                   sort-keys) skeys=1 ;;
+                   verbose-array) varray='true' ;;
+                   verbose-number) vnumber='true' ;;
+                   verbose-object) vobject='true' ;;
+                   verbose-string) vstring='true' ;;
+               esac
+               ;;
+        esac
+    done
+
+    shift $((OPTIND-1))
+
+    local COMPACT='' SORT_KEYS=''
+    local -a REQUIRED VARRAY VNUMBER VOBJECT VSTRING
+
+    if ((compact)); then COMPACT="--compact-output"; fi
+    if ((skeys)); then SORT_KEYS="--sort-keys"; fi
+
+    REQUIRED=('--argjson' 'opt_required' $required)
+    VARRAY=('--argjson' 'opt_array_verbose' $varray)
+    VNUMBER=('--argjson' 'opt_number_verbose' $vnumber)
+    VOBJECT=('--argjson' 'opt_object_verbose' $vobject)
+    VSTRING=('--argjson' 'opt_string_verbose' $vstring)
+
+    jq $JBOL \
+        --from-file $0.jq   \
+        ${SORT_KEYS}        \
+        ${COMPACT}          \
+        "${REQUIRED[@]}"    \
+        "${VARRAY[@]}"      \
+        "${VNUMBER[@]}"     \
+        "${VSTRING[@]}"     \
+        "${VOBJECT[@]}"     \
+        "$@"
+}
+
+# Call main and exit
+main "$@"
+
+exit
+
+# vim:syntax=sh:ai:sw=4:ts=4:et

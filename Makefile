@@ -22,6 +22,7 @@ endif
 
 prefix	?= /usr/local
 datadir	?= $(prefix)/share
+bindir	?= $(prefix)/bin
 
 ########################################################################
 # Paranoia
@@ -143,14 +144,16 @@ clobber: clean
 check: clean all
 
 install:
-	test -d $(datadir)/$(project) \
-	|| $(SUDO) mkdir -v --parents $(datadir)/$(project)
+	test -d $(datadir)/$(project) || $(SUDO) mkdir -v --parents $(datadir)/$(project)
+	test -d $(bindir) || $(SUDO) mkdir -v --parents $(bindir)
 	$(SUDO) cp -v -u -r fadado.github.io $(datadir)/$(project)
+	$(SUDO) install --verbose --compare --mode 555 bin/{jgen,jval}* $(bindir)
 
 uninstall:
 	test -d $(datadir)/$(project)					  \
 	&& $(SUDO) rm --verbose --force --recursive $(datadir)/$(project) \
 	|| true
+	$(SUDO) rm -f $(bindir)/{jgen,jval}* 
 
 # Show targets
 help:
