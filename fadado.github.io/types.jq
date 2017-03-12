@@ -20,6 +20,9 @@ def isboolean: #:: α| -> boolean
 def isnumber: #:: α| -> boolean
     type == "number"
 ;
+def isinteger: #:: α| -> boolean
+    type == "number" and . == floor
+;
 def isstring: #:: α| -> boolean
     type == "string"
 ;
@@ -50,6 +53,9 @@ def isboolean($a): #:: (α) -> boolean
 ;
 def isnumber($a): #:: (α) -> boolean
     $a|isnumber
+;
+def isinteger($a): #:: (α) -> boolean
+    $a|isinteger
 ;
 def isstring($a): #:: (α) -> boolean
     $a|isstring
@@ -101,7 +107,7 @@ def mapdoc(filter): #:: α|(β->γ) -> α
     end
 ;
 
-# Generates a document schema
+# Generates a simple document schema
 #
 def schema: #:: α| -> SCHEMA
     { "type": type } +
@@ -123,6 +129,8 @@ def schema: #:: α| -> SCHEMA
             { "items": (
                 if every(.[]|isscalar) and ([.[]|type]|unique|length) == 1 then
                     { "type": (.[0] | type) }
+                elif length == 1 then
+                   .[0] | schema 
                 else
                     reduce .[] as $item (
                         [];
@@ -132,9 +140,74 @@ def schema: #:: α| -> SCHEMA
               )
             }
         end
-    else # scalar
-        null
-    end
+    else null end # scalar
+;
+
+# Validates a document against a simple schema
+#
+def valid($schema): #:: α|(SCHEMA) -> boolean
+    def k_type: # keyword type
+        if $schema | has("type") then
+            type as $t
+            | if ($schema["type"] | type) == "string" # string or array
+              then $t == $schema["type"] or ($schema["type"] == "integer" and isinteger)
+              else some(($schema["type"][] | type) == $t)
+              end
+        else true end
+    ;
+    def k_enum: # keyword enum
+        if $schema | has("enum") then
+            . as $instance
+            | isscalar and ($schema.enum | indices([$instance]) | length) > 0
+        else true end
+    ;
+    def k_allOf: # keyword allOf
+        if $schema | has("allOf") then
+            every(valid($schema.allOf[]))
+        else true end
+    ;
+    def k_anyOf: # keyword anyOf
+        if $schema | has("anyOf") then
+            some(valid($schema.anyOf[]))
+        else true end
+    ;
+    def k_oneOf: # keyword oneOf
+        if $schema | has("oneOf") then
+            [valid($schema.oneOf[])] == [true]
+        else true end
+    ;
+    def k_not: # keyword not
+        if $schema | has("not") then
+            valid($schema.not) | not
+        else true end
+    ;
+    if $schema != null and $schema != {} then
+        k_type  and
+        k_enum  and
+        k_allOf and
+        k_anyOf and
+        k_oneOf and
+        k_not   and
+        if isobject then 
+            if $schema | has("properties") then
+                every(
+                    keys_unsorted[] as $k
+                    | (.[$k] | valid($schema.properties[$k]))
+                )
+            else true end
+        elif isarray then
+            if $schema | has("items") then
+                if ($schema.items | isobject) then # object or array
+                    every(.[] | valid($schema.items))
+                else
+                    every(
+                        range($schema.items | length) as $i
+                        | (.[$i] | valid($schema.items[$i]))
+                    )
+                end
+            else true end
+        else true end # scalar
+    else true end # empty or null schema
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

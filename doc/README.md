@@ -1,1 +1,1 @@
-Warning: documentation about JQ, not about JBOL!
+Documentation about JQ and JBOL
