@@ -1,5 +1,6 @@
-#!/usr/local/bin/jq -f
-
+#
+# Generates JSON schema for an instance document
+#
 include "fadado.github.io/prelude";
 include "fadado.github.io/types";
 
@@ -79,10 +80,14 @@ def schema: #:: α| -> SCHEMA
 
 # Main
 #
-{
-    "$schema": "http://json-schema.org/schema#",
-    "title": "Schema title",
-    "description": "Schema description"
-} + schema
+def meta:
+    {
+        "$schema": "http://json-schema.org/schema#",
+        "title": "Schema title",
+        "description": "Schema description"
+    }
+;
+
+meta + schema
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

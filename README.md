@@ -1,8 +1,33 @@
 # ≈ JBOL ≈
 
-**JBOL** is a collection of modules for the **JQ** language.
+**JBOL** is a collection of modules and tools for the **JQ** language.
 
-## Installation and usage
+## Modules
+
+ALl modules reside in the directory `fadado.github.io`.
+
+## Tools
+
+### jgen
+
+Generates the JSON schema for an instance document.
+
+### jval
+
+Validates an instance document against a JSON schema.
+
+## Installation
+
+Run 
+
+```
+$ sudo make install
+```
+
+This will install the modules to `/usr/local/share/jbol` and the tools
+to `/usr/local/bin`.
+
+### Manual installation
 
 All modules provided are in the `fadado.github.io` directory. Copy this
 directory to your top-level **JQ** modules path with a command equivalent to
@@ -10,6 +35,14 @@ directory to your top-level **JQ** modules path with a command equivalent to
 ```sh
 $ cp -r fadado.github.io TOP-PATH
 ```
+
+Also copy the tools in you director of choice; for example:
+
+```sh
+$ cp bin/j* ~/bin
+```
+
+## Usage
 
 In your **JQ** scripts include or import modules with directives like
 

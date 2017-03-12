@@ -146,7 +146,8 @@ check: clean all
 install:
 	test -d $(datadir)/$(project) || $(SUDO) mkdir -v --parents $(datadir)/$(project)
 	test -d $(bindir) || $(SUDO) mkdir -v --parents $(bindir)
-	$(SUDO) cp -v -u -r fadado.github.io $(datadir)/$(project)
+	$(SUDO) cp -v -u -r fadado.github.io/ $(datadir)/$(project)
+	$(SUDO) cp -v -u -r schemata/ $(datadir)/$(project)
 	$(SUDO) install --verbose --compare --mode 555 bin/{jgen,jval}* $(bindir)
 
 uninstall:

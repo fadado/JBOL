@@ -181,6 +181,26 @@ def valid($schema): #:: α|(SCHEMA) -> boolean
             valid($schema.not) | not
         else true end
     ;
+    def c_object: # object constraints
+        if $schema | has("properties") then
+            every(
+                keys_unsorted[] as $k
+                | (.[$k] | valid($schema.properties[$k]))
+            )
+        else true end
+    ;
+    def c_array: # array constraints
+        if $schema | has("items") then
+            if ($schema.items | isobject) then # object or array
+                every(.[] | valid($schema.items))
+            else
+                every(
+                    range($schema.items | length) as $i
+                    | (.[$i] | valid($schema.items[$i]))
+                )
+            end
+        else true end
+    ;
     if $schema != null and $schema != {} then
         k_type  and
         k_enum  and
@@ -188,25 +208,9 @@ def valid($schema): #:: α|(SCHEMA) -> boolean
         k_anyOf and
         k_oneOf and
         k_not   and
-        if isobject then 
-            if $schema | has("properties") then
-                every(
-                    keys_unsorted[] as $k
-                    | (.[$k] | valid($schema.properties[$k]))
-                )
-            else true end
-        elif isarray then
-            if $schema | has("items") then
-                if ($schema.items | isobject) then # object or array
-                    every(.[] | valid($schema.items))
-                else
-                    every(
-                        range($schema.items | length) as $i
-                        | (.[$i] | valid($schema.items[$i]))
-                    )
-                end
-            else true end
-        else true end # scalar
+        if isobject then c_object
+        elif isarray then c_array
+        else true end # null, boolean, number, string
     else true end # empty or null schema
 ;
 

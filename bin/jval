@@ -1,5 +1,72 @@
 #!/bin/bash
+#
+# Validates an instance document against a JSON schema.
+#
 
-# NOT YET IMPLEMENTED
+# JBOL modules
+JBOL='-L/usr/local/share/jbol'
+
+# Options
+set -o errexit -o noglob -o nounset -o pipefail
+shopt -s expand_aliases
+
+# Script name
+declare -r SELF=${0##*/}
+
+# Show help
+function help {
+    cat <<EOF
+${SELF} - validates a JSON document
+Usage: ${SELF} [options] schema [file]
+
+${SELF} validates against an schema a JSON instance document read from a file
+or the standard input.
+
+Options:
+    -h, --help              Show this help
+EOF
+    exit $(( $# == 0 ))
+}
+
+#TODO: --schema     Validates the schema itself
+
+# Entry point
+function main {
+    local opt
+    while getopts :h-: opt; do
+        case $opt in
+            h) help ;;
+            -) case $OPTARG in
+                   help) help ;;
+               esac
+               ;;
+        esac
+    done
+
+    shift $((OPTIND-1))
+    (( $# > 0 )) || help
+
+    local schema diagnostic
+    schema=$1; shift
+
+    diagnostic=$(
+        jq $JBOL \
+            --raw-output \
+            --slurpfile SCHEMA $schema \
+            --from-file $0.jq \
+            "$@"
+    )
+    if [[ $diagnostic == '' ]]; then
+        return 0
+    else
+        echo 1>&2 "$diagnostic"
+        return 1
+    fi
+}
+
+# Call main and exit
+main "$@"
+
+exit
 
 # vim:syntax=sh:ai:sw=4:ts=4:et

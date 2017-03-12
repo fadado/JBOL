@@ -1,5 +1,4 @@
 #!/bin/bash
-
 #
 # Generates JSON schema for an instance document
 #
@@ -9,7 +8,6 @@ JBOL='-L/usr/local/share/jbol'
 
 # Options
 set -o errexit -o noglob -o nounset -o pipefail
-shopt -s expand_aliases
 
 # Script name
 declare -r SELF=${0##*/}
