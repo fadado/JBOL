@@ -55,27 +55,89 @@ def valid($schema): #:: α|(SCHEMA) -> boolean
                 | (.[$k] | valid($schema.properties[$k]))
             )
         else true end
+        and if $schema | has("required") then
+            . as $instance
+            | every(
+                $schema.required[] as $r
+                | ($instance | has($r))
+            )
+        else true end
+        and if $schema | has("additionalProperties") then
+            $schema.additionalProperties  as $p
+            | if $p == false then
+                every(
+                    keys_unsorted[] as $k
+                    | ($schema.properties | has($k))
+                )
+              elif isobject($p) then
+                . as $instance
+                | every(
+                    keys_unsorted[]
+                    | select(in($schema.properties) | not)
+                    ($instance[.] | valid($p))
+                  )
+              # TODO: patternProperties 
+              else true end
+        else true end
+        and if $schema | has("minProperties") then
+            . >= $schema.minProperties
+        else true end
+        and if $schema | has("maxProperties") then
+            . <= $schema.maxProperties
+        else true end
+        # TODO: dependencies
     ;
     def c_array: # array constraints
         if $schema | has("items") then
             if ($schema.items | isobject) then # object or array
                 every(.[] | valid($schema.items))
-            else
-                every(
-                    range($schema.items | length) as $i
-                    | (.[$i] | valid($schema.items[$i]))
-                )
+            else # tuple validation
+                ($schema.items|length) as $len
+                | if ($schema.additionalItems|not) and length != $len then
+                    false
+                else
+                    every(
+                        range($len) as $i
+                        | (.[$i] | valid($schema.items[$i]))
+                    )
+                end
             end
+        else true end
+        and if $schema | has("uniqueItems") then
+            length == (unique|length)
+        else true end
+        and if $schema | has("minItems") then
+            . >= $schema.minItems
+        else true end
+        and if $schema | has("maxItems") then
+            . <= $schema.maxItems
         else true end
     ;
     def c_string: # string constraints
         if $schema | has("pattern") then
             test($schema.pattern)
         else true end
+        and if $schema | has("minLength") then
+            . >= $schema.minLength
+        else true end
+        and if $schema | has("maxLength") then
+            . <= $schema.maxLength
+        else true end
+        and if $schema | has("format") then
+            error("Keyword 'format' not supported")
+        else true end
     ;
     def c_number: # number constraints
         if $schema | has("multipleOf") then
             (. % $schema.multipleOf) == 0
+        else true end
+        and if $schema | has("minimum") then
+            $schema.minimum as $n
+            | if $schema.exclusiveMinimum then . > $n else . >= $n end
+        else true end
+        and if $schema | has("maximum") then
+            $schema.maximum as $n
+            | if $schema.exclusiveMaximum then . < $n else . <= $n end
         else true end
     ;
     #
