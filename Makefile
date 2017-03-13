@@ -113,6 +113,7 @@ $(LogDir)/%.log: tests/%.test
 # Common tests
 $(LogDir)/prelude.log: $(LIB)/prelude.jq
 $(LogDir)/types.log: $(LIB)/types.jq
+$(LogDir)/schema.log: $(LIB)/schema.jq
 $(LogDir)/math.log: $(LIB)/math.jq
 $(LogDir)/sets.log: $(LIB)/set.jq
 

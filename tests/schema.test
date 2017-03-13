@@ -1,0 +1,244 @@
+#########################################################################
+# Schema
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+#########################################################################
+
+include "schema"; generate
+null
+{"type": "null"}
+
+include "schema"; generate
+false
+{"type": "boolean"}
+
+include "schema"; generate
+12.3
+{"type": "number"}
+
+include "schema"; generate
+"Hello"
+{"type": "string"}
+
+include "schema"; generate
+[]
+{"type": "array"}
+
+include "schema"; generate
+[1]
+{"type": "array", "items": {"type": "number"}}
+
+include "schema"; generate
+[1, false]
+{"type": "array", "items": [{"type": "number"},{"type": "boolean"}]}
+
+include "schema"; generate
+{}
+{"type": "object"}
+
+include "schema"; generate
+{"p": 1}
+{"type": "object", "properties": {"p": {"type": "number"}}}
+
+include "schema"; generate
+{"p": 1, "q": [1]}
+{"type": "object", "properties": {"p": {"type": "number"}, "q": {"type": "array", "items": {"type": "number"}}}}
+
+include "schema"; generate
+{"p": 1, "q": [[1]]}
+{"type":"object","properties":{"p":{"type":"number"},"q":{"type":"array","items":{"type":"array","items":{"type":"number"}}}}}
+
+include "schema"; generate
+{"id": 1, "name": "A green door", "price": 12.50, "tags": ["home","green"]}
+{"type":"object","properties":{"id":{"type":"number"},"name":{"type":"string"},"price":{"type":"number"},"tags":{"type":"array","items":{"type":"string"}}}}
+
+include "schema"; valid({})
+null
+true
+
+include "schema"; valid({})
+true
+true
+
+include "schema"; valid({})
+2134.234
+true
+
+include "schema"; valid({})
+"lele"
+true
+
+include "schema"; valid({"type":"null"})
+null
+true
+
+include "schema"; valid({"type":"boolean"})
+false
+true
+
+include "schema"; valid({"type":"integer"})
+123.123
+false
+
+include "schema"; valid({"type":"integer"})
+123
+true
+
+include "schema"; valid({"type":"number"})
+123.123
+true
+
+include "schema"; valid({"type":"string"})
+"lala"
+true
+
+include "schema"; valid({"type":"object", "properties":{"a":{},"b":{}}})
+{"a":1,"b":true}
+true
+
+include "schema"; valid({"type":"object", "properties":{"a":{"type":"integer"},"b":{"type":"boolean"}}})
+{"a":1,"b":true}
+true
+
+include "schema"; valid({"type":"object", "properties":{"a":{"type":"integer"}}})
+{"a":1,"b":true}
+true
+
+include "schema"; valid({"enum":["yes","no"]})
+"no"
+true
+
+include "schema"; valid({"enum":["yes","no"]})
+"yes"
+true
+
+include "schema"; valid({"enum":["yes","no"]})
+"si"
+false
+
+include "schema"; valid({"not": {"type":"null"}})
+"si"
+true
+
+include "schema"; valid({"not": {"enum":["yes","no"]}})
+"si"
+true
+
+include "schema"; valid({"allOf":[{"type":"number"},{"enum":[234,123]}]})
+123
+true
+
+include "schema"; valid({"oneOf":[{"type":"number"},{"enum":[234,123]}]})
+123
+false
+
+include "schema"; valid({"anyOf":[{"type":"number"},{"enum":[234,123]}]})
+123
+true
+
+include "schema"; valid({"anyOf":[{"type":"number"},{"enum":[234,123]}]})
+1234
+true
+
+include "schema"; valid({"one":[{"type":"number"},{"enum":[234,123]}]})
+1234
+true
+
+include "schema"; valid({"type":"number", "multipleOf": 2})
+64
+true
+
+include "schema"; valid({"type":"number", "maximum": 64, "exclusiveMaximum":true })
+64
+false
+
+include "schema"; valid({"type":"number", "maximum": 64, "exclusiveMaximum":false })
+64
+true
+
+include "schema"; valid({"type":"number", "maximum": 64 })
+64
+true
+
+include "schema"; valid({"type":"number", "minimum": 2, "exclusiveMinimum":true })
+2
+false
+
+include "schema"; valid({"type":"number", "minimum": 2, "exclusiveMinimum":false })
+2
+true
+
+include "schema"; valid({"type":"number", "minimum": 2 })
+2
+true
+
+include "schema"; valid({"type":"string", "maxLength": 4 })
+"papa"
+true
+
+include "schema"; valid({"type":"string", "maxLength": 4 })
+"papas"
+false
+
+include "schema"; valid({"type":"string", "minLength": 3 })
+"papa"
+true
+
+include "schema"; valid({"type":"string", "minLength": 3 })
+"pa"
+false
+
+include "schema"; valid({"type":"string", "pattern": "%$" })
+"pa%"
+true
+
+include "schema"; valid({"type":"string", "pattern": "%$" })
+"pa%x"
+false
+
+include "schema"; valid({"type":"string", "format": "email" })
+"me@acme.com"
+true
+
+include "schema"; valid({"type":"array"})
+[1,2]
+true
+
+include "schema"; valid({"type":"array","uniqueItems":true,"items":{"type":"number"}})
+[1,2]
+true
+
+include "schema"; valid({"type":"array", "items":{"type":"number"}, "minItems":1, "maxItems":3})
+[2]
+true
+
+include "schema"; valid({"type":"array", "items":{"type":"number"}, "minItems":1, "maxItems":3})
+[2,3,4]
+true
+
+include "schema"; valid({"type":"array", "items":{"type":"number"}, "minItems":1, "maxItems":3})
+[1,2,3,4]
+false
+
+include "schema"; valid({"type":"array", "items":{"type":"number"}, "minItems":1, "maxItems":3})
+[]
+false
+
+include "schema"; valid({"type":"array","items":[{"type":"number"}],"additionalItems":true})
+[1]
+true
+
+include "schema"; valid({"type":"array","items":[{"type":"number"}],"additionalItems":true})
+[1,2,3]
+true
+
+include "schema"; valid({"type":"array","items":[{"type":"number"}],"additionalItems":false})
+[1,2,3]
+false
+
+include "schema"; valid({"type":"array","items":[{"type":"number"}],"additionalItems":false})
+[1]
+true
+
+# vim:ai:sw=2:ts=2:et:syntax=jq

@@ -3,169 +3,19 @@
 #
 include "fadado.github.io/prelude";
 include "fadado.github.io/types";
-
-# Validates a document against a simple schema
-#
-def valid($schema): #:: α|(SCHEMA) -> boolean
-    #
-    # Schema keywords
-    #
-    def k_type: # keyword type
-        if $schema | has("type") then
-            type as $t
-            | if ($schema["type"] | type) == "string" # string or array
-              then $t == $schema["type"] or ($schema["type"] == "integer" and isinteger)
-              else some(($schema["type"][] | type) == $t)
-              end
-        else true end
-    ;
-    def k_enum: # keyword enum
-        if $schema | has("enum") then
-            . as $instance
-            | isscalar and ($schema.enum | indices([$instance]) | length) > 0
-        else true end
-    ;
-    def k_allOf: # keyword allOf
-        if $schema | has("allOf") then
-            every(valid($schema.allOf[]))
-        else true end
-    ;
-    def k_anyOf: # keyword anyOf
-        if $schema | has("anyOf") then
-            some(valid($schema.anyOf[]))
-        else true end
-    ;
-    def k_oneOf: # keyword oneOf
-        if $schema | has("oneOf") then
-            [valid($schema.oneOf[])] == [true]
-        else true end
-    ;
-    def k_not: # keyword not
-        if $schema | has("not") then
-            valid($schema.not) | not
-        else true end
-    ;
-    #
-    # Type constraints
-    #
-    def c_number: # number constraints
-        if $schema | has("multipleOf") then
-            (. / $schema.multipleOf) | . == floor
-        else true end
-        and if $schema | has("maximum") then
-            $schema.maximum as $n
-            | if $schema.exclusiveMaximum then . < $n else . <= $n end
-        else true end
-        and if $schema | has("minimum") then
-            $schema.minimum as $n
-            | if $schema.exclusiveMinimum then . > $n else . >= $n end
-        else true end
-    ;
-    def c_string: # string constraints
-        if $schema | has("maxLength") then
-            length <= $schema.maxLength
-        else true end
-        and if $schema | has("minLength") then
-            length >= $schema.minLength
-        else true end
-        and if $schema | has("pattern") then
-            test($schema.pattern)
-        else true end
-        and if $schema | has("format") then
-            error("Keyword 'format' not supported")
-        else true end
-    ;
-    def c_array: # array constraints
-
-        if $schema | has("items") then
-            if ($schema.items | isobject) then
-                every(.[] | valid($schema.items))
-            else # array: tuple validation
-                ($schema.items|length) as $len
-                | if ($schema.additionalItems == false) and length != $len
-                then false
-                else
-                    every(
-                        range($len) as $i
-                        | (.[$i] | valid($schema.items[$i]))
-                    )
-                end
-            end
-            and if $schema | has("maxItems") then
-                length <= $schema.maxItems
-            else true end
-            and if $schema | has("minItems") then
-                length >= $schema.minItems
-            else true end
-            and if $schema | has("uniqueItems") then
-                ($schema.uniqueItems | not) or length == (unique | length)
-            else true end
-        else true end
-    ;
-    def c_object: # object constraints
-        . as $instance
-        | if $schema | has("properties") then
-            if $schema | has("maxProperties") then
-                . <= $schema.maxProperties
-            else true end
-            and if $schema | has("minProperties") then
-                . >= $schema.minProperties
-            else true end
-            and if $schema | has("required") then
-                every($instance | has($schema.required[]))
-            else true end
-            and if $schema | has("additionalProperties") then
-                $schema.additionalProperties as $p
-                | if $p == false then
-                    every($schema.properties | has(keys_unsorted[]))
-                elif isobject($p) then
-                    every(
-                        keys_unsorted[]
-                        | select(in($schema.properties) | not)
-                        | $instance[.] | valid($p)
-                    )
-                else true end
-            else true end
-            and every(
-                keys_unsorted[] as $k
-                | (.[$k] | valid($schema.properties[$k]))
-            )
-        else true end
-    ;
-    #
-    # Validate
-    #
-    def check(a):
-        if a then true else
-            "Validation error. Instance: \(.); Schema: \($schema)"
-            | error
-        end
-    ;
-    if $schema == null or $schema == {}
-    then true
-    else
-        check(k_type)  and
-        check(k_enum)  and
-        check(k_allOf) and
-        check(k_anyOf) and
-        check(k_oneOf) and
-        check(k_not)   and
-        if isobject then check(c_object)
-        elif isarray then check(c_array)
-        elif isstring then check(c_string)
-        elif isnumber then check(c_number)
-        else true end # null or boolean
-    end # empty or null schema
-;
+import "fadado.github.io/schema" as schema;
 
 # Main
 #
 $SCHEMA[0] as $schema
-| if $schema | has("$schema") | not then
+| if $schema | has("$schema") | not
+then
     "Expected '$schema' property in root instance"
-  else
-    try (valid($schema) | "") catch .
-  end
+else
+    . as $root
+    | try (schema::validate($schema; $root) | "")
+      catch "Validation error. Instance: \(.instance); Schema: \(.schema)"
+end
 
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

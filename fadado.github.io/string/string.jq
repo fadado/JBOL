@@ -263,9 +263,7 @@ def join($separator): #:: [string]|(string) -> string
         else .+$separator
         end
     ;
-    reduce .[] as $s
-        (null; sep + $s)
-    // ""
+    reduce .[] as $s (null; sep + $s) // ""
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq
