@@ -127,7 +127,7 @@ def schema: #:: α| -> SCHEMA
         if length == 0 then null
         else
             { "items": (
-                if every(.[]|isscalar) and ([.[]|type]|unique|length) == 1 then
+                if every(.[] | isscalar) and ([.[] | type] | unique | length) == 1 then
                     { "type": (.[0] | type) }
                 elif length == 1 then
                    .[0] | schema 
@@ -146,6 +146,9 @@ def schema: #:: α| -> SCHEMA
 # Validates a document against a simple schema
 #
 def valid($schema): #:: α|(SCHEMA) -> boolean
+    #
+    # Schema keywords
+    #
     def k_type: # keyword type
         if $schema | has("type") then
             type as $t
@@ -181,37 +184,111 @@ def valid($schema): #:: α|(SCHEMA) -> boolean
             valid($schema.not) | not
         else true end
     ;
+    #
+    # Type constraints
+    #
+    def c_number: # number constraints
+        if $schema | has("multipleOf") then
+            (. / $schema.multipleOf) | . == floor
+        else true end
+        and if $schema | has("maximum") then
+            $schema.maximum as $n
+            | if $schema.exclusiveMaximum then . < $n else . <= $n end
+        else true end
+        and if $schema | has("minimum") then
+            $schema.minimum as $n
+            | if $schema.exclusiveMinimum then . > $n else . >= $n end
+        else true end
+    ;
+    def c_string: # string constraints
+        if $schema | has("maxLength") then
+            length <= $schema.maxLength
+        else true end
+        and if $schema | has("minLength") then
+            length >= $schema.minLength
+        else true end
+        and if $schema | has("pattern") then
+            test($schema.pattern)
+        else true end
+        and if $schema | has("format") then
+            error("Keyword 'format' not supported")
+        else true end
+    ;
+    def c_array: # array constraints
+
+        if $schema | has("items") then
+            if ($schema.items | isobject) then
+                every(.[] | valid($schema.items))
+            else # array: tuple validation
+                ($schema.items|length) as $len
+                | if ($schema.additionalItems == false) and length != $len
+                then false
+                else
+                    every(
+                        range($len) as $i
+                        | (.[$i] | valid($schema.items[$i]))
+                    )
+                end
+            end
+            and if $schema | has("maxItems") then
+                length <= $schema.maxItems
+            else true end
+            and if $schema | has("minItems") then
+                length >= $schema.minItems
+            else true end
+            and if $schema | has("uniqueItems") then
+                ($schema.uniqueItems | not) or length == (unique | length)
+            else true end
+        else true end
+    ;
     def c_object: # object constraints
-        if $schema | has("properties") then
-            every(
+        . as $instance
+        | if $schema | has("properties") then
+            if $schema | has("maxProperties") then
+                . <= $schema.maxProperties
+            else true end
+            and if $schema | has("minProperties") then
+                . >= $schema.minProperties
+            else true end
+            and if $schema | has("required") then
+                every($instance | has($schema.required[]))
+            else true end
+            and if $schema | has("additionalProperties") then
+                $schema.additionalProperties as $p
+                | if $p == false then
+                    every($schema.properties | has(keys_unsorted[]))
+                elif isobject($p) then
+                    every(
+                        keys_unsorted[]
+                        | select(in($schema.properties) | not)
+                        | $instance[.] | valid($p)
+                    )
+                else true end
+            else true end
+            and every(
                 keys_unsorted[] as $k
                 | (.[$k] | valid($schema.properties[$k]))
             )
         else true end
     ;
-    def c_array: # array constraints
-        if $schema | has("items") then
-            if ($schema.items | isobject) then # object or array
-                every(.[] | valid($schema.items))
-            else
-                every(
-                    range($schema.items | length) as $i
-                    | (.[$i] | valid($schema.items[$i]))
-                )
-            end
-        else true end
-    ;
-    if $schema != null and $schema != {} then
+    #
+    # Validate
+    #
+    if $schema == null or $schema == {}
+    then true
+    else
         k_type  and
         k_enum  and
         k_allOf and
         k_anyOf and
         k_oneOf and
         k_not   and
-        if isobject then c_object
+        if isnumber then c_number
+        elif isstring then c_string
         elif isarray then c_array
-        else true end # null, boolean, number, string
-    else true end # empty or null schema
+        elif isobject then c_object
+        else true end # null, boolean
+    end # empty or null schema
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq
