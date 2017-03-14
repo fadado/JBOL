@@ -117,6 +117,15 @@ include "schema"; valid({"enum":["yes","no"]})
 "si"
 false
 
+include "schema"; valid({"type":"null"})
+null
+true
+
+# TODO
+#include "schema"; valid({"not": {"type":"null"}})
+#null
+#false
+
 include "schema"; valid({"not": {"type":"null"}})
 "si"
 true
@@ -240,5 +249,53 @@ false
 include "schema"; valid({"type":"array","items":[{"type":"number"}],"additionalItems":false})
 [1]
 true
+
+include "schema"; valid({"items":[{},{},{}],"additionalItems":false})
+[]
+true
+
+include "schema"; valid({"items":[{},{},{}],"additionalItems":false})
+[[1,2,3,4],[5,6,7,8]]
+true
+
+include "schema"; valid({"items":[{},{},{}],"additionalItems":false})
+[1,2,3]
+true
+
+include "schema"; valid({"items":[{},{},{}],"additionalItems":false})
+[1,2,3,4]
+false
+
+include "schema"; valid({"items":[{},{},{}],"additionalItems":false})
+[null,{"a":"b"},true,31.00000000000000000013]
+false
+
+include "schema"; valid({"items":[{},{},{}],"additionalItems":{"type":"boolean"}})
+[1,2,3,true]
+true
+
+include "schema"; valid({"items":[{},{},{}],"additionalItems":{"type":"boolean"}})
+[1,2,3,4]
+false
+
+include "schema"; valid({"items":[{},{},{}],"additionalItems":false})
+[1,2,3,4]
+false
+
+include "schema"; valid({"items":[{},{},{}],"additionalItems":true})
+[1,2,3,4]
+true
+
+include "schema"; valid({"type":"object","required":["a"]})
+{"b":1,"a":2}
+true
+
+include "schema"; valid({"type":"object","required":["a","b"]})
+{"b":1,"a":2}
+true
+
+include "schema"; valid({"type":"object","required":["a","c"]})
+{"b":1,"a":2}
+false
 
 # vim:ai:sw=2:ts=2:et:syntax=jq

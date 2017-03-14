@@ -54,4 +54,12 @@ include "prelude"; failure(nan)
 null
 false
 
+include "prelude"; every(empty)
+null
+true
+
+include "prelude"; some(empty)
+null
+false
+
 # vim:ai:sw=2:ts=2:et:syntax=jq
