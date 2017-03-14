@@ -79,7 +79,7 @@ def generate($opt): #:: α|(OPTIONS) -> SCHEMA
         if length == 0 then null
         else
             { "items": (
-                if every(.[]|isscalar) and ([.[]|type]|unique|length) == 1 then
+                if every(.[] | isscalar) and ([.[] | type] | unique | length) == 1 then
                     { "type": (.[0] | type) }
                 elif length == 1 then
                    .[0] | generate($opt) 
@@ -160,7 +160,7 @@ def validate($schema; $root): #:: α|(SCHEMA) -> boolean
         ;
         def k_not: # keyword not
             if $schema | has("not") then
-                try _validate($schema.not) catch (false | not)
+                try _validate($schema.not) catch false
             else true end
         ;
         #
@@ -200,32 +200,108 @@ def validate($schema; $root): #:: α|(SCHEMA) -> boolean
                 }[$schema.format]//false
             else true end
         ;
+#       def c_array: # array constraints
+#           if $schema | has("maxItems") then
+#               length <= $schema.maxItems
+#           else true end
+#           and if $schema | has("minItems") then
+#               length >= $schema.minItems
+#           else true end
+#           and if $schema | has("uniqueItems") then
+#               ($schema.uniqueItems | not) or length == (unique | length)
+#           else true end
+#           and if $schema | has("items") then
+#               if ($schema.items | isobject) then
+#                   every(.[] | _validate($schema.items))
+#               else # array: tuple validation
+#                   if ($schema.additionalItems == false) and length > ($schema.items | length)
+#                   then false
+#                   else
+#                       every(
+#                           range(length) as $i
+#                           | if $i in($schema.items)
+#                           then .[$i] | _validate($schema.items[$i])
+#                           else true end
+#                       )
+#                   end
+#               end
+#           else true end
+#       ;
         def c_array: # array constraints
-            if $schema | has("items") then
+            def array_itself:
+                if ($schema | has("items") | not) or ($schema.items | isobject)
+                    or ($schema.additionalItems == true) or ($schema.additionalItems | isobject)
+                then true
+                elif $schema.additionalItems == false and $schema.items | isarray
+                then length <= ($schema.items | length)
+                else false end
+
+            ;
+            def array_elements:
+                def additional:
+                    if ($schema | has("additionalItems") | not)
+                        or ($schema.additionalItems == true)
+                    then {}
+                    elif $schema.additionalItems | isobject
+                    then $schema.additionalItems 
+                    else null
+                    end
+                ;
                 if ($schema.items | isobject) then
                     every(.[] | _validate($schema.items))
-                else # array: tuple validation
-                    if ($schema.additionalItems == false) and length > ($schema.items|length)
-                    then false
-                    else
-                        every(
-                            range(length) as $i
-                            | (.[$i] | _validate($schema.items[$i]))
-                        )
-                    end
+                else
+                    additional as $additional
+                    | every(
+                        range(length) as $i
+                        | if $i in($schema.items)
+                        then .[$i] | _validate($schema.items[$i])
+                        else $additional != null and .[$i] | _validate($additional)
+                        end
+                    )
                 end
-                and if $schema | has("maxItems") then
-                    length <= $schema.maxItems
-                else true end
-                and if $schema | has("minItems") then
-                    length >= $schema.minItems
-                else true end
-                and if $schema | has("uniqueItems") then
-                    ($schema.uniqueItems | not) or length == (unique | length)
-                else true end
+            ;
+            if $schema | has("maxItems") then
+                length <= $schema.maxItems
             else true end
+            and if $schema | has("minItems") then
+                length >= $schema.minItems
+            else true end
+            and if $schema | has("uniqueItems") then
+                ($schema.uniqueItems | not) or length == (unique | length)
+            else true end
+            and array_itself
+            and array_elements
         ;
         def c_object: # object constraints
+            def object_itself:
+                if ($schema.additionalProperties == true) or ($schema.additionalProperties | isobject)
+                then true
+                else # TODO
+                end
+            ;
+            def object_members:
+                def additional:
+                    if ($schema | has("additionalProperties") | not)
+                        or ($schema.additionalProperties == true)
+                    then {}
+                    elif $schema.additionalProperties | isobject
+                    then $schema.additionalProperties 
+                    else null
+                    end
+                ;
+                $schema.properties//{} as $p
+                | $schema.patternProperties//{} as $pp
+                | additional as $additional
+                | keys_unsorted as $m
+                [   keep_if($m | in($p); $p[$m]),
+                    ($pp|keys_unsorted) as $re
+                    | keep_if($m | test($re); $pp[$m])
+                ] as $s
+                | if ($s | length) == 0
+                then $additional != null and .[$m] | _validate($additional)
+                else .[$m] | some(_validate($s[]))
+                end
+            ;
             . as $instance
             | if $schema | has("maxProperties") then
                 length <= $schema.maxProperties
@@ -236,38 +312,70 @@ def validate($schema; $root): #:: α|(SCHEMA) -> boolean
             and if $schema | has("required") then
                 every($instance | has($schema.required[]))
             else true end
-            and if ($schema | has("additionalItems") | not) or ($schema.additionalProperties == true) then
-                if $schema | has("properties") then
-                    every(
-                        keys_unsorted[] as $k
-                        | ($k | in($schema.properties) | not)
-                            or ($instance[$k] | _validate($schema.properties[$k]))
-                    )
-                else true end
-            else true end
-            and if $schema.additionalProperties == false then
-                if ($schema | has("properties")) and ($schema | has("patternProperties")) then
-                    true
-                elif $schema | has("properties") then
-                    every(
-                        keys_unsorted[] as $k
-                        | ($k | in($schema.properties))
-                            and ($instance[$k] | _validate($schema.properties[$k]))
-                    )
-                elif $schema | has("patternProperties") then
-                    true
-                else length == 0 end
-            else true end
-            and if $schema.additionalProperties | isobject then
-                if ($schema | has("properties")) and ($schema | has("patternProperties")) then
-                    true
-                elif $schema | has("properties") then
-                    true
-                elif $schema | has("patternProperties") then
-                    true
-                else true end
-            else true end
+            and object_itself
+            and object_members
         ;
+#       def c_object: # object constraints
+#           . as $instance
+#           | if $schema | has("maxProperties") then
+#               length <= $schema.maxProperties
+#           else true end
+#           and if $schema | has("minProperties") then
+#               length >= $schema.minProperties
+#           else true end
+#           and if $schema | has("required") then
+#               every($instance | has($schema.required[]))
+#           else true end
+#           and if ($schema | has("additionalProperties") | not)
+#                   or ($schema.additionalProperties == true) then
+#               if ($schema | has("properties")) and ($schema | has("patternProperties")) then
+#                   some(
+#                       keys_unsorted[] as $k
+#                       | if $k | in($schema.properties)
+#                       then $instance[$k] | _validate($schema.properties[$k])
+#                       else
+#                       end
+#                   ) # TODO ???
+#               elif $schema | has("properties") then
+#                   every(
+#                       keys_unsorted[] as $k
+#                       | ($k | in($schema.properties) | not)
+#                           or ($instance[$k] | _validate($schema.properties[$k]))
+#                   )
+#               elif $schema | has("patternProperties") then
+#                   some(
+#                       keys_unsorted[] as $k
+#                       | ($schema.patternProperties | keys_unsorted) as $re
+#                       | if $k|test($re)
+#                       then
+#                           $instance[$k] | _validate($schema.patternProperties[$re])
+#                       else false end
+#                   )
+#               else true end
+#           else true end
+#           and if $schema.additionalProperties == false then
+#               if ($schema | has("properties")) and ($schema | has("patternProperties")) then
+#                   true    # TODO
+#               elif $schema | has("properties") then
+#                   every(
+#                       keys_unsorted[] as $k
+#                       | ($k | in($schema.properties))
+#                           and ($instance[$k] | _validate($schema.properties[$k]))
+#                   )
+#               elif $schema | has("patternProperties") then
+#                   true    # TODO
+#               else length == 0 end
+#           else true end
+#           and if $schema.additionalProperties | isobject then
+#               if ($schema | has("properties")) and ($schema | has("patternProperties")) then
+#                   true    # TODO
+#               elif $schema | has("properties") then
+#                   true    # TODO
+#               elif $schema | has("patternProperties") then
+#                   true    # TODO
+#               else true end
+#           else true end
+#       ;
         #
         # Validate
         #
