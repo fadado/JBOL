@@ -123,7 +123,20 @@ def generate($opt): #:: α|(OPTIONS) -> SCHEMA
 
 # Validates a document against an schema
 #
-def validate($schema; $root): #:: α|(SCHEMA) -> boolean
+def valid($schema): #:: α|(SCHEMA) -> boolean
+    def pointer($s):
+        if $s | startswith("#") | not
+        then error("Only supported pointers in current document")
+        elif $s == "#"
+        then $schema # root
+        elif $s | startswith("#/") | not
+        then error("Only supported absolute pointers")
+        else
+            $schema
+            | getpath($s[2:] / "/")
+            | when(isnull; error("Cannot dereference pointer"))
+        end
+    ;
     def _validate($schema):
         #
         # Schema keywords
@@ -156,6 +169,23 @@ def validate($schema; $root): #:: α|(SCHEMA) -> boolean
         def k_oneOf: # keyword oneOf
             if $schema | has("oneOf") then
                 [_validate($schema.oneOf[])] == [true]
+            else true end
+        ;
+        def k_dependencies: # keyword dependencies
+            if $schema | has("dependencies") then
+                . as $instance
+                | every(
+                    $schema.dependencies
+                    | keys_unsorted[]
+                    | if in($instance)
+                    then
+                        $schema.dependencies[.] as $d
+                        | if $d | isarray
+                        then every($d[] | in($instance))
+                        else $instance | _validate($d)
+                        end
+                    else true end
+                  )
             else true end
         ;
         #
@@ -197,13 +227,12 @@ def validate($schema; $root): #:: α|(SCHEMA) -> boolean
         ;
         def c_array: # array constraints
             def valid_array:
-                if ($schema | has("items") | not)
-                    or ($schema.items | isobject)
-                    or ($schema | has("additionalItems") | not)
-                    or ($schema.additionalItems == true)
-                    or ($schema.additionalItems | isobject)
-                then true
-                elif $schema.additionalItems == false and ($schema.items | isarray)
+                ($schema | has("items") | not)
+                or ($schema.items | isobject)
+                or ($schema | has("additionalItems") | not)
+                or ($schema.additionalItems == true)
+                or ($schema.additionalItems | isobject)
+                or if $schema.additionalItems == false and ($schema.items | isarray)
                 then length <= ($schema.items | length)
                 else false end
             ;
@@ -244,11 +273,10 @@ def validate($schema; $root): #:: α|(SCHEMA) -> boolean
         ;
         def c_object: # object constraints
             def valid_object:
-                if ($schema | has("additionalProperties") | not)
-                    or ($schema.additionalProperties == true)
-                    or ($schema.additionalProperties | isobject)
-                then true
-                elif $schema.additionalProperties == false
+                ($schema | has("additionalProperties") | not)
+                or ($schema.additionalProperties == true)
+                or ($schema.additionalProperties | isobject)
+                or if $schema.additionalProperties == false
                 then
                     ($schema.properties//{}) as $p
                     | ($schema.patternProperties//{}) as $pp
@@ -301,21 +329,24 @@ def validate($schema; $root): #:: α|(SCHEMA) -> boolean
         # Validate
         #
         def check(constraint):
-            constraint or ({ instance: ., schema: $schema } | error)
+            constraint #or ({ instance: ., schema: $schema } | error)
         ;
         if $schema == null or $schema == {}
         then true
-#       elif $schema | has("$ref")
-#       then _validate(pointer($schema["$ref"]))
+        elif isobject and has("$ref") # when validating schemas!
+        then .["$ref"] | isstring
+        elif $schema | has("$ref")
+        then _validate(pointer($schema["$ref"]))
         elif $schema | has("not")
-        then try (_validate($schema.not) | not)
-             catch true
+        then
+            _validate($schema | del(.not)) and (_validate($schema.not) | not)
         else
             check(k_type)  and
             check(k_enum)  and
             check(k_allOf) and
             check(k_anyOf) and
             check(k_oneOf) and
+            check(k_dependencies) and
             if isnumber then check(c_number)
             elif isstring then check(c_string)
             elif isarray then check(c_array)
@@ -325,14 +356,6 @@ def validate($schema; $root): #:: α|(SCHEMA) -> boolean
     ;
     #
     _validate($schema)
-;
-
-# Simple boolean validation
-#
-def valid($schema): #:: α|(SCHEMA) -> boolean
-    . as $root
-    | try validate($schema; $root)
-      catch false
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

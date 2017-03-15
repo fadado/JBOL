@@ -29,7 +29,7 @@ Options:
     -a, --verbose-array     Add array constraints
     -n, --verbose-number    Add number constraints
     -o, --verbose-object    Add object constraints
-    -s, verbose-string      Add string constraints
+    -s, --verbose-string    Add string constraints
 EOF
     exit $(( $# == 0 ))
 }
