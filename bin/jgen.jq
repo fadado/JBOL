@@ -8,7 +8,7 @@ import "fadado.github.io/schema" as schema;
 #
 def meta:
     {
-        "$schema": "http://json-schema.org/schema#",
+        "$schema": "http://json-schema.org/draft-04/schema#",
         "title": "Schema title",
         "description": "Schema description"
     }

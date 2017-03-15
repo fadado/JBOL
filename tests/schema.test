@@ -121,10 +121,9 @@ include "schema"; valid({"type":"null"})
 null
 true
 
-# TODO
-#include "schema"; valid({"not": {"type":"null"}})
-#null
-#false
+include "schema"; valid({"not": {"type":"null"}})
+null
+false
 
 include "schema"; valid({"not": {"type":"null"}})
 "si"

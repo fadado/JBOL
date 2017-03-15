@@ -158,11 +158,6 @@ def validate($schema; $root): #:: α|(SCHEMA) -> boolean
                 [_validate($schema.oneOf[])] == [true]
             else true end
         ;
-        def k_not: # keyword not    TODO: test failed at line 124 of tests
-            if $schema | has("not") then
-                try (_validate($schema.not) | not) catch true
-            else true end
-        ;
         #
         # Type constraints
         #
@@ -257,9 +252,9 @@ def validate($schema; $root): #:: α|(SCHEMA) -> boolean
                 then
                     ($schema.properties//{}) as $p
                     | ($schema.patternProperties//{}) as $pp
-                    | [ keys_unsorted
+                    | [ keys_unsorted[]
                         | select(in($p) | not)
-                        | select(every(test($pp | keys_unsorted) | not))
+                        | select(every(test($pp | keys_unsorted[]) | not))
                       ]
                     | length == 0
                 else false end
@@ -280,7 +275,7 @@ def validate($schema; $root): #:: α|(SCHEMA) -> boolean
                 | every(
                     keys_unsorted[] as $m
                     | [ keep_if($m | in($p); $p[$m]),
-                        (($pp | keys_unsorted)[] as $re
+                        (($pp | keys_unsorted[]) as $re
                             | keep_if($m | test($re); $pp[$re]))
                     ] as $s
                     | if ($s | length) > 0
@@ -310,13 +305,17 @@ def validate($schema; $root): #:: α|(SCHEMA) -> boolean
         ;
         if $schema == null or $schema == {}
         then true
+#       elif $schema | has("$ref")
+#       then _validate(pointer($schema["$ref"]))
+        elif $schema | has("not")
+        then try (_validate($schema.not) | not)
+             catch true
         else
             check(k_type)  and
             check(k_enum)  and
             check(k_allOf) and
             check(k_anyOf) and
             check(k_oneOf) and
-            check(k_not)   and
             if isnumber then check(c_number)
             elif isstring then check(c_string)
             elif isarray then check(c_array)
