@@ -13,8 +13,11 @@ then
     "Expected '$schema' property in root instance"
 else
     . as $root
-    | try (schema::validate($schema; $root) | "")
-      catch "Validation error. Instance: \(.instance); Schema: \(.schema)"
+    | try
+        if schema::valid($schema) | not
+        then "Validation error"
+        else "" end
+      catch "Error: \(.)"
 end
 
 
