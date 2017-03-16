@@ -48,7 +48,8 @@ def generate: #:: α| -> SCHEMA
 ;
 
 # Generates a document schema (with options)
-#
+# OPTIONS: an object of runtime options
+# SCHEMA: a JSON schema document
 def generate($opt): #:: α|(OPTIONS) -> SCHEMA
     { "type": type } +
     if isobject then
@@ -122,8 +123,9 @@ def generate($opt): #:: α|(OPTIONS) -> SCHEMA
 ;
 
 # Validates a document against an schema
-#
+# SCHEMA: a JSON schema document
 def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
+    def rule(a; c): if a then c else true;
     def pointer($s):
         if $s | startswith("#") | not
         then error("Only supported pointers in current document")
@@ -142,16 +144,16 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
         # Schema keywords
         #
         def k_enum: # keyword enum
-            if $schema | has("enum") then
+            rule($schema | has("enum");
                 . as $instance
                 | isscalar and ($schema.enum | indices([$instance]) | length) > 0
-            else true end
+            )
         ;
         def k_type: # keyword type
             if $schema | has("type") then
                 type as $t
                 | if ($schema["type"] | type) == "string" # string or array
-                then $t == $schema["type"] or ($schema["type"] == "integer" and isinteger)
+                then $t == $schema["type"] or ($t == "number" and $schema["type"] == "integer" and isinteger)
                 else some(($schema["type"][] | type) == $t)
                 end
             else true end
@@ -232,14 +234,15 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
                 test($schema.pattern)
             else true end
             and if $schema | has("format") then
-                { # all accepted for now!!!
-                    "date-time": true,
-                    "email":  true,
-                    "hostname": true,
-                    "ipv4":  true,
-                    "ipv6": true,
-                    "uri": true,
-                }[$schema.format]//false
+                {   "date-time": "[0-9]",   # one digit at least
+                    "email": "^.+@.+$",     # one @ inside text
+                    "hostname": "[A-Za-z]", # one letter at least
+                    "ipv4": "^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$", # 4 digits triples
+                    "ipv6": "[0-9]",        # one digit at least
+                    "uri": "^[a-zA-Z]:",    # required schema prefix
+                    "uriref": "^."          # non empty string
+                }[$schema.format]//"^." as $re # any non empty string as default
+                | test($re)
             else true end
         ;
         def c_array: # array constraints
@@ -379,10 +382,12 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
     _validate($schema; $fatal)
 ;
 
+# SCHEMA: a JSON schema document
 def validate($schema): #:: α|(SCHEMA) -> boolean
     validate($schema; true)
 ;
 
+# SCHEMA: a JSON schema document
 def valid($schema): #:: α|(SCHEMA) -> boolean
     validate($schema; false)
 ;

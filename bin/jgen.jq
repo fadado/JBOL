@@ -4,8 +4,7 @@
 
 import "fadado.github.io/schema" as schema;
 
-# Main
-#
+# Metadata header
 def meta:
     {
         "$schema": "http://json-schema.org/draft-04/schema#",
@@ -14,6 +13,7 @@ def meta:
     }
 ;
 
+# Runtime options
 def options:
 {
     array_verbose: $opt_array_verbose,
@@ -23,6 +23,7 @@ def options:
     string_verbose: $opt_string_verbose
 };
 
+# Main
 options as $opt
 | meta + schema::generate($opt)
 

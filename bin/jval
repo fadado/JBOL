@@ -3,15 +3,16 @@
 # Validates an instance document against a JSON schema.
 #
 
-# JBOL modules
+# JBOL modules path
 JBOL='-L/usr/local/share/jbol'
 
 # Options
 set -o errexit -o noglob -o nounset -o pipefail
-shopt -s expand_aliases
 
-# Script name
+# This script name
 declare -r SELF=${0##*/}
+# JQ script
+declare -r JQ=${0}.jq
 
 # Show help
 function help {
@@ -51,12 +52,12 @@ function main {
 
     diagnostic=$(
         jq $JBOL \
+            --from-file ${JQ} \
             --raw-output \
             --slurpfile SCHEMA $schema \
-            --from-file $0.jq \
             "$@"
     )
-    if [[ $diagnostic == '' ]]; then
+    if [[ -z $diagnostic ]]; then
         return 0
     else
         echo 1>&2 "$diagnostic"
