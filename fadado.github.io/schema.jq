@@ -123,7 +123,7 @@ def generate($opt): #:: α|(OPTIONS) -> SCHEMA
 
 # Validates a document against an schema
 #
-def valid($schema): #:: α|(SCHEMA) -> boolean
+def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
     def pointer($s):
         if $s | startswith("#") | not
         then error("Only supported pointers in current document")
@@ -137,7 +137,7 @@ def valid($schema): #:: α|(SCHEMA) -> boolean
             | when(isnull; error("Cannot dereference pointer"))
         end
     ;
-    def _valid($schema):
+    def _validate($schema; $fatal):
         #
         # Schema keywords
         #
@@ -158,17 +158,17 @@ def valid($schema): #:: α|(SCHEMA) -> boolean
         ;
         def k_allOf: # keyword allOf
             if $schema | has("allOf") then
-                every(_valid($schema.allOf[]))
+                every(_validate($schema.allOf[]; $fatal))
             else true end
         ;
         def k_anyOf: # keyword anyOf
             if $schema | has("anyOf") then
-                some(_valid($schema.anyOf[]))
+                some(_validate($schema.anyOf[]; false))
             else true end
         ;
         def k_oneOf: # keyword oneOf
             if $schema | has("oneOf") then
-                [_valid($schema.oneOf[])] == [true]
+                [_validate($schema.oneOf[]; false)] == [true]
             else true end
         ;
         def k_dependencies: # keyword dependencies
@@ -182,7 +182,24 @@ def valid($schema): #:: α|(SCHEMA) -> boolean
                         $schema.dependencies[.] as $d
                         | if $d | isarray
                         then every($d[] | in($instance))
-                        else $instance | _valid($d)
+                        else $instance | _validate($d; $fatal)
+                        end
+                    else true end
+                  )
+            else true end
+        ;
+        def k_dependencies: # keyword dependencies
+            if $schema | has("dependencies") then
+                . as $instance
+                | every(
+                    $schema.dependencies
+                    | keys_unsorted[]
+                    | if in($instance)
+                    then
+                        $schema.dependencies[.] as $d
+                        | if $d | isarray
+                        then every($d[] | in($instance))
+                        else $instance | _validate($d; $fatal)
                         end
                     else true end
                   )
@@ -246,15 +263,15 @@ def valid($schema): #:: α|(SCHEMA) -> boolean
                     else false end
                 ;
                 if ($schema.items | isobject) then
-                    every(.[] | _valid($schema.items))
+                    every(.[] | _validate($schema.items; $fatal))
                 else # isarray
                     additionalItems as $additional
                     | every(
                         range(length) as $i
                         | if $i | in($schema.items) # $i < ($schema.items|length)
-                        then .[$i] | _valid($schema.items[$i])
+                        then .[$i] | _validate($schema.items[$i]; $fatal)
                         elif $additional != false
-                        then .[$i] | _valid($additional)
+                        then .[$i] | _validate($additional; $fatal)
                         else false end
                       )
                 end
@@ -307,9 +324,9 @@ def valid($schema): #:: α|(SCHEMA) -> boolean
                             | keep_if($m | test($re); $pp[$re]))
                     ] as $s
                     | if ($s | length) > 0
-                    then .[$m] | every(_valid($s[]))
+                    then .[$m] | every(_validate($s[]; $fatal))
                     elif $additional != false
-                    then .[$m] | _valid($additional)
+                    then .[$m] | _validate($additional; $fatal)
                     else false end
                   )
             ;
@@ -329,17 +346,21 @@ def valid($schema): #:: α|(SCHEMA) -> boolean
         # Validate
         #
         def check(constraint):
-            constraint #or ({ instance: ., schema: $schema } | error)
+            constraint 
+            or if $fatal
+            then { instance: ., schema: $schema } | error
+            else false end
         ;
         if $schema == null or $schema == {}
         then true
         elif isobject and has("$ref") # when validating schemas!
         then .["$ref"] | isstring
         elif $schema | has("$ref")
-        then _valid(pointer($schema["$ref"]))
+        then _validate(pointer($schema["$ref"]); $fatal)
         elif $schema | has("not")
         then
-            _valid($schema | del(.not)) and (_valid($schema.not) | not)
+            _validate($schema | del(.not); $fatal)
+            and (_validate($schema.not; $fatal) | not)
         else
             check(k_type)  and
             check(k_enum)  and
@@ -347,15 +368,23 @@ def valid($schema): #:: α|(SCHEMA) -> boolean
             check(k_anyOf) and
             check(k_oneOf) and
             check(k_dependencies) and
-            if isnumber then check(c_number)
-            elif isstring then check(c_string)
-            elif isarray then check(c_array)
-            elif isobject then check(c_object)
+            if isnumber     then check(c_number)
+            elif isstring   then check(c_string)
+            elif isarray    then check(c_array)
+            elif isobject   then check(c_object)
             else true end # null, boolean
-        end # empty or null schema
+        end
     ;
     #
-    _valid($schema)
+    _validate($schema; $fatal)
+;
+
+def validate($schema): #:: α|(SCHEMA) -> boolean
+    validate($schema; true)
+;
+
+def valid($schema): #:: α|(SCHEMA) -> boolean
+    validate($schema; false)
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq
