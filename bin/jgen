@@ -3,20 +3,28 @@
 # Generates the JSON schema for an instance document
 #
 
-# JBOL modules path
-JBOL='-L/usr/local/share/jbol'
-
-# Options
+# Bash options
 set -o errexit -o noglob -o nounset -o pipefail
+shopt -s expand_aliases
+
+# jgen version
+declare -r VERSION='0.1'
 
 # This script name
-declare -r SELF=${0##*/}
+declare -r SELF="${0##*/}"
+
 # JQ script
-declare -r JQ=${0}.jq
+declare -r JQ="${0}.jq"
+
+# JBOL modules path
+declare -r JBOL='-L/usr/local/share/jbol'
+
+# Print text on screen
+alias print='echo 1>&2 -e'
 
 # Show help
 function help {
-    cat <<EOF
+    cat 1>&2 <<EOF
 ${SELF} - generates a JSON schema
 Usage: ${SELF} [options] [file]
 
@@ -36,6 +44,20 @@ EOF
     exit $(( $# == 0 ))
 }
 
+# Print version and exit
+function version {
+    print "$SELF $VERSION"
+    exit 0
+}
+
+# Print usage message and exit
+function usage {
+    print "Unknown option: $1\n"
+    print "Usage: ${SELF} [-h | --help | -V]"
+    print "Usage: ${SELF} [options] [file]"
+    exit 1
+}
+
 # Entry point
 function main {
     local required='false' compact='false' \
@@ -43,8 +65,9 @@ function main {
     local -i compact=0 skeys=0
 
     local opt
-    while getopts :hacknors-: opt; do
+    while getopts :Vhacknors-: opt; do
         case $opt in
+            V) version ;;
             h) help ;;
             a) varray='true' ;;
             c) compact=1 ;;
@@ -54,6 +77,7 @@ function main {
             r) required='true' ;;
             s) vstring='true' ;;
             -) case $OPTARG in
+                   version) version ;;
                    help) help ;;
                    compact) compact=1 ;;
                    required) required='true' ;;
@@ -62,8 +86,10 @@ function main {
                    verbose-number) vnumber='true' ;;
                    verbose-object) vobject='true' ;;
                    verbose-string) vstring='true' ;;
-               esac
-               ;;
+                   *) usage "--$OPTARG";;
+                esac
+                ;;
+            ?) usage "-$OPTARG";;
         esac
     done
 

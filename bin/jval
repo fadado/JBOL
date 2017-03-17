@@ -3,23 +3,37 @@
 # Validates an instance document against a JSON schema.
 #
 
-# JBOL modules path
-JBOL='-L/usr/local/share/jbol'
-
-# Options
+# Bash options
 set -o errexit -o noglob -o nounset -o pipefail
+shopt -s expand_aliases
+
+# jval version
+declare -r VERSION='0.1'
 
 # This script name
-declare -r SELF=${0##*/}
-# JQ script
-declare -r JQ=${0}.jq
+declare -r SELF="${0##*/}"
 
-#
-declare -r METASCHEMA=/usr/local/share/jbol/schemata/schema.schema.json
+# JQ script
+declare -r JQ="${0}.jq"
+
+# JBOL modules path
+declare -r JBOL='-L/usr/local/share/jbol'
+
+# Meta schema
+declare -r METASCHEMA='/usr/local/share/jbol/schemata/schema.schema.json'
+
+# Print text on screen
+alias print='echo 1>&2 -e'
+
+# Abort with message
+function fatal {
+    print "Error: $*"
+    exit 1
+}
 
 # Show help
 function help {
-    cat <<EOF
+    cat 1>&2 <<EOF
 ${SELF} - validates a JSON document
 Usage: ${SELF} [options] schema [file]
 
@@ -31,6 +45,20 @@ Options:
     -s, --schema            Validates JSON schema against the meta schema
 EOF
     exit $(( $# == 0 ))
+}
+
+# Print version and exit
+function version {
+    print "$SELF $VERSION"
+    exit 0
+}
+
+# Print usage message and exit
+function usage {
+    print "Unknown option: $1\n"
+    print "Usage: ${SELF} [-h | --help | -V]"
+    print "Usage: ${SELF} [options] schema [file]"
+    exit 1
 }
 
 # Validates document
@@ -48,15 +76,19 @@ function main {
     local -i metaschema=0
 
     local opt
-    while getopts :hs-: opt; do
+    while getopts :Vhs-: opt; do
         case $opt in
+            V) version ;;
             h) help ;;
             s) metaschema=1 ;;
             -) case $OPTARG in
+                   version) version ;;
                    help) help ;;
                    schema) metaschema=1 ;;
+                   *) usage "--$OPTARG";;
                esac
                ;;
+            ?) usage "-$OPTARG";;
         esac
     done
 
@@ -66,7 +98,7 @@ function main {
     local schema diagnostic
     if ((metaschema)); then
         [[ -e $METASCHEMA ]] ||
-            { echo 1>&2 "Error: missing $METASCHEMA meta schema"; exit 1; }
+			fatal "missing $METASCHEMA meta schema"
         schema=$METASCHEMA
     else
         schema=$1; shift
@@ -76,7 +108,7 @@ function main {
     if [[ -z $diagnostic ]]; then
         return 0
     else
-        echo 1>&2 $diagnostic
+        print $diagnostic
         return 1
     fi
 }
