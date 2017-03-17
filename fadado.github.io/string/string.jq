@@ -35,7 +35,7 @@ def upto($s; $i; $j): #:: string|(string;number;number) -> <number>
     assert($s != ""; "upto requires a non empty string as argument")
     | select(0 <= $i and $i < $j and $j <= length)
     | range($i; $j) as $p
-    | keep_if(.[$p:$p+1] | inside($s); $p)
+    | keep(.[$p:$p+1] | inside($s); $p)
 ;
 def upto($s; $i): #:: string|(string;number) -> <number>
     upto($s; $i; length)
@@ -47,7 +47,7 @@ def upto($s): #:: string|(string) -> <number>
 # Match initial string
 def match($s; $i): #:: string|(string;number) -> number
     select(0 <= $i and $i < length)
-    | keep_if(.[$i:] | startswith($s); $i+($s|length))
+    | keep(.[$i:] | startswith($s); $i+($s|length))
 ;
 def match($s): #:: string|(string) -> number
     match($s; 0)
@@ -56,7 +56,7 @@ def match($s): #:: string|(string) -> number
 # Locate initial character
 def any($s; $i): #:: string|(string;number) -> number
     select(0 <= $i and $i < length)
-    | keep_if(.[$i:$i+1] | inside($s); $i+1)
+    | keep(.[$i:$i+1] | inside($s); $i+1)
 ;
 def any($s): #:: string|(string) -> number
     any($s; 0)
@@ -64,7 +64,7 @@ def any($s): #:: string|(string) -> number
 
 def notany($s; $i): #:: string|(string;number) -> number
     select(0 <= $i and $i < length)
-    | keep_if(.[$i:$i+1] | inside($s) | not; $i+1)
+    | keep(.[$i:$i+1] | inside($s) | not; $i+1)
 ;
 def notany($s): #:: string|(string) -> number
     notany($s; 0)
@@ -203,7 +203,7 @@ def translate($from; $to): #:: string|(string:string) -> string
 def _lndx(predicate): # left index or empty if not found
     label $exit
     | range(length-1) as $i
-    | keep_if(.[$i:$i+1] | predicate |not;
+    | keep(.[$i:$i+1] | predicate |not;
         $i , break $exit
       )
 ;
@@ -211,7 +211,7 @@ def _lndx(predicate): # left index or empty if not found
 def _rndx(predicate): # rigth index or empty if not found
     label $exit
     | range(length-1; 0; -1) as $i
-    | keep_if(.[$i:$i+1] | predicate | not;
+    | keep(.[$i:$i+1] | predicate | not;
         $i+1 , break $exit
       )
 ;

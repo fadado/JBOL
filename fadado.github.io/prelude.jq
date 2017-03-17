@@ -56,11 +56,17 @@ def unless(predicate; action): #:: α|(boolean;β) -> αβ
     if predicate//false then . else action end
 ;
 
-def keep_if(predicate; item): #:: (boolean;α) -> α
+# keep if
+def keep(predicate; item): #:: (boolean;α) -> α
     if predicate//false then item else empty end
 ;
-def keep_if(predicate): #:: α|(boolean) -> α
+def keep(predicate): #:: α|(boolean) -> α
     if predicate//false then . else empty end
+;
+
+# rule if
+def rule(antecedent; consequent): #:: α|(boolean; boolean) -> boolean
+    if antecedent then consequent else true end
 ;
 
 # Assertions

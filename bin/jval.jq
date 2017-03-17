@@ -4,15 +4,15 @@
 
 import "fadado.github.io/schema" as schema;
 
-# Main
-#
-$SCHEMA[0] as $schema
-| if $schema | has("$schema") | not
+# SCHEMA parameter provided by the calling script
+$SCHEMA[0] as $schema |
+# require top-level '$schema' property in schema
+if "$schema" | in($schema) | not
 then
-    "Expected '$schema' property in schema root object"
+    "Error: expected '$schema' property in schema root object"
 else
-    try (schema::validate($schema) | "")
-    catch "Validation error; instance: \(.instance); schema: \(.schema)"
+    try (schema::validate($schema) | "") # no output if ok
+    catch "Validation error; Instance: \(.instance); Schema: \(.schema)"
 end
 
 

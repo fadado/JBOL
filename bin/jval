@@ -14,6 +14,9 @@ declare -r SELF=${0##*/}
 # JQ script
 declare -r JQ=${0}.jq
 
+#
+declare -r METASCHEMA=/usr/local/share/jbol/schemata/schema.schema.json
+
 # Show help
 function help {
     cat <<EOF
@@ -25,20 +28,33 @@ or the standard input.
 
 Options:
     -h, --help              Show this help
+    -s, --schema            Validates JSON schema against the meta schema
 EOF
     exit $(( $# == 0 ))
 }
 
-#TODO: --schema     Validates the schema itself
+# Validates document
+function validate {
+    local schema=$1
+    jq $JBOL                        \
+        --from-file ${JQ}           \
+        --raw-output                \
+        --slurpfile SCHEMA $schema  \
+        "$@"
+}
 
 # Entry point
 function main {
+    local -i metaschema=0
+
     local opt
-    while getopts :h-: opt; do
+    while getopts :hs-: opt; do
         case $opt in
             h) help ;;
+            s) metaschema=1 ;;
             -) case $OPTARG in
                    help) help ;;
+                   schema) metaschema=1 ;;
                esac
                ;;
         esac
@@ -48,19 +64,19 @@ function main {
     (( $# > 0 )) || help
 
     local schema diagnostic
-    schema=$1; shift
+    if ((metaschema)); then
+        [[ -e $METASCHEMA ]] ||
+            { echo 1>&2 "Error: missing $METASCHEMA meta schema"; exit 1; }
+        schema=$METASCHEMA
+    else
+        schema=$1; shift
+    fi
 
-    diagnostic=$(
-        jq $JBOL \
-            --from-file ${JQ} \
-            --raw-output \
-            --slurpfile SCHEMA $schema \
-            "$@"
-    )
+    diagnostic=$(validate $schema "$@")
     if [[ -z $diagnostic ]]; then
         return 0
     else
-        echo 1>&2 "$diagnostic"
+        echo 1>&2 $diagnostic
         return 1
     fi
 }

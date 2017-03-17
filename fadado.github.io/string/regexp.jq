@@ -110,7 +110,7 @@ def tostr: #:: MATCH -> string
       else (
         label $exit
         | range($len) as $i
-        | keep_if(.captures[$i].string; # not null
+        | keep(.captures[$i].string; # not null
             .captures[$i].string , break $exit
           )
         )//""

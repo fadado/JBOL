@@ -43,7 +43,7 @@ def _left($i): #:: [α]|(number) -> [α]
 # Subsets with one element removed (unsorted output)
 #
 def subset1_u: #:: [α]| -> <[α]>
-    keep_if(length != 0; 
+    keep(length != 0; 
         # either what's _left after picking one,
         _left
         # or this one with what's _left with one removed
@@ -58,7 +58,7 @@ def subset($k): #:: [α]|(number) -> <[α]>
     def _subset($k):
         if $k == 0
         then []
-        else keep_if(length > 0;  # no results for k > n
+        else keep(length > 0;  # no results for k > n
                 # either _pick one and add to what's _left subsets
                 _pick + (_left|_subset($k-1))
                 # or what's _left combined
@@ -101,7 +101,7 @@ def mulset($k): #:: [α]|(number) -> <[α]>
     def _mulset($k):
         if $k == 0
         then []
-        else keep_if(length > 0;
+        else keep(length > 0;
                 # either _pick one and add to other multisets minus one
                 _pick + _mulset($k-1)
                 # or what's _left multisets
@@ -208,7 +208,7 @@ def mulseq($k): #:: [α]|(number) <[α]>
 def derangement: #:: [α]| -> <[α]>
     def choose($i): #:: [α]|(number) -> [[number,α]]
         range(length) as $j
-        | keep_if(.[$j][0] != $i; [$j, .[$j][1]])
+        | keep(.[$j][0] != $i; [$j, .[$j][1]])
     ;
     def _derange($i): #:: [α]|(number) -> <[α]>
         if length == 0
@@ -303,7 +303,7 @@ def take($k; $seed): #:: [α]|(number;number) -> <α>
     def _take($a; $r; $m):
         def t($n; $k):
             ($m-$n) as $i
-            | keep_if($n >= 1;
+            | keep($n >= 1;
                 if $r[$i] < ($k/$n)
                 then $a[$i] , t($n-1; $k-1)
                 else t($n-1; $k)

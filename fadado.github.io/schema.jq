@@ -50,7 +50,7 @@ def generate: #:: α| -> SCHEMA
 # Generates a document schema (with options)
 # OPTIONS: an object of runtime options
 # SCHEMA: a JSON schema document
-def generate($opt): #:: α|(OPTIONS) -> SCHEMA
+def generate($options): #:: α|(OPTIONS) -> SCHEMA
     { "type": type } +
     if isobject then
         if length == 0 then null
@@ -59,16 +59,16 @@ def generate($opt): #:: α|(OPTIONS) -> SCHEMA
             { "properties": (
                 reduce keys_unsorted[] as $name (
                     {};
-                    . + {($name): ($object[$name] | generate($opt))}
+                    . + {($name): ($object[$name] | generate($options))}
                 )
               )
             } +
-            if $opt.required then
+            if $options.required then
             {
                 "required": [keys]
             }
             else null end +
-            if $opt.object_verbose then
+            if $options.object_verbose then
             {
                 "additionalProperties": false,
                 "minProperties": length,
@@ -83,16 +83,16 @@ def generate($opt): #:: α|(OPTIONS) -> SCHEMA
                 if every(.[] | isscalar) and ([.[] | type] | unique | length) == 1 then
                     { "type": (.[0] | type) }
                 elif length == 1 then
-                   .[0] | generate($opt) 
+                   .[0] | generate($options) 
                 else
                     reduce .[] as $item (
                         [];
-                        .[length] = ($item | generate($opt))
+                        .[length] = ($item | generate($options))
                     )
                 end
               )
             } +
-            if $opt.array_verbose then
+            if $options.array_verbose then
             {
                 "additionalItems": false,
                 "maxItems": length,
@@ -102,7 +102,7 @@ def generate($opt): #:: α|(OPTIONS) -> SCHEMA
             else null end
         end
     elif isnumber then
-        if $opt.number_verbose then
+        if $options.number_verbose then
         {
             "multipleOf": 1,
             "maximum": 10000,
@@ -112,7 +112,7 @@ def generate($opt): #:: α|(OPTIONS) -> SCHEMA
         }
         else null end
     elif isstring then
-        if $opt.string_verbose then
+        if $options.string_verbose then
         {
             "minLength": 1,
             "maxLength": 1000,
@@ -125,7 +125,6 @@ def generate($opt): #:: α|(OPTIONS) -> SCHEMA
 # Validates a document against an schema
 # SCHEMA: a JSON schema document
 def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
-    def rule(a; c): if a then c else true;
     def pointer($s):
         if $s | startswith("#") | not
         then error("Only supported pointers in current document")
@@ -146,94 +145,63 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
         def k_enum: # keyword enum
             rule($schema | has("enum");
                 . as $instance
-                | isscalar and ($schema.enum | indices([$instance]) | length) > 0
-            )
+                | isscalar and ($schema.enum | indices([$instance]) | length) > 0)
         ;
         def k_type: # keyword type
-            if $schema | has("type") then
+            rule($schema | has("type");
                 type as $t
                 | if ($schema["type"] | type) == "string" # string or array
                 then $t == $schema["type"] or ($t == "number" and $schema["type"] == "integer" and isinteger)
-                else some(($schema["type"][] | type) == $t)
-                end
-            else true end
+                else some(($schema["type"][] | type) == $t) end)
         ;
         def k_allOf: # keyword allOf
-            if $schema | has("allOf") then
-                every(_validate($schema.allOf[]; $fatal))
-            else true end
+            rule($schema | has("allOf");
+                every(_validate($schema.allOf[]; $fatal)))
         ;
         def k_anyOf: # keyword anyOf
-            if $schema | has("anyOf") then
-                some(_validate($schema.anyOf[]; false))
-            else true end
+            rule($schema | has("anyOf");
+                some(_validate($schema.anyOf[]; false)))
         ;
         def k_oneOf: # keyword oneOf
-            if $schema | has("oneOf") then
-                [_validate($schema.oneOf[]; false)] == [true]
-            else true end
+            rule($schema | has("oneOf");
+                [_validate($schema.oneOf[]; false)] == [true])
         ;
         def k_dependencies: # keyword dependencies
-            if $schema | has("dependencies") then
+            rule(schema | has("dependencies");
                 . as $instance
                 | every(
                     $schema.dependencies
                     | keys_unsorted[]
-                    | if in($instance)
-                    then
+                    | rule(in($instance);
                         $schema.dependencies[.] as $d
                         | if $d | isarray
                         then every($d[] | in($instance))
                         else $instance | _validate($d; $fatal)
-                        end
-                    else true end
-                  )
-            else true end
-        ;
-        def k_dependencies: # keyword dependencies
-            if $schema | has("dependencies") then
-                . as $instance
-                | every(
-                    $schema.dependencies
-                    | keys_unsorted[]
-                    | if in($instance)
-                    then
-                        $schema.dependencies[.] as $d
-                        | if $d | isarray
-                        then every($d[] | in($instance))
-                        else $instance | _validate($d; $fatal)
-                        end
-                    else true end
-                  )
-            else true end
+                        end)))
         ;
         #
         # Type constraints
         #
         def c_number: # number constraints
-            if $schema | has("multipleOf") then
-                (. / $schema.multipleOf) | . == floor
-            else true end
-            and if $schema | has("maximum") then
-                $schema.maximum as $n
-                | if $schema.exclusiveMaximum then . < $n else . <= $n end
-            else true end
-            and if $schema | has("minimum") then
-                $schema.minimum as $n
-                | if $schema.exclusiveMinimum then . > $n else . >= $n end
-            else true end
+            rule($schema | has("multipleOf");
+                (. / $schema.multipleOf) | . == floor)
+            and rule($schema | has("maximum");
+                if $schema.exclusiveMaximum
+                then . < $schema.maximum
+                else . <= $schema.maximum end)
+            and rule($schema | has("minimum");
+                if $schema.exclusiveMinimum
+                then . >$schema.minimum  
+                else . >= $schema.minimum  end)
         ;
         def c_string: # string constraints
-            if $schema | has("maxLength") then
-                length <= $schema.maxLength
-            else true end
-            and if $schema | has("minLength") then
-                length >= $schema.minLength
-            else true end
-            and if $schema | has("pattern") then
-                test($schema.pattern)
-            else true end
-            and if $schema | has("format") then
+            rule($schema | has("maxLength");
+                length <= $schema.maxLength)
+            and rule($schema | has("minLength");
+                length >= $schema.minLength)
+            and rule($schema | has("pattern");
+                test($schema.pattern))
+            and rule($schema | has("format");
                 {   "date-time": "[0-9]",   # one digit at least
                     "email": "^.+@.+$",     # one @ inside text
                     "hostname": "[A-Za-z]", # one letter at least
@@ -242,8 +210,7 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
                     "uri": "^[a-zA-Z]:",    # required schema prefix
                     "uriref": "^."          # non empty string
                 }[$schema.format]//"^." as $re # any non empty string as default
-                | test($re)
-            else true end
+                | test($re))
         ;
         def c_array: # array constraints
             def valid_array:
@@ -280,15 +247,12 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
                 end
             ;
             valid_array
-            and if $schema | has("maxItems") then
-                length <= $schema.maxItems
-            else true end
-            and if $schema | has("minItems") then
-                length >= $schema.minItems
-            else true end
-            and if $schema | has("uniqueItems") then
-                ($schema.uniqueItems | not) or length == (unique | length)
-            else true end
+            and rule($schema | has("maxItems");
+                length <= $schema.maxItems)
+            and rule($schema | has("minItems");
+                length >= $schema.minItems)
+            and rule($schema | has("uniqueItems");
+                ($schema.uniqueItems | not) or length == (unique | length))
             and valid_elements
         ;
         def c_object: # object constraints
@@ -322,9 +286,9 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
                 | ($schema.patternProperties//{}) as $pp
                 | every(
                     keys_unsorted[] as $m
-                    | [ keep_if($m | in($p); $p[$m]),
+                    | [ keep($m | in($p); $p[$m]),
                         (($pp | keys_unsorted[]) as $re
-                            | keep_if($m | test($re); $pp[$re]))
+                            | keep($m | test($re); $pp[$re]))
                     ] as $s
                     | if ($s | length) > 0
                     then .[$m] | every(_validate($s[]; $fatal))
@@ -334,15 +298,12 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
                   )
             ;
             valid_object
-            and if $schema | has("maxProperties") then
-                length <= $schema.maxProperties
-            else true end
-            and if $schema | has("minProperties") then
-                length >= $schema.minProperties
-            else true end
-            and if $schema | has("required") then
-                every(has($schema.required[]))
-            else true end
+            and rule($schema | has("maxProperties");
+                length <= $schema.maxProperties)
+            and rule($schema | has("minProperties");
+                length >= $schema.minProperties)
+            and rule($schema | has("required");
+                every(has($schema.required[])))
             and valid_members
         ;
         #
@@ -350,13 +311,11 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
         #
         def check(constraint):
             constraint 
-            or if $fatal
-            then { instance: ., schema: $schema } | error
-            else false end
+            or $fatal and ({ instance: ., schema: $schema } | error)
         ;
-        if $schema == null or $schema == {}
-        then true
-        elif isobject and has("$ref") # when validating schemas!
+        $schema == null
+        or $schema == {}
+        or if isobject and has("$ref") # when validating schemas!
         then .["$ref"] | isstring
         elif $schema | has("$ref")
         then _validate(pointer($schema["$ref"]); $fatal)
@@ -375,7 +334,7 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
             elif isstring   then check(c_string)
             elif isarray    then check(c_array)
             elif isobject   then check(c_object)
-            else true end # null, boolean
+            else isnull or isboolean end
         end
     ;
     #
