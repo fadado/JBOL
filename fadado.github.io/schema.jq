@@ -1,6 +1,6 @@
 module {
     name: "schema",
-    description: "Schema generation and validation",
+    description: "JSON schema generation and validation",
     namespace: "fadado.github.io",
     author: {
         name: "Joan Josep Ordinas Rosa",

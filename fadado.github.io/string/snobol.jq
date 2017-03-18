@@ -1,6 +1,6 @@
 module {
     name: "snobol",
-    description: "SNOBOL embeded in jq",
+    description: "Pattern matching in the SNOBOL style",
     namespace: "fadado.github.io",
     author: {
         name: "Joan Josep Ordinas Rosa",

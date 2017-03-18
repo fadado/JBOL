@@ -1,4 +1,4 @@
-# Easy management for the JBOL project
+# Makefile for the JBOL project
 
 project := jbol
 

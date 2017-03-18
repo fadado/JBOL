@@ -1,6 +1,6 @@
 module {
     name: "ascii",
-    description: "Functions in the ctype style for the ASCII encoding",
+    description: "Functions in the ctype.h style for the ASCII encoding",
     namespace: "fadado.github.io",
     author: {
         name: "Joan Josep Ordinas Rosa",

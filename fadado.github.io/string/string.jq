@@ -1,6 +1,6 @@
 module {
     name: "string",
-    description: "Common string operations",
+    description: "Common string operations, some in the Icon language style",
     namespace: "fadado.github.io",
     author: {
         name: "Joan Josep Ordinas Rosa",

@@ -1,6 +1,6 @@
 module {
     name: "math",
-    description: "Misc. mathematical functions",
+    description: "Miscelaneous mathematical functions",
     namespace: "fadado.github.io",
     author: {
         name: "Joan Josep Ordinas Rosa",

@@ -1,6 +1,6 @@
 module {
     name: "set",
-    description: "Objects as sets",
+    description: "Objects managed as sets",
     namespace: "fadado.github.io",
     author: {
         name: "Joan Josep Ordinas Rosa",

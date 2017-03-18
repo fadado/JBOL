@@ -1,6 +1,6 @@
 module {
     name: "generator",
-    description: "Common generators operations",
+    description: "Common operations on generators",
     namespace: "fadado.github.io",
     author: {
         name: "Joan Josep Ordinas Rosa",

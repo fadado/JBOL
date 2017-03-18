@@ -1,6 +1,6 @@
 module {
     name: "types",
-    description: "Common types",
+    description: "Type predicates",
     namespace: "fadado.github.io",
     author: {
         name: "Joan Josep Ordinas Rosa",

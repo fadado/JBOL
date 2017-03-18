@@ -24,7 +24,7 @@ def read_sh:
             .logical_line = $line
         end
         ;
-        keep_if(.continuing; .logical_line)
+        keep(.continuing; .logical_line)
     )
 ;
 
@@ -50,9 +50,9 @@ def read_sh_check:
         end
         ;
         if $line==null then  # EOF
-            keep_if(.continuing; .logical_line) # last line ended in \
+            keep(.continuing; .logical_line) # last line ended in \
         else
-            keep_if(.continuing|not; .logical_line)
+            keep(.continuing|not; .logical_line)
         end
     )
 ;
@@ -92,7 +92,7 @@ def read_headers:
         else error("unexpected state")
         end
         ;
-        keep_if(.state == $emit; .logical_line)
+        keep(.state == $emit; .logical_line)
     )
 ;
 
