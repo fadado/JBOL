@@ -13,13 +13,11 @@ def queens($n):
         )
     ;
     def qput($row; $avail):
-        if $row == $n # $avail == []
-        then .
-        else
+        unless($row == $n; # $avail == []
             $avail[] as $col # choose a column
             | keep(safe($row; $col);
                 .[$row]=$col | qput($row+1; $avail-[$col]))
-        end
+        )
     ;
     #
     [] as $board |

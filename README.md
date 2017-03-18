@@ -140,8 +140,10 @@ tests.
 
 Several **JQ** scripts are included in the `examples` directory.  The `Makefile` has
 rules to help you run the examples, but you should study first the code to know
-how each example works. As an example, this script generates in a smart way the
-solutions for the classical _8 queens_ problem:
+how each example works. Warning: the scripts expect `jq` to be at `/usr/local/bin`.
+
+As an example, this script generates in a smart way the solutions for the
+classical _8 queens_ problem:
 
 ```
 #!/usr/local/bin/jq -cnRrf
@@ -159,13 +161,11 @@ def queens($n):
         )
     ;
     def qput($row; $avail):
-        if $row == $n # $avail == []
-        then .
-        else
+        unless($row == $n; # $avail == []
             $avail[] as $col # choose a column
             | keep(safe($row; $col);
                 .[$row]=$col | qput($row+1; $avail-[$col]))
-        end
+        )
     ;
     #
     [] as $board |
