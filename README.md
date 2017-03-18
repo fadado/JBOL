@@ -4,17 +4,17 @@
 
 ## Modules
 
-ALl modules reside in the directory `fadado.github.io`.
+All modules reside in the directory `fadado.github.io`.
 
 ## Tools
 
 ### jgen
 
-Generates the JSON schema for an instance document.
+Generates JSON schemas for instance documents.
 
 ### jval
 
-Validates an instance document against a JSON schema.
+Validates instance documents against a JSON schema.
 
 ## Installation
 
@@ -34,12 +34,6 @@ directory to your top-level **JQ** modules path with a command equivalent to
 
 ```sh
 $ cp -r fadado.github.io TOP-PATH
-```
-
-Also copy the tools in you director of choice; for example:
-
-```sh
-$ cp bin/j* ~/bin
 ```
 
 ## Usage

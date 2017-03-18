@@ -1,14 +1,24 @@
 #!/bin/bash
 #
-# Generates the JSON schema for an instance document
+# Generates JSON schemas for instance documents
 #
+# Joan Ordinas <jordinas@gmail.com>
 
-# Bash options
-set -o errexit -o noglob -o nounset -o pipefail
-shopt -s expand_aliases
+########################################################################
+# Environment
+########################################################################
 
-# jgen version
+# Script version
 declare -r VERSION='0.1'
+
+# Data directory: edit if necessary
+declare -r DATADIR='/usr/local/share'
+
+# JBOL modules path
+declare -r MODULES="${DATADIR}/jbol"
+
+# Meta schema
+declare -r METASCHEMA="${DATADIR}/jbol/schemata/schema.schema.json"
 
 # This script name
 declare -r SELF="${0##*/}"
@@ -16,32 +26,58 @@ declare -r SELF="${0##*/}"
 # JQ script
 declare -r JQ="${0}.jq"
 
-# JBOL modules path
-declare -r JBOL='-L/usr/local/share/jbol'
+########################################################################
+# Functions and aliases
+########################################################################
+
+# Bash options
+set -o errexit -o noglob -o nounset -o pipefail
+shopt -s expand_aliases
 
 # Print text on screen
 alias print='echo 1>&2 -e'
+alias message='cat 1>&2'
+
+# Abort with message
+function fatal {
+    print "Error: $*"
+    exit 1
+}
 
 # Show help
 function help {
-    cat 1>&2 <<EOF
-${SELF} - generates a JSON schema
-Usage: ${SELF} [options] [file]
+    message <<EOF
+${SELF} -- Generates JSON schemas for instance documents
 
-${SELF} generates a JSON schema for an instance document read from a file or
-the standard input.
+Usage: ${SELF} [-h | --help | -v | --version]
+       ${SELF} [options...] [files...]
+
+${SELF} generates a JSON schema for each instance document read from the
+standard input.  One or more files may be specified, in which case ${SELF} will
+read input from those instead.
 
 Options:
-    -h, --help              Show this help
-    -c, --compact           Compact output
-    -k, --sort-keys         Sort output keys 
-    -r, --required          Add the 'required' keyword
     -a, --verbose-array     Add array constraints
+    -c, --compact           Compact output
+    -h, --help              Show this help
+    -k, --sort-keys         Sort output keys 
     -n, --verbose-number    Add number constraints
     -o, --verbose-object    Add object constraints
+    -r, --required          Add the 'required' keyword
     -s, --verbose-string    Add string constraints
+    -v, --version           Print version information
 EOF
     exit $(( $# == 0 ))
+}
+
+# Print usage message and exit
+function usage {
+    message <<EOF
+Unknown option: $1
+Usage: ${SELF} [-h | --help | -v | --version]
+       ${SELF} [options] [file]
+EOF
+    exit 1
 }
 
 # Print version and exit
@@ -50,13 +86,9 @@ function version {
     exit 0
 }
 
-# Print usage message and exit
-function usage {
-    print "Unknown option: $1\n"
-    print "Usage: ${SELF} [-h | --help | -V]"
-    print "Usage: ${SELF} [options] [file]"
-    exit 1
-}
+########################################################################
+# Entry point
+########################################################################
 
 # Entry point
 function main {
@@ -65,9 +97,8 @@ function main {
     local -i compact=0 skeys=0
 
     local opt
-    while getopts :Vhacknors-: opt; do
+    while getopts :hacknorsv-: opt; do
         case $opt in
-            V) version ;;
             h) help ;;
             a) varray='true' ;;
             c) compact=1 ;;
@@ -76,8 +107,8 @@ function main {
             o) vobject='true' ;;
             r) required='true' ;;
             s) vstring='true' ;;
+            v) version ;;
             -) case $OPTARG in
-                   version) version ;;
                    help) help ;;
                    compact) compact=1 ;;
                    required) required='true' ;;
@@ -86,6 +117,7 @@ function main {
                    verbose-number) vnumber='true' ;;
                    verbose-object) vobject='true' ;;
                    verbose-string) vstring='true' ;;
+                   version) version ;;
                    *) usage "--$OPTARG";;
                 esac
                 ;;
@@ -94,6 +126,9 @@ function main {
     done
 
     shift $((OPTIND-1))
+
+    [[ -e $MODULES ]] ||
+        fatal "$MODULES modules directory does not exists"
 
     local COMPACT='' SORT_KEYS=''
     local -a REQUIRED VARRAY VNUMBER VOBJECT VSTRING
@@ -107,7 +142,7 @@ function main {
     REQUIRED=('--argjson' 'opt_required'       $required)
     VSTRING=('--argjson'  'opt_string_verbose' $vstring)
 
-    jq $JBOL \
+    jq  -L $MODULES         \
         --from-file ${JQ}   \
         ${SORT_KEYS}        \
         ${COMPACT}          \
