@@ -205,6 +205,5 @@ series: ; $(JQ) -cnRrf examples/$@.jq
 shuffle: ; $(JQ) -cnRrf examples/$@.jq
 nqsbrute: ; $(JQ) -cnRrf examples/$@.jq
 triple: ; $(JQ) -cnrf examples/$@.jq
-schema: ; $(JQ) -f examples/$@.jq
 
 # vim:ai:sw=8:ts=8:noet:syntax=make

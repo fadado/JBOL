@@ -1,5 +1,7 @@
 #!/usr/local/bin/jq -nRrf
 
+include "fadado.github.io/prelude";
+
 def chars: #:: string|-> <string>
     split("")[]
 ;
@@ -10,9 +12,8 @@ def main:
     | ("012"|chars) as $h1
     | ("0123456789"|chars) as $h2
 
-    | if $h1 == "2" and $h2 == "4"
-    then break $pipe
-    else . end
+    | when($h1 == "2" and $h2 == "4";
+        break $pipe)
 
     | ("012345"|chars) as $m1
     | ("0123456789"|chars) as $m2
