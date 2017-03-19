@@ -1,11 +1,9 @@
-#
-# Generates JSON schemas for instance documents
-#
+# Called from the `jgen` Bash script
 
 import "fadado.github.io/schema" as schema;
 
 # Metadata header
-def meta:
+def metadata:
     {
         "$schema": "http://json-schema.org/draft-04/schema#",
         "title": "Schema title",
@@ -13,9 +11,9 @@ def meta:
     }
 ;
 
-# Runtime options
+# Runtime options, all defined in the calling script
 def options:
-    { # boolean options, all defined in the calling script
+    {
         array_verbose:  $opt_array_verbose,
         number_verbose: $opt_number_verbose,
         object_verbose: $opt_object_verbose,
@@ -24,7 +22,7 @@ def options:
     }
 ;
 
-# For each input JSON value generates an schema
-meta + schema::generate(options)
+# For each input JSON document generates the corresponding JSON schema
+metadata + schema::generate(options)
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

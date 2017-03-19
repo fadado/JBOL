@@ -13,6 +13,7 @@ include "fadado.github.io/types";
 
 # Generates a simple document schema
 #
+# SCHEMA: a JSON schema document
 def generate: #:: α| -> SCHEMA
     { "type": type } +
     if isobject then
@@ -48,6 +49,7 @@ def generate: #:: α| -> SCHEMA
 ;
 
 # Generates a document schema (with options)
+#
 # OPTIONS: an object of runtime options
 # SCHEMA: a JSON schema document
 def generate($options): #:: α|(OPTIONS) -> SCHEMA
@@ -123,6 +125,7 @@ def generate($options): #:: α|(OPTIONS) -> SCHEMA
 ;
 
 # Validates a document against an schema
+#
 # SCHEMA: a JSON schema document
 def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
     def pointer($s):
@@ -174,7 +177,7 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
                     | keys_unsorted[]
                     | rule(in($instance);
                         $schema.dependencies[.] as $d
-                        | if $d | isarray
+                        | if $d|isarray
                         then every($d[] | in($instance))
                         else $instance | _validate($d; $fatal)
                         end)))
@@ -334,18 +337,23 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
             elif isstring   then check(c_string)
             elif isarray    then check(c_array)
             elif isobject   then check(c_object)
-            else isnull or isboolean end
+            else true # isnull or isboolean
+            end
         end
     ;
     #
     _validate($schema; $fatal)
 ;
 
+# Validates a document against an schema
+#
 # SCHEMA: a JSON schema document
 def validate($schema): #:: α|(SCHEMA) -> boolean
     validate($schema; true)
 ;
 
+# Validates a document without signaling errors
+#
 # SCHEMA: a JSON schema document
 def valid($schema): #:: α|(SCHEMA) -> boolean
     validate($schema; false)

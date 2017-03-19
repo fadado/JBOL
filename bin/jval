@@ -1,24 +1,11 @@
 #!/bin/bash
 #
-# Validates instance documents against a JSON schema.
+# jval -- Validates instance documents against a JSON schema
 #
 # Joan Ordinas <jordinas@gmail.com>
 
-########################################################################
-# Environment
-########################################################################
-
 # Script version
 declare -r VERSION='0.1'
-
-# Data directory: edit if necessary
-declare -r DATADIR='/usr/local/share'
-
-# JBOL modules path
-declare -r MODULES="${DATADIR}/jbol"
-
-# Meta schema
-declare -r METASCHEMA="${DATADIR}/jbol/schemata/schema.schema.json"
 
 # This script name
 declare -r SELF="${0##*/}"
@@ -26,8 +13,12 @@ declare -r SELF="${0##*/}"
 # JQ script
 declare -r JQ="${0}.jq"
 
-########################################################################
-# Functions and aliases
+# Data and modules directory: edit if necessary
+declare -r JBOL='/usr/local/share/jbol'
+
+# Meta schema
+declare -r METASCHEMA="${JBOL}/schemata/schema.schema.json"
+
 ########################################################################
 
 # Bash options
@@ -77,22 +68,21 @@ EOF
 
 # Print version and exit
 function version {
-    print "$SELF $VERSION"
+    print "${SELF} ${VERSION}"
     exit 0
 }
 
 # Validates document
 function validate {
     local schema=$1
-    jq  -L $MODULES                 \
-        --from-file ${JQ}           \
+
+    jq  -L $JBOL                    \
+        --from-file $JQ             \
         --raw-output                \
         --slurpfile SCHEMA $schema  \
         "$@"
 }
 
-########################################################################
-# Entry point
 ########################################################################
 
 function main {
@@ -110,20 +100,18 @@ function main {
                    quiet) quiet=1 ;;
                    schema) metaschema=1 ;;
                    version) version ;;
-                   *) usage "--$OPTARG";;
+                   *) usage "--${OPTARG}";;
                esac
                ;;
-            ?) usage "-$OPTARG";;
+            ?) usage "-${OPTARG}";;
         esac
     done
 
     shift $((OPTIND-1))
     (( $# > 0 )) || help
 
-    [[ -e $MODULES ]] ||
-        fatal "$MODULES modules directory does not exists"
-    [[ -e $METASCHEMA ]] ||
-        fatal "missing $METASCHEMA meta schema"
+    [[ -e $JBOL ]]       || fatal "${JBOL} directory does not exists"
+    [[ -e $METASCHEMA ]] || fatal "missing ${METASCHEMA} meta schema"
 
     local schema diagnostic
     if ((metaschema)); then

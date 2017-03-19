@@ -1,24 +1,11 @@
 #!/bin/bash
 #
-# Generates JSON schemas for instance documents
+# jgen -- Generates JSON schemas for instance documents
 #
 # Joan Ordinas <jordinas@gmail.com>
 
-########################################################################
-# Environment
-########################################################################
-
 # Script version
 declare -r VERSION='0.1'
-
-# Data directory: edit if necessary
-declare -r DATADIR='/usr/local/share'
-
-# JBOL modules path
-declare -r MODULES="${DATADIR}/jbol"
-
-# Meta schema
-declare -r METASCHEMA="${DATADIR}/jbol/schemata/schema.schema.json"
 
 # This script name
 declare -r SELF="${0##*/}"
@@ -26,8 +13,9 @@ declare -r SELF="${0##*/}"
 # JQ script
 declare -r JQ="${0}.jq"
 
-########################################################################
-# Functions and aliases
+# Data and modules directory: edit if necessary
+declare -r JBOL='/usr/local/share/jbol'
+
 ########################################################################
 
 # Bash options
@@ -82,15 +70,12 @@ EOF
 
 # Print version and exit
 function version {
-    print "$SELF $VERSION"
+    print "${SELF} ${VERSION}"
     exit 0
 }
 
 ########################################################################
-# Entry point
-########################################################################
 
-# Entry point
 function main {
     local required='false' compact='false' \
           vnumber='false' vstring='false' varray='false' vobject='false'
@@ -118,17 +103,16 @@ function main {
                    verbose-object) vobject='true' ;;
                    verbose-string) vstring='true' ;;
                    version) version ;;
-                   *) usage "--$OPTARG";;
+                   *) usage "--${OPTARG}" ;;
                 esac
                 ;;
-            ?) usage "-$OPTARG";;
+            ?) usage "-${OPTARG}" ;;
         esac
     done
 
     shift $((OPTIND-1))
 
-    [[ -e $MODULES ]] ||
-        fatal "$MODULES modules directory does not exists"
+    [[ -e $JBOL ]] || fatal "${JBOL} directory does not exists"
 
     local COMPACT='' SORT_KEYS=''
     local -a REQUIRED VARRAY VNUMBER VOBJECT VSTRING
@@ -136,13 +120,14 @@ function main {
     if ((compact)); then COMPACT="--compact-output"; fi
     if ((skeys)); then SORT_KEYS="--sort-keys"; fi
 
+    REQUIRED=('--argjson' 'opt_required'       $required)
     VARRAY=('--argjson'   'opt_array_verbose'  $varray)
     VNUMBER=('--argjson'  'opt_number_verbose' $vnumber)
     VOBJECT=('--argjson'  'opt_object_verbose' $vobject)
-    REQUIRED=('--argjson' 'opt_required'       $required)
     VSTRING=('--argjson'  'opt_string_verbose' $vstring)
 
-    jq  -L $MODULES         \
+    # run the JQ script
+    jq  -L ${JBOL}          \
         --from-file ${JQ}   \
         ${SORT_KEYS}        \
         ${COMPACT}          \

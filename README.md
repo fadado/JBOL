@@ -135,8 +135,8 @@ Options:
 ## Tests end examples
 
 The `Makefile` has rules to help you run the tests included in the `tests`
-directory. Run `make` to run all the tests or `make check` to run again all
-tests.
+directory.  To run all tests simply execute `make`, or `make check` to force
+the execution, again, of previously successful tests.
 
 Several **JQ** scripts are included in the `examples` directory.  The `Makefile` has
 rules to help you run the examples, but you should study first the code to know
