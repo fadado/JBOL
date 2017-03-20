@@ -32,7 +32,9 @@ def generate: #:: α| -> SCHEMA
         if length == 0 then null
         else
             { "items": (
-                if every(.[] | isscalar) and ([.[] | type] | unique | length) == 1 then
+                if every(.[] | isscalar)
+                   and ([.[] | type] | unique | length) == 1
+                then
                     { "type": (.[0] | type) }
                 elif length == 1 then
                    .[0] | generate 
@@ -82,7 +84,9 @@ def generate($options): #:: α|(OPTIONS) -> SCHEMA
         if length == 0 then null
         else
             { "items": (
-                if every(.[] | isscalar) and ([.[] | type] | unique | length) == 1 then
+                if every(.[] | isscalar)
+                   and ([.[] | type] | unique | length) == 1
+                then
                     { "type": (.[0] | type) }
                 elif length == 1 then
                    .[0] | generate($options) 
@@ -153,9 +157,10 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
         def k_type: # keyword type
             rule($schema | has("type");
                 type as $t
-                | if ($schema["type"] | type) == "string" # string or array
-                then $t == $schema["type"] or ($t == "number" and $schema["type"] == "integer" and isinteger)
-                else some(($schema["type"][] | type) == $t) end)
+                | if isstring($schema["type"]) # string or array
+                  then $t == $schema["type"]
+                       or ($t == "number" and $schema["type"] == "integer" and isinteger)
+                  else some(($schema["type"][] | type) == $t) end)
         ;
         def k_allOf: # keyword allOf
             rule($schema | has("allOf");
@@ -177,10 +182,9 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
                     | keys_unsorted[]
                     | rule(in($instance);
                         $schema.dependencies[.] as $d
-                        | if $d|isarray
-                        then every($d[] | in($instance))
-                        else $instance | _validate($d; $fatal)
-                        end)))
+                        | if isarray($d)
+                          then every($d[] | in($instance))
+                          else $instance | _validate($d; $fatal) end)))
         ;
         #
         # Type constraints
@@ -195,7 +199,7 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
             and rule($schema | has("minimum");
                 if $schema.exclusiveMinimum
                 then . >$schema.minimum  
-                else . >= $schema.minimum  end)
+                else . >= $schema.minimum end)
         ;
         def c_string: # string constraints
             rule($schema | has("maxLength");
@@ -210,7 +214,7 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
                     "hostname": "[A-Za-z]", # one letter at least
                     "ipv4": "^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$", # 4 digits triples
                     "ipv6": "[0-9]",        # one digit at least
-                    "uri": "^[a-zA-Z]:",    # required schema prefix
+                    "uri": "^[a-zA-Z]+:",   # required schema prefix
                     "uriref": "^."          # non empty string
                 }[$schema.format]//"^." as $re # any non empty string as default
                 | test($re))
@@ -222,9 +226,8 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
                 or ($schema | has("additionalItems") | not)
                 or ($schema.additionalItems == true)
                 or ($schema.additionalItems | isobject)
-                or if $schema.additionalItems == false and ($schema.items | isarray)
-                then length <= ($schema.items | length)
-                else false end
+                or ($schema.additionalItems == false and ($schema.items | isarray))
+                and length <= ($schema.items | length)
             ;
             def valid_elements:
                 def additionalItems:
@@ -233,7 +236,7 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
                     then {}
                     elif $schema.additionalItems | isobject
                     then $schema.additionalItems 
-                    else false end
+                    else null end
                 ;
                 if ($schema.items | isobject) then
                     every(.[] | _validate($schema.items; $fatal))
@@ -242,10 +245,9 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
                     | every(
                         range(length) as $i
                         | if $i | in($schema.items) # $i < ($schema.items|length)
-                        then .[$i] | _validate($schema.items[$i]; $fatal)
-                        elif $additional != false
-                        then .[$i] | _validate($additional; $fatal)
-                        else false end
+                          then .[$i] | _validate($schema.items[$i]; $fatal)
+                          else $additional != null
+                               and (.[$i] | _validate($additional; $fatal)) end
                       )
                 end
             ;
@@ -263,16 +265,13 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
                 ($schema | has("additionalProperties") | not)
                 or ($schema.additionalProperties == true)
                 or ($schema.additionalProperties | isobject)
-                or if $schema.additionalProperties == false
-                then
-                    ($schema.properties//{}) as $p
+                or $schema.additionalProperties == false
+                and ($schema.properties//{}) as $p
                     | ($schema.patternProperties//{}) as $pp
                     | [ keys_unsorted[]
                         | select(in($p) | not)
-                        | select(every(test($pp | keys_unsorted[]) | not))
-                      ]
+                        | select(every(test($pp | keys_unsorted[]) | not)) ]
                     | length == 0
-                else false end
             ;
             def valid_members:
                 def additionalProperties:
@@ -281,8 +280,7 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
                     then {}
                     elif $schema.additionalProperties | isobject
                     then $schema.additionalProperties 
-                    else false
-                    end
+                    else null end
                 ;
                 additionalProperties as $additional
                 | ($schema.properties//{}) as $p
@@ -291,13 +289,11 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
                     keys_unsorted[] as $m
                     | [ keep($m | in($p); $p[$m]),
                         (($pp | keys_unsorted[]) as $re
-                            | keep($m | test($re); $pp[$re]))
-                    ] as $s
+                         | keep($m | test($re); $pp[$re])) ] as $s
                     | if ($s | length) > 0
-                    then .[$m] | every(_validate($s[]; $fatal))
-                    elif $additional != false
-                    then .[$m] | _validate($additional; $fatal)
-                    else false end
+                      then .[$m] | every(_validate($s[]; $fatal))
+                      else $additional != null
+                           and (.[$m] | _validate($additional; $fatal)) end
                   )
             ;
             valid_object
@@ -327,18 +323,17 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
             _validate($schema | del(.not); $fatal)
             and (_validate($schema.not; $fatal) | not)
         else
-            check(k_type)  and
-            check(k_enum)  and
-            check(k_allOf) and
-            check(k_anyOf) and
-            check(k_oneOf) and
-            check(k_dependencies) and
-            if isnumber     then check(c_number)
+            check(k_type)
+            and check(k_enum)
+            and check(k_allOf)
+            and check(k_anyOf)
+            and check(k_oneOf)
+            and check(k_dependencies)
+            and if isnumber then check(c_number)
             elif isstring   then check(c_string)
             elif isarray    then check(c_array)
             elif isobject   then check(c_object)
-            else true # isnull or isboolean
-            end
+            else isnull or isboolean end
         end
     ;
     #
