@@ -191,7 +191,8 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
         #
         def c_number: # number constraints
             rule($schema | has("multipleOf");
-                (. / $schema.multipleOf) | . == floor)
+                . / $schema.multipleOf
+                | . == floor)
             and rule($schema | has("maximum");
                 if $schema.exclusiveMaximum
                 then . < $schema.maximum
@@ -216,7 +217,7 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
                     "ipv6": "[0-9]",        # one digit at least
                     "uri": "^[a-zA-Z]+:",   # required schema prefix
                     "uriref": "^."          # non empty string
-                }[$schema.format]//"^." as $re # any non empty string as default
+                }[$schema.format] // "^." as $re # any non empty string as default
                 | test($re))
         ;
         def c_array: # array constraints
@@ -232,7 +233,7 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
             def valid_elements:
                 def additionalItems:
                     if ($schema | has("additionalItems") | not)
-                        or ($schema.additionalItems == true)
+                        or $schema.additionalItems == true
                     then {}
                     elif $schema.additionalItems | isobject
                     then $schema.additionalItems 
@@ -263,11 +264,11 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
         def c_object: # object constraints
             def valid_object:
                 ($schema | has("additionalProperties") | not)
-                or ($schema.additionalProperties == true)
+                or $schema.additionalProperties == true
                 or ($schema.additionalProperties | isobject)
                 or $schema.additionalProperties == false
-                and ($schema.properties//{}) as $p
-                    | ($schema.patternProperties//{}) as $pp
+                and $schema.properties // {} as $p
+                    | $schema.patternProperties // {} as $pp
                     | [ keys_unsorted[]
                         | select(in($p) | not)
                         | select(every(test($pp | keys_unsorted[]) | not)) ]
@@ -276,15 +277,15 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
             def valid_members:
                 def additionalProperties:
                     if ($schema | has("additionalProperties") | not)
-                        or ($schema.additionalProperties == true)
+                        or $schema.additionalProperties == true
                     then {}
                     elif $schema.additionalProperties | isobject
                     then $schema.additionalProperties 
                     else null end
                 ;
                 additionalProperties as $additional
-                | ($schema.properties//{}) as $p
-                | ($schema.patternProperties//{}) as $pp
+                | $schema.properties // {} as $p
+                | $schema.patternProperties // {} as $pp
                 | every(
                     keys_unsorted[] as $m
                     | [ keep($m | in($p); $p[$m]),
