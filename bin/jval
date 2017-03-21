@@ -16,8 +16,9 @@ declare -r JQ="${0}.jq"
 # Data and modules directory: edit if necessary
 declare -r JBOL='/usr/local/share/jbol'
 
-# Meta schema
+# Meta schemas
 declare -r METASCHEMA="${JBOL}/schemata/schema.schema.json"
+declare -r HYPERSCHEMA="${JBOL}/schemata/hyper-schema_expanded.schema.json"
 
 ########################################################################
 
@@ -50,8 +51,9 @@ read input from those instead.
 Options:
     -h, --help              Show this help
     -q, --quiet             Suppress all normal output (status is zero or one)
-    -s, --schema            Validates a JSON schema against the meta schema
+    -s, --schema            Validates a JSON schema against the Schema meta-schema
     -v, --version           Print version information
+    -y, --hyper             Validates a JSON schema against the Hyper-Schema meta-schema
 EOF
     exit $(( $# == 0 ))
 }
@@ -74,31 +76,33 @@ function version {
 
 # Validates document
 function validate {
-    local schema=$1
+    local schema=$1; shift
 
-    jq  -L $JBOL                    \
-        --from-file $JQ             \
-        --raw-output                \
-        --slurpfile SCHEMA $schema  \
-        "$@"
+    jq  -L $JBOL                        \
+        --from-file $JQ                 \
+        --raw-output                    \
+        --slurpfile SCHEMA "$schema"    \
+        "$@" 2>&1
 }
 
 ########################################################################
 
 function main {
-    local -i metaschema=0 quiet=0
+    local -i quiet=0 metaschema=0 hyperschema=0
 
     local opt
-    while getopts :hqsv-: opt; do
+    while getopts :hqsvy-: opt; do
         case $opt in
             h) help ;;
             q) quiet=1 ;;
             s) metaschema=1 ;;
+            y) hyperschema=1 ;;
             v) version ;;
             -) case $OPTARG in
                    help) help ;;
                    quiet) quiet=1 ;;
                    schema) metaschema=1 ;;
+                   hyper) hyperschema=1 ;;
                    version) version ;;
                    *) usage "--${OPTARG}";;
                esac
@@ -109,22 +113,26 @@ function main {
 
     shift $((OPTIND-1))
     (( $# > 0 )) || help
+    (( metaschema+hyperschema < 2 )) || help
 
-    [[ -e $JBOL ]]       || fatal "${JBOL} directory does not exists"
-    [[ -e $METASCHEMA ]] || fatal "missing ${METASCHEMA} meta schema"
+    [[ -e $JBOL ]]        || fatal "modules directory does not exists"
+    [[ -e $METASCHEMA ]]  || fatal "missing Schema meta-schema"
+    [[ -e $HYPERSCHEMA ]] || fatal "missing Hyper-Schema meta-schema"
 
     local schema diagnostic
     if ((metaschema)); then
         schema=$METASCHEMA
+    elif ((hyperschema)); then
+        schema=$HYPERSCHEMA
     else
         schema=$1; shift
     fi
 
     diagnostic=$(validate $schema "$@")
-    if [[ -z $diagnostic ]]; then
+    if [[ -z "$diagnostic" ]]; then
         return 0
     else
-        (( quiet )) || print $diagnostic
+        (( quiet )) || echo "$diagnostic"
         return 1
     fi
 }

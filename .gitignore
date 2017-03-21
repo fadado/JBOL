@@ -1,2 +1,3 @@
 .logs/
 *.swp
+/JSON-Schema-Test-Suite/

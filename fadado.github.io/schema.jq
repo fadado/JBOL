@@ -134,15 +134,17 @@ def generate($options): #:: α|(OPTIONS) -> SCHEMA
 def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
     def pointer($s):
         if $s | startswith("#") | not
-        then error("Only supported pointers in current document")
+        then error("Only supported pointers in current document: \($s)")
         elif $s == "#"
         then $schema # root
         elif $s | startswith("#/") | not
         then error("Only supported absolute pointers")
         else
             $schema
-            | getpath($s[2:] / "/")
-            | when(isnull; error("Cannot dereference pointer"))
+            | ($s[2:] / "/") as $a
+            | [$a[] | . as $x | try tonumber catch $x] as $p
+            | getpath($p)
+            | when(isnull; error("Cannot dereference path: \($p)"))
         end
     ;
     def _validate($schema; $fatal):
@@ -178,8 +180,7 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
             rule(schema | has("dependencies");
                 . as $instance
                 | every(
-                    $schema.dependencies
-                    | keys_unsorted[]
+                    $schema.dependencies | keys_unsorted[]
                     | rule(in($instance);
                         $schema.dependencies[.] as $d
                         | if isarray($d)
@@ -210,14 +211,14 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
             and rule($schema | has("pattern");
                 test($schema.pattern))
             and rule($schema | has("format");
-                {   "date-time": "[0-9]",   # one digit at least
+                ({  "date-time": "[0-9]",   # one digit at least
                     "email": "^.+@.+$",     # one @ inside text
                     "hostname": "[A-Za-z]", # one letter at least
                     "ipv4": "^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$", # 4 digits triples
                     "ipv6": "[0-9]",        # one digit at least
                     "uri": "^[a-zA-Z]+:",   # required schema prefix
                     "uriref": "^."          # non empty string
-                }[$schema.format] // "^." as $re # any non empty string as default
+                }[$schema.format] // "^.") as $re # any non empty string as default
                 | test($re))
         ;
         def c_array: # array constraints
@@ -267,8 +268,8 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
                 or $schema.additionalProperties == true
                 or ($schema.additionalProperties | isobject)
                 or $schema.additionalProperties == false
-                and $schema.properties // {} as $p
-                    | $schema.patternProperties // {} as $pp
+                and ($schema.properties // {}) as $p
+                    | ($schema.patternProperties // {}) as $pp
                     | [ keys_unsorted[]
                         | select(in($p) | not)
                         | select(every(test($pp | keys_unsorted[]) | not)) ]
@@ -284,8 +285,8 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
                     else null end
                 ;
                 additionalProperties as $additional
-                | $schema.properties // {} as $p
-                | $schema.patternProperties // {} as $pp
+                | ($schema.properties // {}) as $p
+                | ($schema.patternProperties // {}) as $pp
                 | every(
                     keys_unsorted[] as $m
                     | [ keep($m | in($p); $p[$m]),
