@@ -10,7 +10,7 @@ module {
 
 include "fadado.github.io/prelude";
 include "fadado.github.io/types";
-import "fadado.github.io/string" as str;
+import "fadado.github.io/string/url" as url;
 
 # Generates a simple document schema
 #
@@ -136,7 +136,7 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
     def pointer($s):
         def unescape:
             gsub("~1"; "/") | gsub("~0"; "~")
-            | str::url_decode
+            | url::decode
         ;
         if $s | startswith("#") | not
         then error("Only supported pointers in current document: \($s)")

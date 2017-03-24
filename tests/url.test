@@ -1,0 +1,12 @@
+#########################################################################
+# URL functions
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+#########################################################################
+
+include "string/url"; decode
+"%21%23%24%26%27%28%29%2A%2B%2C%2F%3A%3B%3D%3F%40%5B%5D"
+"!#$&'()*+,/:;=?@[]"
+
+# vim:ai:sw=2:ts=2:et:syntax=jq

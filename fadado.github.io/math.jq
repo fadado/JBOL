@@ -56,6 +56,21 @@ def tobase($b): #:: number|(number) -> string
     | r
 ;
 
+# Inspired in https://www.rosettacode.org/wiki/URL_decoding#jq
+def frombase($base): #:: string|(number) -> number
+    # downcase
+    def f: if 65 <= . and . <= 90 then . + 32  else . end;
+    # "a" ~ 97 => 10 ~ 87
+    def g: if . > 96  then . - 87 else . - 48 end;
+    #
+    reduce (explode | reverse[] | f | g) as $c (
+        {power: 1, answer: 0};
+        (.power * $base) as $b
+        | .answer += (.power * $c)
+        | .power = $b
+    ) | .answer
+;
+
 ########################################################################
 # Reductions
 

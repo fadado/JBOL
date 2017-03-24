@@ -129,6 +129,7 @@ $(LogDir)/latin1.log: $(STR)/latin1.jq $(STR)/latin1.json $(LIB)/prelude.jq
 $(LogDir)/regexp.log: $(STR)/regexp.jq $(LIB)/prelude.jq $(STR)/string.jq
 $(LogDir)/string.log: $(STR)/string.jq $(LIB)/prelude.jq $(STR)/ascii.jq $(STR)/ascii.json
 $(LogDir)/snobol.log: $(STR)/snobol.jq $(LIB)/prelude.jq  $(STR)/string.jq
+$(LogDir)/url.log: $(STR)/url.jq $(LIB)/math.jq
 
 ########################################################################
 # Utilities
