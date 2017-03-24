@@ -10,6 +10,7 @@ module {
 
 include "fadado.github.io/prelude";
 include "fadado.github.io/types";
+import "fadado.github.io/string" as str;
 
 # Generates a simple document schema
 #
@@ -133,6 +134,10 @@ def generate($options): #:: α|(OPTIONS) -> SCHEMA
 # SCHEMA: a JSON schema document
 def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
     def pointer($s):
+        def unescape:
+            gsub("~1"; "/") | gsub("~0"; "~")
+            | str::url_decode
+        ;
         if $s | startswith("#") | not
         then error("Only supported pointers in current document: \($s)")
         elif $s == "#"
@@ -141,8 +146,7 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
         then error("Only supported absolute pointers")
         else
             $schema
-            | ($s[2:] / "/") as $a
-            | [$a[] | . as $x | try tonumber catch $x] as $p
+            | [($s[2:] / "/" | map(unescape))[] | . as $x | try tonumber catch $x] as $p
             | getpath($p)
             | when(isnull; error("Cannot dereference path: \($p)"))
         end
@@ -154,15 +158,18 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
         def k_enum: # keyword enum
             rule($schema | has("enum");
                 . as $instance
-                | isscalar and ($schema.enum | indices([$instance]) | length) > 0)
+                | ($schema.enum | indices([$instance]) | length) > 0)
         ;
         def k_type: # keyword type
+            def cmp($t; $r):
+                $t == $r
+                or ($t == "number" and $r == "integer" and isinteger)
+            ;
             rule($schema | has("type");
                 type as $t
                 | if isstring($schema["type"]) # string or array
-                  then $t == $schema["type"]
-                       or ($t == "number" and $schema["type"] == "integer" and isinteger)
-                  else some(($schema["type"][] | type) == $t) end)
+                  then cmp($t; $schema["type"])
+                  else some(cmp($t; $schema["type"][])) end)
         ;
         def k_allOf: # keyword allOf
             rule($schema | has("allOf");
@@ -174,10 +181,10 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
         ;
         def k_oneOf: # keyword oneOf
             rule($schema | has("oneOf");
-                [_validate($schema.oneOf[]; false)] == [true])
+                ([_validate($schema.oneOf[]; false) | select(.)] == [true]))
         ;
         def k_dependencies: # keyword dependencies
-            rule(schema | has("dependencies");
+            rule(($schema | has("dependencies")) and isobject;
                 . as $instance
                 | every(
                     $schema.dependencies | keys_unsorted[]
@@ -192,15 +199,14 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
         #
         def c_number: # number constraints
             rule($schema | has("multipleOf");
-                . / $schema.multipleOf
-                | . == floor)
+                . / $schema.multipleOf | isinteger)
             and rule($schema | has("maximum");
                 if $schema.exclusiveMaximum
                 then . < $schema.maximum
                 else . <= $schema.maximum end)
             and rule($schema | has("minimum");
                 if $schema.exclusiveMinimum
-                then . >$schema.minimum  
+                then . > $schema.minimum  
                 else . >= $schema.minimum end)
         ;
         def c_string: # string constraints
@@ -240,14 +246,15 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
                     then $schema.additionalItems 
                     else null end
                 ;
-                if ($schema.items | isobject) then
-                    every(.[] | _validate($schema.items; $fatal))
+                ($schema.items // {}) as $items
+                | if ($items | isobject) then
+                    every(.[] | _validate($items; $fatal))
                 else # isarray
                     additionalItems as $additional
                     | every(
                         range(length) as $i
-                        | if $i | in($schema.items) # $i < ($schema.items|length)
-                          then .[$i] | _validate($schema.items[$i]; $fatal)
+                        | if $i | in($items) # $i < ($items|length)
+                          then .[$i] | _validate($items[$i]; $fatal)
                           else $additional != null
                                and (.[$i] | _validate($additional; $fatal)) end
                       )

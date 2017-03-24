@@ -27,8 +27,23 @@ All **JBOL** modules reside in the `fadado.github.io` directory:
 
 Thin _Bash_ wrappers around **JQ** filters:
 
-* **jgen**: generates JSON schemas for instance documents.
-* **jval**: validates instance documents against a JSON schema.
+### jgen
+
+`jgen` generates JSON schemas for instance documents.
+
+### jval
+
+`jval` validates instance documents against a JSON [schema](http://json-schema.org/).
+`jval` supports the entire JSON schema draft v4 specification, except for
+remote references. It&rsquo;s tested against the official
+[JSON-Schema-Test-Suite](https://github.com/json-schema-org/JSON-Schema-Test-Suite),
+and the only failed tests are in the files `definitions.json`, `ref.json` and `refRemote.json`.
+
+Some of the `jval` limitations are:
+
+* Schema-reference resolution does not check recursivity: if there is a nested
+  cross-schema reference, it will not stop.
+* Errors cannot reference exactly the line where are produced.
 
 ## Installation
 
@@ -116,7 +131,7 @@ Options:
 
 ```
 $ jval --help
-jval -- Validates an instance document against a JSON schema
+jval -- Validates instance documents against a JSON schema
 
 Usage: jval [-h | --help | -v | --version]
        jval [options...] schema [file...]
@@ -128,8 +143,9 @@ read input from those instead.
 Options:
     -h, --help              Show this help
     -q, --quiet             Suppress all normal output (status is zero or one)
-    -s, --schema            Validates JSON schema against the meta schema
+    -s, --schema            Validates a JSON schema against the Schema meta-schema
     -v, --version           Print version information
+    -y, --hyper             Validates a JSON schema against the Hyper-Schema meta-schema
 ```
 
 ## Tests end examples

@@ -23,6 +23,9 @@ def isnumber: #:: α| -> boolean
 def isinteger: #:: α| -> boolean
     type == "number" and . == floor
 ;
+def isfloat: #:: α| -> boolean
+    type == "number" and . != floor
+;
 def isstring: #:: α| -> boolean
     type == "string"
 ;
@@ -56,6 +59,9 @@ def isnumber($a): #:: (α) -> boolean
 ;
 def isinteger($a): #:: (α) -> boolean
     $a|isinteger
+;
+def isfloat($a): #:: (α) -> boolean
+    $a|isfloat
 ;
 def isstring($a): #:: (α) -> boolean
     $a|isstring
