@@ -10,7 +10,10 @@ module {
 
 include "fadado.github.io/prelude";
 include "fadado.github.io/types";
+
+import "fadado.github.io/generator" as generator;
 import "fadado.github.io/string/url" as url;
+import "fadado.github.io/string/regexp" as re;
 
 # Generates a simple document schema
 #
@@ -135,7 +138,7 @@ def generate($options): #:: α|(OPTIONS) -> SCHEMA
 def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
     def pointer($s):
         def unescape:
-            gsub("~1"; "/") | gsub("~0"; "~")
+            re::gsub("~1"; "/") | re::gsub("~0"; "~")
             | url::decode
         ;
         if $s | startswith("#") | not
@@ -181,7 +184,7 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
         ;
         def k_oneOf: # keyword oneOf
             rule($schema | has("oneOf");
-                ([_validate($schema.oneOf[]; false) | select(.)] == [true]))
+                generator::singleton(_validate($schema.oneOf[]; false) | select(.)))
         ;
         def k_dependencies: # keyword dependencies
             rule(($schema | has("dependencies")) and isobject;
@@ -217,13 +220,12 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
             and rule($schema | has("pattern");
                 test($schema.pattern))
             and rule($schema | has("format");
-                ({  "date-time": "[0-9]",   # one digit at least
-                    "email": "^.+@.+$",     # one @ inside text
-                    "hostname": "[A-Za-z]", # one letter at least
-                    "ipv4": "^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$", # 4 digits triples
-                    "ipv6": "[0-9]",        # one digit at least
-                    "uri": "^[a-zA-Z]+:",   # required schema prefix
-                    "uriref": "^."          # non empty string
+                ({  "date-time": "^[0-9]{4}-(?:0[0-9]|1[0-2])-[0-9]{2}[tT ][0-9]{2}:[0-9]{2}:[0-9]{2}(?:[.][0-9]+)?(?:[zZ]|[+-][0-9]{2}:[0-9]{2})$",
+                    "email": "^[^ \t\r\n]+@[^ \t\r\n]+$",
+                    "hostname": "^(?:[0-9A-Za-z]|[0-9A-Za-z][0-9A-Za-z-]{0,61}[0-9A-Za-z])(?:[.](?:[0-9A-Za-z]|[0-9A-Za-z][0-9A-Za-z-]{0,61}[0-9A-Za-z]))*$",
+                    "ipv4": "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)[.]){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$",
+                    "uri": "^[A-Za-z][0-9A-Za-z+-.]*:[^ \t\r\n]*"
+
                 }[$schema.format] // "^.") as $re # any non empty string as default
                 | test($re))
         ;
@@ -296,9 +298,10 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
                 | ($schema.patternProperties // {}) as $pp
                 | every(
                     keys_unsorted[] as $m
-                    | [ keep($m | in($p); $p[$m]),
-                        (($pp | keys_unsorted[]) as $re
-                         | keep($m | test($re); $pp[$re])) ] as $s
+                    | [ keep($m | in($p); $p[$m])
+                        , (($pp | keys_unsorted[]) as $re
+                            | keep($m | test($re); $pp[$re]))
+                      ] as $s
                     | if ($s | length) > 0
                       then .[$m] | every(_validate($s[]; $fatal))
                       else $additional != null

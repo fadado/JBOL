@@ -41,8 +41,10 @@ and the only failed tests are in the files `definitions.json`, `ref.json` and `r
 
 Some of the `jval` limitations are:
 
+* Remote references are not supported.
 * Schema-reference resolution does not check recursivity: if there is a nested
   cross-schema reference, it will not stop.
+* Some checks for the `format` keyword are not very accurate or consider valid any non empty string.
 * Errors cannot reference exactly the line where are produced.
 
 ## Installation

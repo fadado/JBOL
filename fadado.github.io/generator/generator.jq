@@ -50,6 +50,15 @@ def count(generator): #:: (<α>) -> number
     reduce generator as $_ (0; .+1)
 ;
 
+# One result?
+def singleton(generator): #:: (<α>) -> boolean
+    #([generator] | length) == 1
+    [   label $exit |
+        foreach generator as $item
+            (2; if . < 1 then break $exit else .-1 end; null)
+    ] | length == 1
+;
+
 # Extract the first element of a stream.
 #
 def first(generator): #:: (<α>) ->α
