@@ -2,6 +2,12 @@
 
 **JBOL** is a collection of modules and tools for the **JQ** language.
 
+`jq` is a lightweight and flexible command-line JSON processor, and to use
+`jq` you must program in the **JQ** language, a lazy functional language with an evaluation
+model similar to the _goal-directed style_ of **SNOBOL** and **Icon** languages.
+
+The name **JBOL** has been chosen to honor the inspirational **SNOBOL** influence.
+
 ## Modules
 
 All **JBOL** modules reside in the `fadado.github.io` directory:
@@ -197,11 +203,6 @@ queens(8)
 
 # vim:ai:sw=4:ts=4:et:syntax=jq
 ```
-
-## Documentation
-
-Please visit this repository [wiki](https://github.com/fadado/JBOL/wiki) for
-more information.
 
 <!--
 vim:syntax=markdown:et:ts=4:sw=4:ai

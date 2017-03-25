@@ -205,8 +205,24 @@ include "schema"; valid({"type":"string", "pattern": "%$" })
 "pa%x"
 false
 
+include "schema"; valid({"type":"string", "format": "date-time" })
+"2017-03-25T10:59:40+01:00"
+true
+
 include "schema"; valid({"type":"string", "format": "email" })
 "me@acme.com"
+true
+
+include "schema"; valid({"type":"string", "format": "hostname" })
+"saldecoco.info"
+true
+
+include "schema"; valid({"type":"string", "format": "ipv4" })
+"192.168.0.1"
+true
+
+include "schema"; valid({"type":"string", "format": "uri" })
+"http://host.domain/path/file?query#fragment"
 true
 
 include "schema"; valid({"type":"array"})

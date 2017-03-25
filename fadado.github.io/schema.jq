@@ -149,7 +149,7 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
         then error("Only supported absolute pointers")
         else
             $schema
-            | [($s[2:] / "/" | map(unescape))[] | . as $x | try tonumber catch $x] as $p
+            | [($s[2:] / "/")[] | unescape as $x | try tonumber catch $x] as $p
             | getpath($p)
             | when(isnull; error("Cannot dereference path: \($p)"))
         end
@@ -225,7 +225,6 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
                     "hostname": "^(?:[0-9A-Za-z]|[0-9A-Za-z][0-9A-Za-z-]{0,61}[0-9A-Za-z])(?:[.](?:[0-9A-Za-z]|[0-9A-Za-z][0-9A-Za-z-]{0,61}[0-9A-Za-z]))*$",
                     "ipv4": "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)[.]){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$",
                     "uri": "^[A-Za-z][0-9A-Za-z+-.]*:[^ \t\r\n]*"
-
                 }[$schema.format] // "^.") as $re # any non empty string as default
                 | test($re))
         ;
