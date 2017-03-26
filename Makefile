@@ -150,7 +150,8 @@ install:
 	test -d $(bindir) || $(SUDO) mkdir -v --parents $(bindir)
 	$(SUDO) cp -v -u -r fadado.github.io/ $(datadir)/$(project)
 	$(SUDO) cp -v -u -r schemata/ $(datadir)/$(project)
-	$(SUDO) install --verbose --compare --mode 555 bin/{jgen,jval}* $(bindir)
+	$(SUDO) install --verbose --compare --mode 555 bin/{jgen,jval} $(bindir)
+	$(SUDO) install --verbose --compare --mode 644 bin/{jgen,jval}.jq $(bindir)
 
 uninstall:
 	test -d $(datadir)/$(project)					  \
