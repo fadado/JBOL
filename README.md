@@ -5,6 +5,8 @@
 `jq` is a lightweight and flexible command-line JSON processor, and to use
 `jq` you must program in the **JQ** language, a lazy functional language with an evaluation
 model similar to the _goal-directed style_ of **SNOBOL** and **Icon** languages.
+If you are interested in **JBOL** you can also see [_jqt_](https://fadado.github.io/jqt/),
+a related project offering a template engine implemented on top of `jq`.
 
 The name **JBOL** has been chosen to honor the inspirational **SNOBOL** influence.
 
