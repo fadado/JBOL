@@ -20,10 +20,13 @@ def issorted:
 
 def bogussort:
     choice::shuffle
-    | once(
-        choice::permutation
-        | keep(issorted)
-    )
+    | try (
+        choice::permutation | keep(issorted) | fence
+    ) catch fenced
+#   | once(
+#       choice::permutation
+#       | keep(issorted)
+#   )
 ;
 
 def main:

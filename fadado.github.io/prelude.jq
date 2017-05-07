@@ -8,19 +8,39 @@ module {
     }
 };
 
-# α β γ δ   alpha, beta, gamma, delta
-# ⊥         bottom
-# ε         epsilon
+# α β γ δ ε alpha, beta, gamma, delta, epsilon
+# botom:    ␘ ⊥ ⫠ ⟘ ∅ ⫩
 
 ########################################################################
 # Control operators
 ########################################################################
+
+def cancel:
+    error("⫠")
+;
+def cancelled: #:: string| -> ⊥
+    if . == "⫠"
+    then empty # ∅
+    else error # ⫠
+    end
+;
+
+def fence: #:: α| -> α⊥
+    ., error("⫩")
+;
+def fenced: #:: string| -> ⊥
+    if . == "⫩"
+    then empty # ∅
+    else error # ⫠
+    end
+;
 
 # Run once a computation.
 #
 # By default `jq` tries all alternatives. This is the reverse of  *Icon*.
 #
 def once(generator): #:: (<α>) -> α
+#   try ( generator | fence ) catch fenced
     label $exit
     | generator
     | . , break $exit

@@ -52,7 +52,6 @@ def count(generator): #:: (<α>) -> number
 
 # One result?
 def singleton(generator): #:: (<α>) -> boolean
-    #([generator] | length) == 1
     [   label $exit |
         foreach generator as $item
             (2; if . < 1 then break $exit else .-1 end; null)
@@ -61,7 +60,8 @@ def singleton(generator): #:: (<α>) -> boolean
 
 # Extract the first element of a stream.
 #
-def first(generator): #:: (<α>) ->α
+def first(generator): #:: (<α>) -> α
+#   try ( generator | fence ) catch fenced
     label $exit
     | generator
     | . , break $exit
@@ -69,7 +69,7 @@ def first(generator): #:: (<α>) ->α
 
 # Extract the last element of a stream.
 #
-def last(generator): #:: (<α>) ->α
+def last(generator): #:: (<α>) -> α
     reduce generator as $item
         (null; $item)
 ;
@@ -143,6 +143,7 @@ def take($n; generator): #:: (number;<α>) -> <α>
 # Returns the prefix of `generator` while `predicate` is true.
 #
 def takeWhile(predicate; generator): #:: (α->boolean;<α>) -> <α>
+#   try ( generator | unless(predicate; cancel) ) catch cancelled
     label $exit
     | generator
     | unless(predicate; break $exit)

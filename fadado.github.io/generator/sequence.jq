@@ -38,7 +38,7 @@ def positives: #:: -> <number>
 ;
 
 def negatives: #:: -> <number>
-    arithmetic(-1; -1) # range(-1; -(infinite); -1)
+    arithmetic(-1; -1) # range(-1; 0-infinite; -1)
 ;
 
 #def seq($a; $d): #:: (number;$number) -> <number>

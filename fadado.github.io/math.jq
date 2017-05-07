@@ -89,7 +89,7 @@ def product(generator): #:: (<number>) -> number
 
 def maximum(generator): #:: (<number>) -> number
     reduce generator as $item
-        (-(infinite); max($item; .))
+        (0-infinite; max($item; .))
 ;
 
 def minimum(generator): #:: (<number>) -> number
