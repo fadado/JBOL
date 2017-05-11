@@ -9,30 +9,32 @@ module {
 };
 
 # α β γ δ ε alpha, beta, gamma, delta, epsilon
-# botom:    ␘ ⊥ ⫠ ⟘ ∅ ⫩
+# empty: ∅ ⦰ ⦱ 
+# botom: ⫠ ⊥ ⟘ ⫩ ⫫ ⫨
 
 ########################################################################
 # Control operators
 ########################################################################
 
-def cancel:
-    error("⫠")
-;
-def cancelled: #:: string| -> ⊥
-    if . == "⫠"
+def _ignore($s):
+    if . == $s
     then empty # ∅
-    else error # ⫠
+    else error # ⊥ 
     end
 ;
 
+def cancel:
+    error("⊥")
+;
+def cancelled: #:: string| -> ⊥
+    _ignore("⊥")
+;
+
 def fence: #:: α| -> α⊥
-    ., error("⫩")
+    (., error("⫩"))
 ;
 def fenced: #:: string| -> ⊥
-    if . == "⫩"
-    then empty # ∅
-    else error # ⫠
-    end
+    _ignore("⫩")
 ;
 
 # Run once a computation.
@@ -47,14 +49,29 @@ def once(generator): #:: (<α>) -> α
 ;
 
 # Boolean context for goal-directed expression evaluation.
-def success(generator): #:: (<α>) -> boolean
+def asbool(generator): #:: (<α>) -> boolean
     (label $exit | generator | 1 , break $exit)//0
     | .==1  # computation generates results
 ;
 
+# "not isempty" in stream terms
+def success(generator): #:: (<α>) -> boolean
+    asbool(generator)==true
+;
+
+# "isempty" in stream terms
 def failure(generator): #:: (<α>) -> boolean
-    (label $exit | generator | 1 , break $exit)//0
-    | .==0  # computation does not generate results
+    asbool(generator)==false
+;
+
+# related?
+def yes(generator): #:: (<α>) -> boolean
+    select(asbool(generator)==true)
+;
+
+# unrelated?
+def not(generator): #:: (<α>) -> boolean
+    select(asbool(generator)==false)
 ;
 
 # All true? None false?

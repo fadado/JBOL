@@ -141,11 +141,11 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
             re::gsub("~1"; "/") | re::gsub("~0"; "~")
             | url::decode
         ;
-        if $s | startswith("#") | not
+        if $s | startswith("#")|not
         then error("Only supported pointers in current document: \($s)")
         elif $s == "#"
         then $schema # root
-        elif $s | startswith("#/") | not
+        elif $s | startswith("#/")|not
         then error("Only supported absolute pointers")
         else
             $schema
@@ -230,9 +230,9 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
         ;
         def c_array: # array constraints
             def valid_array:
-                ($schema | has("items") | not)
+                ($schema | has("items")|not)
                 or ($schema.items | isobject)
-                or ($schema | has("additionalItems") | not)
+                or ($schema | has("additionalItems")|not)
                 or ($schema.additionalItems == true)
                 or ($schema.additionalItems | isobject)
                 or ($schema.additionalItems == false and ($schema.items | isarray))
@@ -240,7 +240,7 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
             ;
             def valid_elements:
                 def additionalItems:
-                    if ($schema | has("additionalItems") | not)
+                    if ($schema | has("additionalItems")|not)
                         or $schema.additionalItems == true
                     then {}
                     elif $schema.additionalItems | isobject
@@ -267,25 +267,25 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
             and rule($schema | has("minItems");
                 length >= $schema.minItems)
             and rule($schema | has("uniqueItems");
-                ($schema.uniqueItems | not) or length == (unique | length))
+                ($schema.uniqueItems|not) or length == (unique | length))
             and valid_elements
         ;
         def c_object: # object constraints
             def valid_object:
-                ($schema | has("additionalProperties") | not)
+                ($schema | has("additionalProperties")|not)
                 or $schema.additionalProperties == true
                 or ($schema.additionalProperties | isobject)
                 or $schema.additionalProperties == false
                 and ($schema.properties // {}) as $p
                     | ($schema.patternProperties // {}) as $pp
                     | [ keys_unsorted[]
-                        | select(in($p) | not)
-                        | select(every(test($pp | keys_unsorted[]) | not)) ]
+                        | select(in($p)|not)
+                        | select(every(test($pp | keys_unsorted[])|not)) ]
                     | length == 0
             ;
             def valid_members:
                 def additionalProperties:
-                    if ($schema | has("additionalProperties") | not)
+                    if ($schema | has("additionalProperties")|not)
                         or $schema.additionalProperties == true
                     then {}
                     elif $schema.additionalProperties | isobject
@@ -332,7 +332,7 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
         elif $schema | has("not")
         then
             _validate($schema | del(.not); $fatal)
-            and (_validate($schema.not; $fatal) | not)
+            and (_validate($schema.not; $fatal)|not)
         else
             check(k_type)
             and check(k_enum)

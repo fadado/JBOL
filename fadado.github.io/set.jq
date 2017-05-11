@@ -55,7 +55,7 @@ def intersection($other): #:: {boolean}|({boolean}) -> {boolean}
 ;
 
 def difference($other): #:: {boolean}|({boolean}) -> {boolean}
-    mapobj(select(.name | in($other) | not))
+    mapobj(select(.name | in($other)|not))
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

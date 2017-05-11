@@ -260,7 +260,7 @@ def ANY($s): #:: CURSOR|(string) -> CURSOR
 def NOTANY($s): #:: CURSOR|(string) -> CURSOR
     assert($s != ""; "NOTANY requires a non empty string as argument")
     | select(.position != .slen)
-    | select(.subject[.position:.position+1] | inside($s) | not)
+    | select(.subject[.position:.position+1] | inside($s)|not)
     | .start=.position
     | .position+=1
 ;
@@ -400,16 +400,6 @@ def TRIM($s): #:: (string) -> string
 #
 # Extensions found in the literature
 #
-
-# also called NOT...
-def NO(pattern): #::CURSOR|(CURSOR|->CURSOR) -> CURSOR
-    select(failure(pattern))
-;
-
-# also called IF, NEXT...
-def YES(pattern): #::CURSOR|(CURSOR|->CURSOR) -> CURSOR
-    select(success(pattern))
-;
 
 # retrofitted from Icon
 def FIND($s): #::CURSOR|(pattern) -> <CURSOR>

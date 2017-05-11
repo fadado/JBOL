@@ -64,7 +64,7 @@ def any($s): #:: string|(string) -> number
 
 def notany($s; $i): #:: string|(string;number) -> number
     select(0 <= $i and $i < length)
-    | keep(.[$i:$i+1] | inside($s) | not; $i+1)
+    | keep(.[$i:$i+1] | inside($s)|not; $i+1)
 ;
 def notany($s): #:: string|(string) -> number
     notany($s; 0)
@@ -203,7 +203,7 @@ def translate($from; $to): #:: string|(string:string) -> string
 def _lndx(predicate): # left index or empty if not found
     label $exit
     | range(length-1) as $i
-    | keep(.[$i:$i+1] | predicate |not;
+    | keep(.[$i:$i+1] | predicate|not;
         $i , break $exit
       )
 ;
@@ -211,7 +211,7 @@ def _lndx(predicate): # left index or empty if not found
 def _rndx(predicate): # rigth index or empty if not found
     label $exit
     | range(length-1; 0; -1) as $i
-    | keep(.[$i:$i+1] | predicate | not;
+    | keep(.[$i:$i+1] | predicate|not;
         $i+1 , break $exit
       )
 ;

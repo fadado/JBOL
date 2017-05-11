@@ -357,11 +357,11 @@ include "string/snobol"; A | LEN(3) | M
 "ABC"
 "ABC"
 
-include "string/snobol"; U | POS(0) | NO(LEN(3)) | M
+include "prelude"; include "string/snobol"; U | POS(0) | not(LEN(3)) | M
 "ABC"
 #
 
-include "string/snobol"; U | YES(LEN(3)) | M
+include "prelude"; include "string/snobol"; U | yes(LEN(3)) | M
 "AB"
 #
 
