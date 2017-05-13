@@ -14,23 +14,23 @@ include "fadado.github.io/prelude";
 # Predicates
 
 # Redefine some jq primitives
-def all(generator; predicate): #:: (<α>;α->boolean) -> boolean
+def all(generator; predicate): #:: α|(α_<β>;β_boolean) => boolean
     failure(generator | predicate and empty)
 ;
-def all: #:: [boolean]| -> boolean
+def all: #:: [boolean]| => boolean
     all(.[]; .)
 ;
-def all(predicate): #:: [α]|(α->boolean) -> boolean
+def all(predicate): #:: [α]|(α_boolean) => boolean
     all(.[]; predicate)
 ;
 
-def any(generator; predicate): #:: (<α>;α->boolean) -> boolean
+def any(generator; predicate): #:: α|(α_<β>;β_boolean) => boolean
     success(generator | predicate or empty)
 ;
-def any: #:: [boolean]| -> boolean
+def any: #:: [boolean]| => boolean
     any(.[]; .)
 ;
-def any(predicate): #:: [α]|(α->boolean) -> boolean
+def any(predicate): #:: [α]|(α_boolean) => boolean
     any(.[]; predicate)
 ;
 
@@ -46,46 +46,45 @@ def any(predicate): #:: [α]|(α->boolean) -> boolean
 
 # Count stream items.
 #
-def count(generator): #:: (<α>) -> number
+def count(generator): #:: α|(α_<β>) => number
     reduce generator as $_ (0; .+1)
 ;
 
 # One result?
-def singleton(generator): #:: (<α>) -> boolean
+def singleton(generator): #:: α|(α_<β>) => boolean
     [   label $exit |
         foreach generator as $item
-            (2; if . < 1 then break $exit else .-1 end; null)
+            (2; if . >= 1 then .-1 else break $exit end; null)
     ] | length == 1
 ;
 
 # Extract the first element of a stream.
 #
-def first(generator): #:: (<α>) -> α
-#   try ( generator | fence ) catch fenced
-    label $exit
-    | generator
-    | . , break $exit
+def first(generator): #:: α|(α_<β>) => β^∅
+#   once(generator)
+    label $exit | generator | . , break $exit
 ;
 
 # Extract the last element of a stream.
 #
-def last(generator): #:: (<α>) -> α
+def last(generator): #:: α|(α_<β>) => β^∅
     reduce generator as $item
         (null; $item)
+    | if .==null then empty else . end
 ;
 
 # Extract the nth element of a stream.
 #
-def nth($n; generator): #:: (number;<α>-> α
+def nth($n; generator): #:: α|(number;α_<β>) => β^∅
     select($n >= 0) | # not defined for n<0 and n>=#generator
     label $exit
-    | foreach generator as $item ($n; .-1;
-        keep(. == -1; $item , break $exit))
+    | foreach generator as $item
+        ($n; .-1; keep(. == -1; $item , break $exit))
 ;
 
 # Produces enumerated items from `generator`.
 #
-def enum(generator): #:: (<α>) -> <[number,α]>
+def enum(generator): #:: α|(α_<β>) => <[number,β]>
     foreach generator as $item
         (-1; .+1; [.,$item])
 ;
@@ -94,7 +93,7 @@ def enum(generator): #:: (<α>) -> <[number,α]>
 # infinite repetition of the original stream.  It is the identity on infinite
 # streams. Equivalent to the `repeat` builtin.
 #
-def repeat(generator): #:: (<α>) -> <α>, (α) -> <α>
+def repeat(generator): #:: α|(α_<β>) => <β>
     def r: generator , r;
     r
 ;
@@ -102,13 +101,12 @@ def repeat(generator): #:: (<α>) -> <α>, (α) -> <α>
 # Returns the suffix of `generator` after the first `n` elements, or
 # `empty` after all elements are dropped
 #
-def drop($n; generator): #:: (number;<α>) -> <α>
+def drop($n; generator): #:: α|(number;α_<β>) => <β>
     select($n >= 0) | # not defined for n < 0 or n >= #generator
     if $n == 0
     then generator
     else
         foreach generator as $item
-        # . will never reach -(infinity), I hope!
             ($n; .-1; keep(. < 0; $item))
     end
 ;
@@ -120,29 +118,29 @@ def drop($n; generator): #:: (number;<α>) -> <α>
 
 # Remove the first element of a stream.
 #
-def rest(generator): #:: (<α>) -> <α>
+def rest(generator): #:: α|(α_<β>) => <β>
     foreach generator as $item
-    # . will never reach -(infinity), I hope!
         (1; .-1; keep(. < 0; $item))
 ;
 
 # Returns the prefix of `generator` of length `n`.
 #
-def take($n; generator): #:: (number;<α>) -> <α>
+def take($n; generator): #:: α|(number;α_<β>) => <β>
     select($n >= 0) | # not defined for n<0
     if $n == 0
     then generator
     else
         label $exit
-        | foreach generator as $item ($n;
-            if . < 1 then break $exit else .-1 end;
-            $item)
+        | foreach generator as $item
+            ($n;
+             if . >= 1 then .-1 else break $exit end;
+             $item)
     end
 ;
 
 # Returns the prefix of `generator` while `predicate` is true.
 #
-def takeWhile(predicate; generator): #:: (α->boolean;<α>) -> <α>
+def takeWhile(predicate; generator): #:: α|(β_boolean;α_<β>) => <β>
 #   try ( generator | unless(predicate; cancel) ) catch cancelled
     label $exit
     | generator
@@ -151,7 +149,7 @@ def takeWhile(predicate; generator): #:: (α->boolean;<α>) -> <α>
 
 # Analogous to array[start; stop] applied to streams.
 #
-def slice($i; $j; generator): #:: (number;number;<α>) -> <α>
+def slice($i; $j; generator): #:: α|(number;number;α_<β>) => <β>
     select($i < $j)
     | take($j-$i; drop($i; generator))
 ;
@@ -166,7 +164,7 @@ def slice($i; $j; generator): #:: (number;number;<α>) -> <α>
 #
 # Warning: input streams cannot be infinite!
 #
-def zip(g; h): #:: (<α>;<β>) -> <[α,β]>
+def zip(g; h): #:: (<α>;<β>) => <[α,β]>
     [[g], [h]] as $pair
     | ($pair | map(length) | max) as $longest
     | range($longest)
@@ -175,7 +173,7 @@ def zip(g; h): #:: (<α>;<β>) -> <[α,β]>
 
 # Generalized `zip` for 2 or more generators.
 #
-def zip: #:: [[α],[β]...]| -> <[α,β...]>
+def zip: #:: [[α],[β]...]| => <[α,β...]>
     . as $in
     | (map(length) | max) as $longest
     | length as $N
@@ -183,29 +181,29 @@ def zip: #:: [[α],[β]...]| -> <[α,β...]>
         reduce range($N) as $i
             ([]; . + [$in[$i][$j]]))
 ;
-def zip(g1; g2; g3): #:: (<α>,<β>...) -> <[α,β...]>
+def zip(g1; g2; g3): #:: (<α>,<β>...) => <[α,β...]>
     [[g1], [g2], [g3]] | zip
 ;
-def zip(g1; g2; g3; g4): #:: (<α>,<β>...) -> <[α,β...]>
+def zip(g1; g2; g3; g4): #:: (<α>,<β>...) => <[α,β...]>
     [[g1], [g2], [g3], [g4]] | zip
 ;
-def zip(g1; g2; g3; g4; g5): #:: (<α>,<β>...) -> <[α,β...]>
+def zip(g1; g2; g3; g4; g5): #:: (<α>,<β>...) => <[α,β...]>
     [[g1], [g2], [g3], [g4], [g5]] | zip
 ;
-def zip(g1; g2; g3; g4; g5; g6): #:: (<α>,<β>...) -> <[α,β...]>
+def zip(g1; g2; g3; g4; g5; g6): #:: (<α>,<β>...) => <[α,β...]>
     [[g1], [g2], [g3], [g4], [g5], [g6]] | zip
 ;
-def zip(g1; g2; g3; g4; g5; g6; g7): #:: (<α>,<β>...) -> <[α,β...]>
+def zip(g1; g2; g3; g4; g5; g6; g7): #:: (<α>,<β>...) => <[α,β...]>
     [[g1], [g2], [g3], [g4], [g5], [g6], [g7]] | zip
 ;
 
 # Dot product (very inefficient zip on infinite streams)
-def parallel(g1; g2): #:: (<α>,<β>) -> <[α,β]>
+def parallel(g1; g2): #:: (<α>,<β>) => <[α,β]>
   first(g1) as $g1 | first(g2) as $g2
   | [$g1, $g2], parallel(rest(g1); rest(g2))
 ;
 
-def parallel(g1; g2; g3): #:: (<α>,<β>...) -> <[α,β...]>
+def parallel(g1; g2; g3): #:: (<α>,<β>...) => <[α,β...]>
   first(g1) as $g1 | first(g2) as $g2 | first(g3) as $g3
   | [$g1, $g2, $g3], parallel(rest(g1); rest(g2); rest(g3))
 ;

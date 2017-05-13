@@ -67,20 +67,20 @@ null
 
 # reductions ###########################################################
 
-include "math"; sum(range(0)) == 0
-null
+include "math"; sum(range(.)) == 0
+0
 true
 
-include "math"; [range(10)]|add == sum(range(10))
-null
+include "math"; [range(.)]|add == sum(range(10))
+10
 true
 
-include "math"; product(range(0)) == 1
-null
+include "math"; product(range(.)) == 1
+0
 true
 
-include "math"; product(range(2;10)) == (2*3*4*5*6*7*8*9)
-null
+include "math"; product(range(.m;.n)) == (2*3*4*5*6*7*8*9)
+{"m":2,"n":10}
 true
 
 include "math"; minimum(empty) == infinite
@@ -91,8 +91,8 @@ include "math"; maximum(empty) == 0-infinite
 null
 true
 
-include "math"; maximum(range(2;10)) == 9
-null
+include "math"; maximum(range(.m;.n)) == 9
+{"m":2,"n":10}
 true
 
 include "math"; maximum(-1,-2,-3) == -1

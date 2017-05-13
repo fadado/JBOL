@@ -2,7 +2,7 @@
 
 import "fadado.github.io/generator" as stream;
 
-def chars: #:: string|-> <string>
+def chars:
     split("")[]
 ;
 

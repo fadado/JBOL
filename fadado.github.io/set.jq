@@ -37,24 +37,25 @@ include "fadado.github.io/types";
 
 # Set construction from strings and arrays
 #
-def set($elements): #:: (α) -> {boolean}
-    if $elements|isstring
-    then # string
+def set($elements): #:: (string^array) => {boolean}^⊥
+    if $elements|isstring then
         reduce ($elements/"")[] as $element
             ({}; . += {($element):true})
-    else # array
+    elif $elements|isarray then
         reduce $elements[] as $element
             ({}; . += {($element|tostring):true})
+    else
+        error("Expected string or array")
     end
 ;
 
 # Common sets operations
 #
-def intersection($other): #:: {boolean}|({boolean}) -> {boolean}
+def intersection($other): #:: {boolean}|({boolean}) => {boolean}
     mapobj(select(.name | in($other)))
 ;
 
-def difference($other): #:: {boolean}|({boolean}) -> {boolean}
+def difference($other): #:: {boolean}|({boolean}) => {boolean}
     mapobj(select(.name | in($other)|not))
 ;
 

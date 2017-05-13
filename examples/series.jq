@@ -6,8 +6,7 @@ include "fadado.github.io/prelude";
 # https://en.wikipedia.org/wiki/Twelve-tone_technique
 
 # Generates all panintervalic dodecaphonic series
-def series($n): #:: number -> <[number]>
-    #:: [number]|([number];[number]) -> <[number]>
+def series($n):
     def _series($notes; $intervals):
         # . is the serie beeing constructed
         if $notes == []

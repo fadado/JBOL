@@ -2,7 +2,7 @@
 
 include "fadado.github.io/prelude";
 
-def chars: #:: string|-> <string>
+def chars:
     split("")[]
 ;
 

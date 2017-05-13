@@ -19,7 +19,7 @@ include "fadado.github.io/math";
 #   a(0) = a
 #   a(n) = a(n-1)+d
 #
-def arithmetic($a; $d): #:: (number;number) -> <number>
+def arithmetic($a; $d): #:: (number;number) => <number>
     $a|iterate(. + $d) # range($a; infinite; $d)
 ;
 
@@ -29,28 +29,28 @@ def arithmetic($a; $d): #:: (number;number) -> <number>
 #   a(0) = 0
 #   a(n) = a(n-1)+1
 #
-def naturals: #:: -> <number>
+def naturals: #:: => <number>
     arithmetic(0; 1) # range(0; infinite; 1)
 ;
 
-def positives: #:: -> <number>
+def positives: #:: => <number>
     arithmetic(1; 1) # range(1; infinite; 1)
 ;
 
-def negatives: #:: -> <number>
+def negatives: #:: => <number>
     arithmetic(-1; -1) # range(-1; 0-infinite; -1)
 ;
 
-#def seq($a; $d): #:: (number;$number) -> <number>
+#def seq($a; $d): #:: (number;$number) => <number>
 #    arithmetic($a; $d) # range($a; infinite; $d)
 #;
-#def seq($a): #:: (number) -> <number>
+#def seq($a): #:: (number) => <number>
 #    arithmetic($a; 1) # range($a; infinite; 1)
 #;
-#def seq: #:: -> <number>
+#def seq: #:: => <number>
 #    arithmetic(0; 1) # range(1; infinite; 1)
 #;
-#def to($m; $n): #:: (number;number) -> <number>
+#def to($m; $n): #:: (number;number) => <number>
 #    label $exit # range($m; $n+1)
 #    | arithmetic($m; 1)
 #    | when(. > $n; break $exit)
@@ -62,7 +62,7 @@ def negatives: #:: -> <number>
 #   a(0) = 1
 #   a(n) = a(n-1)+2
 #
-def odds: #:: -> <number>
+def odds: #:: => <number>
     arithmetic(1; 2) # range(1; infinite; 2)
 ;
 
@@ -72,7 +72,7 @@ def odds: #:: -> <number>
 #   a(0) = 0
 #   a(n) = a(n-1)+2
 #
-def evens: #:: -> <number>
+def evens: #:: => <number>
     arithmetic(0; 2) # range(0; infinite; 2)
 ;
 
@@ -82,10 +82,10 @@ def evens: #:: -> <number>
 #   a(0) = 0
 #   a(n) = a(n-1)+n
 #
-def multiples($n): #:: (number) -> <number>
+def multiples($n): #:: (number) => <number>
     arithmetic(0; $n) # range(0; infinite; $n)
 ;
-def multiples: #:: number| -> <number>
+def multiples: #:: number| => <number>
     multiples(.) # range(0; infinite; .)
 ;
 
@@ -97,7 +97,7 @@ def multiples: #:: number| -> <number>
 #   a(0) = a
 #   a(n) = a(n-1)*r
 #
-def geometric($a; $r): #:: (number;number) -> <number>
+def geometric($a; $r): #:: (number;number) => <number>
     $a|iterate(. * $r)
 ;
 
@@ -107,10 +107,10 @@ def geometric($a; $r): #:: (number;number) -> <number>
 #   a(0) = 1
 #   a(n) = a(n-1)*r
 #
-def powers($r): #:: (number) -> <number>
+def powers($r): #:: (number) => <number>
     geometric(1; $r)
 ;
-def powers: #:: number| -> <number>
+def powers: #:: number| => <number>
     powers(.)
 ;
 
@@ -122,7 +122,7 @@ def powers: #:: number| -> <number>
 #   a(0) = 0
 #   a(n) = a(n-1)+2n-1
 #
-def squares: #:: -> <number>
+def squares: #:: => <number>
     0, foreach odds as $n (0; .+$n)
 #   0, foreach positives as $n (0; .+$n+$n-1)
 #   tabulate(pow(.; 2))
@@ -134,7 +134,7 @@ def squares: #:: -> <number>
 #   a(0) = 0
 #   a(n) = n(a(n-1)+2n-1)
 #
-def cubes: #:: -> <number>
+def cubes: #:: => <number>
     foreach squares as $s (-1; .+1; $s*.)
 #   0, foreach positives as $n (0; .+$n+$n-1; .*$n)
 #   tabulate(pow(.; 3))
@@ -148,7 +148,7 @@ def reciprocals(g): #:: (<number>)-> <number>
 # CF:
 #   a(n) = 1/n
 #
-def harmonic: #:: -> <number>
+def harmonic: #:: => <number>
     reciprocals(positives)
 ;
 
@@ -163,7 +163,7 @@ def moduli($m): #:: (number)-> <number>
 #   repeat(range(0; $m))
 #   tabulate(.%$m)
 ;
-def moduli: #:: number| -> <number>
+def moduli: #:: number| => <number>
     moduli(.)
 ;
 
@@ -171,7 +171,7 @@ def moduli: #:: number| -> <number>
 #   a(0) = 1
 #   a(n) = a(n-1)*n
 #
-def factorials: #:: -> <number>
+def factorials: #:: => <number>
     1, foreach positives as $n (1; . * $n)
 #   1, scan(.[0]*.[1]; 1; positives)
 ;
@@ -180,7 +180,7 @@ def factorials: #:: -> <number>
 #   a(0) = 0
 #   a(n) = a(n-1)+n
 #
-def triangulars: #:: -> <number>
+def triangulars: #:: => <number>
     0, foreach positives as $n (0; . + $n)
 ;
 
@@ -189,7 +189,7 @@ def triangulars: #:: -> <number>
 #   a(1) = 1
 #   a(n) = a(n-1) + a(n-2)
 #
-def fibonacci: #:: -> <number>
+def fibonacci: #:: => <number>
     [0,1]
     | iterate([.[-1], .[-1]+.[-2]])
     | .[-2]
@@ -197,19 +197,19 @@ def fibonacci: #:: -> <number>
 ;
 
 # Fibbonacci strings
-def fibstr($s; $t): #:: (string;string) -> <number>
+def fibstr($s; $t): #:: (string;string) => <number>
     [$s,$t]
     | iterate([.[-1], .[-1]+.[-2]])
     | .[-2]
 ;
-def fibstr: #:: -> <number>
+def fibstr: #:: => <number>
     fibstr("a"; "b")
 ;
 
 # The famous sieve
 #
-def primes: #:: -> <number>
-    def sieve(g): #:: (<number>) -> <number>
+def primes: #:: => <number>
+    def sieve(g): #:: (<number>) => <number>
         # first(g) as $n
         (label $exit | g | . , break $exit) as $n
         | $n, sieve(g|select((. % $n) != 0))
@@ -226,14 +226,14 @@ def primes: #:: -> <number>
 # and
 #   a(2n) = a(n)
 #
-def leibniz: #:: -> <number>
+def leibniz: #:: => <number>
     def r(g): (g | .+1), r(g , (g | .+1));
     0, 1,  r(0 , 1)
 ;
 
 # All integer partitions ###############################################
 #
-def partition($i): #:: (number) -> <[number]>
+def partition($i): #:: (number) => <[number]>
 	def choose(a; b): range(a; 1+b);
     #
 	def pmax(n; mx):

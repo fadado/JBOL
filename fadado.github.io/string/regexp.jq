@@ -54,10 +54,10 @@ import "fadado.github.io/string" as str;
 #
 # Only to provide all pattern matching services in this module.
 #
-def test($regex; $flags): #:: string|(string;string) -> boolean
+def test($regex; $flags): #:: string|(string;string) => boolean
     _match_impl($regex; $flags; true)
 ;
-def test($regex): #:: string|(string) -> boolean
+def test($regex): #:: string|(string) => boolean
     test($regex; null)
 ;
 
@@ -67,7 +67,7 @@ def test($regex): #:: string|(string) -> boolean
 # Like builtin `match` but add to the match object some strings for context
 # (like Perl $`, $& and $').
 #
-def match($regex; $flags): #:: string|(string;string) -> <MATCH>
+def match($regex; $flags): #:: string|(string;string) => <MATCH>
     . as $subject
     | _match_impl($regex; $flags; false)[]
     | . + { "&": .string,
@@ -75,7 +75,7 @@ def match($regex; $flags): #:: string|(string;string) -> <MATCH>
             "'": $subject[.offset+.length:] }
 ;
 
-def match($regex): #:: string|(string) -> <MATCH>
+def match($regex): #:: string|(string) => <MATCH>
     match($regex; "")
 ;
 
@@ -87,23 +87,29 @@ def match($regex): #:: string|(string) -> <MATCH>
 
 # Extract named groups from a MATCH object as a map (object)
 #
-def tomap: #:: MATCH -> object
+def tomap: #:: MATCH| => {string}
+    def init:
+        if ."&" == null
+        then {}
+        else {"&":."&", "`":."`", "'":."'"}
+        end
+    ;
     reduce (.captures[]
             | select(.name != null)
-            | {(.name):.string}) as $pair
-        (if ."&" == null then {} else {"&":."&", "`":."`", "'":."'"} end;
-         . + $pair)
+            | {(.name):.string})
+        as $pair
+        (init; . + $pair)
 ;
 
 # Extract matched string and all groups from a MATCH object as a list (array)
 #
-def tolist: #:: MATCH -> [string]
+def tolist: #:: MATCH| => [string]
     [.string, (.captures[] | .string)]
 ;
 
 # Extract matched string or first non null group from a MATCH object
 #
-def tostr: #:: MATCH -> string
+def tostr: #:: MATCH| => string
     (.captures|length) as $len
     | if $len == 0
       then .string//""
@@ -111,7 +117,7 @@ def tostr: #:: MATCH -> string
         label $exit
         | range($len) as $i
         | keep(.captures[$i].string; # not null
-            .captures[$i].string , break $exit
+               .captures[$i].string , break $exit
           )
         )//""
       end
@@ -123,7 +129,7 @@ def tostr: #:: MATCH -> string
 #   * Emit 1..$limit items
 #   * Include matched groups if present
 
-def split($regex; $flags; $limit): #:: string|(string;string;number) -> <string>
+def split($regex; $flags; $limit): #:: string|(string;string;number) => <string>
     def segment:
         when(length > 3;
              .[0:3] , (.[3:] | segment))
@@ -139,13 +145,13 @@ def split($regex; $flags; $limit): #:: string|(string;string;number) -> <string>
                 | foreach match($regex; $flags+"g") as $m
                     # init
                     ($limit;
-                    # update
-                    .-1;
-                    # yield if conditions are ok
-                    if . < 0
-                    then break $exit
-                    else $m.offset, $m.captures, $m.offset+$m.length
-                    end)),
+                     # update
+                     .-1;
+                     # yield if conditions are ok
+                     if . < 0
+                     then break $exit
+                     else $m.offset, $m.captures, $m.offset+$m.length
+                     end)),
             ($subject|length), # last index
             [] # empty captures for last segment
         ]
@@ -157,7 +163,7 @@ def split($regex; $flags; $limit): #:: string|(string;string;number) -> <string>
 # Fully compatible with `splits/2`, and replaces `split/2` in a non compatible
 # way (use [regexp::split(r;f)] for compatible behavior)
 #
-def split($regex; $a): #:: string|(string;α) -> <string>
+def split($regex; $a): #:: string|(string;number^string) => <string>^⊥
     if $a|isnumber
     then split($regex; ""; $a)     # $a = limit
     elif $a|isstring
@@ -169,20 +175,20 @@ def split($regex; $a): #:: string|(string;α) -> <string>
 # Fully compatible with `splits/1`, and replaces `split/1` in a non compatible
 # way (use "s"/"d" instead for full compatibility)
 #
-def split($regex): #:: string|(string) -> <string>
+def split($regex): #:: string|(string) => <string>
     split($regex; "g"; infinite)
 ;
 
 # Splits its input on white space breaks, trimming space around
 #
-def split: #:: string| -> <string>
+def split: #:: string| => <string>
     str::trim | split("\\s+"; ""; infinite)
 ;
 
 ########################################################################
 # Compatible substitutes for `sub` and `gsub` builtins
 
-def sub($regex; template; $flags): #:: string|(string;string;string) -> string
+def sub($regex; template; $flags): #:: string|(string;string;string) => string
     def sub1($flags; $gs):
         def _sub1:
             . as $subject
@@ -213,15 +219,15 @@ def sub($regex; template; $flags): #:: string|(string;string;string) -> string
     | sub1($fs; $gs)
 ;
 
-def sub($regex; template): #:: string|(string;string) -> string
+def sub($regex; template): #:: string|(string;string) => string
     sub($regex; template; "")
 ;
 
-def gsub($regex; template; $flags): #:: string|(string;string;string) -> string
+def gsub($regex; template; $flags): #:: string|(string;string;string) => string
     sub($regex; template; $flags+"g")
 ;
 
-def gsub($regex; template): #:: string|(string;string) -> string
+def gsub($regex; template): #:: string|(string;string) => string
     sub($regex; template; "g")
 ;
 

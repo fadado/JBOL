@@ -26,7 +26,7 @@ import "fadado.github.io/generator" as gen;
 # &ANCHOR keyword.
 
 # Anchored subject
-def A($subject): #:: (string) -> CURSOR
+def A($subject): #:: (string) => CURSOR
 {
     $subject,               # string to scan
     slen:($subject|length), # subject length
@@ -34,12 +34,12 @@ def A($subject): #:: (string) -> CURSOR
     start:null,             # current pattern start scanning position
     position:0              # current cursor position
 };
-def A: #:: string| -> CURSOR
+def A: #:: string| => CURSOR
     A(.)
 ;
 
 # Unanchored subject
-def U($subject): #:: (string) -> <CURSOR>
+def U($subject): #:: (string) => <CURSOR>
     ($subject|length) as $slen   |
     range(0; $slen+1) as $offset |
 {
@@ -49,7 +49,7 @@ def U($subject): #:: (string) -> <CURSOR>
     start:null,         # current pattern start scanning position
     position:$offset    # current cursor position
 };
-def U: #:: string| -> <CURSOR>
+def U: #:: string| => <CURSOR>
     U(.)
 ;
 
@@ -58,27 +58,27 @@ def U: #:: string| -> <CURSOR>
 #
 
 # Returns the cursor position; similar to the @ operator in SNOBOL
-def AT: #:: CURSOR| -> number
+def AT: #:: CURSOR| => number
     .position
 ;
 
 # Return a string with the whole pattern match (like & in regexes)
-def M: #:: CURSOR| -> string
+def M: #:: CURSOR| => string
     .subject[.offset:.position]
 ;
 
 # Return a string with the last (nearest) pattern match
-def N: #:: CURSOR| -> string
+def N: #:: CURSOR| => string
     .subject[.start:.position]
 ;
 
 # Return a string with the matches string prefix, like $` in Perl
-def P: #:: CURSOR| -> string
+def P: #:: CURSOR| => string
     .subject[0:.offset]
 ;
 
 # Return a string with the matches string prefix, like $' in Perl
-def S: #:: CURSOR| -> string
+def S: #:: CURSOR| => string
     .subject[.position:]
 ;
 
@@ -87,24 +87,24 @@ def S: #:: CURSOR| -> string
 #
 
 # Matches the empty string (always matches), like the empty pattern in SNOBOL
-def NULL: #:: CURSOR -> CURSOR
+def NULL: #:: CURSOR| => CURSOR
     . # ε
 ;
 
 # Match a literal, necessary to "wrap" all string literals
-def L($literal): #:: CURSOR|(string) -> CURSOR
+def L($literal): #:: CURSOR|(string) => CURSOR
     ($literal|length) as $tlen
     | select(.position+$tlen <= .slen)
     | select(.subject[.position:.position+$tlen] == $literal)
-    | .start=.position
-    | .position+=$tlen
+    | .start = .position
+    | .position += $tlen
 ;
 
 # Group patterns; blend a composite pattern into an atomic pattern
-def G(pattern): #:: CURSOR|(CURSOR|->CURSOR) -> CURSOR
+def G(pattern): #:: CURSOR|(CURSOR_CURSOR) => CURSOR
     (.position//0) as $p
     | pattern   # any expression using `,` and/or `|` if necessary
-    | .start=$p
+    | .start = $p
 ;
 
 ########################################################################
@@ -146,59 +146,64 @@ def G(pattern): #:: CURSOR|(CURSOR|->CURSOR) -> CURSOR
 # Predicates
 #
 
-def EQ($m; $n): #:: (number;number) -> CURSOR
+def EQ($m; $n): #:: CURSOR|(number;number) => CURSOR
     select($m == $n)
 ;
-def NE($m; $n): #:: (number;number) -> CURSOR
+def NE($m; $n): #:: CURSOR|(number;number) => CURSOR
     select($m != $n)
 ;
-def GE($m; $n): #:: (number;number) -> CURSOR
+def GE($m; $n): #:: CURSOR|(number;number) => CURSOR
     select($m >= $n)
 ;
-def GT($m; $n): #:: (number;number) -> CURSOR
+def GT($m; $n): #:: CURSOR|(number;number) => CURSOR
     select($m >  $n)
 ;
-def LE($m; $n): #:: (number;number) -> CURSOR
+def LE($m; $n): #:: CURSOR|(number;number) => CURSOR
     select($m >= $n)
 ;
-def LT($m; $n): #:: (number;number) -> CURSOR
+def LT($m; $n): #:: CURSOR|(number;number) => CURSOR
     select($m >  $n)
 ;
 
-def LGT($s; $t): #:: (string;string) -> CURSOR
+def LGT($s; $t): #:: CURSOR|(string;string) => CURSOR
     select(isstring($s) and $s > $t)
 ;
-def IDENT($s; $t): #:: (string;string) -> CURSOR
+def IDENT($s; $t): #:: CURSOR|(string;string) => CURSOR
     select($s == $t)
 ;
-def IDENT($s): #:: (string;string) -> CURSOR
+def IDENT($s): #:: CURSOR|(string;string) => CURSOR
     select($s == "")
 ;
-def DIFFER($s; $t): #:: (string;string) -> CURSOR
+def DIFFER($s; $t): #:: CURSOR|(string;string) => CURSOR
     select($s != $t)
 ;
-def DIFFER($s): #:: (string;string) -> CURSOR
+def DIFFER($s): #:: CURSOR|(string;string) => CURSOR
     select($s != "")
 ;
-def INTEGER($a): #:: (α) -> CURSOR
+def INTEGER($a): #:: CURSOR|(α) => CURSOR
     def test:
        (isnumber and . == floor)
-       or (tonumber?//false) and (contains(".")|not)
+       or (tonumber?//false)
+       and (contains(".")|not)
     ;
     select(test)
 ;
 
 #
-# String functions
+# String functions (not patterns)
 #
 
-def DUPL($s; $n): #:: (string;number) -> string
-    select($n >= 0)|if $n == 0 then "" else $s*$n end
+def DUPL($s; $n): #:: (string;number) => string
+    select($n >= 0)
+    | if $n == 0
+      then ""
+      else $s*$n
+      end
 ;
-def REPLACE($s; $t; $u): #:: (string;string;string) -> string
+def REPLACE($s; $t; $u): #:: (string;string;string) => string
     $s|str::translate($t; $u)
 ;
-def SIZE($s): #:: (string) -> number
+def SIZE($s): #:: (string) => number
     $s|length
 ;
 
@@ -206,7 +211,7 @@ def SIZE($s): #:: (string) -> number
 # Patterns that control the application of other patterns 
 #
 
-def ARBNO(pattern): #:: CURSOR|(CURSOR|->CURSOR) -> <CURSOR>
+def ARBNO(pattern): #:: CURSOR|(CURSOR_CURSOR) => <CURSOR>
     iterate(pattern)
 ;
 
@@ -214,33 +219,33 @@ def ARBNO(pattern): #:: CURSOR|(CURSOR|->CURSOR) -> <CURSOR>
 # Patterns concerned with positions in the subject
 #
 
-def LEN($n): #:: CURSOR|(number) -> CURSOR
+def LEN($n): #:: CURSOR|(number) => CURSOR
     assert($n >= 0; "LEN requires a non negative number as argument")
     | select(.position+$n <= .slen)
-    | .start=.position
-    | .position+=$n
+    | .start = .position
+    | .position += $n
 ;
 
-def TAB($n): #:: CURSOR|(number) -> CURSOR
+def TAB($n): #:: CURSOR|(number) => CURSOR
     assert($n >= 0; "TAB requires a non negative number as argument")
     | select($n >= .position)
-    | .start=.position
-    | .position=$n
+    | .start = .position
+    | .position = $n
 ;
 
-def RTAB($n): #:: CURSOR|(number) -> CURSOR
+def RTAB($n): #:: CURSOR|(number) => CURSOR
     assert($n >= 0; "RTAB requires a non negative number as argument")
     | select(.slen-$n >= .position)
-    | .start=.position
-    | .position=.slen-$n
+    | .start = .position
+    | .position = .slen-$n
 ;
 
-def POS($n): #:: CURSOR|(number) -> CURSOR
+def POS($n): #:: CURSOR|(number) => CURSOR
     assert($n >= 0; "POS requires a non negative number as argument")
     | select(.position == $n)
 ;
 
-def RPOS($n): #:: CURSOR|(number) -> CURSOR
+def RPOS($n): #:: CURSOR|(number) => CURSOR
     assert($n >= 0; "RPOS requires a non negative number as argument")
     | select($n == .slen-.position)
 ;
@@ -249,31 +254,31 @@ def RPOS($n): #:: CURSOR|(number) -> CURSOR
 # Patterns whose actions depend on the character structure of the subject 
 #
 
-def ANY($s): #:: CURSOR|(string) -> CURSOR
+def ANY($s): #:: CURSOR|(string) => CURSOR
     assert($s != ""; "ANY requires a non empty string as argument")
     | select(.position != .slen)
     | select(.subject[.position:.position+1] | inside($s))
-    | .start=.position
-    | .position+=1
+    | .start = .position
+    | .position += 1
 ;
 
-def NOTANY($s): #:: CURSOR|(string) -> CURSOR
+def NOTANY($s): #:: CURSOR|(string) => CURSOR
     assert($s != ""; "NOTANY requires a non empty string as argument")
     | select(.position != .slen)
     | select(.subject[.position:.position+1] | inside($s)|not)
-    | .start=.position
-    | .position+=1
+    | .start = .position
+    | .position += 1
 ;
 
-def BREAK($s): #:: CURSOR|(string) -> CURSOR
+def BREAK($s): #:: CURSOR|(string) => CURSOR
     assert($s != ""; "BREAK requires a non empty string as argument")
     | select(.position != .slen)
     | .position as $p
     | TAB(gen::first(.subject|str::upto($s; $p)))
-      // .
+    //.
 ;
 
-def SPAN($s): #:: CURSOR|(string) -> CURSOR
+def SPAN($s): #:: CURSOR|(string) => CURSOR
     assert($s != ""; "SPAN requires a non empty string as argument")
     | select(.position != .slen)
     | select(.subject[.position:.position+1] | inside($s))
@@ -284,14 +289,14 @@ def SPAN($s): #:: CURSOR|(string) -> CURSOR
 # Patterns concerned with specific types of matching
 #
 
-def ARB: #:: CURSOR| -> <CURSOR>
+def ARB: #:: CURSOR| => <CURSOR>
     # equivalent to TAB(range(.position; .slen))
     range(.position; .slen) as $n
-    | .start=.position
-    | .position=$n
+    | .start = .position
+    | .position = $n
 ;
 
-def BAL: #:: CURSOR| -> <CURSOR>
+def BAL: #:: CURSOR| => <CURSOR>
     def _bal:
         NOTANY("()")
         , (L("(") | iterate(_bal) | L(")"))
@@ -299,33 +304,33 @@ def BAL: #:: CURSOR| -> <CURSOR>
     G(loop(_bal))
 ;
 
-def REM: #:: CURSOR| -> CURSOR
+def REM: #:: CURSOR| => CURSOR
     # equivalent to RTAB(0)
-    .start=.position
-    | .position=.slen
+    .start = .position
+    | .position = .slen
 ;
 
 #
 # Patterns concerned with control of the matching process 
 #
 
-def ABORT: #:: CURSOR| -> CURSOR
+def ABORT: #:: CURSOR| => ⊥
     error("ABORT")
     # With label/break:
     #   label $abort | P | Q , break $abort | R;
 ;
 
-def FAIL: #:: CURSOR| -> CURSOR
+def FAIL: #:: CURSOR| => ∅
     empty
 ;
 
-def FENCE: #:: CURSOR| -> CURSOR
+def FENCE: #:: CURSOR| => CURSOR^⊥
     . , error("ABORT")
     # With label/break:
     #   label $abort | P | NULL , break $abort | Q;
 ;
 
-def SUCCEED: #::CURSOR| -> <CURSOR>
+def SUCCEED: #::CURSOR| => <CURSOR>
     iterate(.)
 ;
 
@@ -342,58 +347,58 @@ def SUCCEED: #::CURSOR| -> <CURSOR>
 # SPITBOL extensions
 #
 
-def BREAKX($s): #:: CURSOR|(string) -> <CURSOR>
+def BREAKX($s): #:: CURSOR|(string) => <CURSOR>
     assert($s != ""; "BREAKX requires a non empty string as argument")
     | select(.position != .slen)
-    .position as $p
+    | .position as $p
     | TAB(.subject|str::upto($s; $p))
-      // .
+    //.
 ;
 
-def LEQ($s; $t): #:: (string;string) -> CURSOR
+def LEQ($s; $t): #:: CURSOR|(string;string) => CURSOR
     select(isstring($s) and $s == $t)
 ;
-def LGE($s; $t): #:: (string;string) -> CURSOR
+def LGE($s; $t): #:: CURSOR|(string;string) => CURSOR
     select(isstring($s) and $s >= $t)
 ;
-def LLE($s; $t): #:: (string;string) -> CURSOR
+def LLE($s; $t): #:: CURSOR|(string;string) => CURSOR
     select(isstring($s) and $s >= $t)
 ;
-def LLT($s; $t): #:: (string;string) -> CURSOR
+def LLT($s; $t): #:: CURSOR|(string;string) => CURSOR
     select(isstring($s) and $s >  $t)
 ;
-def LNE($s; $t): #:: (string;string) -> CURSOR
+def LNE($s; $t): #:: CURSOR|(string;string) => CURSOR
     select(isstring($s) and $s != $t)
 ;
 
-def CHAR($n): #:: (number) -> string
+def CHAR($n): #:: (number) => string
     str::char($n)
 ;
-def ORD($s): #:: (string) -> number
+def ORD($s): #:: (string) => number
     str::ord($s)
 ;
-def LPAD($s; $n): #:: (string;number) -> string
+def LPAD($s; $n): #:: (string;number) => string
     $s|str::left($n; " ")
 ;
-def LPAD($s; $n; $t): #:: (string;number;string) -> string
+def LPAD($s; $n; $t): #:: (string;number;string) => string
     $s|str::left($n; $t)
 ;
-def RPAD($s; $n): #:: (string;number) -> string
+def RPAD($s; $n): #:: (string;number) => string
     $s|str::right($n; " ")
 ;
-def RPAD($s; $n; $t): #:: (string;number;string) -> string
+def RPAD($s; $n; $t): #:: (string;number;string) => string
     $s|str::right($n; $t)
 ;
-def REVERSE($s): #:: (string) -> string
+def REVERSE($s): #:: (string) => string
     $s|explode|reverse|implode
 ;
-def SUBSTR($s; $n): #:: (string;number) -> string
+def SUBSTR($s; $n): #:: (string;number) => string
     $s[$n:]
 ;
-def SUBSTR($s; $n; $m):  #:: (string;number;number) -> string
+def SUBSTR($s; $n; $m):  #:: (string;number;number) => string
     $s[$n:$m]
 ;
-def TRIM($s): #:: (string) -> string
+def TRIM($s): #:: (string) => string
     $s|str::strip(" \t\r\n\f")
 ;
 
@@ -402,21 +407,22 @@ def TRIM($s): #:: (string) -> string
 #
 
 # retrofitted from Icon
-def FIND($s): #::CURSOR|(pattern) -> <CURSOR>
-    .position as $p | .slen as $n
-    | TAB(.subject | str::find($s; $p; $n))
+def FIND($s): #:: CURSOR|(pattern) => <CURSOR>
+    .position as $p |
+    .slen as $n |
+    TAB(.subject | str::find($s; $p; $n))
 ;
 
 # retrofitted from Icon
-def MOVE($n): #:: CURSOR|(number) -> CURSOR
+def MOVE($n): #:: CURSOR|(number) => CURSOR
 # TODO: not really tested!!!
-    .position+=$n
+    .position += $n
     # ???
-    # if .position < .start then .start=.position else . end
+    # if .position < .start then .start = .position else . end
 ;
 # TODO: from SNOBOL4+, define ATB, ARTAB...
 
-def REMOVE($s): #:: (string) -> string
+def REMOVE($s): #:: (string) => string
     reduce ((./"")[] | select(inside($s)|not)) as $c
         (""; . + $c)
 ;

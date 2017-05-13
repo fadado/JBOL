@@ -4,11 +4,11 @@
 
 import "fadado.github.io/string" as str;
 
-def chars: #:: string|-> <string>
+def chars:
     split("")[]
 ;
 
-def lpad($n): #:: string|(number) -> string
+def lpad($n):
     (" "*$n) + .
 ;
 

@@ -11,7 +11,7 @@ module {
 import "fadado.github.io/math" as math;
 
 # Inspired in https://www.rosettacode.org/wiki/URL_decoding#jq
-def decode: #:: string| -> string
+def decode: #:: string| => string
     .  as $in
     | length as $length
     | {i: 0, answer: ""}
@@ -24,7 +24,8 @@ def decode: #:: string| -> string
             .answer += $in[.i:.i+1]
             | .i += 1
         end
-    ) | .answer
+      )
+    | .answer
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

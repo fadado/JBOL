@@ -18,128 +18,126 @@ import "fadado.github.io/string/ascii" as ascii;
 # See http://www.cs.arizona.edu/icon/refernce/funclist.htm
 
 # Find string
-def find($s; $i; $j): #:: string|(string;number;number) -> <number>
+def find($s; $i; $j): #:: string|(string;number;number) => <number>
     select(0 <= $i and $i < $j and $j <= length)
     | .[$i:$j]
     | indices($s)[]
 ;
-def find($s; $i): #:: string|(string;number) -> <number>
+def find($s; $i): #:: string|(string;number) => <number>
     find($s; $i; length)
 ;
-def find($s): #:: string|(string) -> <number>
+def find($s): #:: string|(string) => <number>
     find($s;  0; length)
 ;
 
 # Locate characters
-def upto($s; $i; $j): #:: string|(string;number;number) -> <number>
+def upto($s; $i; $j): #:: string|(string;number;number) => <number>
     assert($s != ""; "upto requires a non empty string as argument")
     | select(0 <= $i and $i < $j and $j <= length)
     | range($i; $j) as $p
     | keep(.[$p:$p+1] | inside($s); $p)
 ;
-def upto($s; $i): #:: string|(string;number) -> <number>
+def upto($s; $i): #:: string|(string;number) => <number>
     upto($s; $i; length)
 ;
-def upto($s): #:: string|(string) -> <number>
+def upto($s): #:: string|(string) => <number>
     upto($s;  0; length)
 ;
 
 # Match initial string
-def match($s; $i): #:: string|(string;number) -> number
+def match($s; $i): #:: string|(string;number) => number
     select(0 <= $i and $i < length)
     | keep(.[$i:] | startswith($s); $i+($s|length))
 ;
-def match($s): #:: string|(string) -> number
+def match($s): #:: string|(string) => number
     match($s; 0)
 ;
 
 # Locate initial character
-def any($s; $i): #:: string|(string;number) -> number
+def any($s; $i): #:: string|(string;number) => number
     select(0 <= $i and $i < length)
     | keep(.[$i:$i+1] | inside($s); $i+1)
 ;
-def any($s): #:: string|(string) -> number
+def any($s): #:: string|(string) => number
     any($s; 0)
 ;
 
-def notany($s; $i): #:: string|(string;number) -> number
+def notany($s; $i): #:: string|(string;number) => number
     select(0 <= $i and $i < length)
     | keep(.[$i:$i+1] | inside($s)|not; $i+1)
 ;
-def notany($s): #:: string|(string) -> number
+def notany($s): #:: string|(string) => number
     notany($s; 0)
 ;
 
 # Locate many characters
-def many($s; $i): #:: string|(string;number) -> number
+def many($s; $i): #:: string|(string;number) => number
     def _many($t; $n):
         def r:
             if . == $n                then $n
             elif $t[.:.+1]|inside($s) then .+1|r
             elif . != $i              then .
-                                      else empty
-            end
+            else empty end
         ;
         $i|r
     ;
     select(0 <= $i and $i < length)
     | _many(.; length)
 ;
-def many($s): #:: string|(string) -> number
+def many($s): #:: string|(string) => number
     many($s; 0)
 ;
 
-def none($s; $i): #:: string|(string;number) -> number
+def none($s; $i): #:: string|(string;number) => number
     def _none($t; $n):
         def r:
             if . == $n                    then $n
             elif $t[.:.+1]|inside($s)|not then .+1|r
             elif . != $i                  then .
-                                          else empty
-            end
+            else empty end
         ;
         $i|r
     ;
     select(0 <= $i and $i < length)
     | _none(.; length)
 ;
-def none($s): #:: string|(string) -> number
+def none($s): #:: string|(string) => number
     none($s; 0)
 ;
 
 # Pad strings
-def left($n; $t): #:: string|(number;string) -> string
+def left($n; $t): #:: string|(number;string) => string
     when($n > length;
          ($t*($n-length)) + .)
 ;
-def left($n): #:: string|(number) -> string
+def left($n): #:: string|(number) => string
     left($n; " ")
 ;
 
-def right($n; $t): #:: string|(number;string) -> string
+def right($n; $t): #:: string|(number;string) => string
     when($n > length;
          . + ($t*($n-length)))
 ;
-def right($n): #:: string|(number) -> string
+def right($n): #:: string|(number) => string
     right($n; " ")
 ;
 
-def center($n; $t): #:: string|(number;string) -> string
+def center($n; $t): #:: string|(number;string) => string
     when($n > length;
         ((($n-length)/2) | floor) as $i
         | ($t*$i) + . + ($t*$i)
         | when(length != $n; .+$t)
     )
 ;
-def center($n): #:: string|(number) -> string
+def center($n): #:: string|(number) => string
     center($n; " ")
 ;
 
-def ord($s): #:: (string) -> number
+def ord($s): #:: (string) => number
     $s[0:1] | explode[0]
 ;
 
-def char($n): #:: (number) -> string
+def char($n): #:: (number) => string
     [$n] | implode
 ;
 
@@ -148,7 +146,7 @@ def char($n): #:: (number) -> string
 
 # Translate/remove tables
 #
-def table($from; $to): #:: (string;string) -> TABLE
+def table($from; $to): #:: (string;string) => {string}
    ($from/"") as $s
    | ($to/"") as $t
    | reduce range($s|length) as $i
@@ -157,23 +155,23 @@ def table($from; $to): #:: (string;string) -> TABLE
 
 # Rotate strings in both directions
 #
-def rotate($s; $n): #:: (string; number) -> string
+def rotate($s; $n): #:: (string;number) => string
     $s[$n:] + $s[:$n]
 ;
 
-def rotate($n): #:: string|(number) -> string
+def rotate($n): #:: string|(number) => string
     rotate(.; $n)
 ;
 
 # Translation table for rotate by 13 places
 #
-def rot13: #:: TABLE
+def rot13: #:: {string}
     table(ascii::ALPHA; rotate(ascii::upper; 13)+rotate(ascii::lower; 13))
 ;
 
 # Preserve tables
 #
-def ptable($from; $preserve): #:: (string;string) -> TABLE
+def ptable($from; $preserve): #:: (string;string) => {string}
    set::set($preserve) as $t
    | reduce (($from/"") | unique)[] as $c
         ({}; . += (if $t[$c] then null else {($c):""} end))
@@ -181,11 +179,12 @@ def ptable($from; $preserve): #:: (string;string) -> TABLE
 
 # Translate characters in input string using translation table
 #
-def translate($table): #:: string|(TABLE) -> string
-    [ (./"")[] | $table[.]//. ] | join("")
+def translate($table): #:: string|({string}) => string
+    [ (./"")[] | $table[.]//. ]
+    | join("")
 ;
 
-def translate($from; $to): #:: string|(string:string) -> string
+def translate($from; $to): #:: string|(string;string) => string
     translate(table($from; $to))
 ;
 
@@ -204,7 +203,7 @@ def _lndx(predicate): # left index or empty if not found
     label $exit
     | range(length-1) as $i
     | keep(.[$i:$i+1] | predicate|not;
-        $i , break $exit
+           $i , break $exit
       )
 ;
 
@@ -212,25 +211,25 @@ def _rndx(predicate): # rigth index or empty if not found
     label $exit
     | range(length-1; 0; -1) as $i
     | keep(.[$i:$i+1] | predicate|not;
-        $i+1 , break $exit
+           $i+1 , break $exit
       )
 ;
 
-def lstrip($s): #:: string|(string) -> string
+def lstrip($s): #:: string|(string) => string
     when(length != 0 and (.[0:1] | inside($s));
-        (_lndx(inside($s))//-1) as $i
-        | if $i < 0 then "" else .[$i:] end
+        (_lndx(inside($s))//-1) as $i |
+        if $i < 0 then "" else .[$i:] end
     )
 ;
 
-def rstrip($s): #:: string|(string) -> string
+def rstrip($s): #:: string|(string) => string
     when(length != 0 and (.[-1:length] | inside($s));
-         (_rndx(inside($s))//-1) as $i
-         | if $i < 0 then "" else .[0:$i] end
+         (_rndx(inside($s))//-1) as $i |
+         if $i < 0 then "" else .[0:$i] end
     )
 ;
 
-def strip($s): #:: string|(string) -> string
+def strip($s): #:: string|(string) => string
     when(length != 0 and ((.[0:1] | inside($s)) or (.[-1:length] | inside($s)));
         (_lndx(inside($s))//-1) as $i |
         (_rndx(inside($s))//-1) as $j |
@@ -242,13 +241,13 @@ def strip($s): #:: string|(string) -> string
     )
 ;
 
-def trim: #:: string| -> string
+def trim: #:: string| => string
     strip(" \t\r\n\f")
 ;
-def ltrim: #:: string| -> string
+def ltrim: #:: string| => string
     lstrip(" \t\r\n\f")
 ;
-def rtrim: #:: string| -> string
+def rtrim: #:: string| => string
     rstrip(" \t\r\n\f")
 ;
 
@@ -256,7 +255,7 @@ def rtrim: #:: string| -> string
 
 # Fast join, only for string arrays
 #
-def join($separator): #:: [string]|(string) -> string
+def join($separator): #:: [string]|(string) => string
     def sep:
         if . == null
         then ""
