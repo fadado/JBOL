@@ -143,10 +143,7 @@ def split($regex; $flags; $limit): #:: string|(string;string;number) => <string>
         | [ 0, # first index
             (label $exit
                 | foreach match($regex; $flags+"g") as $m
-                    # init
-                    ($limit;
-                     # update
-                     .-1;
+                    ($limit; .-1; # init and update
                      # yield if conditions are ok
                      if . < 0
                      then break $exit

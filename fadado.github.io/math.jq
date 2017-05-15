@@ -66,12 +66,12 @@ def frombase($base): #:: string|(number) => number
     def toint: # "a" ~ 97 => 10 ~ 87
         if . > 96  then . - 87 else . - 48 end
     ;
-    reduce (explode | reverse[] | downcase | toint) as $c (
-        {power: 1, answer: 0};
+    reduce (explode | reverse[] | downcase | toint) as $c
+       ({power: 1, answer: 0};
         (.power * $base) as $b
         | .answer += (.power * $c)
-        | .power = $b
-    ) | .answer
+        | .power = $b)
+    | .answer
 ;
 
 ########################################################################

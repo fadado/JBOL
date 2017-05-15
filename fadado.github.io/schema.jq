@@ -19,8 +19,8 @@ import "fadado.github.io/string/regexp" as re;
 #
 # SCHEMA: a JSON schema document
 def generate: #:: α| -> SCHEMA
-    { "type": type } +
-    if isobject then
+    { "type": type }
+    + if isobject then
         if length == 0 then null
         else
             . as $object |
@@ -41,7 +41,7 @@ def generate: #:: α| -> SCHEMA
                 then
                     { "type": (.[0] | type) }
                 elif length == 1 then
-                   .[0] | generate 
+                   .[0] | generate
                 else
                     reduce .[] as $item (
                         [];
@@ -59,8 +59,8 @@ def generate: #:: α| -> SCHEMA
 # OPTIONS: an object of runtime options
 # SCHEMA: a JSON schema document
 def generate($options): #:: α|(OPTIONS) -> SCHEMA
-    { "type": type } +
-    if isobject then
+    { "type": type }
+    + if isobject then
         if length == 0 then null
         else
             . as $object |
@@ -70,18 +70,18 @@ def generate($options): #:: α|(OPTIONS) -> SCHEMA
                     . + {($name): ($object[$name] | generate($options))}
                 )
               )
-            } +
-            if $options.required then
-            {
-                "required": [keys]
             }
-            else null end +
-            if $options.object_verbose then
-            {
-                "additionalProperties": false,
-                "minProperties": length,
-                "maxProperties": length
-            }
+            + if $options.required then
+                {
+                    "required": [keys]
+                }
+            else null end
+            + if $options.object_verbose then
+                {
+                    "additionalProperties": false,
+                    "minProperties": length,
+                    "maxProperties": length
+                }
             else null end
         end
     elif isarray then
@@ -93,7 +93,7 @@ def generate($options): #:: α|(OPTIONS) -> SCHEMA
                 then
                     { "type": (.[0] | type) }
                 elif length == 1 then
-                   .[0] | generate($options) 
+                   .[0] | generate($options)
                 else
                     reduce .[] as $item (
                         [];
@@ -101,33 +101,33 @@ def generate($options): #:: α|(OPTIONS) -> SCHEMA
                     )
                 end
               )
-            } +
-            if $options.array_verbose then
-            {
-                "additionalItems": false,
-                "maxItems": length,
-                "minItems": 0,
-                "uniqueItems": false
             }
+            + if $options.array_verbose then
+                {
+                    "additionalItems": false,
+                    "maxItems": length,
+                    "minItems": 0,
+                    "uniqueItems": false
+                }
             else null end
         end
     elif isnumber then
         if $options.number_verbose then
-        {
-            "multipleOf": 1,
-            "maximum": 10000,
-            "minimum": 1,
-            "exclusiveMaximum": false,
-            "exclusiveMinimum": false
-        }
+            {
+                "multipleOf": 1,
+                "maximum": 10000,
+                "minimum": 1,
+                "exclusiveMaximum": false,
+                "exclusiveMinimum": false
+            }
         else null end
     elif isstring then
         if $options.string_verbose then
-        {
-            "minLength": 1,
-            "maxLength": 1000,
-            "pattern": "^.*$"
-        }
+            {
+                "minLength": 1,
+                "maxLength": 1000,
+                "pattern": "^.*$"
+            }
         else null end
     else null end # boolean and null
 ;
@@ -141,11 +141,11 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
             re::gsub("~1"; "/") | re::gsub("~0"; "~")
             | url::decode
         ;
-        if $s | startswith("#")|not
+        if $s|startswith("#")|not
         then error("Only supported pointers in current document: \($s)")
         elif $s == "#"
         then $schema # root
-        elif $s | startswith("#/")|not
+        elif $s|startswith("#/")|not
         then error("Only supported absolute pointers")
         else
             $schema
@@ -209,7 +209,7 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
                 else . <= $schema.maximum end)
             and rule($schema | has("minimum");
                 if $schema.exclusiveMinimum
-                then . > $schema.minimum  
+                then . > $schema.minimum
                 else . >= $schema.minimum end)
         ;
         def c_string: # string constraints
@@ -225,7 +225,8 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
                     "hostname": "^(?:[0-9A-Za-z]|[0-9A-Za-z][0-9A-Za-z-]{0,61}[0-9A-Za-z])(?:[.](?:[0-9A-Za-z]|[0-9A-Za-z][0-9A-Za-z-]{0,61}[0-9A-Za-z]))*$",
                     "ipv4": "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)[.]){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$",
                     "uri": "^[A-Za-z][0-9A-Za-z+-.]*:[^ \t\r\n]*"
-                }[$schema.format] // "^.") as $re # any non empty string as default
+                }[$schema.format]
+                    // "^.") as $re # any non empty string as default
                 | test($re))
         ;
         def c_array: # array constraints
@@ -236,7 +237,7 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
                 or ($schema.additionalItems == true)
                 or ($schema.additionalItems | isobject)
                 or ($schema.additionalItems == false and ($schema.items | isarray))
-                and length <= ($schema.items | length)
+                    and length <= ($schema.items | length)
             ;
             def valid_elements:
                 def additionalItems:
@@ -244,17 +245,17 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
                         or $schema.additionalItems == true
                     then {}
                     elif $schema.additionalItems | isobject
-                    then $schema.additionalItems 
+                    then $schema.additionalItems
                     else null end
                 ;
-                ($schema.items // {}) as $items
+                ($schema.items//{}) as $items
                 | if ($items | isobject) then
                     every(.[] | _validate($items; $fatal))
                 else # isarray
                     additionalItems as $additional
                     | every(
                         range(length) as $i
-                        | if $i | in($items) # $i < ($items|length)
+                        | if $i|in($items) # $i < ($items|length)
                           then .[$i] | _validate($items[$i]; $fatal)
                           else $additional != null
                                and (.[$i] | _validate($additional; $fatal)) end
@@ -267,7 +268,8 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
             and rule($schema | has("minItems");
                 length >= $schema.minItems)
             and rule($schema | has("uniqueItems");
-                ($schema.uniqueItems|not) or length == (unique | length))
+                ($schema.uniqueItems|not)
+                or length == (unique | length))
             and valid_elements
         ;
         def c_object: # object constraints
@@ -276,8 +278,8 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
                 or $schema.additionalProperties == true
                 or ($schema.additionalProperties | isobject)
                 or $schema.additionalProperties == false
-                and ($schema.properties // {}) as $p
-                    | ($schema.patternProperties // {}) as $pp
+                and ($schema.properties//{}) as $p
+                    | ($schema.patternProperties//{}) as $pp
                     | [ keys_unsorted[]
                         | select(in($p)|not)
                         | select(every(test($pp | keys_unsorted[])|not)) ]
@@ -289,12 +291,12 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
                         or $schema.additionalProperties == true
                     then {}
                     elif $schema.additionalProperties | isobject
-                    then $schema.additionalProperties 
+                    then $schema.additionalProperties
                     else null end
                 ;
                 additionalProperties as $additional
-                | ($schema.properties // {}) as $p
-                | ($schema.patternProperties // {}) as $pp
+                | ($schema.properties//{}) as $p
+                | ($schema.patternProperties//{}) as $pp
                 | every(
                     keys_unsorted[] as $m
                     | [ keep($m | in($p); $p[$m])
@@ -320,7 +322,7 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
         # Validate
         #
         def check(constraint):
-            constraint 
+            constraint
             or $fatal and ({ instance: ., schema: $schema } | error)
         ;
         $schema == null

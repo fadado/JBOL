@@ -109,7 +109,8 @@ def mapdoc(filter): #:: α|(α_β) => β
     elif isarray then
         [.[] | mapdoc(filter)]
         | filter
-    else filter
+    else
+        filter
     end
 ;
 

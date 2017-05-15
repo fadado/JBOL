@@ -6,12 +6,9 @@ import "fadado.github.io/generator/choice" as choice;
 def issorted:
     def _issorted($xs; $len):
         def r:
-            if . >= $len
-            then true
-            elif $xs[.] < $xs[.-1]
-            then false
-            else .+1|r
-            end
+            . >= $len
+            or $xs[.] >= $xs[.-1]
+               and (.+1|r)
         ;
         1|r
     ;

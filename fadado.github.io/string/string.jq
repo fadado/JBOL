@@ -203,16 +203,14 @@ def _lndx(predicate): # left index or empty if not found
     label $exit
     | range(length-1) as $i
     | keep(.[$i:$i+1] | predicate|not;
-           $i , break $exit
-      )
+           $i , break $exit)
 ;
 
 def _rndx(predicate): # rigth index or empty if not found
     label $exit
     | range(length-1; 0; -1) as $i
     | keep(.[$i:$i+1] | predicate|not;
-           $i+1 , break $exit
-      )
+           $i+1 , break $exit)
 ;
 
 def lstrip($s): #:: string|(string) => string
@@ -262,7 +260,8 @@ def join($separator): #:: [string]|(string) => string
         else .+$separator
         end
     ;
-    reduce .[] as $s (null; sep + $s) // ""
+    reduce .[] as $s
+        (null; sep + $s)//""
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

@@ -28,6 +28,32 @@ def read_sh:
     )
 ;
 
+def XXXread_sh:
+    def init:
+        { continuing: false, logical_line: "" }
+    ;
+    def update($line):
+        if .continuing then 
+            if $line[-1:] == "\\" then  # add more text to line
+                .logical_line += $line[:-1]
+            else                        # complete line
+                .continuing = false  |
+                .logical_line += $line
+            end
+        elif $line[-1:] == "\\" then    # start continuation line
+            .continuing = true |
+            .logical_line = $line[:-1]
+        else                            # line complete
+            .logical_line = $line
+        end
+    ;
+    def extract:
+        keep(.continuing; .logical_line)
+    ;
+    foreach inputs as $line
+        (init; update($line); extract)
+;
+
 # sh continuation lines style checking bad input
 def read_sh_check:
     foreach (inputs, null) as $line (

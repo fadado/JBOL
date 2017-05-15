@@ -27,17 +27,17 @@ def ignore($s): #:: string|(string) => ∅^⊥
 ;
 
 def cancel: #:: ⊥
-    error("!")
+    error("¡")
 ;
 def cancelled: #:: string| => ∅^⊥
-    ignore("!")
+    ignore("¡")
 ;
 
 def fence: #:: α| => α^⊥
-    (., error("?"))
+    (., error("¿"))
 ;
 def fenced: #:: string| => ∅^⊥
-    ignore("?")
+    ignore("¿")
 ;
 
 # Run once a computation.  By default `jq` tries all alternatives. This is the
