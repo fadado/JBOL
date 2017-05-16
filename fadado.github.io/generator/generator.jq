@@ -70,7 +70,7 @@ def first(generator): #:: α|(α_<β>) => β^∅
 def last(generator): #:: α|(α_<β>) => β^∅
     reduce generator as $item
         (null; $item)
-    | if .==null then empty else . end
+    | keep(. != null)
 ;
 
 # Extract the nth element of a stream.
