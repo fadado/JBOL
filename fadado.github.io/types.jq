@@ -11,77 +11,77 @@ module {
 include "fadado.github.io/prelude";
 
 # Data type predicates
-def isnull: #:: α| => boolean
+def isnull: #:: a| => boolean
     type == "null"
 ;
-def isboolean: #:: α| => boolean
+def isboolean: #:: a| => boolean
     type == "boolean"
 ;
-def isnumber: #:: α| => boolean
+def isnumber: #:: a| => boolean
     type == "number"
 ;
-def isinteger: #:: α| => boolean
+def isinteger: #:: a| => boolean
     type == "number" and . == floor
 ;
-def isfloat: #:: α| => boolean
+def isfloat: #:: a| => boolean
     type == "number" and . != floor
 ;
-def isstring: #:: α| => boolean
+def isstring: #:: a| => boolean
     type == "string"
 ;
-def isarray: #:: α| => boolean
+def isarray: #:: a| => boolean
     type == "array"
 ;
-def isobject: #:: α| => boolean
+def isobject: #:: a| => boolean
     type == "object"
 ;
-def isscalar: #:: α| => boolean
+def isscalar: #:: a| => boolean
     type| . == "null" or . == "boolean" or . == "number" or . == "string"
 ;
-def isiterable: #:: α| => boolean
+def isiterable: #:: a| => boolean
     type| . == "array" or . == "object"
 ;
-def isvoid: #:: α| => boolean
+def isvoid: #:: a| => boolean
     isiterable and length == 0
 ;
-def isleaf: #:: α| => boolean
+def isleaf: #:: a| => boolean
     isscalar or isvoid
 ;
 
-def isnull($a): #:: (α) => boolean
+def isnull($a): #:: (a) => boolean
     $a|isnull
 ;
-def isboolean($a): #:: (α) => boolean
+def isboolean($a): #:: (a) => boolean
     $a|isboolean
 ;
-def isnumber($a): #:: (α) => boolean
+def isnumber($a): #:: (a) => boolean
     $a|isnumber
 ;
-def isinteger($a): #:: (α) => boolean
+def isinteger($a): #:: (a) => boolean
     $a|isinteger
 ;
-def isfloat($a): #:: (α) => boolean
+def isfloat($a): #:: (a) => boolean
     $a|isfloat
 ;
-def isstring($a): #:: (α) => boolean
+def isstring($a): #:: (a) => boolean
     $a|isstring
 ;
-def isarray($a): #:: (α) => boolean
+def isarray($a): #:: (a) => boolean
     $a|isarray
 ;
-def isobject($a): #:: (α) => boolean
+def isobject($a): #:: (a) => boolean
     $a|isobject
 ;
-def isscalar($a): #:: (α) => boolean
+def isscalar($a): #:: (a) => boolean
     $a|isscalar
 ;
-def isiterable($a): #:: (α) => boolean
+def isiterable($a): #:: (a) => boolean
     $a|isiterable
 ;
-def isvoid($a): #:: (α) => boolean
+def isvoid($a): #:: (a) => boolean
     $a|isvoid
 ;
-def isleaf($a): #:: (α) => boolean
+def isleaf($a): #:: (a) => boolean
     $a|isleaf
 ;
 
@@ -89,7 +89,7 @@ def isleaf($a): #:: (α) => boolean
 #
 # PAIR: {"name":string, "value":value}
 #
-def mapobj(filter): #:: object|(PAIR_PAIR) => object
+def mapobj(filter): #:: object|(PAIR->PAIR) => object
     reduce (keys_unsorted[] as $k
             | {name: $k, value: .[$k]}
             | filter
@@ -100,7 +100,7 @@ def mapobj(filter): #:: object|(PAIR_PAIR) => object
 
 # Variation on `walk`
 #
-def mapdoc(filter): #:: α|(α_β) => β
+def mapdoc(filter): #:: a|(a->b) => b
     . as $doc |
     if isobject then
         reduce keys_unsorted[] as $k

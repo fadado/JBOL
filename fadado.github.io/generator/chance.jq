@@ -36,20 +36,20 @@ def randomize: #:: => number
 
 # Generates a stream of random 2^15 values.
 #
-def rand($seed): #:: (number) => <number>
+def rand($seed): #:: (number) => *number
     unfold(_NXTGEN; $seed)
 ;
 
 # Generates a stream of random [0..1) values.
 #
-def rnd($seed): #:: (number) => <number>
+def rnd($seed): #:: (number) => *number
     unfold(_NXTGEN; $seed)
     | . / 32768
 ;
 
 # Generates a random [0..n) stream.
 #
-def random($n; $seed): #:: (number;number) => <number>
+def random($n; $seed): #:: (number;number) => *number
     unfold(_NXTGEN; $seed)
     | .%($n)
 ;

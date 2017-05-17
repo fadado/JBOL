@@ -67,7 +67,7 @@ def test($regex): #:: string|(string) => boolean
 # Like builtin `match` but add to the match object some strings for context
 # (like Perl $`, $& and $').
 #
-def match($regex; $flags): #:: string|(string;string) => <MATCH>
+def match($regex; $flags): #:: string|(string;string) => *MATCH
     . as $subject
     | _match_impl($regex; $flags; false)[]
     | . + { "&": .string,
@@ -75,7 +75,7 @@ def match($regex; $flags): #:: string|(string;string) => <MATCH>
             "'": $subject[.offset+.length:] }
 ;
 
-def match($regex): #:: string|(string) => <MATCH>
+def match($regex): #:: string|(string) => *MATCH
     match($regex; "")
 ;
 
@@ -129,7 +129,7 @@ def tostr: #:: MATCH| => string
 #   * Emit 1..$limit items
 #   * Include matched groups if present
 
-def split($regex; $flags; $limit): #:: string|(string;string;number) => <string>
+def split($regex; $flags; $limit): #:: string|(string;string;number) => *string
     def segment:
         when(length > 3;
              .[0:3] , (.[3:] | segment))
@@ -160,7 +160,7 @@ def split($regex; $flags; $limit): #:: string|(string;string;number) => <string>
 # Fully compatible with `splits/2`, and replaces `split/2` in a non compatible
 # way (use [regexp::split(r;f)] for compatible behavior)
 #
-def split($regex; $a): #:: string|(string;number^string) => <string>^⊥
+def split($regex; $a): #:: string|(string;number^string) => *string
     if $a|isnumber
     then split($regex; ""; $a)     # $a = limit
     elif $a|isstring
@@ -172,13 +172,13 @@ def split($regex; $a): #:: string|(string;number^string) => <string>^⊥
 # Fully compatible with `splits/1`, and replaces `split/1` in a non compatible
 # way (use "s"/"d" instead for full compatibility)
 #
-def split($regex): #:: string|(string) => <string>
+def split($regex): #:: string|(string) => *string
     split($regex; "g"; infinite)
 ;
 
 # Splits its input on white space breaks, trimming space around
 #
-def split: #:: string| => <string>
+def split: #:: string| => *string
     str::trim | split("\\s+"; ""; infinite)
 ;
 

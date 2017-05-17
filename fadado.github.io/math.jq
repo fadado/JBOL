@@ -41,14 +41,14 @@ def gcd($m; $n): #:: (number;number) => number
 ;
 
 def sign($n): #:: (number) => number
-    if isnan or type!="number" then nan
-    elif $n > 0                then 1
-    elif $n == 0               then 0
-                               else -1
+    $n|if isnan or type!="number" then nan
+    elif . > 0                then 1
+    elif . == 0               then 0
+                              else -1
     end
 ;
 
-def tobase($b): #:: number|(number) => string^∅
+def tobase($b): #:: number|(number) => ?string
     def digit: "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"[.:.+1];
     def div: (. / $b)|floor;
     def mod: . % $b;
@@ -77,22 +77,22 @@ def frombase($base): #:: string|(number) => number
 ########################################################################
 # Reductions
 
-def sum(generator): #:: α|(α_<number>) => number
+def sum(generator): #:: a|(a->*number) => number
     reduce generator as $item
         (0; . + $item)
 ;
 
-def product(generator): #:: α|(α_<number>) => number
+def product(generator): #:: a|(a->*number) => number
     reduce generator as $item
         (1; . * $item)
 ;
 
-def maximum(generator): #:: α|(α_<number>) => number
+def maximum(generator): #:: a|(a->*number) => number
     reduce generator as $item
         (0-infinite; max($item; .))
 ;
 
-def minimum(generator): #:: α|(α_<number>) => number
+def minimum(generator): #:: a|(a->*number) => number
     reduce generator as $item
         (infinite; min($item; .))
 ;

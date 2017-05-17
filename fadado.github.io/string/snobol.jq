@@ -39,7 +39,7 @@ def A: #:: string| => CURSOR
 ;
 
 # Unanchored subject
-def U($subject): #:: (string) => <CURSOR>
+def U($subject): #:: (string) => *CURSOR
     ($subject|length) as $slen   |
     range(0; $slen+1) as $offset |
 {
@@ -49,7 +49,7 @@ def U($subject): #:: (string) => <CURSOR>
     start:null,         # current pattern start scanning position
     position:$offset    # current cursor position
 };
-def U: #:: string| => <CURSOR>
+def U: #:: string| => *CURSOR
     U(.)
 ;
 
@@ -88,7 +88,7 @@ def S: #:: CURSOR| => string
 
 # Matches the empty string (always matches), like the empty pattern in SNOBOL
 def NULL: #:: CURSOR| => CURSOR
-    . # ε
+    .
 ;
 
 # Match a literal, necessary to "wrap" all string literals
@@ -101,7 +101,7 @@ def L($literal): #:: CURSOR|(string) => CURSOR
 ;
 
 # Group patterns; blend a composite pattern into an atomic pattern
-def G(pattern): #:: CURSOR|(CURSOR_CURSOR) => CURSOR
+def G(pattern): #:: CURSOR|(CURSOR->CURSOR) => CURSOR
     (.position//0) as $p
     | pattern   # any expression using `,` and/or `|` if necessary
     | .start = $p
@@ -180,7 +180,7 @@ def DIFFER($s; $t): #:: CURSOR|(string;string) => CURSOR
 def DIFFER($s): #:: CURSOR|(string;string) => CURSOR
     select($s != "")
 ;
-def INTEGER($a): #:: CURSOR|(α) => CURSOR
+def INTEGER($a): #:: CURSOR|(a) => CURSOR
     def test:
        (isnumber and . == floor)
        or (tonumber?//false)
@@ -211,7 +211,7 @@ def SIZE($s): #:: (string) => number
 # Patterns that control the application of other patterns 
 #
 
-def ARBNO(pattern): #:: CURSOR|(CURSOR_CURSOR) => <CURSOR>
+def ARBNO(pattern): #:: CURSOR|(CURSOR->CURSOR) => *CURSOR
     iterate(pattern)
 ;
 
@@ -289,14 +289,14 @@ def SPAN($s): #:: CURSOR|(string) => CURSOR
 # Patterns concerned with specific types of matching
 #
 
-def ARB: #:: CURSOR| => <CURSOR>
+def ARB: #:: CURSOR| => *CURSOR
     # equivalent to TAB(range(.position; .slen))
     range(.position; .slen) as $n
     | .start = .position
     | .position = $n
 ;
 
-def BAL: #:: CURSOR| => <CURSOR>
+def BAL: #:: CURSOR| => *CURSOR
     def _bal:
         NOTANY("()")
         , (L("(") | iterate(_bal) | L(")"))
@@ -315,23 +315,19 @@ def REM: #:: CURSOR| => CURSOR
 #
 
 def ABORT: #:: CURSOR| => ⊥
-    error("ABORT")
-    # With label/break:
-    #   label $abort | P | Q , break $abort | R;
+    cancel  # from prelude
 ;
 
 def FAIL: #:: CURSOR| => ∅
-    empty
+    empty   # builtin
 ;
 
 def FENCE: #:: CURSOR| => CURSOR^⊥
-    . , error("ABORT")
-    # With label/break:
-    #   label $abort | P | NULL , break $abort | Q;
+    fence   # from prelude
 ;
 
-def SUCCEED: #::CURSOR| => <CURSOR>
-    iterate(.)
+def SUCCEED: #::CURSOR| => *CURSOR
+    iterate(.)  # from prelude
 ;
 
 # By default SNOBOL tries only once to match, but by default jq tries all
@@ -347,7 +343,7 @@ def SUCCEED: #::CURSOR| => <CURSOR>
 # SPITBOL extensions
 #
 
-def BREAKX($s): #:: CURSOR|(string) => <CURSOR>
+def BREAKX($s): #:: CURSOR|(string) => *CURSOR
     assert($s != ""; "BREAKX requires a non empty string as argument")
     | select(.position != .slen)
     | .position as $p
@@ -407,7 +403,7 @@ def TRIM($s): #:: (string) => string
 #
 
 # retrofitted from Icon
-def FIND($s): #:: CURSOR|(pattern) => <CURSOR>
+def FIND($s): #:: CURSOR|(pattern) => *CURSOR
     .position as $p |
     .slen as $n |
     TAB(.subject | str::find($s; $p; $n))
@@ -422,7 +418,7 @@ def MOVE($n): #:: CURSOR|(number) => CURSOR
 ;
 # TODO: from SNOBOL4+, define ATB, ARTAB...
 
-def REMOVE($s): #:: (string) => string
+def REMOVE($s): #:: string|(string) => string
     reduce ((./"")[] | select(inside($s)|not)) as $c
         (""; . + $c)
 ;

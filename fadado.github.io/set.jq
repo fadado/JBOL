@@ -37,7 +37,7 @@ include "fadado.github.io/types";
 
 # Set construction from strings and arrays
 #
-def set($elements): #:: (string^array) => {boolean}^⊥
+def set($elements): #:: (string^[a]) => {boolean}
     if $elements|isstring then
         reduce ($elements/"")[] as $element
             ({}; . += {($element):true})

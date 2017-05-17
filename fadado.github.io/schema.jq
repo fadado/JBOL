@@ -18,7 +18,7 @@ import "fadado.github.io/string/regexp" as re;
 # Generates a simple document schema
 #
 # SCHEMA: a JSON schema document
-def generate: #:: α| -> SCHEMA
+def generate: #:: a| => SCHEMA
     { "type": type }
     + if isobject then
         if length == 0 then null
@@ -58,7 +58,7 @@ def generate: #:: α| -> SCHEMA
 #
 # OPTIONS: an object of runtime options
 # SCHEMA: a JSON schema document
-def generate($options): #:: α|(OPTIONS) -> SCHEMA
+def generate($options): #:: a|(OPTIONS) => SCHEMA
     { "type": type }
     + if isobject then
         if length == 0 then null
@@ -135,7 +135,7 @@ def generate($options): #:: α|(OPTIONS) -> SCHEMA
 # Validates a document against an schema
 #
 # SCHEMA: a JSON schema document
-def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
+def validate($schema; $fatal): #:: a|(SCHEMA;boolean) => boolean
     def pointer($s):
         def unescape:
             re::gsub("~1"; "/") | re::gsub("~0"; "~")
@@ -356,14 +356,14 @@ def validate($schema; $fatal): #:: α|(SCHEMA;boolean) -> boolean
 # Validates a document against an schema
 #
 # SCHEMA: a JSON schema document
-def validate($schema): #:: α|(SCHEMA) -> boolean
+def validate($schema): #:: a|(SCHEMA) => boolean
     validate($schema; true)
 ;
 
 # Validates a document without signaling errors
 #
 # SCHEMA: a JSON schema document
-def valid($schema): #:: α|(SCHEMA) -> boolean
+def valid($schema): #:: a|(SCHEMA) => boolean
     validate($schema; false)
 ;
 

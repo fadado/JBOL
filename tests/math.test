@@ -33,6 +33,10 @@ include "math"; tobase(16)
 255
 "FF"
 
+include "math"; sign(nan) | isnan
+null
+true
+
 include "math"; sign(.)
 -3
 -1

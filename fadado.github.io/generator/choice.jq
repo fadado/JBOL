@@ -17,22 +17,22 @@ import "fadado.github.io/generator/chance" as chance;
 # Private auxiliar filters
 
 # Pick one element, any
-def _pick: #:: [α]| => [α]
+def _pick: #:: [a]| => [a]
     .[0:1]
 ;
 
 # What's _left after picking one element
-def _left: #:: [α]| => [α]
+def _left: #:: [a]| => [a]
     .[1:]
 ;
 
 # Pick the element at $i
-def _pick($i): #:: [α]|(number) => [α]
+def _pick($i): #:: [a]|(number) => [a]
     .[$i:$i+1]
 ;
 
 # What's _left after picking the element at $i
-def _left($i): #:: [α]|(number) => [α]
+def _left($i): #:: [a]|(number) => [a]
     del(.[$i])
 ;
 
@@ -42,7 +42,7 @@ def _left($i): #:: [α]|(number) => [α]
 
 # Subsets with one element removed (unsorted output)
 #
-def subset1_u: #:: [α]| => <[α]>
+def subset1_u: #:: [a]| => *[a]
     keep(length != 0; 
         # either what's _left after picking one,
         _left
@@ -54,7 +54,7 @@ def subset1_u: #:: [α]| => <[α]>
 # Size k subsets
 # Combinations
 #
-def subset($k): #:: [α]|(number) => <[α]>
+def subset($k): #:: [a]|(number) => *[a]
     def _subset($k):
         if $k == 0
         then []
@@ -72,14 +72,14 @@ def subset($k): #:: [α]|(number) => <[α]>
 
 # All subsets (powerset)
 
-def subset: #:: [α]| => <[α]>
+def subset: #:: [a]| => *[a]
     range(0; 1+length) as $n
     | subset($n)
 ;
 
 # All subsets (unsorted output)
 #
-def subset_u: #:: [α]| => <[α]>
+def subset_u: #:: [a]| => *[a]
     if length == 0
     then []
     else
@@ -97,7 +97,7 @@ def subset_u: #:: [α]| => <[α]>
 # Size k multisets
 # Combinations with repetition
 #
-def mulset($k): #:: [α]|(number) => <[α]>
+def mulset($k): #:: [a]|(number) => *[a]
     def _mulset($k):
         if $k == 0
         then []
@@ -115,7 +115,7 @@ def mulset($k): #:: [α]|(number) => <[α]>
 
 # Infinite multisets from a set
 #
-def mulset: #:: [α]| => <[α]>
+def mulset: #:: [a]| => *[a]
     mulset(range(0; infinite))
 ;
 
@@ -125,8 +125,8 @@ def mulset: #:: [α]| => <[α]>
 
 # Permutations
 #
-def permutation: #:: [α]| => <[α]>
-    def choose: range(0; length); #:: => <number>
+def permutation: #:: [a]| => *[a]
+    def choose: range(0; length);
     #
     if length == 0
     then []
@@ -139,7 +139,7 @@ def permutation: #:: [α]| => <[α]>
 
 # All sizes permutations
 #
-def subseq: #:: [α]| => <[α]>
+def subseq: #:: [a]| => *[a]
     range(0; 1+length) as $k
     | subset($k)
     | permutation
@@ -147,7 +147,7 @@ def subseq: #:: [α]| => <[α]>
 
 # Partial permutations
 #
-def subseq($k): #:: [α]| => <[α]>
+def subseq($k): #:: [a]| => *[a]
     select(0 <= $k and $k <= length) # not defined for all $k
     | subset($k)
     | permutation
@@ -159,7 +159,7 @@ def subseq($k): #:: [α]| => <[α]>
 
 # Cartesian product
 #
-def product: #:: [[α]]| => <[α]>
+def product: #:: [[a]]| => *[a]
     if length == 0
     then []
     else
@@ -173,12 +173,12 @@ def product: #:: [[α]]| => <[α]>
 # Infinite words over an alphabet
 # All sizes permutations (variations) with repetition
 #
-def mulseq: #:: [α]| => <[α]>
+def mulseq: #:: [a]| => *[a]
     # ordered version for:
     # def star(alphabet): "", (alphabet/"")[]+star(alphabet);
     #
-    def choose: .[]; #:: [α]| => <α>
-    def _mulseq: #:: [α]| => <[α]>
+    def choose: .[]; #:: [a]| => *a
+    def _mulseq: #:: [a]| => *[a]
         # either the void sequence
         []
         # or add a sequence and an element from the set
@@ -192,7 +192,7 @@ def mulseq: #:: [α]| => <[α]>
 # Permutations (variations) with repetition
 # Words over an alphabet
 #
-def mulseq($k): #:: [α]|(number) => <[α]>
+def mulseq($k): #:: [a]|(number) => *[a]
     select(0 <= $k) # not defined for all $k
     | . as $set
     | [range($k) | $set]
@@ -205,12 +205,12 @@ def mulseq($k): #:: [α]|(number) => <[α]>
 
 # Derangements
 #
-def derangement: #:: [α]| => <[α]>
-    def choose($i): #:: [α]|(number) => [[number,α]]
+def derangement: #:: [a]| => *[a]
+    def choose($i): #:: [a]|(number) => [[number,a]]
         range(length) as $j
         | keep(.[$j][0] != $i; [$j, .[$j][1]])
     ;
-    def _derange($i): #:: [α]|(number) => <[α]>
+    def _derange($i): #:: [a]|(number) => *[a]
         if length == 0
         then []
         else
@@ -228,7 +228,7 @@ def derangement: #:: [α]| => <[α]>
 
 # Circular permutations (necklaces)
 #
-def circle_u: #:: [α]| => <[α]>
+def circle_u: #:: [a]| => *[a]
     # expect sorted input
     .[-1] as $last
     | .[0:-1]|permutation
@@ -237,8 +237,8 @@ def circle_u: #:: [α]| => <[α]>
 
 # Sorted necklaces (naïve implementation)
 #
-def circle: #:: [α]| => <[α]>
-    def rotate($min): #:: [α]| => [α]
+def circle: #:: [a]| => *[a]
+    def rotate($min): #:: [a]| => [a]
         when(.[0] != $min;
              .[-1:]+.[0:-1] | rotate($min))
     ;
@@ -250,14 +250,14 @@ def circle: #:: [α]| => <[α]>
 
 # Multi-set permutations (naïve implementation)
 #
-def arrangement: #:: [α]| => <[α]>
+def arrangement: #:: [a]| => *[a]
     [permutation]
     | unique[]
 ;
 
 # Multi-set combinations (naïve implementation)
 #
-def disposition: #:: [α]| => <[α]>
+def disposition: #:: [a]| => *[a]
     [subset]
     | unique
     | sort_by(length)[]
@@ -269,9 +269,9 @@ def disposition: #:: [α]| => <[α]>
 
 # Shuffles an array contents.
 #
-def shuffle($seed): #:: [α]|(number) => [α]
+def shuffle($seed): #:: [a]|(number) => [a]
     # Swaps two array positions
-    def swap($i; $j): #:: [α]|(number;number) => [α]
+    def swap($i; $j): #:: [a]|(number;number) => [a]
         when($i != $j;
              .[$i] as $t | .[$i]=.[$j] | .[$j]=$t)
     ;
@@ -288,13 +288,13 @@ def shuffle($seed): #:: [α]|(number) => [α]
          # exchange a[j] and a[i]
          | swap($i; $j))
 ;
-def shuffle: #:: [α] => [α]
+def shuffle: #:: [a]| => [a]
     shuffle(chance::randomize)
 ;
 
 # Choose in order k random elements from the input array.
 #
-def take($k; $seed): #:: [α]|(number;number) => <α>
+def take($k; $seed): #:: [a]|(number;number) => *a
     # Print in order k random elements from A[1]..A[n]
     # for (i=1; n>0; i++)
     #     if (rand() < k/n--) {
@@ -319,7 +319,7 @@ def take($k; $seed): #:: [α]|(number;number) => <α>
     | _take($a; $r; $len)
 ;
 
-def take($k): #:: [α]|(number) => <α>
+def take($k): #:: [a]|(number) => *a
     take($k; chance::randomize)    
 ;
 

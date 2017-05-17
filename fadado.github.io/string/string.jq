@@ -18,29 +18,29 @@ import "fadado.github.io/string/ascii" as ascii;
 # See http://www.cs.arizona.edu/icon/refernce/funclist.htm
 
 # Find string
-def find($s; $i; $j): #:: string|(string;number;number) => <number>
+def find($s; $i; $j): #:: string|(string;number;number) => *number
     select(0 <= $i and $i < $j and $j <= length)
     | .[$i:$j]
     | indices($s)[]
 ;
-def find($s; $i): #:: string|(string;number) => <number>
+def find($s; $i): #:: string|(string;number) => *number
     find($s; $i; length)
 ;
-def find($s): #:: string|(string) => <number>
+def find($s): #:: string|(string) => *number
     find($s;  0; length)
 ;
 
 # Locate characters
-def upto($s; $i; $j): #:: string|(string;number;number) => <number>
+def upto($s; $i; $j): #:: string|(string;number;number) => *number
     assert($s != ""; "upto requires a non empty string as argument")
     | select(0 <= $i and $i < $j and $j <= length)
     | range($i; $j) as $p
     | keep(.[$p:$p+1] | inside($s); $p)
 ;
-def upto($s; $i): #:: string|(string;number) => <number>
+def upto($s; $i): #:: string|(string;number) => *number
     upto($s; $i; length)
 ;
-def upto($s): #:: string|(string) => <number>
+def upto($s): #:: string|(string) => *number
     upto($s;  0; length)
 ;
 
