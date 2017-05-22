@@ -50,9 +50,14 @@ def once(generator): #:: a|(a->*b) => ?b
 ;
 
 # Boolean context for goal-directed expression evaluation.
-def asbool(generator): #:: a|(a->*b) => boolean
-    (label $exit | generator | 1 , break $exit)//0
+def asbool(goal): #:: a|(a->*b) => boolean
+    (label $exit | goal | 1 , break $exit)//0
     | .==1  # computation generates results?
+;
+
+# Goal context for simple boolean expression.
+def asgoal(bool): #:: a|(a->boolean) => a^∅
+    bool//empty
 ;
 
 # "not isempty" in stream terms
