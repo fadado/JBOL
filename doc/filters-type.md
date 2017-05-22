@@ -25,7 +25,7 @@ Parameters                              Name                 number
                                     Name(3)                  [Value]
                                         Value->Value         {Value}
                                         Value->Stream        <Value>(6)
-                                                             a..z(7)
+                                                             Letter(7)
                                                              Value^Value(8)
                                                              TYPE_NAME(9)
 ```
@@ -37,11 +37,11 @@ Notes:
 2. The character `!` denote the value produced for filters that cancel.
 3. Parameters passed by name are like parameterless filters.
 4. The character `@` denote the empty stream.
-5. Occurrence indicators (`?`, `*`, `+`) have the regular expressions usual meaning.
-6. Indistinct array or object.
-7. Single lowercase letter represent indeterminate JSON value types.
+5. Occurrence indicators (`?`, `*`, `+`) are used as in regular expressions.
+6. Indistinct array or object: <a> = [a]^{a}. 
+7. Single lowercase letters represent indeterminate JSON value types.
 8. Union of two value types.
-9. Named object (use uppercase letters and underscore character only).
+9. Named object (use only uppercase letters and underscore character).
 
 ## Types allowed in each place
 
@@ -50,7 +50,7 @@ where each type can appear.
 
 |        | input | parameter | output |
 |--------|:-----:|:---------:|:-------:
-| value  | *     | *         | *      |
+| value  | *     | *         |        |
 | stream |       |           | *      |
 | name   |       | *         |        | 
 | !      |       |           | *      |
