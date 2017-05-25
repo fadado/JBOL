@@ -117,11 +117,11 @@ true
 null
 true
 
-include "prelude"; (yes(.==1//empty)|7) , (not(.==1//empty)|11)
+include "prelude"; (yes(asgoal(.==1))|7) , (not(asgoal(.==1))|11)
 1
 7
 
-include "prelude"; (yes(.==2//empty)|7) , (not(.==2//empty)|11)
+include "prelude"; (yes(asgoal(.==2))|7) , (not(asgoal(.==2))|11)
 1
 11
 

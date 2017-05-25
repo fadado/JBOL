@@ -210,7 +210,7 @@ def fibstr: #:: => *number
 #
 def primes: #:: => *number
     def sieve(g):
-        # first(g) as $n
+        #first(g) as $n
         (label $exit | g | . , break $exit) as $n
         | $n, sieve(g|select((. % $n) != 0))
     ;

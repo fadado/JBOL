@@ -44,9 +44,9 @@ def fenced: #:: string| => ∅^⊥
 #
 # "first" in stream terms
 #
-def once(generator): #:: a|(a->*b) => ?b
-#   try ( generator | fence ) catch fenced
-    label $exit | generator | . , break $exit
+def once(goal): #:: a|(a->*b) => ?b
+#   try ( goal | fence ) catch fenced
+    label $exit | goal | . , break $exit
 ;
 
 # Boolean context for goal-directed expression evaluation.
@@ -56,28 +56,30 @@ def asbool(goal): #:: a|(a->*b) => boolean
 ;
 
 # Goal context for simple boolean expression.
-def asgoal(bool): #:: a|(a->boolean) => a^∅
-    bool//empty
+def asgoal(predicate): #:: a|(a->boolean) => a^∅
+    predicate//empty
 ;
 
 # "not isempty" in stream terms
-def success(generator): #:: a|(a->*b) => boolean
-    asbool(generator)==true
+def success(goal): #:: a|(a->*b) => boolean
+    asbool(goal)==true
 ;
 
 # "isempty" in stream terms
-def failure(generator): #:: a|(a->*b) => boolean
-    asbool(generator)==false
+def failure(goal): #:: a|(a->*b) => boolean
+    asbool(goal)==false
 ;
 
-# select input values if generator succeeds
-def yes(generator): #:: a|(a->*b) => boolean
-    select(success(generator))
+# select input values if goal succeeds
+def yes(goal): #:: a|(a->*b) => a
+#   select(success(goal))
+    if success(goal) then . else empty end
 ;
 
-# select input values if generator fails
-def not(generator): #:: a|(a->*b) => boolean
-    select(failure(generator))
+# select input values if goal fails
+def not(goal): #:: a|(a->*b) => a
+#   select(failure(goal))
+    if failure(goal) then . else empty end
 ;
 
 # All true? None false?

@@ -1,6 +1,6 @@
 module {
     name: "generator",
-    description: "Common operations on generators",
+    description: "Common operations on generators considered as streams",
     namespace: "fadado.github.io",
     author: {
         name: "Joan Josep Ordinas Rosa",
@@ -11,9 +11,8 @@ module {
 include "fadado.github.io/prelude";
 
 ########################################################################
-# Predicates
-
 # Redefine some jq primitives
+
 def all(generator; predicate): #:: a|(a->*b;b->boolean) => boolean
     failure(generator | predicate and empty)
 ;
@@ -46,46 +45,46 @@ def any(predicate): #:: [a]|(a->boolean) => boolean
 
 # Count stream items.
 #
-def count(generator): #:: a|(a->*b) => number
-    reduce generator as $ignore (0; .+1)
+def count(stream): #:: a|(a->*b) => number
+    reduce stream as $ignore (0; .+1)
 ;
 
 # One result?
-def singleton(generator): #:: a|(a->*b) => boolean
+def singleton(stream): #:: a|(a->*b) => boolean
     [   label $exit |
-        foreach generator as $item
+        foreach stream as $item
             (2; if . >= 1 then .-1 else break $exit end; null)
     ] | length == 1
 ;
 
 # Extract the first element of a stream.
 #
-def first(generator): #:: a|(a->*b) => ?b
-#   once(generator)
-    label $exit | generator | . , break $exit
+def first(stream): #:: a|(a->*b) => ?b
+#   once(stream)
+    label $exit | stream | . , break $exit
 ;
 
 # Extract the last element of a stream.
 #
-def last(generator): #:: a|(a->*b) => ?b
-    reduce generator as $item
+def last(stream): #:: a|(a->*b) => ?b
+    reduce stream as $item
         (null; $item)
     | keep(. != null)
 ;
 
 # Extract the nth element of a stream.
 #
-def nth($n; generator): #:: a|(number;a->*b) => ?b
-    select($n >= 0) | # not defined for n<0 and n>=#generator
+def nth($n; stream): #:: a|(number;a->*b) => ?b
+    select($n >= 0) | # not defined for n<0 and n>=#stream
     label $exit
-    | foreach generator as $item
+    | foreach stream as $item
         ($n; .-1; keep(. == -1; $item , break $exit))
 ;
 
-# Produces enumerated items from `generator`.
+# Produces enumerated items from `stream`.
 #
-def enum(generator): #:: a|(a->*b) => *[number,b]
-    foreach generator as $item
+def enum(stream): #:: a|(a->*b) => *[number,b]
+    foreach stream as $item
         (-1; .+1; [.,$item])
 ;
 
@@ -93,65 +92,65 @@ def enum(generator): #:: a|(a->*b) => *[number,b]
 # infinite repetition of the original stream.  It is the identity on infinite
 # streams. Equivalent to the `repeat` builtin.
 #
-def repeat(generator): #:: a|(a->*b) => *b
-    def r: generator , r;
+def repeat(stream): #:: a|(a->*b) => *b
+    def r: stream , r;
     r
 ;
 
-# Returns the suffix of `generator` after the first `n` elements, or
+# Returns the suffix of `stream` after the first `n` elements, or
 # `empty` after all elements are dropped
 #
-def drop($n; generator): #:: a|(number;a->*b) => *b
-    select($n >= 0) | # not defined for n < 0 or n >= #generator
+def drop($n; stream): #:: a|(number;a->*b) => *b
+    select($n >= 0) | # not defined for n < 0 or n >= #stream
     if $n == 0
-    then generator
+    then stream
     else
-        foreach generator as $item
+        foreach stream as $item
             ($n; .-1; keep(. < 0; $item))
     end
 ;
 
-#!def dropWhile(predicate; generator):
+#!def dropWhile(predicate; stream):
 #!# Warning: is in fact `filter`
-#!    generator | keep(predicate)
+#!    stream | keep(predicate)
 #!;
 
 # Remove the first element of a stream.
 #
-def rest(generator): #:: a|(a->*b) => *b
-    foreach generator as $item
+def rest(stream): #:: a|(a->*b) => *b
+    foreach stream as $item
         (1; .-1; keep(. < 0; $item))
 ;
 
-# Returns the prefix of `generator` of length `n`.
+# Returns the prefix of `stream` of length `n`.
 #
-def take($n; generator): #:: a|(number;a->*b) => *b
+def take($n; stream): #:: a|(number;a->*b) => *b
     select($n >= 0) | # not defined for n<0
     if $n == 0
-    then generator
+    then stream
     else
         label $exit
-        | foreach generator as $item
+        | foreach stream as $item
             ($n;
              if . >= 1 then .-1 else break $exit end;
              $item)
     end
 ;
 
-# Returns the prefix of `generator` while `predicate` is true.
+# Returns the prefix of `stream` while `predicate` is true.
 #
-def takeWhile(predicate; generator): #:: a|(b->boolean;a->*b) => *b
-#   try ( generator | unless(predicate; cancel) ) catch cancelled
+def takeWhile(predicate; stream): #:: a|(b->boolean;a->*b) => *b
+#   try ( stream | unless(predicate; cancel) ) catch cancelled
     label $exit
-    | generator
+    | stream
     | unless(predicate; break $exit)
 ;
 
 # Analogous to array[start; stop] applied to streams.
 #
-def slice($i; $j; generator): #:: a|(number;number;a->*b) => *b
+def slice($i; $j; stream): #:: a|(number;number;a->*b) => *b
     select($i < $j)
-    | take($j-$i; drop($i; generator))
+    | take($j-$i; drop($i; stream))
 ;
 
 #
