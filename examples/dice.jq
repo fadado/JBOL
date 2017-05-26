@@ -1,6 +1,6 @@
 #!/usr/local/bin/jq -cnRrf
 
-import "fadado.github.io/generator" as stream;
+import "fadado.github.io/generator/stream" as stream;
 import "fadado.github.io/generator/chance" as chance;
 
 def dice:

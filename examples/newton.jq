@@ -2,7 +2,7 @@
 
 include "fadado.github.io/prelude";
 
-import "fadado.github.io/generator" as stream;
+import "fadado.github.io/generator/stream" as stream;
 import "fadado.github.io/math" as math;
 
 def nrsqrt:

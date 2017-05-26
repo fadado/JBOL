@@ -12,7 +12,7 @@ include "fadado.github.io/prelude";
 include "fadado.github.io/types";
 
 import "fadado.github.io/string" as str;
-import "fadado.github.io/generator" as gen;
+import "fadado.github.io/generator/stream" as stream;
 
 ########################################################################
 # Patterns implementation
@@ -274,7 +274,7 @@ def BREAK($s): #:: CURSOR|(string) => CURSOR
     assert($s != ""; "BREAK requires a non empty string as argument")
     | select(.position != .slen)
     | .position as $p
-    | TAB(gen::first(.subject|str::upto($s; $p)))
+    | TAB(stream::first(.subject|str::upto($s; $p)))
     //.
 ;
 
@@ -282,7 +282,7 @@ def SPAN($s): #:: CURSOR|(string) => CURSOR
     assert($s != ""; "SPAN requires a non empty string as argument")
     | select(.position != .slen)
     | select(.subject[.position:.position+1] | inside($s))
-    | G(gen::last(loop(ANY($s))))
+    | G(stream::last(loop(ANY($s))))
 ;
 
 #

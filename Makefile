@@ -113,13 +113,13 @@ $(LogDir)/%.log: tests/%.test
 # Common tests
 $(LogDir)/prelude.log: $(LIB)/prelude.jq
 $(LogDir)/types.log: $(LIB)/types.jq
-$(LogDir)/schema.log: $(LIB)/schema.jq $(LIB)/prelude.jq $(LIB)/types.jq $(STR)/url.jq $(STR)/regexp.jq $(GEN)/generator.jq
+$(LogDir)/schema.log: $(LIB)/schema.jq $(LIB)/prelude.jq $(LIB)/types.jq $(STR)/url.jq $(STR)/regexp.jq $(GEN)/stream.jq
 $(LogDir)/math.log: $(LIB)/math.jq
 $(LogDir)/sets.log: $(LIB)/set.jq
 
 # Generator tests
-$(LogDir)/stream.log: $(GEN)/generator.jq
-$(LogDir)/choice.log: $(GEN)/choice.jq $(GEN)/generator.jq $(GEN)/chance.jq 
+$(LogDir)/stream.log: $(GEN)/stream.jq
+$(LogDir)/choice.log: $(GEN)/choice.jq $(GEN)/stream.jq $(GEN)/chance.jq 
 $(LogDir)/sequence.log: $(GEN)/sequence.jq $(LIB)/prelude.jq
 $(LogDir)/chance.log: $(GEN)/chance.jq $(LIB)/prelude.jq
 

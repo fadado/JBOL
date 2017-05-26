@@ -361,7 +361,7 @@ include "prelude"; include "string/snobol"; U | POS(0) | not(LEN(3)) | M
 "ABC"
 #
 
-include "prelude"; include "string/snobol"; U | yes(LEN(3)) | M
+include "prelude"; include "string/snobol"; U | cond(LEN(3)) | M
 "AB"
 #
 

@@ -17,54 +17,54 @@ true
 null
 true
 
-include "generator"; count(range(3)) == 3
+include "generator/stream"; count(range(3)) == 3
 null
 true
 
-include "generator"; count(empty) == 0
+include "generator/stream"; count(empty) == 0
 null
 true
 
-include "generator"; count(range(3;10)) == 9-3+1
+include "generator/stream"; count(range(3;10)) == 9-3+1
 null
 true
 
-include "generator"; count(range(8), range(4;11)) == count(range(8)) + count(range(4;11))
+include "generator/stream"; count(range(8), range(4;11)) == count(range(8)) + count(range(4;11))
 null
 true
 
 #
 # all, any
 #
-include "generator"; []|all
+include "generator/stream"; []|all
 null
 true
 
-include "generator"; [true]|all
+include "generator/stream"; [true]|all
 null
 true
 
-include "generator"; [true,false]|all
+include "generator/stream"; [true,false]|all
 null
 false
 
-include "generator"; [range(10)]|all(.<10)
+include "generator/stream"; [range(10)]|all(.<10)
 null
 true
 
-include "generator"; []|any
+include "generator/stream"; []|any
 null
 false
 
-include "generator"; [true]|any
+include "generator/stream"; [true]|any
 null
 true
 
-include "generator"; [1,2,3]|any(.>2)
+include "generator/stream"; [1,2,3]|any(.>2)
 null
 true
 
-include "generator"; [1,2,3]|any(.>3)
+include "generator/stream"; [1,2,3]|any(.>3)
 null
 false
 
@@ -72,51 +72,51 @@ false
 # first, take, drop, nth
 #
 
-include "generator"; first([][])
+include "generator/stream"; first([][])
 null
 # empty
 
-include "generator"; first(range(5;100))
+include "generator/stream"; first(range(5;100))
 null
 5
 
-include "generator"; nth(0; range(5;100))
+include "generator/stream"; nth(0; range(5;100))
 null
 5
 
-include "generator"; [take(4;range(100))] == [limit(4; range(77))]
+include "generator/stream"; [take(4;range(100))] == [limit(4; range(77))]
 null
 true
 
-include "generator"; [take(4;range(10))] == [0,1,2,3]
+include "generator/stream"; [take(4;range(10))] == [0,1,2,3]
 null
 true
 
-include "generator"; [takeWhile(.<10; range(0;1000))] == [range(0;10)]
+include "generator/stream"; [takeWhile(.<10; range(0;1000))] == [range(0;10)]
 null
 true
 
-include "generator"; drop(5; range(8))
+include "generator/stream"; drop(5; range(8))
 null
 5
 6
 7
 
-include "generator"; drop(1000; range(1002))
+include "generator/stream"; drop(1000; range(1002))
 null
 1000
 1001
 
-include "generator"; drop(10; range(1))
+include "generator/stream"; drop(10; range(1))
 null
 # empty
 
-include "generator"; drop(10; range(10))
+include "generator/stream"; drop(10; range(10))
 null
 # empty
 
 
-include "generator"; [slice(10; 13; range(1002))]
+include "generator/stream"; [slice(10; 13; range(1002))]
 null
 [10,11,12]
 
@@ -124,19 +124,19 @@ null
 # repeat
 #
 
-include "generator"; [take(6; repeat(range(3)))]
+include "generator/stream"; [take(6; repeat(range(3)))]
 null
 [0,1,2,0,1,2]
 
-include "generator"; [take(6; repeat(range(3)))]
+include "generator/stream"; [take(6; repeat(range(3)))]
 null
 [0,1,2,0,1,2]
 
-include "generator"; [take(6; repeat([0,1,2][]))]
+include "generator/stream"; [take(6; repeat([0,1,2][]))]
 null
 [0,1,2,0,1,2]
 
-include "generator"; [take(4; repeat(8))]
+include "generator/stream"; [take(4; repeat(8))]
 null
 [8,8,8,8]
 
@@ -144,16 +144,16 @@ null
 # enum
 #
 
-include "generator"; enum(split("")[])
+include "generator/stream"; enum(split("")[])
 "ae"
 [0,"a"]
 [1,"e"]
 
-include "generator"; last(enum(split("")[]))
+include "generator/stream"; last(enum(split("")[]))
 "aeiou"
 [4,"u"]
 
-include "generator";  nth(11; enum(split("")[]))
+include "generator/stream";  nth(11; enum(split("")[]))
 "abcdefghijklmnopqrstuvwxyz"
 [11,"l"]
 
@@ -161,31 +161,31 @@ include "generator";  nth(11; enum(split("")[]))
 # zip
 #
 
-include "generator";  zip(range(1); range(0))
+include "generator/stream";  zip(range(1); range(0))
 null
 [0,null]
 
-include "generator";  zip(range(0); range(0))
+include "generator/stream";  zip(range(0); range(0))
 null
 # empty
 
-include "generator";  [] | zip
+include "generator/stream";  [] | zip
 null
 # empty
 
-include "generator";  first(zip(range(10); range(20;30)))
+include "generator/stream";  first(zip(range(10); range(20;30)))
 null
 [0,20]
 
-include "generator";  last(zip(range(5); range(20;23)))
+include "generator/stream";  last(zip(range(5); range(20;23)))
 null
 [4,null]
 
-include "generator";  last([[range(5)], [range(20;23)]] | zip)
+include "generator/stream";  last([[range(5)], [range(20;23)]] | zip)
 null
 [4,null]
 
-include "generator";  nth(5; zip(range(5); range(100); range(20;23)))
+include "generator/stream";  nth(5; zip(range(5); range(100); range(20;23)))
 null
 [null,5,null]
 

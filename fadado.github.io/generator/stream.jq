@@ -1,5 +1,5 @@
 module {
-    name: "generator",
+    name: "stream",
     description: "Common operations on generators considered as streams",
     namespace: "fadado.github.io",
     author: {
@@ -13,8 +13,8 @@ include "fadado.github.io/prelude";
 ########################################################################
 # Redefine some jq primitives
 
-def all(generator; predicate): #:: a|(a->*b;b->boolean) => boolean
-    failure(generator | predicate and empty)
+def all(stream; predicate): #:: a|(a->*b;b->boolean) => boolean
+    failure(stream | predicate and empty)
 ;
 def all: #:: [boolean]| => boolean
     all(.[]; .)
@@ -23,8 +23,8 @@ def all(predicate): #:: [a]|(a->boolean) => boolean
     all(.[]; predicate)
 ;
 
-def any(generator; predicate): #:: a|(a->*b;b->boolean) => boolean
-    success(generator | predicate or empty)
+def any(stream; predicate): #:: a|(a->*b;b->boolean) => boolean
+    success(stream | predicate or empty)
 ;
 def any: #:: [boolean]| => boolean
     any(.[]; .)
@@ -49,6 +49,13 @@ def count(stream): #:: a|(a->*b) => number
     reduce stream as $ignore (0; .+1)
 ;
 
+# Is a stream empty?.
+#
+# "failure" in goal terms
+def isempty(stream): #:: a|(a->*b) => boolean
+    asbool(stream)==false
+;
+
 # One result?
 def singleton(stream): #:: a|(a->*b) => boolean
     [   label $exit |
@@ -59,8 +66,8 @@ def singleton(stream): #:: a|(a->*b) => boolean
 
 # Extract the first element of a stream.
 #
+# "once" in goal terms
 def first(stream): #:: a|(a->*b) => ?b
-#   once(stream)
     label $exit | stream | . , break $exit
 ;
 
@@ -170,7 +177,7 @@ def zip(g; h): #:: x|(x->*a;x->*b) => *[a,b]
     | [$pair[0][.], $pair[1][.]]
 ;
 
-# Generalized `zip` for 2 or more generators.
+# Generalized `zip` for 2 or more streams.
 #
 def zip: #:: [[a],[b]...]| => *[a,b,...]
     . as $in

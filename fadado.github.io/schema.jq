@@ -11,7 +11,7 @@ module {
 include "fadado.github.io/prelude";
 include "fadado.github.io/types";
 
-import "fadado.github.io/generator" as generator;
+import "fadado.github.io/generator/stream" as stream;
 import "fadado.github.io/string/url" as url;
 import "fadado.github.io/string/regexp" as re;
 
@@ -184,7 +184,7 @@ def validate($schema; $fatal): #:: a|(SCHEMA;boolean) => boolean
         ;
         def k_oneOf: # keyword oneOf
             rule($schema | has("oneOf");
-                generator::singleton(_validate($schema.oneOf[]; false) | select(.)))
+                stream::singleton(_validate($schema.oneOf[]; false) | select(.)))
         ;
         def k_dependencies: # keyword dependencies
             rule(($schema | has("dependencies")) and isobject;

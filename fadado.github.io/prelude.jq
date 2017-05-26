@@ -8,8 +8,8 @@ module {
     }
 };
 
-# ∅ : empty stream
-# ⊥ : bottom
+# ∅ @ : empty stream
+# ⊥ ! : bottom
 
 ########################################################################
 # Control operators
@@ -43,43 +43,25 @@ def fenced: #:: string| => ∅^⊥
 # reverse of  *Icon*.
 #
 # "first" in stream terms
-#
 def once(goal): #:: a|(a->*b) => ?b
 #   try ( goal | fence ) catch fenced
     label $exit | goal | . , break $exit
 ;
 
 # Boolean context for goal-directed expression evaluation.
-def asbool(goal): #:: a|(a->*b) => boolean
+def _asbool(goal): #:: a|(a->*x) => boolean
     (label $exit | goal | 1 , break $exit)//0
     | .==1  # computation generates results?
 ;
 
-# Goal context for simple boolean expression.
-def asgoal(predicate): #:: a|(a->boolean) => a^∅
-    predicate//empty
-;
-
 # "not isempty" in stream terms
-def success(goal): #:: a|(a->*b) => boolean
-    asbool(goal)==true
+def success(goal): #:: a|(a->*x) => boolean
+    _asbool(goal)==true
 ;
 
 # "isempty" in stream terms
-def failure(goal): #:: a|(a->*b) => boolean
-    asbool(goal)==false
-;
-
-# select input values if goal succeeds
-def yes(goal): #:: a|(a->*b) => a
-#   select(success(goal))
-    if success(goal) then . else empty end
-;
-
-# select input values if goal fails
-def not(goal): #:: a|(a->*b) => a
-#   select(failure(goal))
-    if failure(goal) then . else empty end
+def failure(goal): #:: a|(a->*x) => boolean
+    _asbool(goal)==false
 ;
 
 # All true? None false?
@@ -92,7 +74,31 @@ def some(generator): #:: a|(a->*boolean) => boolean
     success(generator | . or empty)
 ;
 
-# Conditionals
+# Goal based conditionals
+#
+
+# select input values if goal fails
+def not(goal): #:: a|(a->*x) => a
+#   select(failure(goal))
+    if _asbool(goal) then empty else . end
+;
+
+# select input values if goal succeeds
+def cond(goal): #:: a|(a->*x) => ?a
+    if _asbool(goal) then . else empty end
+;
+
+# score if goal
+def cond(goal; score): #:: a|(a->*x;a->b) => ?b
+    if _asbool(goal) then score else empty end
+;
+
+# score if goal or else stop
+def cond(goal; scored; stopped): #:: a|(a->*x;a->b;a->c) => b^c
+    if _asbool(goal) then scored else stopped end
+;
+
+# Predicate based conditionals
 #
 def when(predicate; action): #:: a|(a->boolean;a->b) => a^b
     if predicate//false then action else . end
