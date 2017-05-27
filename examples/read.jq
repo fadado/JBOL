@@ -24,7 +24,7 @@ def read_sh:
             .logical_line = $line
         end
         ;
-        keep(.continuing; .logical_line)
+        select(.continuing) | .logical_line
     )
 ;
 
@@ -48,7 +48,8 @@ def XXXread_sh:
         end
     ;
     def extract:
-        keep(.continuing; .logical_line)
+        select(.continuing)
+        |.logical_line
     ;
     foreach inputs as $line
         (init; update($line); extract)
@@ -76,9 +77,11 @@ def read_sh_check:
         end
         ;
         if $line==null then  # EOF
-            keep(.continuing; .logical_line) # last line ended in \
+            select(.continuing)
+            | .logical_line # last line ended in \
         else
-            keep(.continuing|not; .logical_line)
+            select(.continuing|not)
+            | .logical_line
         end
     )
 ;
@@ -118,7 +121,8 @@ def read_headers:
         else error("unexpected state")
         end
         ;
-        keep(.state == $emit; .logical_line)
+        select(.state == $emit)
+        | .logical_line
     )
 ;
 

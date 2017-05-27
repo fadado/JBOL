@@ -12,90 +12,47 @@ module {
 # ⊥ ! : bottom
 
 ########################################################################
-# Control operators
+# ABORT (renamed `cancel`) and FENCE from SNOBOL
 ########################################################################
-
-# Abort (cancel) and fence from SNOBOL for constructs like:
-#   try ( generator | fence ) catch fenced
-
-def ignore($s): #:: string|(string) => ∅^⊥
-    if . == $s
-    then empty # ∅
-    else error # ⊥ 
-    end
-;
 
 def cancel: #:: ⊥
     error("¡")
 ;
 def cancelled: #:: string| => ∅^⊥
-    ignore("¡")
+    if . == "¡" then empty else error end
 ;
 
 def fence: #:: a| => a^⊥
     (., error("¿"))
 ;
 def fenced: #:: string| => ∅^⊥
-    ignore("¿")
+    if . == "¿" then empty else error end
 ;
 
-# Run once a computation.  By default `jq` tries all alternatives. This is the
-# reverse of  *Icon*.
-#
-# "first" in stream terms
-def once(goal): #:: a|(a->*b) => ?b
-#   try ( goal | fence ) catch fenced
-    label $exit | goal | . , break $exit
-;
+########################################################################
+# Goal-directed evaluation
+########################################################################
 
-# Boolean context for goal-directed expression evaluation.
-def _asbool(goal): #:: a|(a->*x) => boolean
+# "not isempty" in stream terms
+def success(goal): #:: a|(a->*x) => boolean
     (label $exit | goal | 1 , break $exit)//0
     | .==1  # computation generates results?
 ;
 
-# "not isempty" in stream terms
-def success(goal): #:: a|(a->*x) => boolean
-    _asbool(goal)==true
-;
-
 # "isempty" in stream terms
 def failure(goal): #:: a|(a->*x) => boolean
-    _asbool(goal)==false
+    (label $exit | goal | 1 , break $exit)//0
+    | .==0  # computation generates no results?
 ;
 
-# All true? None false?
-def every(generator): #:: a|(a->*boolean) => boolean
-    failure(generator | . and empty)
-;
-
-# Some true? Not all false?
-def some(generator): #:: a|(a->*boolean) => boolean
-    success(generator | . or empty)
-;
-
-# Goal based conditionals
-#
-
-# select input values if goal fails
+# select input value if goal fails
 def not(goal): #:: a|(a->*x) => a
-#   select(failure(goal))
-    if _asbool(goal) then empty else . end
+    if failure(goal) then . else empty end
 ;
 
-# select input values if goal succeeds
+# select input value if goal succeeds
 def cond(goal): #:: a|(a->*x) => ?a
-    if _asbool(goal) then . else empty end
-;
-
-# score if goal
-def cond(goal; score): #:: a|(a->*x;a->b) => ?b
-    if _asbool(goal) then score else empty end
-;
-
-# score if goal or else stop
-def cond(goal; scored; stopped): #:: a|(a->*x;a->b;a->c) => b^c
-    if _asbool(goal) then scored else stopped end
+    if success(goal) then . else empty end
 ;
 
 # Predicate based conditionals
@@ -107,20 +64,33 @@ def unless(predicate; action): #:: a|(a->boolean;a->b) => a^b
     if predicate//false then . else action end
 ;
 
-# keep if true
-def keep(predicate; item): #:: a|(a->boolean;a->b) => ?b
-    if predicate//false then item else empty end
-;
-def keep(predicate): #:: a|(a->boolean) => ?a
-    if predicate//false then . else empty end
-;
-
 # rule: A implies C
 def rule(antecedent; consequent): #:: a|(a->boolean;a->boolean) => boolean
     if antecedent then consequent else true end
 ;
 
+# Run once a computation.  By default `jq` tries all alternatives. This is the
+# reverse of  Icon (Icon `every` is the JQ default).
+#
+# "first" in stream terms
+def once(goal): #:: a|(a->*b) => ?b
+    label $exit | goal | . , break $exit
+;
+
+# All true?
+def every(generator): #:: a|(a->*boolean) => boolean
+    failure(generator | . and empty)
+;
+
+# Some true?
+def some(generator): #:: a|(a->*boolean) => boolean
+    success(generator | . or empty)
+;
+
+########################################################################
 # Assertions
+########################################################################
+
 def assert(predicate; $location; $message): #:: a|(a->boolean;LOCATION;string) => a^⊥
     if predicate
     then .

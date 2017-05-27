@@ -299,9 +299,11 @@ def validate($schema; $fatal): #:: a|(SCHEMA;boolean) => boolean
                 | ($schema.patternProperties//{}) as $pp
                 | every(
                     keys_unsorted[] as $m
-                    | [ keep($m | in($p); $p[$m])
+                    | [ (select($m | in($p))
+                         | $p[$m])
                         , (($pp | keys_unsorted[]) as $re
-                            | keep($m | test($re); $pp[$re]))
+                            | select($m | test($re))
+                            | $pp[$re])
                       ] as $s
                     | if ($s | length) > 0
                       then .[$m] | every(_validate($s[]; $fatal))

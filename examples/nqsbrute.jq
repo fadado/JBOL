@@ -21,7 +21,7 @@ def queens($n):
         )
     ;
     def and_test:
-        keep(all_safe)
+        select(all_safe)
     ;
     generate | and_test
 ;

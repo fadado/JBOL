@@ -76,7 +76,7 @@ def first(stream): #:: a|(a->*b) => ?b
 def last(stream): #:: a|(a->*b) => ?b
     reduce stream as $item
         (null; $item)
-    | keep(. != null)
+    | select(. != null)
 ;
 
 # Extract the nth element of a stream.
@@ -85,7 +85,7 @@ def nth($n; stream): #:: a|(number;a->*b) => ?b
     select($n >= 0) | # not defined for n<0 and n>=#stream
     label $exit
     | foreach stream as $item
-        ($n; .-1; keep(. == -1; $item , break $exit))
+        ($n; .-1; select(. == -1) | $item , break $exit)
 ;
 
 # Produces enumerated items from `stream`.
@@ -113,20 +113,20 @@ def drop($n; stream): #:: a|(number;a->*b) => *b
     then stream
     else
         foreach stream as $item
-            ($n; .-1; keep(. < 0; $item))
+            ($n; .-1; select(. < 0) | $item)
     end
 ;
 
 #!def dropWhile(predicate; stream):
 #!# Warning: is in fact `filter`
-#!    stream | keep(predicate)
+#!    stream | select(predicate)
 #!;
 
 # Remove the first element of a stream.
 #
 def rest(stream): #:: a|(a->*b) => *b
     foreach stream as $item
-        (1; .-1; keep(. < 0; $item))
+        (1; .-1; select(. < 0) | $item)
 ;
 
 # Returns the prefix of `stream` of length `n`.

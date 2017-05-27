@@ -31,7 +31,7 @@ def father($x):
 ;
 
 def father($x; $y):
-    keep(.father[$x][$y])
+    select(.father[$x][$y])
 ;
 
 def mother($x):
@@ -39,15 +39,15 @@ def mother($x):
 ;
 
 def mother($x; $y):
-    keep(.mother[$x][$y])
+    select(.mother[$x][$y])
 ;
 
 def male($x):
-    keep(.male[$x])
+    select(.male[$x])
 ;
 
 def female($x):
-    keep(.female[$x])
+    select(.female[$x])
 ;
 
 # Rules

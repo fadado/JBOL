@@ -227,7 +227,7 @@ def primes: #:: => *number
 #   a(2n) = a(n)
 #
 def leibniz: #:: => *number
-    def r(g): (g | .+1), r(g , (g | .+1));
+    def r(g): (g | .+1) , r(g , (g | .+1));
     0, 1,  r(0 , 1)
 ;
 

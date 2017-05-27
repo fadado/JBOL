@@ -43,12 +43,10 @@ def _left($i): #:: [a]|(number) => [a]
 # Subsets with one element removed (unsorted output)
 #
 def subset1_u: #:: [a]| => *[a]
-    keep(length != 0; 
-        # either what's _left after picking one,
-        _left
-        # or this one with what's _left with one removed
-        , _pick + (_left|subset1_u)
-    )
+    select(length != 0)
+    # either what's _left after picking one,
+    # or this one with what's _left with one removed
+    | _left , _pick + (_left|subset1_u)
 ;
 
 # Size k subsets
@@ -58,12 +56,12 @@ def subset($k): #:: [a]|(number) => *[a]
     def _subset($k):
         if $k == 0
         then []
-        else keep(length > 0;  # no results for k > n
-                # either _pick one and add to what's _left subsets
-                _pick + (_left|_subset($k-1))
-                # or what's _left combined
-                , (_left|_subset($k))
-            )
+        else
+            select(length > 0)  # no results for k > n
+            # either _pick one and add to what's _left subsets
+            | _pick + (_left|_subset($k-1))
+            # or what's _left combined
+            , (_left|_subset($k))
         end
     ;
     select(0 <= $k and $k <= length) # not defined for all $k
@@ -101,12 +99,12 @@ def mulset($k): #:: [a]|(number) => *[a]
     def _mulset($k):
         if $k == 0
         then []
-        else keep(length > 0;
-                # either _pick one and add to other multisets minus one
-                _pick + _mulset($k-1)
-                # or what's _left multisets
-                , (_left|_mulset($k))
-            )
+        else
+            select(length > 0)
+            # either _pick one and add to other multisets minus one
+            | _pick + _mulset($k-1)
+            # or what's _left multisets
+            , (_left|_mulset($k))
         end
     ;
     select(0 <= $k) # not defined for all $k
@@ -208,7 +206,8 @@ def mulseq($k): #:: [a]|(number) => *[a]
 def derangement: #:: [a]| => *[a]
     def choose($i): #:: [a]|(number) => [[number,a]]
         range(length) as $j
-        | keep(.[$j][0] != $i; [$j, .[$j][1]])
+        | select(.[$j][0] != $i)
+        | [$j, .[$j][1]]
     ;
     def _derange($i): #:: [a]|(number) => *[a]
         if length == 0
@@ -304,12 +303,11 @@ def take($k; $seed): #:: [a]|(number;number) => *a
     def _take($a; $r; $m):
         def t($n; $k):
             ($m-$n) as $i
-            | keep($n >= 1;
-                if $r[$i] < ($k/$n)
-                then $a[$i] , t($n-1; $k-1)
-                else t($n-1; $k)
-                end
-              )
+            | select($n >= 1)
+            | if $r[$i] < ($k/$n)
+              then $a[$i] , t($n-1; $k-1)
+              else t($n-1; $k)
+              end
         ;
         t($m; $k)
     ;

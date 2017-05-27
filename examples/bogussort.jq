@@ -18,11 +18,11 @@ def issorted:
 def bogussort:
     choice::shuffle
     | try (
-        choice::permutation | keep(issorted) | fence
+        choice::permutation | select(issorted) | fence
     ) catch fenced
 #   | once(
 #       choice::permutation
-#       | keep(issorted)
+#       | select(issorted)
 #   )
 ;
 
