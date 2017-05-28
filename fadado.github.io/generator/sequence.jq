@@ -20,7 +20,7 @@ include "fadado.github.io/math";
 #   a(n) = a(n-1)+d
 #
 def arithmetic($a; $d): #:: (number;number) => *number
-    $a|iterate(. + $d) # range($a; infinite; $d)
+    $a|recurse(. + $d) # range($a; infinite; $d)
 ;
 
 # CF:
@@ -98,7 +98,7 @@ def multiples: #:: number| => *number
 #   a(n) = a(n-1)*r
 #
 def geometric($a; $r): #:: (number;number) => *number
-    $a|iterate(. * $r)
+    $a|recurse(. * $r)
 ;
 
 # CF:
@@ -123,9 +123,9 @@ def powers: #:: number| => *number
 #   a(n) = a(n-1)+2n-1
 #
 def squares: #:: => *number
-    0, foreach odds as $n (0; .+$n)
-#   0, foreach positives as $n (0; .+$n+$n-1)
 #   tabulate(pow(.; 2))
+#   0, foreach positives as $n (0; .+$n+$n-1)
+    0, foreach odds as $n (0; .+$n)
 ;
 
 # CF:
@@ -135,9 +135,9 @@ def squares: #:: => *number
 #   a(n) = n(a(n-1)+2n-1)
 #
 def cubes: #:: => *number
-    foreach squares as $s (-1; .+1; $s*.)
-#   0, foreach positives as $n (0; .+$n+$n-1; .*$n)
 #   tabulate(pow(.; 3))
+#   0, foreach positives as $n (0; .+$n+$n-1; .*$n)
+    foreach squares as $s (-1; .+1; $s*.)
 ;
 
 #
@@ -159,9 +159,9 @@ def harmonic: #:: => *number
 #   a(n) = 0 if a(n-1)+1 = m else a(n-1)+1
 #
 def moduli($m): #:: (number) => *number
-    0|iterate(. + 1 | when(. == $m; 0))
+#   tabulate(. % $m)
 #   repeat(range(0; $m))
-#   tabulate(.%$m)
+    0|recurse(. + 1 | when(. == $m; 0))
 ;
 def moduli: #:: number| => *number
     moduli(.)
@@ -172,8 +172,8 @@ def moduli: #:: number| => *number
 #   a(n) = a(n-1)*n
 #
 def factorials: #:: => *number
-    1, foreach positives as $n (1; . * $n)
 #   1, scan(.[0]*.[1]; 1; positives)
+    1, foreach positives as $n (1; . * $n)
 ;
 
 # RR:
@@ -191,7 +191,7 @@ def triangulars: #:: => *number
 #
 def fibonacci: #:: => *number
     [0,1]
-    | iterate([.[-1], .[-1]+.[-2]])
+    | recurse([.[-1], .[-1]+.[-2]])
     | .[-2]
 #   0, ([0,1] | unfold([.[-1], [.[-1], .[-2]+.[-1]]]))
 ;
@@ -199,7 +199,7 @@ def fibonacci: #:: => *number
 # Fibbonacci strings
 def fibstr($s; $t): #:: (string;string) => *number
     [$s,$t]
-    | iterate([.[-1], .[-1]+.[-2]])
+    | recurse([.[-1], .[-1]+.[-2]])
     | .[-2]
 ;
 def fibstr: #:: => *number

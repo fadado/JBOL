@@ -5,9 +5,9 @@
 # Blank lines and lines starting with # are ignored.
 #########################################################################
 
-include "prelude"; reduce .[] as $n (0; .+$n) == fold(.[0]+.[1]; 0; .[])
-[1,2,3,4]
-true
+#include "prelude"; reduce .[] as $n (0; .+$n) == fold(.[0]+.[1]; 0; .[])
+#[1,2,3,4]
+#true
 
 include "prelude"; [limit(6; tabulate(pow(.;2)))]
 null
@@ -142,5 +142,28 @@ true
 [3 , 5 | .*2] == [(3 | .*2) , (5 | .*2)]
 null
 true
+
+########################################################################
+
+[limit(7;range(77))] == [while(.<7;.+1)]
+0
+true
+
+[limit(7;range(77))] == [recurse(.+1;.<7)]
+0
+true
+
+[while(.<7;.+1)] == [recurse(.+1;.<7)]
+0
+true
+
+include "prelude"; [recurse(.+1;.<7)] == [label $x | recurse(.+1) | if .<7 then . else break $x end]
+0
+true
+
+include "prelude"; [while(.<7;.+1)] == [try (recurse(.+1) | hold(.<7)) catch canceled]
+0
+true
+
 
 # vim:ai:sw=2:ts=2:et:syntax=jq

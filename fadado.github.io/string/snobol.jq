@@ -212,7 +212,7 @@ def SIZE($s): #:: (string) => number
 #
 
 def ARBNO(pattern): #:: CURSOR|(CURSOR->CURSOR) => *CURSOR
-    iterate(pattern)
+    recurse(pattern)
 ;
 
 #
@@ -282,7 +282,7 @@ def SPAN($s): #:: CURSOR|(string) => CURSOR
     assert($s != ""; "SPAN requires a non empty string as argument")
     | select(.position != .slen)
     | select(.subject[.position:.position+1] | inside($s))
-    | G(stream::last(loop(ANY($s))))
+    | G(stream::last(recurse1(ANY($s))))
 ;
 
 #
@@ -299,9 +299,9 @@ def ARB: #:: CURSOR| => *CURSOR
 def BAL: #:: CURSOR| => *CURSOR
     def _bal:
         NOTANY("()")
-        , (L("(") | iterate(_bal) | L(")"))
+        , (L("(") | recurse(_bal) | L(")"))
     ;
-    G(loop(_bal))
+    G(recurse1(_bal))
 ;
 
 def REM: #:: CURSOR| => CURSOR
@@ -327,7 +327,7 @@ def FENCE: #:: CURSOR| => CURSOR^⊥
 ;
 
 def SUCCEED: #::CURSOR| => *CURSOR
-    iterate(.)  # from prelude
+    recurse(.)  # from prelude
 ;
 
 # By default SNOBOL tries only once to match, but by default jq tries all

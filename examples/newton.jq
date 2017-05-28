@@ -1,7 +1,5 @@
 #!/usr/local/bin/jq -cnRrf
 
-include "fadado.github.io/prelude";
-
 import "fadado.github.io/generator/stream" as stream;
 import "fadado.github.io/math" as math;
 
@@ -19,7 +17,7 @@ def nrsqrt:
         ;
         #
         $N/2 as $init |
-        search($init|iterate(next))
+        search($init|recurse(next))
     ;
     . as $n |
     0.00001 as $e |

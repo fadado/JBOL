@@ -15,6 +15,11 @@ import "fadado.github.io/generator/stream" as stream;
 import "fadado.github.io/string/url" as url;
 import "fadado.github.io/string/regexp" as re;
 
+# antecedent implies consequent
+def imply(antecedent; consequent): #:: a|(a->boolean;a->boolean) => boolean
+    if antecedent then consequent else true end
+;
+
 # Generates a simple document schema
 #
 # SCHEMA: a JSON schema document
@@ -159,7 +164,7 @@ def validate($schema; $fatal): #:: a|(SCHEMA;boolean) => boolean
         # Schema keywords
         #
         def k_enum: # keyword enum
-            rule($schema | has("enum");
+            imply($schema | has("enum");
                 . as $instance
                 | ($schema.enum | indices([$instance]) | length) > 0)
         ;
@@ -168,30 +173,30 @@ def validate($schema; $fatal): #:: a|(SCHEMA;boolean) => boolean
                 $t == $r
                 or ($t == "number" and $r == "integer" and isinteger)
             ;
-            rule($schema | has("type");
+            imply($schema | has("type");
                 type as $t
                 | if isstring($schema["type"]) # string or array
                   then cmp($t; $schema["type"])
                   else some(cmp($t; $schema["type"][])) end)
         ;
         def k_allOf: # keyword allOf
-            rule($schema | has("allOf");
+            imply($schema | has("allOf");
                 every(_validate($schema.allOf[]; $fatal)))
         ;
         def k_anyOf: # keyword anyOf
-            rule($schema | has("anyOf");
+            imply($schema | has("anyOf");
                 some(_validate($schema.anyOf[]; false)))
         ;
         def k_oneOf: # keyword oneOf
-            rule($schema | has("oneOf");
+            imply($schema | has("oneOf");
                 stream::singleton(_validate($schema.oneOf[]; false) | select(.)))
         ;
         def k_dependencies: # keyword dependencies
-            rule(($schema | has("dependencies")) and isobject;
+            imply(($schema | has("dependencies")) and isobject;
                 . as $instance
                 | every(
                     $schema.dependencies | keys_unsorted[]
-                    | rule(in($instance);
+                    | imply(in($instance);
                         $schema.dependencies[.] as $d
                         | if isarray($d)
                           then every($d[] | in($instance))
@@ -201,25 +206,25 @@ def validate($schema; $fatal): #:: a|(SCHEMA;boolean) => boolean
         # Type constraints
         #
         def c_number: # number constraints
-            rule($schema | has("multipleOf");
+            imply($schema | has("multipleOf");
                 . / $schema.multipleOf | isinteger)
-            and rule($schema | has("maximum");
+            and imply($schema | has("maximum");
                 if $schema.exclusiveMaximum
                 then . < $schema.maximum
                 else . <= $schema.maximum end)
-            and rule($schema | has("minimum");
+            and imply($schema | has("minimum");
                 if $schema.exclusiveMinimum
                 then . > $schema.minimum
                 else . >= $schema.minimum end)
         ;
         def c_string: # string constraints
-            rule($schema | has("maxLength");
+            imply($schema | has("maxLength");
                 length <= $schema.maxLength)
-            and rule($schema | has("minLength");
+            and imply($schema | has("minLength");
                 length >= $schema.minLength)
-            and rule($schema | has("pattern");
+            and imply($schema | has("pattern");
                 test($schema.pattern))
-            and rule($schema | has("format");
+            and imply($schema | has("format");
                 ({  "date-time": "^[0-9]{4}-(?:0[0-9]|1[0-2])-[0-9]{2}[tT ][0-9]{2}:[0-9]{2}:[0-9]{2}(?:[.][0-9]+)?(?:[zZ]|[+-][0-9]{2}:[0-9]{2})$",
                     "email": "^[^ \t\r\n]+@[^ \t\r\n]+$",
                     "hostname": "^(?:[0-9A-Za-z]|[0-9A-Za-z][0-9A-Za-z-]{0,61}[0-9A-Za-z])(?:[.](?:[0-9A-Za-z]|[0-9A-Za-z][0-9A-Za-z-]{0,61}[0-9A-Za-z]))*$",
@@ -263,11 +268,11 @@ def validate($schema; $fatal): #:: a|(SCHEMA;boolean) => boolean
                 end
             ;
             valid_array
-            and rule($schema | has("maxItems");
+            and imply($schema | has("maxItems");
                 length <= $schema.maxItems)
-            and rule($schema | has("minItems");
+            and imply($schema | has("minItems");
                 length >= $schema.minItems)
-            and rule($schema | has("uniqueItems");
+            and imply($schema | has("uniqueItems");
                 ($schema.uniqueItems|not)
                 or length == (unique | length))
             and valid_elements
@@ -312,11 +317,11 @@ def validate($schema; $fatal): #:: a|(SCHEMA;boolean) => boolean
                   )
             ;
             valid_object
-            and rule($schema | has("maxProperties");
+            and imply($schema | has("maxProperties");
                 length <= $schema.maxProperties)
-            and rule($schema | has("minProperties");
+            and imply($schema | has("minProperties");
                 length >= $schema.minProperties)
-            and rule($schema | has("required");
+            and imply($schema | has("required");
                 every(has($schema.required[])))
             and valid_members
         ;

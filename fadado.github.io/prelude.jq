@@ -16,17 +16,19 @@ module {
 ########################################################################
 
 def cancel: #:: ⊥
-    error("¡")
+    error("!")
 ;
-def cancelled: #:: string| => ∅^⊥
-    if . == "¡" then empty else error end
+
+def canceled: #:: string| => ∅^⊥
+    if . == "!" then empty else error end
 ;
 
 def fence: #:: a| => a^⊥
-    (., error("¿"))
+    (. , cancel)
 ;
-def fenced: #:: string| => ∅^⊥
-    if . == "¿" then empty else error end
+
+def hold(predicate): #:: a|(a->boolean) => a^⊥
+    if predicate then . else cancel end
 ;
 
 ########################################################################
@@ -46,8 +48,8 @@ def failure(goal): #:: a|(a->*x) => boolean
 ;
 
 # select input value if goal fails
-def not(goal): #:: a|(a->*x) => a
-    if failure(goal) then . else empty end
+def not(goal): #:: a|(a->*x) => ?a
+    if success(goal) then empty else . end
 ;
 
 # select input value if goal succeeds
@@ -62,11 +64,6 @@ def when(predicate; action): #:: a|(a->boolean;a->b) => a^b
 ;
 def unless(predicate; action): #:: a|(a->boolean;a->b) => a^b 
     if predicate//false then . else action end
-;
-
-# rule: A implies C
-def rule(antecedent; consequent): #:: a|(a->boolean;a->boolean) => boolean
-    if antecedent then consequent else true end
 ;
 
 # Run once a computation.  By default `jq` tries all alternatives. This is the
@@ -112,17 +109,44 @@ def assert(predicate; $message): #:: a|(a->boolean;string) => a^⊥
 # Recursion schemata
 ########################################################################
 
-def fold(filter; $a; generator): #:: x|([a,b]->a;a;x->*b) => a
-    reduce generator as $b
-        ($a; [.,$b]|filter)
+# Builtin
+# =======================
+# recurse/1: f⁰ f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
+# recurse/2
+# repeat/1: f f f f f f…
+# while/2
+# until/2
+
+# As ilustration
+# =======================
+#def fold(filter; $a; generator): #:: x|([a,b]->a;a;x->*b) => a
+#    reduce generator as $b
+#        ($a; [.,$b]|filter)
+#;
+#
+#def scan(filter; generator): #:: x|([a,b]->a;x->*b) => *a
+#    foreach generator as $b
+#        (.; [.,$b]|filter; .)
+#;
+#def scan(filter; $a; generator): #:: x|([a,b]->a;a;x->*b) => *a
+#    $a|scan(filter; generator)
+#;
+
+# f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
+def recurse1(filter): #:: a|(a->a) => *a
+    filter | recurse(filter)
 ;
 
-def scan(filter; generator): #:: x|([a,b]->a;x->*b) => *a
-    foreach generator as $b
-        (.; [.,$b]|filter; .)
+def tabulate($start; filter): #:: (number;number->a) => *a
+#   $start | recurse(.+1) | filter
+    def r: filter , (.+1|r);
+    $start|r
 ;
-def scan(filter; $a; generator): #:: x|([a,b]->a;a;x->*b) => *a
-    $a|scan(filter; generator)
+# tabulate starting at 0
+def tabulate(filter): #:: (number->a) => *a
+#   0 | recurse(.+1) | filter
+    def r: filter , (.+1|r);
+    0|r
 ;
 
 def unfold(filter; $seed): #:: (a->[b,a];a) => *b
@@ -132,25 +156,6 @@ def unfold(filter; $seed): #:: (a->[b,a];a) => *b
 
 def unfold(filter): #:: a|(a->[b,a]) => *b
     unfold(filter; .)
-;
-
-def iterate(filter): #:: a|(a->a) => *a
-    def r: . , (filter|r);
-    r
-;
-
-def loop(filter): #:: a|(a->a) => *a
-    filter | iterate(filter)
-;
-
-def tabulate($start; filter): #:: (number;number->a) => *a
-    def r: filter , (.+1|r);
-    $start|r
-;
-def tabulate(filter): #:: (number->a) => *a
-    # tabulate starting at 0
-    def r: filter , (.+1|r);
-    0|r
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq
