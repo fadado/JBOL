@@ -161,7 +161,7 @@ include "prelude"; [recurse(.+1;.<7)] == [label $x | recurse(.+1) | if .<7 then 
 0
 true
 
-include "prelude"; [while(.<7;.+1)] == [try (recurse(.+1) | hold(.<7)) catch canceled]
+include "prelude"; [while(.<7;.+1)] == [try (recurse(.+1) | keep(.<7)) catch canceled]
 0
 true
 

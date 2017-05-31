@@ -80,7 +80,7 @@ def read_sh_check:
             select(.continuing)
             | .logical_line # last line ended in \
         else
-            select(.continuing|not)
+            reject(.continuing)
             | .logical_line
         end
     )

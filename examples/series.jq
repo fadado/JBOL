@@ -15,7 +15,7 @@ def series($n):
         else
             ($notes-.)[] as $note # choose notes not used
             | [$note-.[-1]|length] as $i
-            | select($intervals|contains($i)|not) # interval is in use?
+            | reject($intervals|contains($i)) # interval is in use?
             | .[length]=$note
             | _series($notes-[$note]; $intervals+$i)
         end

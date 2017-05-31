@@ -265,7 +265,7 @@ def ANY($s): #:: CURSOR|(string) => CURSOR
 def NOTANY($s): #:: CURSOR|(string) => CURSOR
     assert($s != ""; "NOTANY requires a non empty string as argument")
     | select(.position != .slen)
-    | select(.subject[.position:.position+1] | inside($s)|not)
+    | reject(.subject[.position:.position+1] | inside($s))
     | .start = .position
     | .position += 1
 ;
@@ -419,7 +419,7 @@ def MOVE($n): #:: CURSOR|(number) => CURSOR
 # TODO: from SNOBOL4+, define ATB, ARTAB...
 
 def REMOVE($s): #:: string|(string) => string
-    reduce ((./"")[] | select(inside($s)|not)) as $c
+    reduce ((./"")[] | reject(inside($s))) as $c
         (""; . + $c)
 ;
 

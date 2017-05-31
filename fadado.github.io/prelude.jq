@@ -27,8 +27,12 @@ def fence: #:: a| => a^⊥
     (. , cancel)
 ;
 
-def hold(predicate): #:: a|(a->boolean) => a^⊥
+def keep(predicate): #:: a|(a->boolean) => a^⊥
     if predicate then . else cancel end
+;
+
+def discard(predicate): #:: a|(a->boolean) => a^⊥
+    if predicate then cancel else . end
 ;
 
 ########################################################################
@@ -36,33 +40,33 @@ def hold(predicate): #:: a|(a->boolean) => a^⊥
 ########################################################################
 
 # "not isempty" in stream terms
-def success(goal): #:: a|(a->*x) => boolean
+def success(goal): #:: a|(a->*b) => boolean
     (label $exit | goal | 1 , break $exit)//0
     | .==1  # computation generates results?
 ;
 
 # "isempty" in stream terms
-def failure(goal): #:: a|(a->*x) => boolean
+def failure(goal): #:: a|(a->*b) => boolean
     (label $exit | goal | 1 , break $exit)//0
     | .==0  # computation generates no results?
 ;
 
 # select input value if goal fails
-def not(goal): #:: a|(a->*x) => ?a
+def not(goal): #:: a|(a->*b) => ?a
     if success(goal) then empty else . end
 ;
 
 # select input value if goal succeeds
-def cond(goal): #:: a|(a->*x) => ?a
+def cond(goal): #:: a|(a->*b) => ?a
     if success(goal) then . else empty end
 ;
 
 # Predicate based conditionals
 #
-def when(predicate; action): #:: a|(a->boolean;a->b) => a^b
+def when(predicate; action): #:: a|(a->boolean;a->*b) => a^*b
     if predicate//false then action else . end
 ;
-def unless(predicate; action): #:: a|(a->boolean;a->b) => a^b 
+def unless(predicate; action): #:: a|(a->boolean;a->*b) => a^*b 
     if predicate//false then . else action end
 ;
 
@@ -82,6 +86,11 @@ def every(generator): #:: a|(a->*boolean) => boolean
 # Some true?
 def some(generator): #:: a|(a->*boolean) => boolean
     success(generator | . or empty)
+;
+
+# Contrary of select
+def reject(predicate): #:: a|(a->*boolean) => ?a
+    if predicate then empty else . end
 ;
 
 ########################################################################
