@@ -36,16 +36,16 @@ def any(predicate): #:: [a]|(a->boolean) => boolean
 ########################################################################
 # Generators as streams
 
-# concat:      g ++ h         g , h
 # id:          id x           x | .
+# concat:      g ++ h         g , h
 # map:         map f g        g | f
-# filter:      filter p g     g | select(p)
-# apply:       f a            a | f
 # compose:     f · g          g | f
+# apply:       f a            a | f
+# filter:      filter p g     g | select(p)
 
 # Count stream items.
 #
-def count(stream): #:: a|(a->*b) => number
+def length(stream): #:: a|(a->*b) => number
     reduce stream as $ignore (0; .+1)
 ;
 

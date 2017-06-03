@@ -17,19 +17,19 @@ true
 null
 true
 
-include "generator/stream"; count(range(3)) == 3
+include "generator/stream"; length(range(3)) == 3
 null
 true
 
-include "generator/stream"; count(empty) == 0
+include "generator/stream"; length(empty) == 0
 null
 true
 
-include "generator/stream"; count(range(3;10)) == 9-3+1
+include "generator/stream"; length(range(3;10)) == 9-3+1
 null
 true
 
-include "generator/stream"; count(range(8), range(4;11)) == count(range(8)) + count(range(4;11))
+include "generator/stream"; length(range(8), range(4;11)) == length(range(8)) + length(range(4;11))
 null
 true
 
