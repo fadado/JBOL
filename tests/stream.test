@@ -17,6 +17,10 @@ true
 null
 true
 
+include "generator/stream"; length(empty) == 0
+null
+true
+
 include "generator/stream"; length(range(3)) == 3
 null
 true

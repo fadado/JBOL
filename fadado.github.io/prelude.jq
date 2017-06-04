@@ -15,23 +15,23 @@ module {
 # ABORT (renamed `cancel`) and FENCE from SNOBOL
 ########################################################################
 
-def cancel: #:: ⊥
+def cancel: #:: !
     error("!")
 ;
 
-def canceled: #:: string| => ∅^⊥
+def canceled: #:: string| => @^!
     if . == "!" then empty else error end
 ;
 
-def fence: #:: a| => a^⊥
+def fence: #:: a| => a^!
     (. , cancel)
 ;
 
-def keep(predicate): #:: a|(a->boolean) => a^⊥
+def keep(predicate): #:: a|(a->boolean) => a^!
     if predicate then . else cancel end
 ;
 
-def discard(predicate): #:: a|(a->boolean) => a^⊥
+def discard(predicate): #:: a|(a->boolean) => a^!
     if predicate then cancel else . end
 ;
 
@@ -97,7 +97,7 @@ def reject(predicate): #:: a|(a->*boolean) => ?a
 # Assertions
 ########################################################################
 
-def assert(predicate; $location; $message): #:: a|(a->boolean;LOCATION;string) => a^⊥
+def assert(predicate; $location; $message): #:: a|(a->boolean;LOCATION;string) => a^!
     if predicate
     then .
     else
@@ -107,7 +107,7 @@ def assert(predicate; $location; $message): #:: a|(a->boolean;LOCATION;string) =
     end
 ;
 
-def assert(predicate; $message): #:: a|(a->boolean;string) => a^⊥
+def assert(predicate; $message): #:: a|(a->boolean;string) => a^!
     if predicate
     then .
     else error("Assertion failed: "+$message)
@@ -120,40 +120,44 @@ def assert(predicate; $message): #:: a|(a->boolean;string) => a^⊥
 
 # Builtin
 # =======================
-# recurse/1: f⁰ f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
-# recurse/2
+# iterate/1: f⁰ f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
+# iterate/2
 # repeat/1: f f f f f f…
 # while/2
 # until/2
 
-# As ilustration
-# =======================
-#def fold(filter; $a; generator): #:: x|([a,b]->a;a;x->*b) => a
-#    reduce generator as $b
-#        ($a; [.,$b]|filter)
-#;
-#
-#def scan(filter; generator): #:: x|([a,b]->a;x->*b) => *a
-#    foreach generator as $b
-#        (.; [.,$b]|filter; .)
-#;
-#def scan(filter; $a; generator): #:: x|([a,b]->a;a;x->*b) => *a
-#    $a|scan(filter; generator)
-#;
+def fold(filter; $a; generator): #:: x|([a,b]->a;a;x->*b) => a
+    reduce generator as $b
+        ($a; [.,$b]|filter)
+;
+
+def scan(filter; generator): #:: x|([a,b]->a;x->*b) => *a
+    foreach generator as $b
+        (.; [.,$b]|filter; .)
+;
+def scan(filter; $a; generator): #:: x|([a,b]->a;a;x->*b) => *a
+    $a|scan(filter; generator)
+;
+
+# f⁰ f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
+def iterate(filter): #:: a|(a->a) => *a
+    def r: . , (filter|r);
+    r
+;
 
 # f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
-def recurse1(filter): #:: a|(a->a) => *a
-    filter | recurse(filter)
+def iterate1(filter): #:: a|(a->a) => *a
+    filter | iterate(filter)
 ;
 
 def tabulate($start; filter): #:: (number;number->a) => *a
-#   $start | recurse(.+1) | filter
+#   $start | iterate(.+1) | filter
     def r: filter , (.+1|r);
     $start|r
 ;
 # tabulate starting at 0
 def tabulate(filter): #:: (number->a) => *a
-#   0 | recurse(.+1) | filter
+#   0 | iterate(.+1) | filter
     def r: filter , (.+1|r);
     0|r
 ;

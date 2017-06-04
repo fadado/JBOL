@@ -46,7 +46,7 @@ def any(predicate): #:: [a]|(a->boolean) => boolean
 # Count stream items.
 #
 def length(stream): #:: a|(a->*b) => number
-    reduce stream as $ignore (0; .+1)
+    reduce stream as $_ (0; .+1)
 ;
 
 # Is a stream empty?.

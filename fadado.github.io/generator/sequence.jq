@@ -20,7 +20,7 @@ include "fadado.github.io/math";
 #   a(n) = a(n-1)+d
 #
 def arithmetic($a; $d): #:: (number;number) => *number
-    $a|recurse(. + $d) # range($a; infinite; $d)
+    $a|iterate(. + $d) # range($a; infinite; $d)
 ;
 
 # CF:
@@ -98,7 +98,7 @@ def multiples: #:: number| => *number
 #   a(n) = a(n-1)*r
 #
 def geometric($a; $r): #:: (number;number) => *number
-    $a|recurse(. * $r)
+    $a|iterate(. * $r)
 ;
 
 # CF:
@@ -161,7 +161,7 @@ def harmonic: #:: => *number
 def moduli($m): #:: (number) => *number
 #   tabulate(. % $m)
 #   repeat(range(0; $m))
-    0|recurse(. + 1 | when(. == $m; 0))
+    0|iterate(. + 1 | when(. == $m; 0))
 ;
 def moduli: #:: number| => *number
     moduli(.)
@@ -191,7 +191,7 @@ def triangulars: #:: => *number
 #
 def fibonacci: #:: => *number
     [0,1]
-    | recurse([.[-1], .[-1]+.[-2]])
+    | iterate([.[-1], .[-1]+.[-2]])
     | .[-2]
 #   0, ([0,1] | unfold([.[-1], [.[-1], .[-2]+.[-1]]]))
 ;
@@ -199,7 +199,7 @@ def fibonacci: #:: => *number
 # Fibbonacci strings
 def fibstr($s; $t): #:: (string;string) => *number
     [$s,$t]
-    | recurse([.[-1], .[-1]+.[-2]])
+    | iterate([.[-1], .[-1]+.[-2]])
     | .[-2]
 ;
 def fibstr: #:: => *number
