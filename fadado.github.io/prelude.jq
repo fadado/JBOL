@@ -19,25 +19,39 @@ def cancel: #:: !
     error("!")
 ;
 
+# For constructs like:
+#   try (A | possible cancellation | B) catch canceled
 def canceled: #:: string| => @^!
     if . == "!" then empty else error end
 ;
 
+# One way pass. Usage:
+#   try (A | fence | B) catch canceled
 def fence: #:: a| => a^!
     (. , cancel)
 ;
 
-def keep(predicate): #:: a|(a->boolean) => a^!
+# Like select but cancelling
+def upto(predicate): #:: a|(a->boolean) => a^!
     if predicate then . else cancel end
 ;
 
-def discard(predicate): #:: a|(a->boolean) => a^!
-    if predicate then cancel else . end
+# Fence at predicate
+def till(predicate): #:: a|(a->boolean) => a^!
+    if predicate then (. , cancel) else empty end
 ;
 
 ########################################################################
 # Goal-directed evaluation
 ########################################################################
+
+# Run once a computation.  By default `jq` tries all alternatives. This is the
+# reverse of  Icon (Icon `every` is the JQ default).
+#
+# "first" in stream terms
+def once(goal): #:: a|(a->*b) => ?b
+    label $exit | goal | . , break $exit
+;
 
 # "not isempty" in stream terms
 def success(goal): #:: a|(a->*b) => boolean
@@ -51,42 +65,40 @@ def failure(goal): #:: a|(a->*b) => boolean
     | .==0  # computation generates no results?
 ;
 
+# select input value if goal succeeds
+def guard(goal): #:: a|(a->*b) => ?a
+    if success(goal) then . else empty end
+;
+
 # select input value if goal fails
 def not(goal): #:: a|(a->*b) => ?a
     if success(goal) then empty else . end
 ;
 
-# select input value if goal succeeds
-def cond(goal): #:: a|(a->*b) => ?a
-    if success(goal) then . else empty end
-;
-
+########################################################################
 # Predicate based conditionals
-#
+########################################################################
+
+# One branch conditionals
 def when(predicate; action): #:: a|(a->boolean;a->*b) => a^*b
-    if predicate//false then action else . end
+    if predicate then action else . end
 ;
 def unless(predicate; action): #:: a|(a->boolean;a->*b) => a^*b 
-    if predicate//false then . else action end
+    if predicate then . else action end
 ;
 
-# Run once a computation.  By default `jq` tries all alternatives. This is the
-# reverse of  Icon (Icon `every` is the JQ default).
-#
-# "first" in stream terms
-def once(goal): #:: a|(a->*b) => ?b
-    label $exit | goal | . , break $exit
-;
-
-# All true?
+# All true?  Some true?
 def every(generator): #:: a|(a->*boolean) => boolean
     failure(generator | . and empty)
 ;
-
-# Some true?
 def some(generator): #:: a|(a->*boolean) => boolean
     success(generator | . or empty)
 ;
+
+# Builtin
+#def select(predicate): #:: a|(a->*boolean) => ?a
+#    if predicate then . else empty end
+#;
 
 # Contrary of select
 def reject(predicate): #:: a|(a->*boolean) => ?a

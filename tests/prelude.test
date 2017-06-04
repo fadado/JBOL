@@ -117,11 +117,11 @@ true
 null
 true
 
-include "prelude"; (cond(select(.==1))|7) , (not(select(.==1))|11)
+include "prelude"; (guard(select(.==1))|7) , (not(select(.==1))|11)
 1
 7
 
-include "prelude"; (cond(select(.==2))|7) , (not(select(.==2))|11)
+include "prelude"; (guard(select(.==2))|7) , (not(select(.==2))|11)
 1
 11
 
@@ -161,7 +161,7 @@ include "prelude"; [recurse(.+1;.<7)] == [label $x | iterate(.+1) | if .<7 then 
 0
 true
 
-include "prelude"; [while(.<7;.+1)] == [try (iterate(.+1) | keep(.<7)) catch canceled]
+include "prelude"; [while(.<7;.+1)] == [try (iterate(.+1) | upto(.<7)) catch canceled]
 0
 true
 
