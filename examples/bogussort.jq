@@ -19,7 +19,8 @@ def bogussort:
     choice::shuffle
     | try (
         choice::permutation | select(issorted) | fence
-    ) catch fenced
+    ) catch canceled
+
 #   | once(
 #       choice::permutation
 #       | select(issorted)

@@ -8,36 +8,33 @@ module {
     }
 };
 
-# ∅ @ : empty stream
-# ⊥ ! : bottom
-
 ########################################################################
 # ABORT (renamed `cancel`) and FENCE from SNOBOL
 ########################################################################
 
-def cancel: #:: !
+def cancel: #:: => !
     error("!")
 ;
 
 # For constructs like:
 #   try (A | possible cancellation | B) catch canceled
-def canceled: #:: string| => @^!
+def canceled: #:: string| => @!
     if . == "!" then empty else error end
 ;
 
 # One way pass. Usage:
 #   try (A | fence | B) catch canceled
-def fence: #:: a| => a^!
+def fence: #:: a| => a!
     (. , cancel)
 ;
 
 # Like select but cancelling
-def upto(predicate): #:: a|(a->boolean) => a^!
+def upto(predicate): #:: a|(a->boolean) => a!
     if predicate then . else cancel end
 ;
 
 # Fence at predicate
-def till(predicate): #:: a|(a->boolean) => a^!
+def till(predicate): #:: a|(a->boolean) => a!
     if predicate then (. , cancel) else empty end
 ;
 
@@ -67,6 +64,7 @@ def failure(goal): #:: a|(a->*b) => boolean
 
 # select input value if goal succeeds
 def guard(goal): #:: a|(a->*b) => ?a
+#   select(success(goal))
     if success(goal) then . else empty end
 ;
 
@@ -109,7 +107,7 @@ def reject(predicate): #:: a|(a->*boolean) => ?a
 # Assertions
 ########################################################################
 
-def assert(predicate; $location; $message): #:: a|(a->boolean;LOCATION;string) => a^!
+def assert(predicate; $location; $message): #:: a|(a->boolean;LOCATION;string) => a!
     if predicate
     then .
     else
@@ -119,10 +117,12 @@ def assert(predicate; $location; $message): #:: a|(a->boolean;LOCATION;string) =
     end
 ;
 
-def assert(predicate; $message): #:: a|(a->boolean;string) => a^!
+def assert(predicate; $message): #:: a|(a->boolean;string) => a!
     if predicate
     then .
-    else error("Assertion failed: "+$message)
+    else
+        "Assertion failed: "+$message
+        | error
     end
 ;
 

@@ -85,6 +85,25 @@ def isleaf($a): #:: (a) => boolean
     $a|isleaf
 ;
 
+# is unknown?
+def isunk($p): #:: array^object|(number^string) => boolean
+    has($p) and .[$p] == null
+;
+
+# is undefined?
+def isund($p): #:: array^object|(number^string) => boolean
+    has($p) | not
+;
+
+# coerce to bool
+def tobool: #:: a| => boolean
+    not|not
+;
+
+def tobool(a): #:: (a) => boolean
+    (once(a)//false) | tobool
+;
+
 # Variation on `with_entries`
 #
 # PAIR: {"name":string, "value":value}

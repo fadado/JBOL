@@ -165,5 +165,4 @@ include "prelude"; [while(.<7;.+1)] == [try (iterate(.+1) | upto(.<7)) catch can
 0
 true
 
-
 # vim:ai:sw=2:ts=2:et:syntax=jq

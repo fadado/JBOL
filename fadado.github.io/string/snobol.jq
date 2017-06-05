@@ -322,7 +322,7 @@ def FAIL: #:: CURSOR| => @
     empty   # builtin
 ;
 
-def FENCE: #:: CURSOR| => CURSOR^!
+def FENCE: #:: CURSOR| => CURSOR!
     fence   # from prelude
 ;
 

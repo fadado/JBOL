@@ -53,7 +53,8 @@ def length(stream): #:: a|(a->*b) => number
 #
 # "failure" in goal terms
 def isempty(stream): #:: a|(a->*b) => boolean
-    asbool(stream)==false
+    (label $exit | stream | 1 , break $exit)//0
+    | .==0  # computation generates no results?
 ;
 
 # One result?

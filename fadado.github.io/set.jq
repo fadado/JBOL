@@ -8,6 +8,7 @@ module {
     }
 };
 
+include "fadado.github.io/prelude";
 include "fadado.github.io/types";
 
 ########################################################################
@@ -38,14 +39,14 @@ include "fadado.github.io/types";
 # Set construction from strings and arrays
 #
 def set($elements): #:: (string^[a]) => {boolean}
-    if $elements|isstring then
+    $elements
+    | if isstring then
         reduce ($elements/"")[] as $element
             ({}; . += {($element):true})
-    elif $elements|isarray then
+    elif isarray then
         reduce $elements[] as $element
             ({}; . += {($element|tostring):true})
-    else
-        error("Expected string or array")
+    else error(type|"Type error: expected string or array, not \(.)")
     end
 ;
 
@@ -56,7 +57,7 @@ def intersection($other): #:: {boolean}|({boolean}) => {boolean}
 ;
 
 def difference($other): #:: {boolean}|({boolean}) => {boolean}
-    mapobj(select(.name | in($other)|not))
+    mapobj(reject(.name | in($other)))
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

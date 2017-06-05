@@ -287,7 +287,7 @@ def validate($schema; $fatal): #:: a|(SCHEMA;boolean) => boolean
                     | ($schema.patternProperties//{}) as $pp
                     | [ keys_unsorted[]
                         | reject(in($p))
-                        | select(every(test($pp | keys_unsorted[])|not)) ]
+                        | reject(some(test($pp | keys_unsorted[]))) ]
                     | length == 0
             ;
             def valid_members:

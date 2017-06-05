@@ -234,19 +234,19 @@ def leibniz: #:: => *number
 # All integer partitions ###############################################
 #
 def partition($i): #:: (number) => *[number]
-	def choose(a; b): range(a; 1+b);
+    def choose(a; b): range(a; 1+b);
     #
-	def pmax(n; mx):
-		if n == 0
-		then []
-		else
-			choose(1; mx) as $m
-			| (n-$m) as $k
-			| min($k; $m) as $b
-			| [$m]+pmax($k; $b)
-		end
-	;
-	pmax($i; $i)
+    def pmax(n; mx):
+        if n == 0
+        then []
+        else
+            choose(1; mx) as $m
+            | (n-$m) as $k
+            | min($k; $m) as $b
+            | [$m]+pmax($k; $b)
+        end
+    ;
+    pmax($i; $i)
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq
