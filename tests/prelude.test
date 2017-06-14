@@ -117,11 +117,11 @@ true
 null
 true
 
-include "prelude"; (guard(select(.==1))|7) , (not(select(.==1))|11)
+include "prelude"; (allow(select(.==1))|7) , (deny(select(.==1))|11)
 1
 7
 
-include "prelude"; (guard(select(.==2))|7) , (not(select(.==2))|11)
+include "prelude"; (allow(select(.==2))|7) , (deny(select(.==2))|11)
 1
 11
 

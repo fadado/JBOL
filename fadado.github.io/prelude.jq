@@ -63,13 +63,14 @@ def failure(goal): #:: a|(a->*b) => boolean
 ;
 
 # select input value if goal succeeds
-def guard(goal): #:: a|(a->*b) => ?a
+def allow(goal): #:: a|(a->*b) => ?a
 #   select(success(goal))
     if success(goal) then . else empty end
 ;
 
-# select input value if goal fails
-def not(goal): #:: a|(a->*b) => ?a
+# reject input value if goal succeeds
+def deny(goal): #:: a|(a->*b) => ?a
+#   reject(success(goal))
     if success(goal) then empty else . end
 ;
 
