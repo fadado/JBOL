@@ -9,9 +9,10 @@ module {
 };
 
 ########################################################################
-# ABORT (renamed `cancel`) and FENCE from SNOBOL
+# Stolen from SNOBOL: ABORT (renamed `cancel`) and FENCE
 ########################################################################
 
+# Exits current filter
 def cancel: #:: => !
     error("!")
 ;
@@ -26,6 +27,28 @@ def canceled: #:: string| => @!
 #   try (A | fence | B) catch canceled
 def fence: #:: a| => a!
     (. , cancel)
+;
+
+########################################################################
+# Predicate based conditionals
+########################################################################
+
+# Builtin
+#def select(predicate): #:: a|(a->*boolean) => ?a
+#    if predicate then . else empty end
+#;
+
+# Contrary of select
+def reject(predicate): #:: a|(a->*boolean) => ?a
+    if predicate then empty else . end
+;
+
+# One branch conditionals
+def when(predicate; action): #:: a|(a->boolean;a->*b) => a^*b
+    if predicate then action else . end
+;
+def unless(predicate; action): #:: a|(a->boolean;a->*b) => a^*b 
+    if predicate then . else action end
 ;
 
 # Like select but cancelling
@@ -52,56 +75,39 @@ def once(goal): #:: a|(a->*b) => ?b
 
 # "not isempty" in stream terms
 def success(goal): #:: a|(a->*b) => boolean
-    (label $exit | goal | 1 , break $exit)//0
-    | .==1  # computation generates results?
+#   (once(goal) | true)//false
+    (label $exit | goal | true , break $exit)//false
 ;
 
 # "isempty" in stream terms
 def failure(goal): #:: a|(a->*b) => boolean
-    (label $exit | goal | 1 , break $exit)//0
-    | .==0  # computation generates no results?
+#   (once(goal) | true)//false | not
+    (label $exit | goal | true , break $exit)//false | not
 ;
 
 # select input value if goal succeeds
 def allow(goal): #:: a|(a->*b) => ?a
 #   select(success(goal))
-    if success(goal) then . else empty end
+#   when(failure(goal); empty)
+#   if success(goal) then . else empty end
+    (. as $a | label $exit | goal | $a , break $exit)
 ;
 
 # reject input value if goal succeeds
 def deny(goal): #:: a|(a->*b) => ?a
-#   reject(success(goal))
+#   select(failure(goal))
+#   when(success(goal); empty)
     if success(goal) then empty else . end
 ;
 
-########################################################################
-# Predicate based conditionals
-########################################################################
-
-# One branch conditionals
-def when(predicate; action): #:: a|(a->boolean;a->*b) => a^*b
-    if predicate then action else . end
+# All goals true?  Some goal true?
+def every(goal): #:: a|(a->*boolean) => boolean
+#   failure(goal | . and empty)
+    (label $exit | (goal | . and empty) | true , break $exit)//false | not
 ;
-def unless(predicate; action): #:: a|(a->boolean;a->*b) => a^*b 
-    if predicate then . else action end
-;
-
-# All true?  Some true?
-def every(generator): #:: a|(a->*boolean) => boolean
-    failure(generator | . and empty)
-;
-def some(generator): #:: a|(a->*boolean) => boolean
-    success(generator | . or empty)
-;
-
-# Builtin
-#def select(predicate): #:: a|(a->*boolean) => ?a
-#    if predicate then . else empty end
-#;
-
-# Contrary of select
-def reject(predicate): #:: a|(a->*boolean) => ?a
-    if predicate then empty else . end
+def some(goal): #:: a|(a->*boolean) => boolean
+#   success(goal | . or empty)
+    (label $exit | (goal | . or empty) | true , break $exit)//false
 ;
 
 ########################################################################

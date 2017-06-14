@@ -46,7 +46,7 @@ def set($elements): #:: (string^[a]) => {boolean}
     elif isarray then
         reduce $elements[] as $element
             ({}; . += {($element|tostring):true})
-    else error(type|"Type error: expected string or array, not \(.)")
+    else type | "Type error: expected string or array, not \(.)" | error
     end
 ;
 
