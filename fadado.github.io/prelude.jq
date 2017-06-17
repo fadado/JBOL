@@ -74,12 +74,14 @@ def once(goal): #:: a|(a->*b) => ?b
 ;
 
 # "not isempty" in stream terms
+# "as bool": casts goal to boolean; boolean to goal: b//empty
 def success(goal): #:: a|(a->*b) => boolean
 #   (once(goal) | true)//false
     (label $exit | goal | true , break $exit)//false
 ;
 
 # "isempty" in stream terms
+# "as bool | not": casts goal to boolean 
 def failure(goal): #:: a|(a->*b) => boolean
 #   (once(goal) | true)//false | not
     (label $exit | goal | true , break $exit)//false | not
@@ -88,7 +90,6 @@ def failure(goal): #:: a|(a->*b) => boolean
 # select input value if goal succeeds
 def allow(goal): #:: a|(a->*b) => ?a
 #   select(success(goal))
-#   when(failure(goal); empty)
 #   if success(goal) then . else empty end
     (. as $a | label $exit | goal | $a , break $exit)
 ;
@@ -96,8 +97,7 @@ def allow(goal): #:: a|(a->*b) => ?a
 # reject input value if goal succeeds
 def deny(goal): #:: a|(a->*b) => ?a
 #   select(failure(goal))
-#   when(success(goal); empty)
-    if success(goal) then empty else . end
+    if failure(goal) then . else empty end
 ;
 
 # All goals true?  Some goal true?

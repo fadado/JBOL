@@ -231,6 +231,36 @@ def leibniz: #:: => *number
     0, 1,  r(0 , 1)
 ;
 
+# Proper divisors ######################################################
+#
+# unordered
+# Inspired in https://rosettacode.org/wiki/Proper_divisors#jq
+def divisors($n):
+    if $n <= 1
+    then empty
+    else
+        1 ,
+        ( range(2; 1 + ($n|sqrt|floor)) as $i
+          | if ($n % $i) == 0
+          then $i , (($n / $i) | select(. != $i))
+          else empty
+          end)
+    end
+;
+
+# without 1
+def divisors1($n):
+    if $n <= 1
+    then empty
+    else
+        range(2; 1 + ($n|sqrt|floor)) as $i
+        | if ($n % $i) == 0
+        then $i , (($n / $i) | select(. != $i))
+        else empty
+        end
+    end
+;
+
 # All integer partitions ###############################################
 #
 def partition($i): #:: (number) => *[number]
