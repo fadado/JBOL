@@ -95,13 +95,13 @@ def isund($p): #:: array^object|(number^string) => boolean
     has($p) | not
 ;
 
-# coerce to bool
+# coerce to bool (exactly true or false)
 def tobool: #:: a| => boolean
-    not|not
+    if . then true else false end
 ;
 
 def tobool(a): #:: (a) => boolean
-    (once(a)//false) | tobool
+    if once(a)//false then true else false end
 ;
 
 # Variation on `with_entries`
