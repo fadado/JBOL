@@ -116,6 +116,7 @@ $(LogDir)/types.log: $(LIB)/types.jq
 $(LogDir)/schema.log: $(LIB)/schema.jq $(LIB)/prelude.jq $(LIB)/types.jq $(STR)/url.jq $(STR)/regexp.jq $(GEN)/stream.jq
 $(LogDir)/math.log: $(LIB)/math.jq
 $(LogDir)/sets.log: $(LIB)/set.jq
+$(LogDir)/relations.log: $(LIB)/rel.jq
 
 # Generator tests
 $(LogDir)/stream.log: $(GEN)/stream.jq

@@ -1,0 +1,40 @@
+#########################################################################
+# Relations
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+#########################################################################
+
+include "rel"; member(6; range(10))
+null
+true
+
+include "rel"; member(66; range(10))
+null
+false
+
+include "rel"; [product((.+1,.*2); (tostring,.*2))]
+2
+["3",6,"4",8]
+
+include "rel"; [union((1,2); (1,3))] | sort
+null
+[1,2,3]
+
+include "rel"; [intersection((1,2); (1,3))] | sort
+null
+[1]
+
+include "rel"; [difference((1,2); (1,3))] | sort
+null
+[2]
+
+include "rel"; [difference((1,3); (1,2))] | sort
+null
+[3]
+
+include "rel"; [symmetric((1,2); (1,3))] | sort
+null
+[2,3]
+
+# vim:ai:sw=2:ts=2:et:syntax=jq
