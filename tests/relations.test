@@ -13,7 +13,7 @@ include "rel"; member(66; range(10))
 null
 false
 
-include "rel"; [product((.+1,.*2); (tostring,.*2))]
+include "rel"; [compose((.+1,.*2); (tostring,.*2))]
 2
 ["3",6,"4",8]
 

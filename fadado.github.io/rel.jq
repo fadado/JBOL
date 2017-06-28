@@ -15,7 +15,11 @@ def member($e; s): #:: a|(b;a->*b) => boolean
     stream::any(s; . == $e)
 ;
 
-def product(R;S): #:: a|(a->*b;b->*c) => *c
+def concat(R;S): #:: a|(a->*b;a->*b) => *b
+    R , S
+;
+
+def compose(R;S): #:: a|(a->*b;b->*c) => *c
     R | S
 ;
 
