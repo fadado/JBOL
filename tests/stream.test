@@ -5,6 +5,14 @@
 # Blank lines and lines starting with # are ignored.
 #########################################################################
 
+include "generator/stream"; member(6; range(10))
+null
+true
+
+include "generator/stream"; member(66; range(10))
+null
+false
+
 [empty, range(8)] == [range(8), empty]
 null
 true

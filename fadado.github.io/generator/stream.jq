@@ -57,6 +57,19 @@ def isempty(stream): #:: a|(a->*b) => boolean
     0 == ((label $exit | stream | 1 , break $exit)//0)
 ;
 
+# . inside?
+def member(s): #:: a|(*a) => boolean
+    . as $a | any(s; . == $a)
+;
+def member($a; s): #:: a|(a;*a) => boolean
+    any(s; . == $a)
+;
+
+# some common?
+def sharing(s; t):  #:: a|(*a;*a) => boolean
+    some(s | member(t))
+;
+
 # One result?
 def singleton(stream): #:: a|(a->*b) => boolean
     [   label $exit |

@@ -5,14 +5,6 @@
 # Blank lines and lines starting with # are ignored.
 #########################################################################
 
-include "rel"; member(6; range(10))
-null
-true
-
-include "rel"; member(66; range(10))
-null
-false
-
 include "rel"; [compose((.+1,.*2); (tostring,.*2))]
 2
 ["3",6,"4",8]

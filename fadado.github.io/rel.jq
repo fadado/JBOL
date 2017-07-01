@@ -11,9 +11,7 @@ module {
 include "fadado.github.io/prelude";
 import "fadado.github.io/generator/stream" as stream;
 
-def member($e; s): #:: a|(b;a->*b) => boolean
-    stream::any(s; . == $e)
-;
+# very very experimental !!!!!!!!!!!!!!!!!!!!!!!!!11
 
 def concat(R;S): #:: a|(a->*b;a->*b) => *b
     R , S
@@ -24,20 +22,20 @@ def compose(R;S): #:: a|(a->*b;b->*c) => *c
 ;
 
 def union(R; S): #:: a|(a->*b;a->*b) => *b
-    R , (S | reject(member(.; R)))
+    R , (S | reject(stream::member(.; R)))
 ;
 
 def intersection(R; S): #:: a|(a->*b;a->*b) => *b
-    R | select(member(.; S))
+    R | select(stream::member(.; S))
 ;
 
 def difference(R; S): #:: a|(a->*b;a->*b) => *b
-    R | reject(member(.; S))
+    R | reject(stream::member(.; S))
 ;
 
 def symmetric(R; S): #:: a|(a->*b;a->*b) => *b
-    (R | reject(member(.; S)))
-    , (S | reject(member(.; R)))
+    (R | reject(stream::member(.; S)))
+    , (S | reject(stream::member(.; R)))
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq
