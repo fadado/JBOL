@@ -183,7 +183,7 @@ def DIFFER($s): #:: CURSOR|(string;string) => CURSOR
 def INTEGER($a): #:: CURSOR|(a) => CURSOR
     def test:
        (isnumber and . == floor)
-       or (tonumber?//false)
+       or (tonumber? // false)
        and (contains(".")|not)
     ;
     select(test)
