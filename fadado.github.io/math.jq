@@ -33,11 +33,35 @@ def max($a; $b): #:: (number;number) => number
     if $a > $b then $a else $b end
 ;
 
-def gcd($m; $n): #:: (number;number) => number
+def xgcd($m; $n): #:: (number;number) => number
     if $n == 0
     then $m
     else gcd($n; $m % $n)
     end
+;
+
+def ygcd($m; $n): #:: (number;number) => number
+    def step:
+        .x = .n      |
+        .n = .m % .n |
+        .m = .x
+        
+    ;
+    label $pipe
+    | {$m, $n}
+    | iterate(step)
+    | select(.n == 0)
+    | (.m, break $pipe)
+;
+
+def gcd($m; $n): #:: (number;number) => number
+    def step:
+        .x = .n      |
+        .n = .m % .n |
+        .m = .x
+        
+    ;
+    {$m, $n} | until(.n == 0; step) | .m
 ;
 
 def sign($n): #:: (number) => number
