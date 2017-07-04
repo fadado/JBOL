@@ -21,7 +21,7 @@ def bogussort:
         choice::permutation | select(issorted) | fence
     ) catch canceled
 
-#   | once(
+#   | first(
 #       choice::permutation
 #       | select(issorted)
 #   )

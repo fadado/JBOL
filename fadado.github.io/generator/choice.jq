@@ -186,6 +186,9 @@ def mulseq: #:: [a]| => *[a]
     ;
     _mulseq
 ;
+def sstar(alphabet): "", (alphabet/"")[]+sstar(alphabet);
+def astar(alphabet): [], ((alphabet/"")[] as $a | [$a])+astar(alphabet);
+#def astar(alphabet): [], astar(alphabet) as $a | (alphabet/"")[] as $s | [$s]+$a;
 
 # Permutations (variations) with repetition
 # Words over an alphabet

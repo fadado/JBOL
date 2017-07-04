@@ -14,43 +14,43 @@ null
 [0,1,4,9,16,25]
 
 
-include "prelude"; failure(empty)
+isempty(empty)
 null
 true
 
-include "prelude"; failure(range(.))
+isempty(range(.))
 0
 true
 
-include "prelude"; failure(.)
+isempty(.)
 true
 false
 
-include "prelude"; failure(.)
+isempty(.)
 false
 false
 
-include "prelude"; failure(.)
+isempty(.)
 null
 false
 
-include "prelude"; failure(range(.))
+isempty(range(.))
 8
 false
 
-include "prelude"; failure(.[])
+isempty(.[])
 [1,2,3]
 false
 
-include "prelude"; failure(.)
+isempty(.)
 0
 false
 
-include "prelude"; failure(infinite)
+isempty(infinite)
 null
 false
 
-include "prelude"; failure(nan)
+isempty(nan)
 null
 false
 
@@ -116,14 +116,6 @@ true
 [2 | (.*3 , .*5)] == [(2 | .*3) , (2 | .*5)]
 null
 true
-
-include "prelude"; (allow(select(.==1))|7) , (deny(select(.==1))|11)
-1
-7
-
-include "prelude"; (allow(select(.==2))|7) , (deny(select(.==2))|11)
-1
-11
 
 ########################################################################
 

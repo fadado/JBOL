@@ -5,6 +5,14 @@
 # Blank lines and lines starting with # are ignored.
 #########################################################################
 
+include "generator/stream"; member(range(10))
+6
+true
+
+include "generator/stream"; member(range(10))
+66
+false
+
 include "generator/stream"; member(6; range(10))
 null
 true
@@ -12,6 +20,10 @@ true
 include "generator/stream"; member(66; range(10))
 null
 false
+
+include "generator/stream"; sharing((33,7,44); range(10))
+null
+true
 
 [empty, range(8)] == [range(8), empty]
 null
@@ -25,7 +37,7 @@ true
 null
 true
 
-include "generator/stream"; isempty(empty)
+isempty(empty)
 null
 true
 
@@ -88,11 +100,11 @@ false
 # first, take, drop, nth
 #
 
-include "generator/stream"; first([][])
+first([][])
 null
 # empty
 
-include "generator/stream"; first(range(5;100))
+first(range(5;100))
 null
 5
 

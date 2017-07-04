@@ -11,29 +11,6 @@ module {
 include "fadado.github.io/prelude";
 
 ########################################################################
-# Redefine some jq primitives
-
-def all(stream; predicate): #:: a|(a->*b;b->boolean) => boolean
-    failure(stream | predicate and empty)
-;
-def all: #:: [boolean]| => boolean
-    all(.[]; .)
-;
-def all(predicate): #:: [a]|(a->boolean) => boolean
-    all(.[]; predicate)
-;
-
-def any(stream; predicate): #:: a|(a->*b;b->boolean) => boolean
-    success(stream | predicate or empty)
-;
-def any: #:: [boolean]| => boolean
-    any(.[]; .)
-;
-def any(predicate): #:: [a]|(a->boolean) => boolean
-    any(.[]; predicate)
-;
-
-########################################################################
 # Generators as streams
 
 # id:          id x           x | .
@@ -47,14 +24,6 @@ def any(predicate): #:: [a]|(a->boolean) => boolean
 #
 def length(stream): #:: a|(a->*b) => number!
     reduce stream as $_ (0; .+1)
-;
-
-# Is a stream empty?.
-#
-# "failure" in goal terms
-def isempty(stream): #:: a|(a->*b) => boolean
-    # computation generates no results?
-    0 == ((label $exit | stream | 1 , break $exit)//0)
 ;
 
 # . inside?
@@ -78,21 +47,6 @@ def singleton(stream): #:: a|(a->*b) => boolean
     ] | length == 1
 ;
 
-# Extract the first element of a stream.
-#
-# "once" in goal terms
-def first(stream): #:: a|(a->*b) => ?b
-    label $exit | stream | . , break $exit
-;
-
-# Extract the last element of a stream.
-#
-def last(stream): #:: a|(a->*b) => ?b
-    reduce stream as $item
-        (null; $item)
-    | select(. != null)
-;
-
 # Extract the nth element of a stream.
 #
 def nth($n; stream): #:: a|(number;a->*b) => ?b
@@ -107,15 +61,6 @@ def nth($n; stream): #:: a|(number;a->*b) => ?b
 def enum(stream): #:: a|(a->*b) => *[number,b]
     foreach stream as $item
         (-1; .+1; [.,$item])
-;
-
-# Ties a finite stream into a circular one, or equivalently, the
-# infinite repetition of the original stream.  It is the identity on infinite
-# streams. Equivalent to the `repeat` builtin.
-#
-def repeat(stream): #:: a|(a->*b) => *b
-    def r: stream , r;
-    r
 ;
 
 # Returns the suffix of `stream` after the first `n` elements, or

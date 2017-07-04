@@ -101,7 +101,7 @@ def tobool: #:: a| => boolean
 ;
 
 def tobool(a): #:: (a) => boolean
-    if once(a)//false then true else false end
+    if first(a)//false then true else false end
 ;
 
 # Variation on `with_entries`

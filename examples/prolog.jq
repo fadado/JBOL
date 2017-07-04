@@ -4,7 +4,7 @@ include "fadado.github.io/prelude";
 import "fadado.github.io/set" as set;
 
 def query(generator):
-    success(generator)
+    isdot(generator)
 ;
 
 # Database

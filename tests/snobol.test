@@ -357,12 +357,8 @@ include "string/snobol"; A | LEN(3) | M
 "ABC"
 "ABC"
 
-include "prelude"; include "string/snobol"; U | POS(0) | deny(LEN(3)) | M
+include "prelude"; include "string/snobol"; U | POS(0) | not(LEN(3)) | M
 "ABC"
-#
-
-include "prelude"; include "string/snobol"; U | allow(LEN(3)) | M
-"AB"
 #
 
 include "string/snobol"; INTEGER(.) | true

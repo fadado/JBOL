@@ -9,6 +9,53 @@ module {
 };
 
 ########################################################################
+# Redefine some jq primitives
+########################################################################
+
+# Builtin `isempty`
+#def isempty(stream): #:: a|(a->*b) => boolean
+#    0 == ((label $exit | stream | 1 , break $exit)//0);
+
+# Inverse of `isempty`
+def isdot(stream): #:: a|(a->*b) => boolean
+    1 == ((label $exit | stream | 1 , break $exit)//0)
+;
+
+def not(s): #:: a|(a->*b) => ?a
+    if isempty(s) then . else empty end
+;
+
+def all(stream; predicate): #:: a|(a->*b;b->boolean) => boolean
+    isempty(stream | predicate and empty)
+;
+def all: #:: [boolean]| => boolean
+    all(.[]; .)
+;
+def all(predicate): #:: [a]|(a->boolean) => boolean
+    all(.[]; predicate)
+;
+
+def any(stream; predicate): #:: a|(a->*b;b->boolean) => boolean
+    isdot(stream | predicate or empty)
+;
+def any: #:: [boolean]| => boolean
+    any(.[]; .)
+;
+def any(predicate): #:: [a]|(a->boolean) => boolean
+    any(.[]; predicate)
+;
+
+# all(stream; .)
+def every(stream): #:: a|(a->*boolean) => boolean
+    isempty(stream | . and empty)
+;
+
+# any(stream; .)
+def some(stream): #:: a|(a->*boolean) => boolean
+    isdot(stream | . or empty)
+;
+
+########################################################################
 # Stolen from SNOBOL: ABORT (renamed `cancel`) and FENCE
 ########################################################################
 
@@ -33,12 +80,11 @@ def fence: #:: a| => a!
 # Predicate based conditionals
 ########################################################################
 
-# Builtin
+# Builtin `select`
 #def select(predicate): #:: a|(a->*boolean) => ?a
-#    if predicate then . else empty end
-#;
+#    if predicate then . else empty end;
 
-# Contrary of select
+# Complement of select
 def reject(predicate): #:: a|(a->*boolean) => ?a
     if predicate then empty else . end
 ;
@@ -59,55 +105,6 @@ def upto(predicate): #:: a|(a->boolean) => a!
 # Fence at predicate
 def till(predicate): #:: a|(a->boolean) => a!
     if predicate then (. , cancel) else empty end
-;
-
-########################################################################
-# Goal-directed evaluation
-########################################################################
-
-# Run once a computation.  By default `jq` tries all alternatives. This is the
-# reverse of  Icon (Icon `every` is the JQ default).
-#
-# "first" in stream terms
-def once(goal): #:: a|(a->*b) => ?b
-    label $exit | goal | . , break $exit
-;
-
-# "not isempty" in stream terms
-# "as bool": casts goal to boolean; boolean to goal: b//empty
-def success(goal): #:: a|(a->*b) => boolean
-#   (once(goal) | true)//false
-    (label $exit | goal | true , break $exit)//false
-;
-
-# "isempty" in stream terms
-# "as bool | not": casts goal to boolean 
-def failure(goal): #:: a|(a->*b) => boolean
-#   (once(goal) | true)//false | not
-    (label $exit | goal | true , break $exit)//false | not
-;
-
-# select input value if goal succeeds
-def allow(goal): #:: a|(a->*b) => ?a
-#   select(success(goal))
-#   if success(goal) then . else empty end
-    (. as $a | label $exit | goal | $a , break $exit)
-;
-
-# reject input value if goal succeeds
-def deny(goal): #:: a|(a->*b) => ?a
-#   select(failure(goal))
-    if failure(goal) then . else empty end
-;
-
-# All goals true?  Some goal true?
-def every(goal): #:: a|(a->*boolean) => boolean
-#   failure(goal | . and empty)
-    (label $exit | (goal | . and empty) | true , break $exit)//false | not
-;
-def some(goal): #:: a|(a->*boolean) => boolean
-#   success(goal | . or empty)
-    (label $exit | (goal | . or empty) | true , break $exit)//false
 ;
 
 ########################################################################
