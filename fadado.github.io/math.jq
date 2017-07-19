@@ -33,13 +33,13 @@ def max($a; $b): #:: (number;number) => number
     if $a > $b then $a else $b end
 ;
 
-#def gcd($m; $n): #:: (number;number) => number
-#    if $n == 0
-#    then $m
-#    else gcd($n; $m % $n)
-#    end
-#;
-#
+def gcd($m; $n): #:: (number;number) => number
+    if $n == 0
+    then $m
+    else gcd($n; $m % $n)
+    end
+;
+
 #def gcd($m; $n): #:: (number;number) => number
 #    def step:
 #        .x = .n      |
@@ -54,13 +54,13 @@ def max($a; $b): #:: (number;number) => number
 #    | (.m, break $pipe)
 #;
 
-def gcd($m; $n): #:: (number;number) => number
-    def step:
-        .n as $x     |
-        .n = .m % .n |
-        .m = $x;
-    {$m, $n} | until(.n == 0; step) | .m
-;
+#def gcd($m; $n): #:: (number;number) => number
+#    def step:
+#        .n as $x     |
+#        .n = .m % .n |
+#        .m = $x;
+#    {$m, $n} | until(.n == 0; step) | .m
+#;
 
 def sign($n): #:: (number) => number
     $n|if isnan or type!="number" then nan

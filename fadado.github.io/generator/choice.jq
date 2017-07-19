@@ -21,7 +21,7 @@ def _pick: #:: [a]| => [a]
     .[0:1]
 ;
 
-# What's _left after picking one element
+# What's left after picking one element
 def _left: #:: [a]| => [a]
     .[1:]
 ;
@@ -31,7 +31,7 @@ def _pick($i): #:: [a]|(number) => [a]
     .[$i:$i+1]
 ;
 
-# What's _left after picking the element at $i
+# What's left after picking the element at $i
 def _left($i): #:: [a]|(number) => [a]
     del(.[$i])
 ;
@@ -43,10 +43,14 @@ def _left($i): #:: [a]|(number) => [a]
 # Subsets with one element removed (unsorted output)
 #
 def subset1_u: #:: [a]| => *[a]
-    select(length != 0)
-    # either what's _left after picking one,
-    # or this one with what's _left with one removed
-    | _left , _pick + (_left|subset1_u)
+    if length == 0  # none to pick?
+    then empty      # then fail
+    else
+        # either what's left after picking one,
+        _left
+        # or this one with what's left with one removed
+        , _pick + (_left|subset1_u)
+    end
 ;
 
 # Size k subsets
@@ -56,11 +60,12 @@ def subset($k): #:: [a]|(number) => *[a]
     def _subset($k):
         if $k == 0
         then []
+        elif length == 0 # none to pick?
+        then empty       # then fail (no results for k > n)
         else
-            select(length > 0)  # no results for k > n
-            # either _pick one and add to what's _left subsets
-            | _pick + (_left|_subset($k-1))
-            # or what's _left combined
+            # either _pick one and add to what's left subsets
+            _pick + (_left|_subset($k-1))
+            # or what's left combined
             , (_left|_subset($k))
         end
     ;
@@ -69,21 +74,20 @@ def subset($k): #:: [a]|(number) => *[a]
 ;
 
 # All subsets (powerset)
-
+#
 def subset: #:: [a]| => *[a]
-    range(0; 1+length) as $n
-    | subset($n)
+    subset(range(0; 1+length))
 ;
 
-# All subsets (unsorted output)
+# All subsets (powerset), unsorted output
 #
 def subset_u: #:: [a]| => *[a]
     if length == 0
     then []
     else
-        # either what's _left after picking one,
+        # either what's left after picking one,
         (_left|subset_u)
-        # or this one added to what's _left subsets
+        # or this one added to what's left subsets
         , _pick + (_left|subset_u)
     end
 ;
@@ -99,11 +103,12 @@ def mulset($k): #:: [a]|(number) => *[a]
     def _mulset($k):
         if $k == 0
         then []
+        elif length == 0 # none to pick?
+        then empty       # then fail
         else
-            select(length > 0)
             # either _pick one and add to other multisets minus one
-            | _pick + _mulset($k-1)
-            # or what's _left multisets
+            _pick + _mulset($k-1)
+            # or what's left multisets
             , (_left|_mulset($k))
         end
     ;
@@ -129,7 +134,7 @@ def permutation: #:: [a]| => *[a]
     if length == 0
     then []
     else
-        # choose one and add to what's _left permuted
+        # choose one and add to what's left permuted
         choose as $i
         | _pick($i) + (_left($i)|permutation)
     end
@@ -138,8 +143,7 @@ def permutation: #:: [a]| => *[a]
 # All sizes permutations
 #
 def subseq: #:: [a]| => *[a]
-    range(0; 1+length) as $k
-    | subset($k)
+    subset(range(0; 1+length))
     | permutation
 ;
 
@@ -161,8 +165,8 @@ def product: #:: [[a]]| => *[a]
     if length == 0
     then []
     else
-        .[0][] as $x
-        | (.[1:]|product) as $y
+        first[] as $x
+        | (_left|product) as $y
         | [$x] + $y
     end
 ;
@@ -173,28 +177,31 @@ def product: #:: [[a]]| => *[a]
 #
 def mulseq: #:: [a]| => *[a]
     # ordered version for:
-    # def star(alphabet): "", (alphabet/"")[]+star(alphabet);
-    #
-    def choose: .[]; #:: [a]| => *a
-    def _mulseq: #:: [a]| => *[a]
-        # either the void sequence
-        []
-        # or add a sequence and an element from the set
-        , _mulseq as $seq
+    #   def k: [], (.[]|[.]) + k;
+    def choose: .[];
+    def _mulseq:
+        [] # either the void sequence
+        ,  # or add a sequence and an element from the set
+        _mulseq as $seq
         | choose as $element
         | $seq|.[length]=$element
     ;
-    _mulseq
+    if length == 0 then . else _mulseq end
 ;
-def sstar(alphabet): "", (alphabet/"")[]+sstar(alphabet);
-def astar(alphabet): [], ((alphabet/"")[] as $a | [$a])+astar(alphabet);
-#def astar(alphabet): [], astar(alphabet) as $a | (alphabet/"")[] as $s | [$s]+$a;
+
+# Unordered stream of words over an alphabet
+#
+def kstar: #:: string| => +string
+    def k: "", .[] + k;
+    # . as $alphabet
+    if length == 0 then . else (./"")|k end
+;
 
 # Permutations (variations) with repetition
 # Words over an alphabet
 #
 def mulseq($k): #:: [a]|(number) => *[a]
-    select(0 <= $k) # not defined for all $k
+    select(0 <= $k) # not defined for negative $k
     | . as $set
     | [range($k) | $set]
     | product
@@ -217,7 +224,7 @@ def derangement: #:: [a]| => *[a]
         then []
         else
             # choose one valid for this "column"
-            # and add to what's _left after removing this one deranged
+            # and add to what's left after removing this one deranged
             choose($i) as [$j, $x]
             | [$x] + (_left($j)|_derange($i+1))
         end
@@ -273,7 +280,7 @@ def disposition: #:: [a]| => *[a]
 #
 def shuffle($seed): #:: [a]|(number) => [a]
     # Swaps two array positions
-    def swap($i; $j): #:: [a]|(number;number) => [a]
+    def swap($i; $j):
         when($i != $j;
              .[$i] as $t | .[$i]=.[$j] | .[$j]=$t)
     ;
@@ -305,12 +312,15 @@ def take($k; $seed): #:: [a]|(number;number) => *a
     #     }
     def _take($a; $r; $m):
         def t($n; $k):
-            ($m-$n) as $i
-            | select($n >= 1)
-            | if $r[$i] < ($k/$n)
-              then $a[$i] , t($n-1; $k-1)
-              else t($n-1; $k)
-              end
+            if $n < 1
+            then emtpy
+            else
+                ($m-$n) as $i
+                | if $r[$i] < ($k/$n)
+                then $a[$i] , t($n-1; $k-1)
+                else t($n-1; $k)
+                end
+            end
         ;
         t($m; $k)
     ;
