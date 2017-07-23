@@ -160,10 +160,16 @@ def iterate(filter): #:: a|(a->a) => *a
     def r: . , (filter|r);
     r
 ;
+def iterate($n; filter): #:: a|(number;a->a) => *a
+    limit($n; iterate(filter))
+;
 
 # f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
 def iterate1(filter): #:: a|(a->a) => *a
     filter | iterate(filter)
+;
+def iterate1($n; filter): #:: a|(number;a->a) => *a
+    limit($n; iterate1(filter))
 ;
 
 def tabulate($start; filter): #:: (number;number->a) => *a
@@ -185,6 +191,31 @@ def unfold(filter; $seed): #:: (a->[b,a];a) => *b
 
 def unfold(filter): #:: a|(a->[b,a]) => *b
     unfold(filter; .)
+;
+
+########################################################################
+# Kleene closures
+########################################################################
+
+# Similar to `recurse` and `iterate` but accepting _relations_!
+
+# f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
+def kplus(filter): #:: a|(a->+a) => *a
+    def r:
+        if length == 0
+        then empty
+        else
+            .[]
+            ,
+            ([.[] | filter] | r)
+        end
+    ;
+    [filter] | r
+;
+
+# f⁰ f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
+def kstar(filter): #:: a|(a->+a) => *a
+    . , kplus(filter)
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq
