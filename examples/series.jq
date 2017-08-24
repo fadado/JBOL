@@ -9,22 +9,24 @@ def series($n):
         # . is the serie beeing constructed
         if $notes == []
         then .
-        elif length==0 then
-            $notes[] as $note # choose any note
-            | [$note]|_series($notes-[$note]; [])
         else
-            ($notes-.)[] as $note # choose notes not used
-            | [$note-.[-1]|length] as $i
-            | reject($intervals|contains($i)) # interval is in use?
-            | .[length]=$note
-            | _series($notes-[$note]; $intervals+$i)
+            $notes[] as $note | # foreach available note
+            [$note - .[-1] | length] as $i | # compute interval to last note in serie
+            select($intervals | contains($i) | not) | # retract if interval is in use
+            .[length] = $note | # extend current serie with new note
+            _series($notes-[$note]; $intervals+$i) # recurse with one note more added to the serie
         end
     ;
     #
-    [] as $serie |
-    $serie|_series([range($n)]; null)
+    [range($n)] as $notes   | # set of available notes (not yet in use)
+    [] as $intervals        | # set of intervals used (between notes in constructed serie)
+    $notes[] as $note       | # for each note...
+    [$note] as $serie       | # serie: a sequence of notes
+    $serie | _series($notes - [$note]; $intervals)
 ;
 
-series(12)
+def series: series(12);
+
+series
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

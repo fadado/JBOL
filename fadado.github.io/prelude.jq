@@ -21,7 +21,7 @@ def isdot(stream): #:: a|(a->*b) => boolean
     1 == ((label $exit | stream | 1 , break $exit)//0)
 ;
 
-def not(s): #:: a|(a->*b) => ?a
+def deny(s): #:: a|(a->*b) => ?a
     if isempty(s) then . else empty end
 ;
 
