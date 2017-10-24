@@ -40,56 +40,89 @@ def _left($i): #:: [a]|(number) => [a]
 # Sub-sets
 ########################################################################
 
-# Subsets with one element removed (unsorted output)
+# Size (n-1) subsets
 #
-def subset1_u: #:: [a]| => *[a]
+def subsets_1: #:: [a]| => *[a]
     if length == 0  # none to pick?
     then empty      # then fail
     else
-        # either what's left after picking one,
-        _left
-        # or this one with what's left with one removed
-        , _pick + (_left|subset1_u)
+        # either one picked with what's left with one removed
+        _pick + (_left|subsets_1)
+        # or  what's left after picking one
+        , _left
     end
 ;
 
 # Size k subsets
 # Combinations
 #
-def subset($k): #:: [a]|(number) => *[a]
-    def _subset($k):
+def subsets($k): #:: [a]|(number) => *[a]
+    def _subsets($k):
         if $k == 0
         then []
         elif length == 0 # none to pick?
         then empty       # then fail (no results for k > n)
         else
             # either _pick one and add to what's left subsets
-            _pick + (_left|_subset($k-1))
+            _pick + (_left|_subsets($k-1))
             # or what's left combined
-            , (_left|_subset($k))
+            , (_left|_subsets($k))
         end
     ;
     select(0 <= $k and $k <= length) # not defined for all $k
-    | _subset($k)
+    | _subsets($k)
 ;
 
-# All subsets (powerset)
+# All subsets
 #
-def subset: #:: [a]| => *[a]
-    subset(range(0; 1+length))
+def powerset: #:: [a]| => *[a]
+    subsets(range(0; 1+length))
 ;
 
-# All subsets (powerset), unsorted output
+# All subsets, unstable output
 #
-def subset_u: #:: [a]| => *[a]
+def powerset_u: #:: [a]| => *[a]
     if length == 0
     then []
     else
         # either what's left after picking one,
-        (_left|subset_u)
+        (_left|powerset_u)
         # or this one added to what's left subsets
-        , _pick + (_left|subset_u)
+        , _pick + (_left|powerset_u)
     end
+;
+
+########################################################################
+# Sub-sequences
+########################################################################
+
+# Permutations
+#
+def permutations: #:: [a]| => *[a]
+    def choose: range(0; length);
+    #
+    if length == 0
+    then []
+    else
+        # choose one and add to what's left permuted
+        choose as $i
+        | _pick($i) + (_left($i)|permutations)
+    end
+;
+
+# Partial permutations (unstable output)
+# Variations
+#
+def permutations_u($k): #:: [a]| => *[a]
+    select(0 <= $k and $k <= length) # not defined for all $k
+    | subsets($k)
+    | permutations
+;
+
+# All sizes permutations (unstable output)
+#
+def subseq_u: #:: [a]| => *[a]
+    powerset | permutations
 ;
 
 ########################################################################
@@ -97,7 +130,7 @@ def subset_u: #:: [a]| => *[a]
 ########################################################################
 
 # Size k multisets
-# Combinations with repetition
+# Combinations with reposition
 #
 def mulset($k): #:: [a]|(number) => *[a]
     def _mulset($k):
@@ -123,39 +156,6 @@ def mulset: #:: [a]| => *[a]
 ;
 
 ########################################################################
-# Sub-sequences
-########################################################################
-
-# Permutations
-#
-def permutation: #:: [a]| => *[a]
-    def choose: range(0; length);
-    #
-    if length == 0
-    then []
-    else
-        # choose one and add to what's left permuted
-        choose as $i
-        | _pick($i) + (_left($i)|permutation)
-    end
-;
-
-# All sizes permutations
-#
-def subseq: #:: [a]| => *[a]
-    subset(range(0; 1+length))
-    | permutation
-;
-
-# Partial permutations
-#
-def subseq($k): #:: [a]| => *[a]
-    select(0 <= $k and $k <= length) # not defined for all $k
-    | subset($k)
-    | permutation
-;
-
-########################################################################
 # Multi-sequences
 ########################################################################
 
@@ -171,11 +171,21 @@ def product: #:: [[a]]| => *[a]
     end
 ;
 
+# Permutations (variations) with reposition
+# Words over an alphabet
+#
+def words($k): #:: [a]|(number) => *[a]
+    select(0 <= $k) # not defined for negative $k
+    | . as $set
+    | [range($k) | $set]
+    | product
+;
+
 # Infinite tuples from a set
 # Infinite words over an alphabet
-# All sizes permutations (variations) with repetition
+# All sizes permutations (variations) with reposition
 #
-def mulseq: #:: [a]| => *[a]
+def words: #:: [a]| => *[a]
     # ordered version for:
     #   def k: [], (.[]|[.]) + k;
     def choose: .[];
@@ -187,24 +197,6 @@ def mulseq: #:: [a]| => *[a]
         | $seq|.[length]=$element
     ;
     if length == 0 then . else _mulseq end
-;
-
-# Unordered stream of words over an alphabet
-#
-def kstar: #:: string| => +string
-    def k: "", .[] + k;
-    # . as $alphabet
-    if length == 0 then . else (./"")|k end
-;
-
-# Permutations (variations) with repetition
-# Words over an alphabet
-#
-def mulseq($k): #:: [a]|(number) => *[a]
-    select(0 <= $k) # not defined for negative $k
-    | . as $set
-    | [range($k) | $set]
-    | product
 ;
 
 ########################################################################
@@ -237,37 +229,36 @@ def derangement: #:: [a]| => *[a]
 
 # Circular permutations (necklaces)
 #
-def circle_u: #:: [a]| => *[a]
-    # expect sorted input
+def cicles: #:: [a]| => *[a]
     .[-1] as $last
-    | .[0:-1]|permutation
+    | .[0:-1]|permutations
     | .[length]=$last
 ;
 
 # Sorted necklaces (naïve implementation)
 #
-def circle: #:: [a]| => *[a]
+def cicles_canonical: #:: [a]| => *[a]
     def rotate($min): #:: [a]| => [a]
         when(.[0] != $min;
              .[-1:]+.[0:-1] | rotate($min))
     ;
     # expect sorted input
     .[0] as $first
-    | [circle_u | rotate($first)]
+    | [cicles | rotate($first)]
     | sort[]
 ;
 
 # Multi-set permutations (naïve implementation)
 #
 def arrangement: #:: [a]| => *[a]
-    [permutation]
+    [permutations]
     | unique[]
 ;
 
 # Multi-set combinations (naïve implementation)
 #
 def disposition: #:: [a]| => *[a]
-    [subset]
+    [powerset]
     | unique
     | sort_by(length)[]
 ;

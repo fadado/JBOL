@@ -268,4 +268,14 @@ def join($separator): #:: [string]|(string) => string
         (null; sep + $s)//""
 ;
 
+########################################################################
+
+# Unordered stream of words over an alphabet
+#
+def kstar: #:: string| => +string
+    def k: "", .[] + k;
+    # . as $alphabet
+    if length == 0 then . else (./"")|k end
+;
+
 # vim:ai:sw=4:ts=4:et:syntax=jq
