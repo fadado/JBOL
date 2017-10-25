@@ -85,10 +85,10 @@ def powerset_u: #:: [a]| => *[a]
     if length == 0
     then []
     else
-        # either what's left after picking one,
-        (_left|powerset_u)
         # or this one added to what's left subsets
-        , _pick + (_left|powerset_u)
+        _pick + (_left|powerset_u)
+        # either what's left after picking one,
+        , (_left|powerset_u)
     end
 ;
 
@@ -110,19 +110,31 @@ def permutations: #:: [a]| => *[a]
     end
 ;
 
-# Partial permutations (unstable output)
+# Partial permutations
 # Variations
 #
-def permutations_u($k): #:: [a]| => *[a]
+def permutations($k): #:: [a]|(number) => *[a]
+    def _perm($k):
+        def choose: range(0; length);
+        #
+        if $k == 0
+        then []
+        elif length == 0 # none to pick?
+        then empty       # then fail (no results for k > n)
+        else
+            # choose one and add to what's left permuted
+            choose as $i
+            | _pick($i) + (_left($i)|_perm($k-1))
+        end
+    ;
     select(0 <= $k and $k <= length) # not defined for all $k
-    | subsets($k)
-    | permutations
+    | _perm($k)
 ;
 
-# All sizes permutations (unstable output)
+# All sizes permutations
 #
-def subseq_u: #:: [a]| => *[a]
-    powerset | permutations
+def subseqs: #:: [a]| => *[a]
+    permutations(range(0; 1+length))
 ;
 
 ########################################################################
@@ -132,7 +144,7 @@ def subseq_u: #:: [a]| => *[a]
 # Size k multisets
 # Combinations with reposition
 #
-def mulset($k): #:: [a]|(number) => *[a]
+def mulsets($k): #:: [a]|(number) => *[a]
     def _mulset($k):
         if $k == 0
         then []
@@ -151,8 +163,8 @@ def mulset($k): #:: [a]|(number) => *[a]
 
 # Infinite multisets from a set
 #
-def mulset: #:: [a]| => *[a]
-    mulset(range(0; infinite))
+def mulsets: #:: [a]| => *[a]
+    mulsets(range(0; infinite))
 ;
 
 ########################################################################
@@ -165,14 +177,14 @@ def product: #:: [[a]]| => *[a]
     if length == 0
     then []
     else
-        first[] as $x
-        | (_left|product) as $y
+        .[0][] as $x
+        | (.[1:]|product) as $y
         | [$x] + $y
     end
 ;
 
 # Permutations (variations) with reposition
-# Words over an alphabet
+# Size k words over an alphabet
 #
 def words($k): #:: [a]|(number) => *[a]
     select(0 <= $k) # not defined for negative $k
@@ -196,7 +208,9 @@ def words: #:: [a]| => *[a]
         | choose as $element
         | $seq|.[length]=$element
     ;
-    if length == 0 then . else _mulseq end
+    if length == 0
+    then []
+    else _mulseq end
 ;
 
 ########################################################################
@@ -250,24 +264,24 @@ def cicles_canonical: #:: [a]| => *[a]
 
 # Multi-set permutations (naïve implementation)
 #
-def arrangement: #:: [a]| => *[a]
-    [permutations]
-    | unique[]
-;
+#def arrangement: #:: [a]| => *[a]
+#    [permutations]
+#    | unique[]
+#;
 
 # Multi-set combinations (naïve implementation)
 #
-def disposition: #:: [a]| => *[a]
-    [powerset]
-    | unique
-    | sort_by(length)[]
-;
+#def disposition: #:: [a]| => *[a]
+#    [powerset]
+#    | unique
+#    | sort_by(length)[]
+#;
 
 ########################################################################
 # Random choice
 ########################################################################
 
-# Shuffles an array contents.
+# Shuffle array contents.
 #
 def shuffle($seed): #:: [a]|(number) => [a]
     # Swaps two array positions
