@@ -119,8 +119,6 @@ def permutations($k): #:: [a]|(number) => *[a]
         #
         if $k == 0
         then []
-        elif length == 0 # none to pick?
-        then empty       # then fail (no results for k > n)
         else
             # choose one and add to what's left permuted
             choose as $i
@@ -201,21 +199,29 @@ def words: #:: [a]| => *[a]
     # ordered version for:
     #   def k: [], (.[]|[.]) + k;
     def choose: .[];
-    def _mulseq:
+    def _words:
         [] # either the void sequence
         ,  # or add a sequence and an element from the set
-        _mulseq as $seq
+        _words as $seq
         | choose as $element
         | $seq|.[length]=$element
     ;
     if length == 0
     then []
-    else _mulseq end
+    else _words end
 ;
 
 ########################################################################
 # Constricted permutations
 ########################################################################
+
+# Circular permutations (necklaces)
+#
+def cicles: #:: [a]| => *[a]
+    _pick as $first
+    | _left|permutations
+    | $first + .
+;
 
 # Derangements
 #
@@ -240,42 +246,6 @@ def derangement: #:: [a]| => *[a]
     | [range(length) as $i | [$i,.[$i]]]
     | _derange(0)
 ;
-
-# Circular permutations (necklaces)
-#
-def cicles: #:: [a]| => *[a]
-    .[-1] as $last
-    | .[0:-1]|permutations
-    | .[length]=$last
-;
-
-# Sorted necklaces (naïve implementation)
-#
-def cicles_canonical: #:: [a]| => *[a]
-    def rotate($min): #:: [a]| => [a]
-        when(.[0] != $min;
-             .[-1:]+.[0:-1] | rotate($min))
-    ;
-    # expect sorted input
-    .[0] as $first
-    | [cicles | rotate($first)]
-    | sort[]
-;
-
-# Multi-set permutations (naïve implementation)
-#
-#def arrangement: #:: [a]| => *[a]
-#    [permutations]
-#    | unique[]
-#;
-
-# Multi-set combinations (naïve implementation)
-#
-#def disposition: #:: [a]| => *[a]
-#    [powerset]
-#    | unique
-#    | sort_by(length)[]
-#;
 
 ########################################################################
 # Random choice
@@ -338,5 +308,21 @@ def take($k; $seed): #:: [a]|(number;number) => *a
 def take($k): #:: [a]|(number) => *a
     take($k; chance::randomize)    
 ;
+
+########################################################################
+# Multi-set permutations (naïve implementation)
+#
+#def arrangement: #:: [a]| => *[a]
+#    [permutations]
+#    | unique[]
+#;
+
+# Multi-set combinations (naïve implementation)
+#
+#def disposition: #:: [a]| => *[a]
+#    [powerset]
+#    | unique
+#    | sort_by(length)[]
+#;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

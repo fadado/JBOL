@@ -63,7 +63,7 @@ include "generator/choice"; [derangement]
 [1,2,3]
 [[2,3,1],[3,1,2]]
 
-include "generator/choice"; [cicles_canonical]
+include "generator/choice"; [cicles]
 [1,2,3]
 [[1,2,3],[1,3,2]]
 
