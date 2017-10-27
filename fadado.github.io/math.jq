@@ -25,12 +25,12 @@ def odd($n): #:: (number) => boolean
     $n%2 == 1
 ;
 
-def min($a; $b): #:: (number;number) => number
-    if $a < $b then $a else $b end
+def min($m; $n): #:: (number;number) => number
+    if $m < $n then $m else $n end
 ;
 
-def max($a; $b): #:: (number;number) => number
-    if $a > $b then $a else $b end
+def max($m; $n): #:: (number;number) => number
+    if $m > $n then $m else $n end
 ;
 
 def gcd($m; $n): #:: (number;number) => number
@@ -38,6 +38,11 @@ def gcd($m; $n): #:: (number;number) => number
     then $m
     else gcd($n; $m % $n)
     end
+;
+
+def mod($m; $n): #:: (number;number) => number
+    ($m % $n)
+    | when(. < 0; . + $n)
 ;
 
 #def gcd($m; $n): #:: (number;number) => number

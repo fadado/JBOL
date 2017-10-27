@@ -69,6 +69,18 @@ include "math"; abs(-3.3)
 null
 3.3
 
+include "math"; mod(12;6)
+null
+0
+
+include "math"; mod(12;5)
+null
+2
+
+include "math"; mod(12;11)
+null
+1
+
 # reductions ###########################################################
 
 include "math"; sum(range(.)) == 0
