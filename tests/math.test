@@ -81,6 +81,10 @@ include "math"; mod(12;11)
 null
 1
 
+include "math"; div(7;2)
+null
+3
+
 # reductions ###########################################################
 
 include "math"; sum(range(.)) == 0

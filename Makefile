@@ -90,6 +90,7 @@ Logs := $(subst tests/,$(LogDir)/,$(Tests:.test=.log))
 LIB=fadado.github.io
 STR=$(LIB)/string
 GEN=$(LIB)/generator
+MUSIC=$(LIB)/music
 
 ########################################################################
 # Rules
@@ -131,6 +132,9 @@ $(LogDir)/regexp.log: $(STR)/regexp.jq $(LIB)/prelude.jq $(STR)/string.jq
 $(LogDir)/string.log: $(STR)/string.jq $(LIB)/prelude.jq $(STR)/ascii.jq $(STR)/ascii.json
 $(LogDir)/snobol.log: $(STR)/snobol.jq $(LIB)/prelude.jq  $(STR)/string.jq
 $(LogDir)/url.log: $(STR)/url.jq $(LIB)/math.jq
+
+# Music tests
+$(LogDir)/music.log: $(MUSIC)/pitch.jq $(LIB)/prelude.jq $(LIB)/math.jq
 
 ########################################################################
 # Utilities

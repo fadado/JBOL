@@ -1,0 +1,25 @@
+#########################################################################
+# Music
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+#########################################################################
+
+#########################################################################
+# pitch is a module to debug!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+include "music/pitch"; invert(3)
+60
+63
+
+include "music/pitch"; transpose(-3)
+60
+65
+
+include "music/pitch"; format
+60
+"C3"
+
+#########################################################################
+
+# vim:ai:sw=2:ts=2:et:syntax=jq

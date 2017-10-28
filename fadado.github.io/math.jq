@@ -45,6 +45,10 @@ def mod($m; $n): #:: (number;number) => number
     | when(. < 0; . + $n)
 ;
 
+def div($m; $n): #:: (number;number) => number
+    ($m / $n) | floor
+;
+
 #def gcd($m; $n): #:: (number;number) => number
 #    def step:
 #        .x = .n      |
