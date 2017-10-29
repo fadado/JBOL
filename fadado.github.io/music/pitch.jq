@@ -1,6 +1,6 @@
 module {
-    name: "math",
-    description: "Miscelaneous mathematical functions",
+    name: "music/pitch",
+    description: "Pitch functions",
     namespace: "fadado.github.io",
     author: {
         name: "Joan Josep Ordinas Rosa",
@@ -14,18 +14,18 @@ include "fadado.github.io/math";
 ########################################################################
 # Pitch representation (simple number: 0..127)
 
-def invert($interval): #:: number|(number) => number
-    #. as $pitch
+def pitch_invert($interval): #:: number|(number) => number
+#   . as $pitch
     mod(. + $interval; 128)
 ;
 
-def transpose($interval): #:: number|(number) => number
-    #. as $pitch
+def pitch_transpose($interval): #:: number|(number) => number
+#   . as $pitch
     mod($interval - .; 128)
 ;
 
-def format: #:: number| => string
-    #. as $pitch
+def pitch_format: #:: number| => string
+#   . as $pitch
 	["C","Cs","D","Ds","E","F","Fs","G","Gs","A","As","B"] as $names
     | (div(.; 12) - 2) as $octave   # MIDI octave
     | mod(.; 12) as $note
