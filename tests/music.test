@@ -6,7 +6,7 @@
 #########################################################################
 
 #########################################################################
-# pitch class
+# pitch-class
 
 include "music/pitch-class"; [range(60;72) | pitch_class]
 null
@@ -36,23 +36,35 @@ include "music/pitch-class"; member([range(6)])
 7
 false
 
-# Diatonic pitch classes are in chromatic set
+# Diatonic pitch-classes are in chromatic set
 include "music/pitch-class"; [.[] | member([range(12)])] | all
 [0,2,4,5,7,9,11]
 true
 
-# Sharp pitch classes are not in diatonic set
+# Sharp pitch-classes are not in diatonic set
 include "music/pitch-class"; [.[] | member([0,2,4,5,7,9,11]) | not] | all
 [1,3,6,8,10]
 true
 
-include "music/pitch-class"; [range(60;72) | pitch_class | format]
+include "music/pitch-class"; [range(60;72) | pitch_class | representative]
 null
 ["0","1","2","3","4","5","6","7","8","9","t","e"]
 
 include "music/pitch-class"; [.[] | pitch_class]
 ["0","1","2","3","4","5","6","7","8","9","t","e"]
 [0,1,2,3,4,5,6,7,8,9,10,11]
+
+include "music/pitch-class"; name
+0
+"C"
+
+include "music/pitch-class"; name
+7
+"G"
+
+include "music/pitch-class"; [range(60;72) | pitch_class | name]
+null
+["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"]
 
 include "music/pitch-class"; interval(7)
 0
@@ -61,5 +73,44 @@ include "music/pitch-class"; interval(7)
 include "music/pitch-class"; interval_class(7)
 0
 5
+
+#########################################################################
+# pitch-class sets
+
+include "music/pitch-class-set"; holds(7)
+[0,1,2,3,4,5,6,7,8,9,10,11]
+true
+
+include "music/pitch-class-set"; holds(7)
+[0,1,2,11]
+false
+
+include "music/pitch-class-set"; complement
+[0,2,4,5,7,9,11]
+[1,3,6,8,10]
+
+include "music/pitch-class-set"; union([1,3,6,8,10])
+[0,2,4,5,7,9,11]
+[0,1,2,3,4,5,6,7,8,9,10,11]
+
+include "music/pitch-class-set"; intersection([1,3,6,8,10])
+[0,2,4,5,7,9,11]
+[]
+
+include "music/pitch-class-set"; intersection([1,3,6,8,10])
+[0,1,2,3,4,5,6,7,8,9,10,11]
+[1,3,6,8,10]
+
+include "music/pitch-class-set"; subset([0,1,2,3,4,5,6,7,8,9,10,11])
+[1,3,6,8,10]
+true
+
+include "music/pitch-class-set"; subset([1,2,3,4])
+[1,3,5]
+false
+
+include "music/pitch-class-set"; transpositions
+[0,2,4,5,7,9,11]
+12
 
 # vim:ai:sw=2:ts=2:et:syntax=jq
