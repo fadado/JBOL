@@ -134,7 +134,7 @@ $(LogDir)/snobol.log: $(STR)/snobol.jq $(LIB)/prelude.jq  $(STR)/string.jq
 $(LogDir)/url.log: $(STR)/url.jq $(LIB)/math.jq
 
 # Music tests
-$(LogDir)/music.log: $(MUSIC)/pitch.jq $(MUSIC)/pclass.jq $(LIB)/prelude.jq $(LIB)/math.jq
+$(LogDir)/music.log: $(MUSIC)/pitch-class.jq $(LIB)/prelude.jq $(LIB)/math.jq
 
 ########################################################################
 # Utilities
