@@ -42,6 +42,14 @@ include "string/regexp"; match("(?<p>[abc])";"g")|tomap
 "-a-"
 {"&":"a","`":"-","'":"-","p":"a"}
 
+include "string/regexp"; match("^(?<n>[A-G])(?<a>[#b])?(?<o>[0-9]|10)?$";"")|tomap|{n,a,o}
+"C#3"
+{"n":"C","a":"#","o":"3"}
+
+include "string/regexp"; match("^(?<n>[A-G])(?<a>[#b])?(?<o>[0-9]|10)$";"")|tomap|{n,a,o}
+"C3"
+{"n":"C","a":null,"o":"3"}
+
 # split
 include "string/regexp"; [split]
 "a   b  \tc"

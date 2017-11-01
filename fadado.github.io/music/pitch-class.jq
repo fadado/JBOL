@@ -13,18 +13,35 @@ import "fadado.github.io/math" as math;
 
 ########################################################################
 # pitch-class: (0..11)
+# pitch: 0..127 (MIDI pitch)
+#        [0-9te] (pitch-class representative)
+#        [A-G][#b]?([0-9]|10) (note name with octave)
 
 # Produces the pitch-class corresponding to a pitch
 def pitch_class: #:: <number^string>| => number
 #   . as $pitch
     if type == "number" then
-        math::mod(.; 12)    # pitch: 0..128
+        math::mod(.; 12)    # . is a pitch in the range 0..127
     elif type == "string" then
-        if .=="t" or .=="T" or .=="a" or .=="A"     # then
-        then 10
-        elif .=="e" or .=="E" or .=="b" or .=="B"   # eleven
-        then 11
-        else tonumber       # 0..9
+        if test("^[0-9te]$")# representative
+        then
+            if .=="t"       # ten
+            then 10
+            elif .=="e"     # eleven
+            then 11
+            else tonumber   # 0..9
+            end
+        elif test("^([A-G])([#b])?([0-9]|10)$") # note name with octave
+        then
+            {"C":0,"D":2,"E":4,"F":5,"G":7,"A":9,"B":11}[.[0:1]] as $n
+            | .[1:2] as $a
+            | if $a=="#"
+              then math::mod($n+1; 12) # sharp
+              elif $a=="b"
+              then math::mod($n-1; 12) # flat
+              else $n end
+        else
+            "Malformed pitch: \(.)" | error
         end
     else type | "Type error: expected number or string, not \(.)" | error
     end
@@ -36,7 +53,11 @@ def pitch_class($pitch): #::(a) => number
 # Inverts a pitch-class
 def invert($interval): #:: number|(number) => number
 #   . as $pitch_class
-    math::mod(0-. + $interval; 12)
+    math::mod(-. + $interval; 12)
+;
+def invert: #:: number| => number
+#   . as $pitch_class
+    12 - .
 ;
 
 # Trasposes a pitch-class
@@ -52,7 +73,7 @@ def name: #:: number| => number
 ;
 
 # Format a pitch-class as a string
-def representative: #:: number| => string
+def format: #:: number| => string
 #   . as $pitch_class
     ["0","1","2","3","4","5","6","7","8","9","t","e"][.]
 ;
@@ -66,22 +87,23 @@ def member($pcset): #:: number|([number]) => number
 ########################################################################
 # Intervals
 
-# Produces the pitch-class interval (0..11) between two pitch-classes
-def interval($pc): #:: number|(number) => number
+# Produces the specific interval (0..11) between two pitch-classes
+def specific_interval($pclass): #:: number|(number) => number
 #   . as $pitch_class
-    math::mod($pc - .; 12)
+    math::mod($pclass - .; 12)
 ;
 
-# Produces the interval-class (0..6) for a pitch-class interval
+# Produces the interval-class (0..6) for specific interval
 def interval_class: #:: number| => number
-#   . as $interval
+#   . as $specific_interval
     when(. > 6; # > tritone?
         12 - .)
 ;
 
-# Produces the interval-class (0..6) between two pitch-classes
-def interval_class($pc): #:: number|(number) => number
-    interval($pc) | interval_class
+# Produces the specific interval (0..6) between two pitch-classes
+def interval_class($pclass): #:: number|(number) => number
+#   . as $pitch_class
+    specific_interval($pclass) | interval_class
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

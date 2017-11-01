@@ -10,15 +10,16 @@ module {
 
 include "fadado.github.io/prelude";
 import "fadado.github.io/math" as math;
+import "fadado.github.io/string" as str;
 import "fadado.github.io/music/pitch-class" as pc;
 
 ########################################################################
 # pitch-class set operations
 
 # pcs ∋ pc
-def holds($pitch_class): #:: [number]|(number) => number
-#   . as $pitch_class_set
-    contains([$pitch_class])
+def holds($pclass): #:: [number]|(number) => number
+#   . as $pcset
+    contains([$pclass])
 ;
 
 def complement: #:: [number]| => [number]
@@ -64,6 +65,10 @@ def invert($interval): #:: [number]|(number) => [number]
     # map(pc::invert($interval))
     [ .[] | pc::invert($interval) ]
 ;
+def invert: #:: [number]| => [number]
+    # map(pc::invert)
+    [ .[] | pc::invert ]
+;
 
 # Produces a trasposed pitch-class set.
 def transpose($interval): #:: [number]|(number) => [number]
@@ -76,5 +81,16 @@ def transpositions: #:: [number]| => number
 #   . as $pcset
     12 / math::gcd(12; length)
 ;
+
+# Format a pitch-class set as a string with , as delimiter
+def format: #:: number| => string
+#   . as $pcset
+    [.[] | pc::format] | str::join(",") | "<\(.)>"
+;
+
+# Useful prmitives:
+#   + reverse: (retrogradation)
+#   + index($pc): (pclass position)
+#   + map(pc::format) | str::join(""): to string
 
 # vim:ai:sw=4:ts=4:et:syntax=jq
