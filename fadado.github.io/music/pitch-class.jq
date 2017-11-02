@@ -13,12 +13,12 @@ import "fadado.github.io/math" as math;
 
 ########################################################################
 # pitch-class: (0..11)
-# pitch: 0..127 (MIDI pitch)
-#        [0-9te] (pitch-class representative)
-#        [A-G][#b]?([0-9]|10) (note name with octave)
 
 # Produces the pitch-class corresponding to a pitch
 def pitch_class: #:: <number^string>| => number
+# pitch: 0..127 (MIDI pitch)
+#        [0-9te] (pitch-class representative)
+#        [A-G][#b]?([0-9]|10) (note name with octave)
 #   . as $pitch
     if type == "number" then
         math::mod(.; 12)    # . is a pitch in the range 0..127
@@ -52,16 +52,18 @@ def pitch_class($pitch): #::(a) => number
 
 # Inverts a pitch-class
 def invert($interval): #:: number|(number) => number
+# interval: -11..0..11
 #   . as $pitch_class
     math::mod(-. + $interval; 12)
 ;
 def invert: #:: number| => number
 #   . as $pitch_class
-    12 - .
+    invert(0)
 ;
 
 # Trasposes a pitch-class
 def transpose($interval): #:: number|(number) => number
+# interval: -11..0..11
 #   . as $pitch_class
     math::mod(. + $interval; 12)
 ;
@@ -79,31 +81,30 @@ def format: #:: number| => string
 ;
 
 # pc ∈ pcs
-def member($pcset): #:: number|([number]) => number
-#   . as $pitch_class
-    [.] | inside($pcset)
+def member($pcset): #:: number|([number]) => boolean
+    . as $pitch_class
+    | $pcset | contains([$pitch_class])
 ;
 
 ########################################################################
 # Intervals
 
-# Produces the specific interval (0..11) between two pitch-classes
-def specific_interval($pclass): #:: number|(number) => number
+# Produces the chromatic interval (0..11) between two pitch-classes
+def chromatic_interval($pclass): #:: number|(number) => number
 #   . as $pitch_class
     math::mod($pclass - .; 12)
 ;
 
 # Produces the interval-class (0..6) for specific interval
 def interval_class: #:: number| => number
-#   . as $specific_interval
-    when(. > 6; # > tritone?
-        12 - .)
+#   . as $chromatic_interval
+    when(. > 6; 12 - .) # > tritone?
 ;
 
-# Produces the specific interval (0..6) between two pitch-classes
+# Produces the interval-class (0..6) between two pitch-classes
 def interval_class($pclass): #:: number|(number) => number
 #   . as $pitch_class
-    specific_interval($pclass) | interval_class
+    chromatic_interval($pclass) | interval_class
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

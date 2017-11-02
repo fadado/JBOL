@@ -268,6 +268,11 @@ def join($separator): #:: [string]|(string) => string
         (null; sep + $s)//""
 ;
 
+def concat: #:: [string]| => string
+    reduce .[] as $s
+        (""; . + $s)
+;
+
 ########################################################################
 
 # Unordered stream of words over an alphabet

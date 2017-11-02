@@ -17,41 +17,48 @@ import "fadado.github.io/music/pitch-class" as pc;
 # pitch-class set operations
 
 # pcs ∋ pc
-def holds($pclass): #:: [number]|(number) => number
+def holds($pclass): #:: [number]|(number) => boolean
 #   . as $pcset
     contains([$pclass])
 ;
 
+# ~p
 def complement: #:: [number]| => [number]
     . as $pcset
     | [ range(12) | reject(pc::member($pcset)) ]
 ;
 
+# p ∪ q
 def union($pcs): #:: [number]|([number]) => [number]
 #   . as $pcset
     . + $pcs | unique
 ;
 
+# p ∩ q
 def intersection($pcs): #:: [number]|([number]) => [number]
 #   . as $pcset
-    [ .[] | select(pc::member($pcs)) ]
+    map(select(pc::member($pcs)))
 ;
 
+# p – q
 def difference($pcs): #:: [number]|([number]) => [number]
 #   . as $pcset
-    [ .[] | reject(pc::member($pcs)) ]
+    map(reject(pc::member($pcs)))
 ;
 
+# (p – q) ∪ (q – p)
 def sdifference($pcs): #:: [number]|([number]) => [number]
     . as $pcset
     | difference($pcs) | union($pcs | difference($pcset))
 ;
 
+# p ⊂ q
 def subset($pcs): #:: [number]|([number]) => [number]
 #   . as $pcset
     inside($pcs)
 ;
 
+#  p ∩ q ≡ ∅
 def disjoint($pcs): #:: [number]|([number]) => [number]
 #   . as $pcset
     intersection($pcs) == []
@@ -62,18 +69,15 @@ def disjoint($pcs): #:: [number]|([number]) => [number]
 
 # Produces an inverted pitch-class set.
 def invert($interval): #:: [number]|(number) => [number]
-    # map(pc::invert($interval))
-    [ .[] | pc::invert($interval) ]
+    map(pc::invert($interval))
 ;
 def invert: #:: [number]| => [number]
-    # map(pc::invert)
-    [ .[] | pc::invert ]
+    map(pc::invert)
 ;
 
 # Produces a trasposed pitch-class set.
 def transpose($interval): #:: [number]|(number) => [number]
-    # map(pc::transpose($interval))
-    [ .[] | pc::transpose($interval) ]
+    map(pc::transpose($interval))
 ;
 
 # Counts the number of transpositions for a pitch-class set.
@@ -85,12 +89,11 @@ def transpositions: #:: [number]| => number
 # Format a pitch-class set as a string with , as delimiter
 def format: #:: number| => string
 #   . as $pcset
-    [.[] | pc::format] | str::join(",") | "<\(.)>"
+    map(pc::format) | str::concat 
 ;
 
-# Useful prmitives:
+# Useful primitives:
 #   + reverse: (retrogradation)
-#   + index($pc): (pclass position)
-#   + map(pc::format) | str::join(""): to string
+#   + position: index($pc)
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

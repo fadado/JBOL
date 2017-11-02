@@ -65,6 +65,10 @@ include "music/pitch-class"; [range(60;72) | pitch_class | format]
 null
 ["0","1","2","3","4","5","6","7","8","9","t","e"]
 
+include "music/pitch-class-set"; [range(12)] | format
+null
+"0123456789te"
+
 include "music/pitch-class"; [.[] | pitch_class]
 ["0","1","2","3","4","5","6","7","8","9","t","e"]
 [0,1,2,3,4,5,6,7,8,9,10,11]
@@ -89,7 +93,7 @@ include "music/pitch-class"; [range(60;72) | pitch_class | name]
 null
 ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"]
 
-include "music/pitch-class"; specific_interval(7)
+include "music/pitch-class"; chromatic_interval(7)
 0
 7
 
