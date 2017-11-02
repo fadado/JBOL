@@ -1,0 +1,39 @@
+#########################################################################
+# Music
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+#########################################################################
+
+#########################################################################
+# pitch
+
+include "music/pitch"; map(new)
+["C#0","C#1","C#2"]
+[1,13,25]
+
+include "music/pitch"; map(new | format)
+["Db0","Db1","Db2"]
+["C#0","C#1","C#2"]
+
+include "music/pitch"; map(new)
+["Db0","Db1","Db2"]
+[1,13,25]
+
+include "music/pitch"; new
+"C5"
+60
+
+include "music/pitch"; format
+60
+"C5"
+
+#include "music/pitch"; transpose(3)
+#60
+#63
+#
+#include "music/pitch"; transpose(-3)
+#60
+#57
+
+# vim:ai:sw=2:ts=2:et:syntax=jq

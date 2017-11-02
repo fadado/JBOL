@@ -1,0 +1,85 @@
+#########################################################################
+# Music
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+#########################################################################
+
+#########################################################################
+# pitch-class
+
+include "music/pitch-class"; [range(60;72) | new]
+null
+[0,1,2,3,4,5,6,7,8,9,10,11]
+
+include "music/pitch-class"; invert(0)
+2
+10
+
+include "music/pitch-class"; invert(0)
+10
+2
+
+include "music/pitch-class"; transpose(10)
+1
+11
+
+include "music/pitch-class"; transpose(10)
+2
+0
+
+include "music/pitch-class"; member([range(12)])
+7
+true
+
+include "music/pitch-class"; member([range(6)])
+7
+false
+
+# Diatonic pitch-classes are in chromatic set
+include "music/pitch-class"; [.[] | member([range(12)])] | all
+[0,2,4,5,7,9,11]
+true
+
+# Sharp pitch-classes are not in diatonic set
+include "music/pitch-class"; [.[] | member([0,2,4,5,7,9,11]) | not] | all
+[1,3,6,8,10]
+true
+
+include "music/pitch-class"; [range(60;72) | new | format]
+null
+["0","1","2","3","4","5","6","7","8","9","t","e"]
+
+include "music/pitch-class"; [.[] | new]
+["0","1","2","3","4","5","6","7","8","9","t","e"]
+[0,1,2,3,4,5,6,7,8,9,10,11]
+
+include "music/pitch-class"; name
+0
+"C"
+
+include "music/pitch-class"; name
+7
+"G"
+
+include "music/pitch-class"; [.[] | new ]
+["C0","C#0","D0","D#0","E0","F0","F#0","G0","G#0","A0","A#0","B0"]
+[0,1,2,3,4,5,6,7,8,9,10,11]
+
+include "music/pitch-class"; [.[] | new | name ]
+["C1","C#1","D1","D#1","E1","F1","F#1","G1","G#1","A1","A#1","B1"]
+["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"]
+
+include "music/pitch-class"; [range(60;72) | new | name]
+null
+["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"]
+
+include "music/pitch-class"; interval(7)
+0
+7
+
+include "music/pitch-class"; interval_class(7)
+0
+5
+
+# vim:ai:sw=2:ts=2:et:syntax=jq

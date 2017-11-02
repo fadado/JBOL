@@ -16,6 +16,20 @@ import "fadado.github.io/music/pitch-class" as pc;
 ########################################################################
 # pitch-class set operations
 
+# new?
+
+# Format a pitch-class set as a string with , as delimiter
+def format: #:: number| => string
+#   . as $pcset
+    map(pc::format) | str::concat 
+;
+
+# Useful primitives:
+#   + reverse: (retrogradation)
+#   + position: index($pc)
+
+########################################################################
+
 # pcs ∋ pc
 def holds($pclass): #:: [number]|(number) => boolean
 #   . as $pcset
@@ -29,6 +43,7 @@ def complement: #:: [number]| => [number]
 ;
 
 # p ∪ q
+# TODO: an ordered merge without duplicates?
 def union($pcs): #:: [number]|([number]) => [number]
 #   . as $pcset
     . + $pcs | unique
@@ -85,15 +100,5 @@ def transpositions: #:: [number]| => number
 #   . as $pcset
     12 / math::gcd(12; length)
 ;
-
-# Format a pitch-class set as a string with , as delimiter
-def format: #:: number| => string
-#   . as $pcset
-    map(pc::format) | str::concat 
-;
-
-# Useful primitives:
-#   + reverse: (retrogradation)
-#   + position: index($pc)
 
 # vim:ai:sw=4:ts=4:et:syntax=jq
