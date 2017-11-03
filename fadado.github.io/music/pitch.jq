@@ -29,12 +29,13 @@ def new: #:: <number^string>| => number
             match("^(?<n>[A-G])(?<a>[#b])?(?<o>[0-9]|10)$")
             | re::tomap as $m
             | {"C":0,"D":2,"E":4,"F":5,"G":7,"A":9,"B":11}[$m["n"]] as $n
-            | if $m["a"]=="#"
+            | $m["o"] | tonumber * 12
+            + if $m["a"]=="#" or $m["a"]=="s"
               then $n+1     # sharp
-              elif $m["a"]=="b"
+              elif $m["a"]=="b" or $m["a"]=="f"
               then $n-1     # flat
               else $n
-              end + ($m["o"]|tonumber*12)
+              end
         else
             "Malformed pitch: \(.)" | error
         end
@@ -67,7 +68,7 @@ def format: #:: number| => string
 # Produces the pitch interval (-127..127) between two pitches
 def interval($p): #:: number|(number) => number
 #   . as $pitch
-    $p - . | new | select(-127 <= . and . <= 127)
+    $p - . | select(-127 <= . and . <= 127)
 ;
 
 # Utility to make unordered pitch intervals

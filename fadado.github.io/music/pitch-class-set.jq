@@ -25,6 +25,7 @@ def format: #:: number| => string
 ;
 
 # Useful primitives:
+#   + tostring
 #   + reverse: (retrogradation)
 #   + position: index($pc)
 
@@ -99,6 +100,20 @@ def transpose($interval): #:: [number]|(number) => [number]
 def transpositions: #:: [number]| => number
 #   . as $pcset
     12 / math::gcd(12; length)
+;
+
+########################################################################
+# Intervals
+
+def mode: #:: [number]| => string
+    . as $pcset
+    | [range(length), 0] as $ndx
+    | [
+        range(length) as $i
+        | $pcset[$ndx[$i]]
+        | pc::interval($pcset[$ndx[$i+1]])
+      ]
+#   assert(add) == 12
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

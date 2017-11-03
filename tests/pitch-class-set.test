@@ -48,4 +48,20 @@ include "music/pitch-class-set"; [range(12)] | format
 null
 "0123456789te"
 
+include "music/pitch-class-set"; mode | add
+[0,2,4,5,7,9,11]
+12
+
+include "music/pitch-class-set"; mode
+[0,2,4,5,7,9,11]
+[2,2,1,2,2,2,1]
+
+include "music/pitch-class-set"; mode | map(tostring) | join("")
+[0,2,4,5,7,9,11]
+"2212221"
+
+include "music/pitch-class-set"; mode
+[5,7,9,10,0,2,4]
+[2,2,1,2,2,2,1]
+
 # vim:ai:sw=2:ts=2:et:syntax=jq

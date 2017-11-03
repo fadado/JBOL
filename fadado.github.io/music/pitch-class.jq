@@ -97,7 +97,8 @@ def interval_class: #:: number| => number
 # Produces the interval-class (0..6) between two pitch-classes
 def interval_class($pclass): #:: number|(number) => number
 #   . as $pitch_class
-    interval($pclass) | interval_class
+#   interval($pclass) | interval_class
+    math::mod($pclass - .; 12) | when(. > 6; 12 - .)
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

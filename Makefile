@@ -136,7 +136,7 @@ $(LogDir)/url.log: $(STR)/url.jq $(LIB)/math.jq
 # Music tests
 $(LogDir)/pitch.log: $(MUSIC)/pitch.jq $(LIB)/prelude.jq $(LIB)/math.jq $(STR)/regexp.jq 
 $(LogDir)/pitch-class.log: $(MUSIC)/pitch-class.jq $(MUSIC)/pitch.jq $(LIB)/prelude.jq $(LIB)/math.jq
-#$(LogDir)/pitch.class-set.log: $(MUSIC)/pitch-class-set.jq $(MUSIC)/pitch-class.jq $(LIB)/prelude.jq $(LIB)/math.jq $(STR)/string.jq 
+$(LogDir)/pitch-class-set.log: $(MUSIC)/pitch-class-set.jq $(MUSIC)/pitch-class.jq $(LIB)/prelude.jq $(LIB)/math.jq $(STR)/string.jq 
 
 ########################################################################
 # Utilities
