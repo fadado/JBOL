@@ -21,12 +21,12 @@ def new: #:: <number^string>| => number
     if type == "number" then
         if 0 <= . and . <= 127 # . is a pitch in the range 0..127
         then .
-        else "Malformed pitch: \(.)" | error
+        else "Pitch out of range: \(.)" | error
         end
     elif type == "string" then
-        if test("^[A-G][#b]?(?:[0-9]|10)$") # . is a note name with octave
+        if test("^[A-G][#sbf]?(?:[0-9]|10)$") # . is a note name with octave
         then
-            match("^(?<n>[A-G])(?<a>[#b])?(?<o>[0-9]|10)$")
+            match("^(?<n>[A-G])(?<a>[#sbf])?(?<o>[0-9]|10)$")
             | re::tomap as $m
             | {"C":0,"D":2,"E":4,"F":5,"G":7,"A":9,"B":11}[$m["n"]] as $n
             | $m["o"] | tonumber * 12

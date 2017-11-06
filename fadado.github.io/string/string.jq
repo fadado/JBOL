@@ -157,14 +157,14 @@ def table($from; $to): #:: (string;string) => {string}
         ({}; . += {($s[$i]):($t[$i]//"")})
 ;
 
-# Rotate strings in both directions
+# Rotate strings (and arrays) in both directions
 #
-def rotate($s; $n): #:: (string;number) => string
-    $s[$n:] + $s[:$n]
+def rotate($n): #:: <string^array>|(number) => <string^array>
+    .[$n:] + .[:$n]
 ;
 
-def rotate($n): #:: string|(number) => string
-    rotate(.; $n)
+def rotate($s; $n): #:: (<string^array>;number) => <string^array>
+    $s | rotate($n)
 ;
 
 # Translation table for rotate by 13 places

@@ -16,18 +16,18 @@ import "fadado.github.io/music/pitch-class" as pc;
 ########################################################################
 # pitch-class set operations
 
-# new?
 
 # Format a pitch-class set as a string with , as delimiter
-def format: #:: number| => string
+def format: #:: [number]| => string
 #   . as $pcset
     map(pc::format) | str::concat 
 ;
 
 # Useful primitives:
-#   + tostring
+#   + fromjson/tojson
 #   + reverse: (retrogradation)
 #   + position: index($pc)
+#   + str::rotate (rotation)
 
 ########################################################################
 

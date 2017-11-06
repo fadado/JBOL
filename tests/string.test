@@ -103,6 +103,15 @@ include "string"; [find("o")]
 # translate
 #
 
+
+include "string"; rotate(2)
+"kaleidoscope"
+"leidoscopeka"
+
+include "string"; rotate(-2)
+"kaleidoscope"
+"pekaleidosco"
+
 include "string"; import "string/ascii" as ascii; translate(ascii::ttupper)
 "kaleidoscope"
 "KALEIDOSCOPE"

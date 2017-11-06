@@ -56,39 +56,39 @@ def subsets_1: #:: [a]| => *[a]
 # Size k subsets
 # Combinations
 #
-def subsets($k): #:: [a]|(number) => *[a]
-    def _subsets($k):
+def combinations($k): #:: [a]|(number) => *[a]
+    def _combs($k):
         if $k == 0
         then []
         elif length == 0 # none to pick?
         then empty       # then fail (no results for k > n)
         else
-            # either _pick one and add to what's left subsets
-            _pick + (_left|_subsets($k-1))
+            # either _pick one and add to what's left combinations
+            _pick + (_left|_combs($k-1))
             # or what's left combined
-            , (_left|_subsets($k))
+            , (_left|_combs($k))
         end
     ;
     select(0 <= $k and $k <= length) # not defined for all $k
-    | _subsets($k)
+    | _combs($k)
 ;
 
-# All subsets
+# All subsets, stable
 #
 def powerset: #:: [a]| => *[a]
-    subsets(range(0; 1+length))
+    combinations(range(0; 1+length))
 ;
 
 # All subsets, unstable output
 #
-def powerset_u: #:: [a]| => *[a]
+def subsets: #:: [a]| => *[a]
     if length == 0
     then []
     else
         # or this one added to what's left subsets
-        _pick + (_left|powerset_u)
+        _pick + (_left|subsets)
         # either what's left after picking one,
-        , (_left|powerset_u)
+        , (_left|subsets)
     end
 ;
 
@@ -117,16 +117,15 @@ def permutations($k): #:: [a]|(number) => *[a]
     def _perm($k):
         def choose: range(0; length);
         #
-        if $k == 0
-        then []
-        else
-            # choose one and add to what's left permuted
-            choose as $i
-            | _pick($i) + (_left($i)|_perm($k-1))
-        end
+        # choose one and add to what's left permuted
+        choose as $i # empty if none to choose
+        | if $k == 1
+          then _pick($i)
+          else _pick($i) + (_left($i)|_perm($k-1))
+          end
     ;
     select(0 <= $k and $k <= length) # not defined for all $k
-    | _perm($k)
+    | if $k == 0 then [] else _perm($k) end
 ;
 
 # All sizes permutations
