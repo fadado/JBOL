@@ -1,0 +1,47 @@
+#########################################################################
+# Music
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+#########################################################################
+
+#########################################################################
+# Intervals in sets
+
+include "music/intervals"; mode | add
+[0,2,4,5,7,9,11]
+12
+
+include "music/intervals"; mode
+[0,2,4,5,7,9,11]
+[2,2,1,2,2,2,1]
+
+include "music/intervals"; mode | map(tostring) | join("")
+[0,2,4,5,7,9,11]
+"2212221"
+
+include "music/intervals"; mode
+[5,7,9,10,0,2,4]
+[2,2,1,2,2,2,1]
+
+include "music/intervals"; mode|format
+[5,7,9,10,0,2,4]
+"2212221"
+
+include "music/intervals"; vector
+[0,1,5,6,8]
+[5,2,1,1,2,3,1]
+
+include "music/intervals"; vector
+[0,4,7]
+[3,0,0,1,1,1,0]
+
+include "music/intervals"; vector
+[4,7,11]
+[3,0,0,1,1,1,0]
+
+include "music/intervals"; vector[1:]|format
+[4,7,11]
+"001110"
+
+# vim:ai:sw=2:ts=2:et:syntax=jq

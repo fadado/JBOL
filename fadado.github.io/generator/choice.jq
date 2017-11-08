@@ -115,14 +115,18 @@ def permutations: #:: [a]| => *[a]
 #
 def permutations($k): #:: [a]|(number) => *[a]
     def _perm($k):
-        def choose: range(0; length);
-        #
-        # choose one and add to what's left permuted
-        choose as $i # empty if none to choose
-        | if $k == 1
-          then _pick($i)
-          else _pick($i) + (_left($i)|_perm($k-1))
-          end
+        def choose: # empty if none to choose
+            range(0; length)
+        ;
+        if $k == 1
+        then
+            #choose as $i | _pick($i)
+            .[] | [.]
+        else
+            # choose one and add to what's left permuted
+            choose as $i
+            | _pick($i) + (_left($i)|_perm($k-1))
+        end
     ;
     select(0 <= $k and $k <= length) # not defined for all $k
     | if $k == 0 then [] else _perm($k) end

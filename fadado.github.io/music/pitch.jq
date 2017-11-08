@@ -13,7 +13,8 @@ import "fadado.github.io/math" as math;
 import "fadado.github.io/string/regexp" as re;
 
 ########################################################################
-# pitch: 0..127
+# pitch: 0..127 (C0..G10); MIDI based octave count
+#
 
 # Produces a new pitch
 def new: #:: <number^string>| => number
@@ -52,28 +53,27 @@ def format: #:: number| => string
     | math::div(.; 12) as $octave
     | math::mod(.; 12) as $note
     | "\($names[$note])\($octave)"
-
 ;
 
 ########################################################################
-# Intervals
 
 ## Add a directed interval to the pitch
-#def transpose($interval): #:: number|(number) => number
-##   . as $pitch
-#    . + $interval
-#    | select(0 <= . and . <= 127) # . is a pitch in the range 0..127
-#;
+def transpose($interval): #:: number|(number) => number
+#   . as $pitch
+    . + $interval
+    | unless(-127 <= . and . <= 127;
+        "Pitch out of range: \(.)" | error)
+;
 
 # Produces the pitch interval (-127..127) between two pitches
 def interval($p): #:: number|(number) => number
 #   . as $pitch
-    $p - . | select(-127 <= . and . <= 127)
+    $p - .
+    | unless(-127 <= . and . <= 127;
+        "Pitch out of range: \(.)" | error)
 ;
 
-# Utility to make unordered pitch intervals
-def abs: #:: number| => number
-    length
-;
+# Useful primitives:
+#   + math::abs (to make unordered intervals)
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

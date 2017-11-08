@@ -8,6 +8,14 @@
 #########################################################################
 # pitch
 
+include "music/pitch"; new
+"C0"
+0
+
+include "music/pitch"; new
+"G10"
+127
+
 include "music/pitch"; map(new)
 ["C#0","C#1","C#2"]
 [1,13,25]

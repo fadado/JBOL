@@ -19,7 +19,6 @@ import "fadado.github.io/music/pitch" as pitch;
 def new: #:: <number^string>| => number
 #   . as $x
     if type == "number" then
-        # . must be a pitch in the range 0..127
         pitch::new % 12
     elif type == "string" then
         if test("^[0-9te]$")    # representative
@@ -43,49 +42,44 @@ def new($x): #::(<number^string>) => number
 
 # Format a pitch-class as a string
 def format: #:: number| => string
-#   . as $pitch_class
+#   . as $pclass
     ["0","1","2","3","4","5","6","7","8","9","t","e"][.]
 ;
 
 # Produces the note name
 def name: #:: number| => number
-#   . as $pitch_class
+#   . as $pclass
     ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"][.]
 ;
 
 ########################################################################
-
-# Inverts a pitch-class
-def invert($interval): #:: number|(number) => number
-# interval: -11..0..11
-#   . as $pitch_class
-    math::mod(-. + $interval; 12)
-;
-def invert: #:: number| => number
-#   . as $pitch_class
-    math::mod(-.; 12)  # invert(0)
-;
+# Transpositional intervals: -11..0..11
 
 # Transposes a pitch-class
 def transpose($interval): #:: number|(number) => number
-# interval: -11..0..11
-#   . as $pitch_class
+#   . as $pclass
     math::mod(. + $interval; 12)
 ;
 
-# pc ∈ pcs
-def member($pcset): #:: number|([number]) => boolean
-    . as $pitch_class
-    | $pcset | contains([$pitch_class])
+# Inverts a pitch-class
+def invert: #:: number| => number
+#   . as $pclass
+    12 - .
+;
+def invert($interval): #:: number|(number) => number
+#   . as $pclass
+    math::mod($interval - .; 12)
+#   invert | transpose($interval)
+#   math::mod(12 - . + $interval; 12)
 ;
 
 ########################################################################
 # Intervals
 
 # Produces the chromatic interval (0..11) between two pitch-classes
-def interval($pclass): #:: number|(number) => number
-#   . as $pitch_class
-    math::mod($pclass - .; 12)
+def interval($pc): #:: number|(number) => number
+#   . as $pclass
+    math::mod($pc - .; 12)
 ;
 
 # Produces the interval-class (0..6) for a chromatic interval
@@ -95,10 +89,19 @@ def interval_class: #:: number| => number
 ;
 
 # Produces the interval-class (0..6) between two pitch-classes
-def interval_class($pclass): #:: number|(number) => number
-#   . as $pitch_class
-#   interval($pclass) | interval_class
-    math::mod($pclass - .; 12) | when(. > 6; 12 - .)
+def interval_class($pc): #:: number|(number) => number
+#   . as $pclass
+    math::mod($pc - .; 12) | when(. > 6; 12 - .)
+#   interval($pc) | interval_class
+#   math::mod(math::min($pc - .; . - $pc); 12)
+;
+
+########################################################################
+
+# pc ∈ pcs
+def member($pcset): #:: number|([number]) => boolean
+    . as $pclass
+    | $pcset | contains([$pclass])
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq
