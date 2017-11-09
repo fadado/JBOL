@@ -13,11 +13,13 @@ import "fadado.github.io/math" as math;
 import "fadado.github.io/string/regexp" as re;
 
 ########################################################################
-# pitch: 0..127 (C0..G10); MIDI based octave count
+# Names used in type declarations
 #
+# PITCH: 0..127; as string: (C0..G10), MIDI based octave count
+# PI (pitch interval): -127..127
 
 # Produces a new pitch
-def new: #:: <number^string>| => number
+def new: #:: <number^string>| => PITCH
 #   . as $x
     if type == "number" then
         if 0 <= . and . <= 127 # . is a pitch in the range 0..127
@@ -43,11 +45,12 @@ def new: #:: <number^string>| => number
     else type | "Type error: expected number or string, not \(.)" | error
     end
 ;
-def new($x): #:: (<number^string>) => number
+def new($x): #:: (<number^string>) => PITCH
     $x | new
 ;
 
-def format: #:: number| => string
+# Formats a pitch (C0..G10)
+def format: #:: PITCH| => string
 #   . as $pitch
 	["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"] as $names
     | math::div(.; 12) as $octave
@@ -58,19 +61,17 @@ def format: #:: number| => string
 ########################################################################
 
 ## Add a directed interval to the pitch
-def transpose($interval): #:: number|(number) => number
+def transpose($interval): #:: PITCH|(PI) => PITCH
 #   . as $pitch
     . + $interval
-    | unless(-127 <= . and . <= 127;
+    | unless(0 <= . and . <= 127;
         "Pitch out of range: \(.)" | error)
 ;
 
 # Produces the pitch interval (-127..127) between two pitches
-def interval($p): #:: number|(number) => number
+def interval($p): #:: PITCH|(PITCH) => PI
 #   . as $pitch
     $p - .
-    | unless(-127 <= . and . <= 127;
-        "Pitch out of range: \(.)" | error)
 ;
 
 # Useful primitives:

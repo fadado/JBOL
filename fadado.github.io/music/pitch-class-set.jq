@@ -12,15 +12,25 @@ import "fadado.github.io/math" as math;
 import "fadado.github.io/music/pitch-class" as pc;
 
 ########################################################################
-# pitch-class set operations
+# Names used in type declarations
+#
+# PCLASS (pitch-class): 0..11
+# PCI (pitch-class interval): -11..11
+# PCSET (pitch-class set): [PCLASS]
 
 # Produces the pitch-class set
-def new: #:: string| => [number]
-    fromjson
+def new: #:: <array^string>| => PCSET
+    if type == "array"
+    then
+        unique
+    elif type == "string" then
+        fromjson
+    else type | "Type error: expected array or string, not \(.)" | error
+    end
 ;
 
 # Format a pitch-class set as a string with , as delimiter
-def format: #:: [number]| => string
+def format: #:: PCSET| => string
 #   . as $pcset
     map(pc::format) | reduce .[] as $s (""; .+$s) # str::concat 
 ;
@@ -29,54 +39,54 @@ def format: #:: [number]| => string
 # set operations
 
 # pcs ∋ pc
-def holds($pclass): #:: [number]|(number) => boolean
+def member($pclass): #:: PCSET|(PCLASS) => boolean
 #   . as $pcset
     contains([$pclass])
 ;
 
-def position($pclass): #:: [number]|(number) => number^null
+def position($pclass): #:: PCSET|(PCLASS) => number^null
     index($pclass)
 ;
 
 # ~p
-def complement: #:: [number]| => [number]
+def complement: #:: PCSET| => PCSET
     . as $pcset
-    | [ range(12) | select(pc::member($pcset)|not) ]
+    | [ range(12) | select(pc::element($pcset)|not) ]
 ;
 
 # p ∪ q
 # TODO: an ordered merge without duplicates?
-def union($pcs): #:: [number]|([number]) => [number]
+def union($pcs): #:: PCSET|(PCSET) => PCSET
 #   . as $pcset
     . + $pcs | unique
 ;
 
 # p ∩ q
-def intersection($pcs): #:: [number]|([number]) => [number]
+def intersection($pcs): #:: PCSET|(PCSET) => PCSET
 #   . as $pcset
-    map(select(pc::member($pcs)))
+    map(select(pc::element($pcs)))
 ;
 
 # p – q
-def difference($pcs): #:: [number]|([number]) => [number]
+def difference($pcs): #:: PCSET|(PCSET) => PCSET
 #   . as $pcset
-    map(select(pc::member($pcs))|not)
+    map(select(pc::element($pcs))|not)
 ;
 
 # (p – q) ∪ (q – p)
-def sdifference($pcs): #:: [number]|([number]) => [number]
+def sdifference($pcs): #:: PCSET|(PCSET) => PCSET
     . as $pcset
     | difference($pcs) | union($pcs | difference($pcset))
 ;
 
 # p ⊂ q
-def subset($pcs): #:: [number]|([number]) => [number]
+def subset($pcs): #:: PCSET|(PCSET) => boolean
 #   . as $pcset
     inside($pcs)
 ;
 
 #  p ∩ q ≡ ∅
-def disjoint($pcs): #:: [number]|([number]) => [number]
+def disjoint($pcs): #:: PCSET|(PCSET) => boolean
 #   . as $pcset
     intersection($pcs) == []
 ;
@@ -85,31 +95,30 @@ def disjoint($pcs): #:: [number]|([number]) => [number]
 # Other pitch-class set operations
 
 # Produces an inverted pitch-class set.
-# Transpositional intervals: -11..0..11
-def invert($interval): #:: [number]|(number) => [number]
-    map(pc::invert($interval))
+# TODO:
+def invert($axis): #:: PCSET|(PCLASS) => PCSET
+    map(pc::invert($axis))
 ;
-def invert: #:: [number]| => [number]
+def invert: #:: PCSET| => PCSET
     map(pc::invert)
 ;
 
 # Produces a trasposed pitch-class set.
-# Transpositional intervals: -11..0..11
-def transpose($interval): #:: [number]|(number) => [number]
+def transpose($interval): #:: PCSET|(PCI) => PCSET
     map(pc::transpose($interval))
 ;
 
 # Counts the number of transpositions for a pitch-class set.
-def transpositions: #:: [number]| => number
+def transpositions: #:: PCSET| => number
 #   . as $pcset
     12 / math::gcd(12; length)
 ;
 
-def rotate($n): #:: [number]|(number) => [number]
+def rotate($n): #:: PCSET|(number) => PCSET
     .[$n:] + .[:$n]
 ;
 
-def retrograde: #:: [number] => [number]
+def retrograde: #:: PCSET => PCSET
     reverse
 ;
 

@@ -8,23 +8,23 @@
 #########################################################################
 # Intervals in sets
 
-include "music/intervals"; mode | add
+include "music/intervals"; pattern | add
 [0,2,4,5,7,9,11]
 12
 
-include "music/intervals"; mode
+include "music/intervals"; pattern
 [0,2,4,5,7,9,11]
 [2,2,1,2,2,2,1]
 
-include "music/intervals"; mode | map(tostring) | join("")
+include "music/intervals"; pattern | map(tostring) | join("")
 [0,2,4,5,7,9,11]
 "2212221"
 
-include "music/intervals"; mode
+include "music/intervals"; pattern
 [5,7,9,10,0,2,4]
 [2,2,1,2,2,2,1]
 
-include "music/intervals"; mode|format
+include "music/intervals"; pattern|format
 [5,7,9,10,0,2,4]
 "2212221"
 

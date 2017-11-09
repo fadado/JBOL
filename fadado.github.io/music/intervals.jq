@@ -11,10 +11,13 @@ module {
 import "fadado.github.io/music/pitch-class" as pc;
 
 ########################################################################
-# 
+# Names used in type declarations
+#
+# PCLASS (pitch-class): 0..11
+# PCSET (pitch-class set): [PCLASS]
 
 # directed-interval vector, also interval string
-def mode: #:: [number]| => [number]
+def pattern: #:: PCSET| => [PCI]
     . as $pcset
     | [range(length), 0] as $ndx
     | [
@@ -25,8 +28,8 @@ def mode: #:: [number]| => [number]
 #   | assert(add == 12)
 ;
 
-# Interval-class vector
-def vector: #:: [number] => [number]
+# Interval-class tally vector
+def vector: #:: PCSET => [number]
     def intervals:
         . as $pcs
         | length as $n
