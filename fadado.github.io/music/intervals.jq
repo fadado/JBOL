@@ -15,36 +15,71 @@ import "fadado.github.io/music/pitch-class" as pc;
 #
 # PCLASS (pitch-class): 0..11
 # PCSET (pitch-class set): [PCLASS]
+# IC (interval-class): 0..6
+# PCI (pitch-class interval): 0..11
+# PATTERN: [PCI]
+# VECTOR: [number]6 (indices are IC minus 1; values are a count)
+# TALLY: [number]7 (cardinality plus VECTOR)
+# TABLE: [[number]] (indices are generic intervals minus 1; values are a list of specific intervals)
 
-# directed-interval vector, also interval string
-def pattern: #:: PCSET| => [PCI]
+########################################################################
+#
+
+# Known as directed-interval vector, interval succession,  interval string, etc.
+def pattern: #:: PCSET| => PATTERN
     . as $pcset
     | [range(length), 0] as $ndx
-    | [
-        range(length) as $i
-        | $pcset[$ndx[$i]]
-        | pc::interval($pcset[$ndx[$i+1]])
-      ]
+    | [range(length) as $i | $pcset[$ndx[$i]]|pc::interval($pcset[$ndx[$i+1]])]
 #   | assert(add == 12)
 ;
 
-# Interval-class tally vector
-def vector: #:: PCSET => [number]
-    def intervals:
+# TODO: bip
+
+########################################################################
+#
+
+# Interval-class tally
+def tally: #:: PCSET => TALLY
+    def _tally:
         . as $pcs
         | length as $n
         | range($n-1) as $i
         | range($i+1; $n) as $j
-#       | ($j - $i) as $d
-#       | $pcs[$i]|pc::interval($pcs[$j]) as $c
-#       | $c|pc::interval_class
         | $pcs[$i]|pc::interval_class($pcs[$j])
     ;
     # interval class vector with cardinality at .[0]
     [length,0,0,0,0,0,0] as $icv
-    | reduce intervals as $i ($icv; .[$i] += 1)
-    # use $v[1:] to extract traditional interval vector
+    | reduce _tally as $i ($icv; .[$i] += 1)
 ;
+
+# Interval-class vector
+def vector: #:: PCSET => VECTOR
+    tally | .[1:]
+;
+
+# TODO: allequal, allunique (deep_scale)
+
+########################################################################
+#
+
+# 
+def table: #:: PCSET => TABLE
+    def _table:
+        . as $pcs
+        | length as $n
+        | range($n-1) as $i
+        | range($i+1; $n) as $j
+        | ($j - $i) as $d
+        | $pcs[$i]|pc::interval($pcs[$j]) as $c
+        | ([$d,$c] , [$n-$d,12-$c])
+    ;
+    [range(length-2)|[]] as $t
+    | reduce _table as [$d,$c] ($t; .[$d-1] += [$c])
+    | map(unique)
+;
+
+########################################################################
+#
 
 # Format intervals array 
 def format: #:: [number]| => string

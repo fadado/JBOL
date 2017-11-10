@@ -16,8 +16,8 @@ import "fadado.github.io/music/pitch" as pitch;
 # Names used in type declarations
 #
 # PCLASS (pitch-class): 0..11; as string: 0..9,t,e
-# PCI (pitch-class interval): -11..11
-# IC (interval-class): -11..11
+# PCI (pitch-class interval): 0..11 (has not direction) 
+# IC (interval-class): 0..6 (assume interval inversion equivalence)
 # PCSET (pitch-class set): [PCLASS]
 
 # Produces the pitch-class corresponding to a pitch
@@ -71,24 +71,24 @@ def invert: #:: PCLASS| => PCLASS
 #   . as $pclass
     12 - .
 ;
-# TODO!
-def invert($axis): #:: PCLASS|(PCLASS) => PCLASS
+def invert($interval): #:: PCLASS|(PCI) => PCLASS
 #   . as $pclass
-    math::mod($axis - .; 12)
-#   invert | transpose($axis)
-#   math::mod(12 - . + $axis; 12)
+    math::mod($interval - .; 12)
+#   invert | transpose($interval)
+#   math::mod(-. + $interval; 12)
+#   math::mod(12 - . + $interval; 12)
 ;
 
 ########################################################################
 # Intervals
 
-# Produces the chromatic interval (0..11) between two pitch-classes
+# Produces the pitch-class interval (0..11) between two pitch-classes
 def interval($pc): #:: PCLASS|(PCLASS) => PCI
 #   . as $pclass
     math::mod($pc - .; 12)
 ;
 
-# Produces the interval-class (0..6) for a chromatic interval
+# Produces the interval-class (0..6) for a pitch-class interval
 def iclass: #:: PCI| => IC
 #   . as $chromatic_interval
     when(. > 6; 12 - .) # > tritone?

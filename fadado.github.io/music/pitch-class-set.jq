@@ -8,6 +8,7 @@ module {
     }
 };
 
+include "fadado.github.io/prelude";
 import "fadado.github.io/math" as math;
 import "fadado.github.io/music/pitch-class" as pc;
 
@@ -15,7 +16,7 @@ import "fadado.github.io/music/pitch-class" as pc;
 # Names used in type declarations
 #
 # PCLASS (pitch-class): 0..11
-# PCI (pitch-class interval): -11..11
+# PCI (pitch-class interval): 0..11
 # PCSET (pitch-class set): [PCLASS]
 
 # Produces the pitch-class set
@@ -36,7 +37,7 @@ def format: #:: PCSET| => string
 ;
 
 ########################################################################
-# set operations
+# pure set operations
 
 # pcs ∋ pc
 def member($pclass): #:: PCSET|(PCLASS) => boolean
@@ -44,6 +45,7 @@ def member($pclass): #:: PCSET|(PCLASS) => boolean
     contains([$pclass])
 ;
 
+# pitch-class index inside pcset
 def position($pclass): #:: PCSET|(PCLASS) => number^null
     index($pclass)
 ;
@@ -55,7 +57,6 @@ def complement: #:: PCSET| => PCSET
 ;
 
 # p ∪ q
-# TODO: an ordered merge without duplicates?
 def union($pcs): #:: PCSET|(PCSET) => PCSET
 #   . as $pcset
     . + $pcs | unique
@@ -85,6 +86,12 @@ def subset($pcs): #:: PCSET|(PCSET) => boolean
     inside($pcs)
 ;
 
+# p ⊃ q
+def superset($pcs): #:: PCSET|(PCSET) => boolean
+#   . as $pcset
+    contains($pcs)
+;
+
 #  p ∩ q ≡ ∅
 def disjoint($pcs): #:: PCSET|(PCSET) => boolean
 #   . as $pcset
@@ -92,15 +99,20 @@ def disjoint($pcs): #:: PCSET|(PCSET) => boolean
 ;
 
 ########################################################################
-# Other pitch-class set operations
+# pitch-class set considered a sequence
+
+# Is the pcset an ordered sequence?
+def ordered: #:: PCSET| => boolean
+    . as $pcset
+    | every(range(length-1) | $pcset[.] <= $pcset[.+1])
+;
 
 # Produces an inverted pitch-class set.
-# TODO:
-def invert($axis): #:: PCSET|(PCLASS) => PCSET
-    map(pc::invert($axis))
-;
 def invert: #:: PCSET| => PCSET
     map(pc::invert)
+;
+def invert($interval): #:: PCSET|(PCI) => PCSET
+    map(pc::invert($interval))
 ;
 
 # Produces a trasposed pitch-class set.
@@ -114,10 +126,12 @@ def transpositions: #:: PCSET| => number
     12 / math::gcd(12; length)
 ;
 
+# Rotate in both directions
 def rotate($n): #:: PCSET|(number) => PCSET
     .[$n:] + .[:$n]
 ;
 
+# Simply reverse
 def retrograde: #:: PCSET => PCSET
     reverse
 ;

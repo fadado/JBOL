@@ -16,7 +16,7 @@ import "fadado.github.io/string/regexp" as re;
 # Names used in type declarations
 #
 # PITCH: 0..127; as string: (C0..G10), MIDI based octave count
-# PI (pitch interval): -127..127
+# PI (pitch interval): -127..127 (has direction)
 
 # Produces a new pitch
 def new: #:: <number^string>| => PITCH
@@ -68,7 +68,8 @@ def transpose($interval): #:: PITCH|(PI) => PITCH
         "Pitch out of range: \(.)" | error)
 ;
 
-# Produces the pitch interval (-127..127) between two pitches
+# Produces the pitch interval (-127..127) between two pitches, -11..11 when
+# applied to pitch-classes
 def interval($p): #:: PITCH|(PITCH) => PI
 #   . as $pitch
     $p - .
