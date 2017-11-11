@@ -1,0 +1,48 @@
+#########################################################################
+# Music
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+#########################################################################
+
+include "music/vector"; new
+[0,1,5,6,8]
+[5,2,1,1,2,3,1]
+
+include "music/vector"; new
+[0,4,7]
+[3,0,0,1,1,1,0]
+
+include "music/vector"; new
+[4,7,11]
+[3,0,0,1,1,1,0]
+
+include "music/vector"; new[1:] | format
+[0,1,3,7]
+"111111"
+
+include "music/vector"; new[1:] | format
+[4,7,11]
+"001110"
+
+include "music/vector"; new[1:] | different
+[0,2,4,5,7,9,11]
+true
+
+include "music/vector"; new[1:] | different
+[0,4,7]
+false
+
+include "music/vector"; (.[0]|new) == (.[1]|new)
+[[0,1,3,7],[0,1,4,6]]
+true
+
+include "music/vector"; new[1:] | uniform
+[0,1,3,7]
+true
+
+include "music/vector"; new[1:] | uniform
+[0,1,4,6]
+true
+
+# vim:ai:sw=2:ts=2:et:syntax=jq

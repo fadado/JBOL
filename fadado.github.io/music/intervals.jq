@@ -18,8 +18,6 @@ import "fadado.github.io/music/pitch-class" as pc;
 # IC (interval-class): 0..6
 # PCI (pitch-class interval): 0..11
 # PATTERN: [PCI]
-# VECTOR: [number]6 (indices are IC minus 1; values are a count)
-# TALLY: [number]7 (cardinality plus VECTOR)
 # TABLE: [[number]] (indices are generic intervals minus 1; values are a list of specific intervals)
 
 ########################################################################
@@ -38,30 +36,6 @@ def pattern: #:: PCSET| => PATTERN
 ########################################################################
 #
 
-# Interval-class tally
-def tally: #:: PCSET => TALLY
-    def _tally:
-        . as $pcs
-        | length as $n
-        | range($n-1) as $i
-        | range($i+1; $n) as $j
-        | $pcs[$i]|pc::interval_class($pcs[$j])
-    ;
-    # interval class vector with cardinality at .[0]
-    [length,0,0,0,0,0,0] as $icv
-    | reduce _tally as $i ($icv; .[$i] += 1)
-;
-
-# Interval-class vector
-def vector: #:: PCSET => VECTOR
-    tally | .[1:]
-;
-
-# TODO: allequal, allunique (deep_scale)
-
-########################################################################
-#
-
 # 
 def table: #:: PCSET => TABLE
     def _table:
@@ -71,7 +45,7 @@ def table: #:: PCSET => TABLE
         | range($i+1; $n) as $j
         | ($j - $i) as $d
         | $pcs[$i]|pc::interval($pcs[$j]) as $c
-        | ([$d,$c] , [$n-$d,12-$c])
+        | ([$d,$c], [$n-$d,12-$c])
     ;
     [range(length-2)|[]] as $t
     | reduce _table as [$d,$c] ($t; .[$d-1] += [$c])
@@ -81,7 +55,7 @@ def table: #:: PCSET => TABLE
 ########################################################################
 #
 
-# Format intervals array 
+# 
 def format: #:: [number]| => string
 #   . as $a
     def fmt:

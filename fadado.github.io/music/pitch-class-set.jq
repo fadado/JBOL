@@ -23,11 +23,14 @@ import "fadado.github.io/music/pitch-class" as pc;
 def new: #:: <array^string>| => PCSET
     if type == "array"
     then
-        unique
+        unique | map(pc::new)
     elif type == "string" then
         fromjson
     else type | "Type error: expected array or string, not \(.)" | error
     end
+;
+def new($x): #::(<array^string>) => PCSET
+    $x | new
 ;
 
 # Format a pitch-class set as a string with , as delimiter
@@ -39,7 +42,7 @@ def format: #:: PCSET| => string
 ########################################################################
 # pure set operations
 
-# pcs ∋ pc
+# pcs ∋ pc (contains pc as member)
 def member($pclass): #:: PCSET|(PCLASS) => boolean
 #   . as $pcset
     contains([$pclass])

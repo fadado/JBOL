@@ -58,7 +58,6 @@ def name: #:: PCLASS| => string
 ;
 
 ########################################################################
-# Transpositional intervals: -11..0..11
 
 # Transposes a pitch-class
 def transpose($interval): #:: PCLASS|(PCI) => PCLASS
@@ -78,9 +77,6 @@ def invert($interval): #:: PCLASS|(PCI) => PCLASS
 #   math::mod(-. + $interval; 12)
 #   math::mod(12 - . + $interval; 12)
 ;
-
-########################################################################
-# Intervals
 
 # Produces the pitch-class interval (0..11) between two pitch-classes
 def interval($pc): #:: PCLASS|(PCLASS) => PCI
@@ -102,9 +98,7 @@ def interval_class($pc): #:: PCLASS|(PCLASS) => IC
 #   math::mod(math::min($pc - .; . - $pc); 12)
 ;
 
-########################################################################
-
-# pc ∈ pcs
+# pc ∈ pcs (is element of pcset)
 def element($pcset): #:: PCLASS|(PCSET) => boolean
     . as $pclass
     | $pcset | contains([$pclass])
