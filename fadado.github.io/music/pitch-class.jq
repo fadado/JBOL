@@ -98,7 +98,7 @@ def interval_class($pc): #:: PCLASS|(PCLASS) => IC
 #   math::mod(math::min($pc - .; . - $pc); 12)
 ;
 
-# pc ∈ pcs (is element of pcset)
+# pc ∈ pcs (pc is element of pcset)
 def element($pcset): #:: PCLASS|(PCSET) => boolean
     . as $pclass
     | $pcset | contains([$pclass])

@@ -1,0 +1,48 @@
+#########################################################################
+# Music
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+#########################################################################
+
+include "music/interval-class-vector"; new
+[0,1,5,6,8]
+[2,1,1,2,3,1]
+
+include "music/interval-class-vector"; new
+[0,4,7]
+[0,0,1,1,1,0]
+
+include "music/interval-class-vector"; new
+[4,7,11]
+[0,0,1,1,1,0]
+
+include "music/interval-class-vector"; new | format
+[0,1,3,7]
+"111111"
+
+include "music/interval-class-vector"; new | format
+[4,7,11]
+"001110"
+
+include "music/interval-class-vector"; new | different # deep scale
+[0,2,4,5,7,9,11]
+true
+
+include "music/interval-class-vector"; new | different # deep scale
+[0,4,7]
+false
+
+include "music/interval-class-vector"; (.[0]|new) == (.[1]|new)
+[[0,1,3,7],[0,1,4,6]]
+true
+
+include "music/interval-class-vector"; new | uniform
+[0,1,3,7]
+true
+
+include "music/interval-class-vector"; new | uniform
+[0,1,4,6]
+true
+
+# vim:ai:sw=2:ts=2:et:syntax=jq

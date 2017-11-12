@@ -1,6 +1,6 @@
 module {
-    name: "music/vector",
-    description: "Interval class vector",
+    name: "music/interval-class-vector",
+    description: "Interval-class count vector",
     namespace: "fadado.github.io",
     author: {
         name: "Joan Josep Ordinas Rosa",
@@ -17,9 +17,9 @@ import "fadado.github.io/music/pitch-class" as pc;
 # PCLASS (pitch-class): 0..11
 # PCSET (pitch-class set): [PCLASS]
 # IC (interval-class): 0..6
-# VECTOR: [number]7
+# VECTOR: 6[number]; indices are IC-1
 
-# Interval-class vector including unisons (= cardinality)
+# Interval-class vector
 def new: #:: PCSET => VECTOR
     def _tally:
         . as $pcs
@@ -28,9 +28,8 @@ def new: #:: PCSET => VECTOR
         | range($i+1; $n) as $j
         | $pcs[$i]|pc::interval_class($pcs[$j])
     ;
-    # interval class vector with cardinality at .[0]
-    [length,0,0,0,0,0,0] as $icv
-    | reduce _tally as $i ($icv; .[$i] += 1)
+    # interval class vector
+    reduce _tally as $ic ([0,0,0,0,0,0]; .[$ic-1] += 1)
 ;
 
 # Format intervals array 
@@ -46,15 +45,16 @@ def format: #:: VECTOR => string
 def uniform: #:: VECTOR => boolean
 #   . as $vector
     every(
-        range(1; length) as $i
-        | .[$i] == .[$i-1])
+        range(0; length-1) as $i
+        | ($i+1) as $j
+        | .[$i] == .[$j])
 ;
 
 # All counts are diferent? Deep scale property.
 def different: #:: VECTOR => boolean
 #   . as $vector
     every(
-        range(length) as $i
+        range(0; length-1) as $i
         | range($i+1; length) as $j
         | .[$i] != .[$j])
 ;

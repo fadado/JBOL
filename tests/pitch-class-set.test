@@ -48,32 +48,4 @@ include "music/pitch-class-set"; [range(12)] | format
 null
 "0123456789te"
 
-include "music/pitch-class-set"; retrograde
-[1,2,3,4,5]
-[5,4,3,2,1]
-
-include "music/pitch-class-set"; rotate(1)
-[1,2,3,4,5]
-[2,3,4,5,1]
-
-include "music/pitch-class-set"; rotate(-1)
-[1,2,3,4,5]
-[5,1,2,3,4]
-
-include "music/pitch-class-set"; ordered
-[1,9,3,4,5]
-false
-
-include "music/pitch-class-set"; ordered
-[3]
-true
-
-include "music/pitch-class-set"; ordered
-[]
-true
-
-include "music/pitch-class-set"; ordered
-[1,2,3,4,5]
-true
-
 # vim:ai:sw=2:ts=2:et:syntax=jq

@@ -36,27 +36,46 @@ def new($x): #::(<array^string>) => PCSET
 # Format a pitch-class set as a string with , as delimiter
 def format: #:: PCSET| => string
 #   . as $pcset
-    map(pc::format) | reduce .[] as $s (""; .+$s) # str::concat 
+    reduce (.[] | pc::format) as $s (""; .+$s) # str::concat 
+;
+
+########################################################################
+
+# Produces a trasposed pitch-class set.
+def transpose($interval): #:: PCSET|(PCI) => PCSET
+#   . as $pcset
+    map(pc::transpose($interval))
+;
+
+# Counts the number of transpositions for a pitch-class set.
+def transpositions: #:: PCSET| => number
+#   . as $pcset
+    12 / math::gcd(12; length)
+;
+
+# Produces an inverted pitch-class set.
+def invert: #:: PCSET| => PCSET
+#   . as $pcset
+    map(pc::invert)
+;
+def invert($interval): #:: PCSET|(PCI) => PCSET
+#   . as $pcset
+    map(pc::invert($interval))
 ;
 
 ########################################################################
 # pure set operations
 
-# pcs ∋ pc (contains pc as member)
+# pcs ∋ pc (pcs contains pc as member)
 def member($pclass): #:: PCSET|(PCLASS) => boolean
 #   . as $pcset
     contains([$pclass])
 ;
 
-# pitch-class index inside pcset
-def position($pclass): #:: PCSET|(PCLASS) => number^null
-    index($pclass)
-;
-
 # ~p
 def complement: #:: PCSET| => PCSET
     . as $pcset
-    | [ range(12) | select(pc::element($pcset)|not) ]
+    | [ range(12) | reject(pc::element($pcset)) ]
 ;
 
 # p ∪ q
@@ -74,7 +93,7 @@ def intersection($pcs): #:: PCSET|(PCSET) => PCSET
 # p – q
 def difference($pcs): #:: PCSET|(PCSET) => PCSET
 #   . as $pcset
-    map(select(pc::element($pcs))|not)
+    map(reject(pc::element($pcs)))
 ;
 
 # (p – q) ∪ (q – p)
@@ -102,41 +121,6 @@ def disjoint($pcs): #:: PCSET|(PCSET) => boolean
 ;
 
 ########################################################################
-# pitch-class set considered a sequence
-
-# Is the pcset an ordered sequence?
-def ordered: #:: PCSET| => boolean
-    . as $pcset
-    | every(range(length-1) | $pcset[.] <= $pcset[.+1])
-;
-
-# Produces an inverted pitch-class set.
-def invert: #:: PCSET| => PCSET
-    map(pc::invert)
-;
-def invert($interval): #:: PCSET|(PCI) => PCSET
-    map(pc::invert($interval))
-;
-
-# Produces a trasposed pitch-class set.
-def transpose($interval): #:: PCSET|(PCI) => PCSET
-    map(pc::transpose($interval))
-;
-
-# Counts the number of transpositions for a pitch-class set.
-def transpositions: #:: PCSET| => number
-#   . as $pcset
-    12 / math::gcd(12; length)
-;
-
-# Rotate in both directions
-def rotate($n): #:: PCSET|(number) => PCSET
-    .[$n:] + .[:$n]
-;
-
-# Simply reverse
-def retrograde: #:: PCSET => PCSET
-    reverse
-;
+# TODO: nomal, prime...
 
 # vim:ai:sw=4:ts=4:et:syntax=jq
