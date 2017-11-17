@@ -264,13 +264,8 @@ def join($separator): #:: [string]|(string) => string
         else .+$separator
         end
     ;
-    reduce .[] as $s
-        (null; sep + $s)//""
-;
-
-def concat: #:: [string]| => string
-    reduce .[] as $s
-        (""; . + $s)
+    reduce .[] as $s (null; sep + $s)
+        // ""
 ;
 
 ########################################################################

@@ -18,7 +18,6 @@ import "fadado.github.io/music/pitch" as pitch;
 # PCLASS (pitch-class): 0..11; as string: 0..9,t,e
 # PCI (pitch-class interval): 0..11 (has not direction) 
 # IC (interval-class): 0..6 (assume interval inversion equivalence)
-# PCSET (pitch-class set): [PCLASS]
 
 # Produces the pitch-class corresponding to a pitch
 def new: #:: <number^string>| => PCLASS
@@ -96,12 +95,6 @@ def interval_class($pc): #:: PCLASS|(PCLASS) => IC
     math::mod($pc - .; 12) | when(. > 6; 12 - .)
 #   interval($pc) | iclass
 #   math::mod(math::min($pc - .; . - $pc); 12)
-;
-
-# pc ∈ pcs (pc is element of pcset)
-def element($pcset): #:: PCLASS|(PCSET) => boolean
-    . as $pclass
-    | $pcset | contains([$pclass])
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

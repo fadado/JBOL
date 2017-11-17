@@ -1,0 +1,101 @@
+#########################################################################
+# Music
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+#########################################################################
+
+include "music/interval"; vector
+[0,1,5,6,8]
+[2,1,1,2,3,1]
+
+include "music/interval"; vector
+[0,4,7]
+[0,0,1,1,1,0]
+
+include "music/interval"; vector
+[4,7,11]
+[0,0,1,1,1,0]
+
+include "music/interval"; vector | map(tostring) | add
+[0,1,3,7]
+"111111"
+
+include "music/interval"; vector | map(tostring) | add
+[4,7,11]
+"001110"
+
+include "music/interval"; vector | (unique | length == 6)
+[0,2,4,5,7,9,11]
+true
+
+include "music/interval"; include "array"; vector | different # deep scale
+[0,2,4,5,7,9,11]
+true
+
+include "music/interval"; include "array"; vector | different # deep scale
+[0,4,7]
+false
+
+include "music/interval"; (.[0]|vector) == (.[1]|vector)
+[[0,1,3,7],[0,1,4,6]]
+true
+
+include "music/interval"; include "array"; vector | uniform
+[0,1,3,7]
+true
+
+include "music/interval"; include "array"; vector | uniform
+[0,1,4,6]
+true
+
+########################################################################
+
+# tritone
+include "music/interval"; table
+[6]
+[]
+
+# augmented
+include "music/interval"; table
+[2,6,10]
+[[4],[8]]
+
+# tones
+include "music/interval"; table
+[0,2,4,6,8,10]
+[[2],[4],[6],[8],[10]]
+
+# diatonic
+include "music/interval"; table
+[0,2,4,5,7,9,11]
+[[1,2],[3,4],[5,6],[6,7],[8,9],[10,11]]
+
+# octatonic
+include "music/interval"; table
+[0,2,3,5,6,8,9,11]
+[[1,2],[3],[4,5],[6],[7,8],[9],[10,11]]
+
+#########################################################################
+
+include "music/interval"; pattern | add
+[0,2,4,5,7,9,11]
+12
+
+include "music/interval"; pattern
+[0,2,4,5,7,9,11]
+[2,2,1,2,2,2,1]
+
+include "music/interval"; pattern | map(tostring) | join("")
+[0,2,4,5,7,9,11]
+"2212221"
+
+include "music/interval"; pattern
+[5,7,9,10,0,2,4]
+[2,2,1,2,2,2,1]
+
+include "music/interval"; pattern | map(tostring) | join("")
+[5,7,9,10,0,2,4]
+"2212221"
+
+# vim:ai:sw=2:ts=2:et:syntax=jq

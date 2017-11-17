@@ -9,7 +9,6 @@ module {
 };
 
 include "fadado.github.io/prelude";
-import "fadado.github.io/math" as math;
 import "fadado.github.io/string/regexp" as re;
 
 ########################################################################
@@ -17,6 +16,9 @@ import "fadado.github.io/string/regexp" as re;
 #
 # PITCH: 0..127; as string: (C0..G10), MIDI based octave count
 # PI (pitch interval): -127..127 (has direction)
+#
+# Useful primitives:
+#   + math::abs :: number => number (absolute value, to make unordered intervals)
 
 # Produces a new pitch
 def new: #:: <number^string>| => PITCH
@@ -49,18 +51,21 @@ def new($x): #:: (<number^string>) => PITCH
     $x | new
 ;
 
+# Produces the note name
+def name: #:: PCLASS| => string
+#   . as $pitch
+    ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"][. % 12]
+;
+
 # Formats a pitch (C0..G10)
 def format: #:: PITCH| => string
 #   . as $pitch
-	["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"] as $names
-    | math::div(.; 12) as $octave
-    | math::mod(.; 12) as $note
-    | "\($names[$note])\($octave)"
+    "\(name)\(./12|floor)"
 ;
 
 ########################################################################
 
-## Add a directed interval to the pitch
+## Add a directed pitch interval to the pitch
 def transpose($interval): #:: PITCH|(PI) => PITCH
 #   . as $pitch
     . + $interval
@@ -68,14 +73,10 @@ def transpose($interval): #:: PITCH|(PI) => PITCH
         "Pitch out of range: \(.)" | error)
 ;
 
-# Produces the pitch interval (-127..127) between two pitches, -11..11 when
-# applied to pitch-classes
+# Produces the pitch interval (-127..127) between two pitches
 def interval($p): #:: PITCH|(PITCH) => PI
 #   . as $pitch
     $p - .
 ;
-
-# Useful primitives:
-#   + math::abs (to make unordered intervals)
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

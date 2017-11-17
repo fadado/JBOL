@@ -1,6 +1,6 @@
 module {
-    name: "music/pitch-class-sequence",
-    description: "Pitch-class sets considered as sequences",
+    name: "music/interval-class-vector",
+    description: "Interval-class count vector",
     namespace: "fadado.github.io",
     author: {
         name: "Joan Josep Ordinas Rosa",
@@ -9,39 +9,38 @@ module {
 };
 
 include "fadado.github.io/prelude";
+import "fadado.github.io/math" as math;
 import "fadado.github.io/music/pitch-class" as pc;
+import "fadado.github.io/array" as array;
 
 ########################################################################
 # Names used in type declarations
 #
 # PCLASS (pitch-class): 0..11
-# PCI (pitch-class interval): 0..11
 # PCSET (pitch-class set): [PCLASS]
+# IC (interval-class): 0..6
+# VECTOR: 6[number]; indices are IC-1
 # TABLE: [[PCI]]
 # PATTERN: [PCI]
+#
+# Useful primitives:
+#   + add(.[] | math::tobase(16))  (to format vectors)
+#   + map(tostring) | add  (to format vectors if count < 10)
+#   + vector|array::uniform
+#   + vector|array::different (deep scale property)
 
-# pitch-class index inside pcset
-def position($pclass): #:: PCSET|(PCLASS) => number^null
-    index($pclass)
-;
-
-# Is the pcset an ordered sequence?
-def ordered: #:: PCSET| => boolean
+# Interval-class vector
+def vector: #:: PCSET => VECTOR
 #   . as $pcset
-    every(
-        range(length-1) as $i
-        | ($i+1) as $j
-        | .[$i] <= .[$j])
-;
-
-# Rotate in both directions
-def rotate($n): #:: PCSET|(number) => PCSET
-    .[$n:] + .[:$n]
-;
-
-# Simply reverse sequence
-def retrograde: #:: PCSET => PCSET
-    reverse
+    def _tally:
+        . as $pcs
+        | length as $n
+        | range($n-1) as $i
+        | range($i+1; $n) as $j
+        | $pcs[$i]|pc::interval_class($pcs[$j])
+    ;
+    # interval class vector
+    reduce _tally as $ic ([0,0,0,0,0,0]; .[$ic-1] += 1)
 ;
 
 ########################################################################
@@ -65,7 +64,6 @@ def table: #:: PCSET => TABLE
 ;
 
 # TODO
-#   move to step-size-table.jq
 #   define myhill, maximally_even
 
 ########################################################################
@@ -79,9 +77,4 @@ def pattern: #:: PCSET| => PATTERN
     | [range(length) as $i | $pcset[$ndx[$i]]|pc::interval($pcset[$ndx[$i+1]])]
 #   | assert(add == 12)
 ;
-
-# TODO
-#   move to interval-pattern.jq
-#   define bip
-
 # vim:ai:sw=4:ts=4:et:syntax=jq

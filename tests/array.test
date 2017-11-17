@@ -1,0 +1,101 @@
+#########################################################################
+# Generic array operations
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+#########################################################################
+
+########################################################################
+
+include "array"; index(3)
+[1,2,3,4,5]
+2
+
+include "array"; reverse
+[1,2,3,4,5]
+[5,4,3,2,1]
+
+include "array"; rotate(1)
+[1,2,3,4,5]
+[2,3,4,5,1]
+
+include "array"; rotate(-1)
+[1,2,3,4,5]
+[5,1,2,3,4]
+
+include "array"; sorted
+[1,9,3,4,5]
+false
+
+include "array"; sorted
+[3]
+true
+
+include "array"; sorted
+[]
+true
+
+include "array"; sorted
+[1,2,3,4,5]
+true
+
+########################################################################
+
+include "array/set"; index(3)
+[2,4,5,6,7,3,2]
+5
+
+include "array/set"; .[[3]]
+[2,4,5,6,7,3,2]
+[5]
+
+include "array/set"; .[[2]]
+[2,4,5,6,7,3,2]
+[0,6]
+
+include "array/set"; insert(2) | insert(1)
+[5,4,3]
+[5,4,3,2,1]
+
+include "array/set"; remove(2)
+[5,4,3]
+[5,4,3]
+
+include "array/set"; remove(2)
+[5,2,4,3]
+[5,4,3]
+
+include "array"; position(2)
+[5,2,4,3]
+1
+
+include "array/set"; 3 | element([4,2,5,3,2,1])
+null
+true
+
+include "array/set"; [4,2,5,3,2,1] | member(2)
+null
+true
+
+include "array/set";  equal([5,4,3,2,1])
+[1,2,3,4,5]
+true
+
+include "array/set";  union([1,2,3,4,5,6,7,8,9,0])
+[1,2,3,4,5]
+[1,2,3,4,5,6,7,8,9,0]
+
+include "array/set";  intersection([1,2,3,4,5,6,7,8,9,0])
+[1,2,3,4,5]
+[1,2,3,4,5]
+
+include "array/set";  difference([6,7,8,9,0])
+[1,2,3,4,5,6,7,8,9]
+[1,2,3,4,5]
+
+include "array/set";  difference([6,7,8,9,0])
+[1,2,3,4,5,6,7,8,9]
+[1,2,3,4,5]
+
+
+# vim:ai:sw=2:ts=2:et:syntax=jq

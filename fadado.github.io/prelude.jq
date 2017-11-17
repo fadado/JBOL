@@ -55,6 +55,16 @@ def some(stream): #:: a|(a->*boolean) => boolean
     isdot(stream | . or empty)
 ;
 
+#
+def add(generator): #:: a|(a->*b) => b^null
+    reduce generator as $item
+        (null; . + $item)
+;
+def add(generator; $b): #:: a|(a->*b; b) => b
+    reduce generator as $item
+        ($b; . + $item)
+;
+
 ########################################################################
 # Stolen from SNOBOL: ABORT (renamed `cancel`) and FENCE
 ########################################################################

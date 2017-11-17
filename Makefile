@@ -91,6 +91,7 @@ LIB=fadado.github.io
 STR=$(LIB)/string
 GEN=$(LIB)/generator
 MUSIC=$(LIB)/music
+ARRAY=$(LIB)/array
 
 ########################################################################
 # Rules
@@ -116,8 +117,11 @@ $(LogDir)/prelude.log: $(LIB)/prelude.jq
 $(LogDir)/types.log: $(LIB)/types.jq
 $(LogDir)/schema.log: $(LIB)/schema.jq $(LIB)/prelude.jq $(LIB)/types.jq $(STR)/url.jq $(STR)/regexp.jq $(GEN)/stream.jq
 $(LogDir)/math.log: $(LIB)/math.jq
-$(LogDir)/sets.log: $(LIB)/set.jq
+$(LogDir)/set.log: $(LIB)/set.jq
 $(LogDir)/relations.log: $(LIB)/rel.jq
+
+# Arrays tests
+$(LogDir)/array.log: $(ARRAY)/array.jq $(ARRAY)/set.jq
 
 # Generator tests
 $(LogDir)/stream.log: $(GEN)/stream.jq
@@ -134,11 +138,10 @@ $(LogDir)/snobol.log: $(STR)/snobol.jq $(LIB)/prelude.jq  $(STR)/string.jq
 $(LogDir)/url.log: $(STR)/url.jq $(LIB)/math.jq
 
 # Music tests
-$(LogDir)/pitch.log: $(MUSIC)/pitch.jq $(LIB)/prelude.jq $(LIB)/math.jq $(STR)/regexp.jq 
+$(LogDir)/pitch.log: $(MUSIC)/pitch.jq $(LIB)/prelude.jq $(STR)/regexp.jq 
 $(LogDir)/pitch-class.log: $(MUSIC)/pitch-class.jq $(MUSIC)/pitch.jq $(LIB)/prelude.jq $(LIB)/math.jq
-$(LogDir)/pitch-class-set.log: $(MUSIC)/pitch-class-set.jq $(MUSIC)/pitch-class.jq $(LIB)/prelude.jq $(LIB)/math.jq
-$(LogDir)/pitch-class-sequence.log: $(MUSIC)/pitch-class-sequence.jq $(LIB)/prelude.jq 
-$(LogDir)/interval-class-vector.log: $(MUSIC)/interval-class-vector.jq $(MUSIC)/pitch-class.jq $(LIB)/prelude.jq 
+$(LogDir)/pitch-class-set.log: $(MUSIC)/pitch-class-set.jq $(MUSIC)/pitch-class.jq $(LIB)/prelude.jq $(ARRAY)/set.jq $(LIB)/math.jq
+$(LogDir)/interval.log: $(MUSIC)/interval.jq $(MUSIC)/pitch-class.jq $(ARRAY)/array.jq $(LIB)/prelude.jq 
 
 ########################################################################
 # Utilities
