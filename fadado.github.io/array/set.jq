@@ -1,6 +1,6 @@
 module {
     name: "array/set",
-    description: "Array as sets operations",
+    description: "Arrays as sets",
     namespace: "fadado.github.io",
     author: {
         name: "Joan Josep Ordinas Rosa",
@@ -13,16 +13,19 @@ include "fadado.github.io/prelude";
 ########################################################################
 
 # ∅         []
-# |s|       length
-# s ⊂ t     s|contains(t)
-# s ⊃ t     s|inside(t)
+# |S|       length
+# {x...}    [x...] | unique
+# S ∪ T     (S + T) | unique
+# S ⊂ T     S|contains(T)
+# S ⊃ T     S|inside(T)
+# S – T     S - T
 
 # Add element to set
 def insert($x): #:: [a]|(a) => [a]
     .[length] = $x
 ;
 
-# Remove element from set
+# Remove one element from set
 def remove($x): #:: [a]|(a) => [a]
     .[[$x]][0] as $i
     | when($i != null; del(.[$i]))
@@ -40,8 +43,7 @@ def member($x): #:: a|([a]) => boolean
 
 # S ≡ T (S is equal to T)
 def equal($t): #:: [a]|([a]) => boolean
-    . as $s
-    | ($s|inside($t)) and ($t|inside($s))
+    inside($t) and contains($t)
 ;
 
 # S ∪ T
@@ -52,11 +54,6 @@ def union($t): #:: array|(array) => array
 # S ∩ T
 def intersection($t): #:: array|(array) => array
     . - (. - $t)
-;
-
-# S – T
-def difference($t): #:: array|(array) => array
-    . - $t
 ;
 
 # (S – T) ∪ (T – S)

@@ -6,6 +6,9 @@
 #########################################################################
 
 ########################################################################
+# Combinatorics on Words
+
+########################################################################
 
 include "array"; index(3)
 [1,2,3,4,5]
@@ -57,6 +60,14 @@ include "array/set"; insert(2) | insert(1)
 [5,4,3]
 [5,4,3,2,1]
 
+include "array"; remove(2)
+[5,4,3]
+[5,4,3]
+
+include "array"; remove(2)
+[5,2,4,3,2,2]
+[5,4,3]
+
 include "array/set"; remove(2)
 [5,4,3]
 [5,4,3]
@@ -65,7 +76,7 @@ include "array/set"; remove(2)
 [5,2,4,3]
 [5,4,3]
 
-include "array"; position(2)
+include "array"; index(2)
 [5,2,4,3]
 1
 
@@ -89,11 +100,11 @@ include "array/set";  intersection([1,2,3,4,5,6,7,8,9,0])
 [1,2,3,4,5]
 [1,2,3,4,5]
 
-include "array/set";  difference([6,7,8,9,0])
+include "array/set";  . - [6,7,8,9,0]
 [1,2,3,4,5,6,7,8,9]
 [1,2,3,4,5]
 
-include "array/set";  difference([6,7,8,9,0])
+include "array/set";  . - [6,7,8,9,0]
 [1,2,3,4,5,6,7,8,9]
 [1,2,3,4,5]
 

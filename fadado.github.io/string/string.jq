@@ -42,7 +42,7 @@ def upto($s; $i): #:: string|(string;number) => *number
     upto($s; $i; length)
 ;
 def upto($s): #:: string|(string) => *number
-    upto($s;  0; length)
+    upto($s; 0; length)
 ;
 
 # Match initial string
@@ -112,7 +112,7 @@ def none($s): #:: string|(string) => number
 # Pad strings
 def left($n; $t): #:: string|(number;string) => string
     when($n > length;
-         ($t*($n-length)) + .)
+        ($t*($n-length)) + .)
 ;
 def left($n): #:: string|(number) => string
     left($n; " ")
@@ -226,8 +226,8 @@ def lstrip($s): #:: string|(string) => string
 
 def rstrip($s): #:: string|(string) => string
     when(length != 0 and (.[-1:length] | inside($s));
-         (_rndx(inside($s))//-1) as $i |
-         if $i < 0 then "" else .[0:$i] end
+        (_rndx(inside($s))//-1) as $i |
+        if $i < 0 then "" else .[0:$i] end
     )
 ;
 
@@ -275,7 +275,10 @@ def join($separator): #:: [string]|(string) => string
 def kstar: #:: string| => +string
     def k: "", .[] + k;
     # . as $alphabet
-    if length == 0 then . else (./"")|k end
+    if length == 0
+    then .
+    else (./"")|k
+    end
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

@@ -14,6 +14,7 @@ def lpad($n):
 
 def upto($characters; $string):
     $string|str::upto($characters)
+#   $string|str::find(($characters/"")[])
 ;
 
 # Produces a stream of intersections between two words
