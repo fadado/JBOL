@@ -8,6 +8,118 @@
 ########################################################################
 # Combinatorics on Words
 
+# Catenation
+. + [1,2,3]
+[3,4,5]
+[3,4,5,1,2,3]
+
+# Length of w
+length
+[3,4,5]
+3
+
+# Number of a's in w
+.[["a"]] | length
+[1,"a",3,4,"a",5]
+2
+
+include "array"; count("a")
+[1,"a",3,4,"a",5]
+2
+
+include "array"; count("x")
+[1,"a",3,4,"a",5]
+0
+
+# Alphabet of w
+unique
+[1,5,2,3,4,2,5]
+[1,2,3,4,5]
+
+# Reverse
+reverse
+[1,2,3,4,5]
+[5,4,3,2,1]
+
+# Factor, proper factor?
+include "array"; . as $u | []|factor($u)
+[1,2, 3,4,2, 5]
+true
+
+include "array"; . as $u | [3,4,2]|factor($u)
+[]
+false
+
+include "array"; . as $u | []|pfactor($u)
+[1,2, 3,4,2, 5]
+false
+
+include "array"; . as $u | [3,4,2]|pfactor($u)
+[]
+false
+
+include "array"; . as $u | [3,4,2]|factor($u)
+[1,2, 3,4,2, 5]
+true
+
+include "array"; . as $u | [3,4,2]|pfactor($u)
+[3,4,2]
+false
+
+include "array"; . as $u | [3,4,2]|pfactor($u)
+[1,2, 3,4,2, 5]
+true
+
+include "array"; . as $u | [3,4,2]|factor($u)
+[3,4,2,1,2]
+true
+
+include "array"; . as $u | [3,4,2]|factor($u)
+[2,1,3,3,4,2]
+true
+
+# Prefix, proper prefix?
+include "array"; . as $u | [3,4,2]|prefix($u)
+[3,4,2,2,1,3,3,4,2]
+true
+
+include "array"; . as $u | [3,4,2]|prefix($u)
+[3,4,2]
+true
+
+include "array"; . as $u | [3,4,2]|prefix($u)
+[3,2]
+false
+
+include "array"; . as $u | [3,4,2]|pprefix($u)
+[3,4,2,2,1,3,3,4,2]
+true
+
+include "array"; . as $u | [3,4,2]|pprefix($u)
+[3,4,2]
+false
+
+include "array"; . as $u | [3,4,2]|prefix($u)
+[3,2]
+false
+
+# Suffix, proper suffix?
+include "array"; . as $u | [3,4,2]|suffix($u)
+[1,2,3,4,2]
+true
+
+include "array"; . as $u | [3,4,2]|suffix($u)
+[1,2,3,4,2,3]
+false
+
+include "array"; . as $u | [3,4,2]|psuffix($u)
+[1,2,3,4,2,3]
+false
+
+include "array"; . as $u | [3,4,2]|psuffix($u)
+[2,3,4,2]
+true
+
 ########################################################################
 
 include "array"; index(3)
