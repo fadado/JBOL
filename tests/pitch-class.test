@@ -28,21 +28,21 @@ include "music/pitch-class"; transpose(10)
 2
 0
 
-include "array"; element([range(12)])
+include "array/set"; element([range(12)])
 7
 true
 
-include "array"; element([range(6)])
+include "array/set"; element([range(6)])
 7
 false
 
 # Diatonic pitch-classes are in chromatic set
-include "array"; [.[] | element([range(12)])] | all
+include "array/set"; [.[] | element([range(12)])] | all
 [0,2,4,5,7,9,11]
 true
 
 # Sharp pitch-classes are not in diatonic set
-include "array"; [.[] | element([0,2,4,5,7,9,11]) | not] | all
+include "array/set"; [.[] | element([0,2,4,5,7,9,11]) | not] | all
 [1,3,6,8,10]
 true
 
