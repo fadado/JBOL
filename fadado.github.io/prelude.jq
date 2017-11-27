@@ -152,6 +152,11 @@ def assert(predicate; $message): #:: a|(a->boolean;string) => a!
 # while/2
 # until/2
 
+def mapcat(filter):
+    reduce (.[] | filter) as $x
+        (null; . + $x)
+;
+
 def fold(filter; $a; generator): #:: x|([a,b]->a;a;x->*b) => a
     reduce generator as $b
         ($a; [.,$b]|filter)
@@ -210,7 +215,7 @@ def unfold(filter): #:: a|(a->[b,a]) => *b
 # Similar to `recurse` and `iterate` but accepting _relations_!
 
 # f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
-def kplus(filter): #:: a|(a->+a) => *a
+def K_plus(filter): #:: a|(a->*a) => *a
     def r:
         if length == 0
         then empty
@@ -224,8 +229,8 @@ def kplus(filter): #:: a|(a->+a) => *a
 ;
 
 # f⁰ f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
-def kstar(filter): #:: a|(a->+a) => *a
-    . , kplus(filter)
+def K_star(filter): #:: a|(a->+a) => *a
+    . , K_plus(filter)
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq
