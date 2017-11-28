@@ -227,12 +227,6 @@ def K_plus(filter): #:: a|(a->*a) => *a
         end
     ;
     [filter] | r
-#   [filter] | iterate1(
-#       if length == 0
-#       then empty
-#       else .[] , [.[] | filter]
-#       end
-#   )
 ;
 
 # f⁰ f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
