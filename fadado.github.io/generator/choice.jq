@@ -175,13 +175,6 @@ def mulsets: #:: [a]| => *[a]
 # Cartesian product
 #
 def product: #:: [[a]]| => *[a]
-#   if length == 0
-#   then []
-#   else
-#       .[0][] as $x
-#       | (.[1:]|product) as $y
-#       | [$x] + $y
-#   end
     def _product:
         if length == 1
         then
@@ -204,30 +197,20 @@ def words($k): #:: [a]|(number) => *[a]
     | product
 ;
 
-# Infinite words over an alphabet (A+ and A*)
+# Infinite words over an alphabet (A*)
 # Infinite tuples from a set
 # All sizes permutations (variations) with reposition
 #
-# Ordered version for:
-#   def k: [], (.[]|[.]) + k;
-#
-def A_plus: #:: [a]| => *[a]
-    def r:
-        (.[]|[.])           # either wrap each symbol
-        ,                   # or
-        r as $w             # for each word in previous level
-        | .[] as $symbol    # for each symbol in alphabet
-        | $w|.[length]=$symbol  # make new word
-    ;
-    if length == 0 then empty else r end
-;
-
-def A_star: #:: [a]| => +[a]
-    [] , A_plus
-;
-
-def words: #:: [a]| => +[a]
-    [] , A_plus
+def words: #:: [a]| => *[a]
+    if length == 0
+    then empty
+    else
+        . as $alphabet
+        | [] | K_star (
+            $alphabet[] as $symbol
+            | .[length]=$symbol
+        )
+    end
 ;
 
 ########################################################################

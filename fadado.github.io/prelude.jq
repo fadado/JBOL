@@ -146,12 +146,13 @@ def assert(predicate; $message): #:: a|(a->boolean;string) => a!
 
 # Builtin
 # =======================
-# iterate/1: f⁰ f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
-# iterate/2
+# recurse/1: f⁰ f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
+# recurse/2
 # repeat/1: f f f f f f…
 # while/2
 # until/2
 
+# Like Haskell concatMap, Scala flatmap, etc.
 def mapcat(filter):
     reduce (.[] | filter) as $x
         (null; . + $x)
@@ -226,6 +227,12 @@ def K_plus(filter): #:: a|(a->*a) => *a
         end
     ;
     [filter] | r
+#   [filter] | iterate1(
+#       if length == 0
+#       then empty
+#       else .[] , [.[] | filter]
+#       end
+#   )
 ;
 
 # f⁰ f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
