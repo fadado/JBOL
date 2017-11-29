@@ -214,9 +214,10 @@ def unfold(filter): #:: a|(a->[b,a]) => *b
 ########################################################################
 
 # Similar to `recurse` and `iterate` but accepting _relations_!
+# TODO: remove?
 
 # f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
-def K_plus(filter): #:: a|(a->*a) => *a
+def reliter(filter): #:: a|(a->*a) => *a
     def r:
         if length == 0
         then empty
@@ -230,8 +231,8 @@ def K_plus(filter): #:: a|(a->*a) => *a
 ;
 
 # f⁰ f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
-def K_star(filter): #:: a|(a->+a) => *a
-    . , K_plus(filter)
+def reliter1(filter): #:: a|(a->+a) => *a
+    . , reliter(filter)
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

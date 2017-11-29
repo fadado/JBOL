@@ -194,6 +194,61 @@ def product: #:: [[a]]| => *[a]
     if length == 0 then [] else _product end
 ;
 
+# Size n words over an alphabet Σ
+# Powers exponent n of Σ
+# Permutations (variations) with reposition
+#
+# Generates Σ⁰ or Σ¹ or … or Σⁿ
+def powers($n): #:: [a]|(number) => *[a]
+    select(0 <= $n) # not defined for negative $k
+    | if length == 0 or $n == 0
+      then []
+      elif $n == 1
+      then .
+      else
+        . as $set
+        | [range($n) | $set]
+        | product
+      end
+;
+
+# Infinite words over an alphabet Σ
+# Infinite tuples from a set
+# All sizes permutations (variations) with reposition
+#
+# Generates Σ⁺
+def kplus: #:: [a]| => *[a]
+#   . as Σ
+    def r:
+        # Ordered version for:
+        #   def k: [], (.[]|[.]) + k;
+        (.[]|[.])           # either wrap each symbol
+        ,                   # or
+        r as $w             # for each word in previous level
+        | .[] as $symbol    # for each symbol in alphabet
+        | $w|.[length]=$symbol  # make new word
+    ;
+    if length == 0 then empty else r end
+;
+
+# Generates Σ*
+def kstar: #:: [a]| => +[a]
+#   . as Σ
+    [] , kplus
+;
+
+# Generates Σ⁰ or Σ¹ or … or Σⁿ
+def words($n): #:: [a]|(number) => *[a]
+    powers($n)
+;
+
+# Generates Σ*
+def words: #:: [a]| => +[a]
+#   . as Σ
+    [] , kplus
+;
+
+# TODO...
 # Language product?
 def lproduct: #:: [[a]]| => *[a]
     def _product:
@@ -205,55 +260,9 @@ def lproduct: #:: [[a]]| => *[a]
             | $x + (.[1:]|_product)
         end
     ;
-    if length == 0 then empty else _product end
-;
-
-# Size k words over an alphabet (A*k)
-# Permutations (variations) with reposition
-#
-def words($k): #:: [a]|(number) => *[a]
-    select(0 <= $k) # not defined for negative $k
-    | . as $set
-    | [range($k) | $set]
-    | product
-;
-
-#def words: #:: [a]| => *[a]
-#   if length == 0
-#   then empty
-#   else
-#       . as $alphabet
-#       | [] | K_star (
-#           $alphabet[] as $symbol
-#           | .[length]=$symbol
-#       )
-#   end
-#;
-
-# Infinite words over an alphabet (A+ and A*)
-# Infinite tuples from a set
-# All sizes permutations (variations) with reposition
-#
-# Ordered version for:
-#   def k: [], (.[]|[.]) + k;
-#
-def A_plus: #:: [a]| => *[a]
-    def r:
-        (.[]|[.])           # either wrap each symbol
-        ,                   # or
-        r as $w             # for each word in previous level
-        | .[] as $symbol    # for each symbol in alphabet
-        | $w|.[length]=$symbol  # make new word
-    ;
-    if length == 0 then empty else r end
-;
-
-def A_star: #:: [a]| => +[a]
-    [] , A_plus
-;
-
-def words: #:: [a]| => +[a]
-    [] , A_plus
+    if length == 0 then [] else _product end
+    # L · {ε} = L       L · [[]] = L
+    # L · ∅ = ∅         L · [] = []
 ;
 
 ########################################################################
