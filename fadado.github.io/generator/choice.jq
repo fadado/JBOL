@@ -172,16 +172,9 @@ def mulsets: #:: [a]| => *[a]
 # Multi-sequences
 ########################################################################
 
-# Cartesian product
+# Generates cartesian product: A × B…
 #
 def product: #:: [[a]]| => *[a]
-#   if length == 0
-#   then []
-#   else
-#       .[0][] as $x
-#       | (.[1:]|product) as $y
-#       | [$x] + $y
-#   end
     def _product:
         if length == 1
         then
@@ -191,34 +184,47 @@ def product: #:: [[a]]| => *[a]
             | [$x] + (.[1:]|_product)
         end
     ;
-    if length == 0 then [] else _product end
+    if length < 2
+    then empty
+    else _product // [] end
 ;
-def product($a): [$a]|product;
-def product($a;$b): [$a,$b]|product;
-def product($a;$b;$c): [$a,$b,$c]|product;
-def product($a;$b;$c;$d): [$a,$b,$c,$d]|product;
-def product($a;$b;$c;$d;$e): [$a,$b,$c,$d,$e]|product;
+def product($A;$B): [$A,$B]|product;
+def product($A;$B;$C): [$A,$B,$C]|product;
+def product($A;$B;$C;$D): [$A,$B,$C,$D]|product;
+def product($A;$B;$C;$D;$E): [$A,$B,$C,$D,$E]|product;
+def product($A;$B;$C;$D;$E;$F): [$A,$B,$C,$D,$E,$F]|product;
+def product($A;$B;$C;$D;$E;$F;$G): [$A,$B,$C,$D,$E,$F,$G]|product;
 
-# Generates Σ⁰ or Σ¹ or … or Σⁿ
+# Generates any cartesian power: A⁰ or A¹ … Aⁿ
 #
 def powers($n): #:: [a]|(number) => *[a]
-#   . as Σ
     select(0 <= $n) # not defined for negative $k
-    | if length == 0 or $n == 0
-      then []
-      elif $n == 1
-      then .
-      else
+    | if $n == 0
+    then []
+    elif $n == 1
+    then .
+    else
         . as $set
         | [range($n) | $set]
         | product
-      end
+    end
+;
+
+# Generates Σ*
+#
+def kstar: #:: [a]| => +[a]
+    if length == 0
+    then []
+    else
+        . as $alphabet
+        | []
+        | deepen($alphabet[] as $symbol | .[length]=$symbol)
+    end
 ;
 
 # Generates Σ⁺
 #
 def kplus: #:: [a]| => *[a]
-#   . as Σ
     def r:
         # Ordered version for:
         #   def k: [], (.[]|[.]) + k;
@@ -229,19 +235,6 @@ def kplus: #:: [a]| => *[a]
         | $w|.[length]=$symbol  # make new word
     ;
     if length == 0 then empty else r end
-;
-
-# Generates Σ*
-#
-def kstar: #:: [a]| => +[a]
-#   . as Σ
-    if length == 0
-    then []
-    else
-        . as $alphabet
-        | []
-        | deepen($alphabet[] as $symbol | .[length]=$symbol)
-    end
 ;
 
 # Iterate an alphabet: (kstar/kplus)
@@ -275,13 +268,9 @@ def words($n): #:: [a]|(number) => *[a]
 # Infinite tuples from a set
 # All sizes permutations (variations) with reposition
 #
-# Generates Σ*
-#
 def words: #:: [a]| => +[a]
 #   . as Σ
-#   [] , kplus
-    . as $alphabet
-    | [] | deepen($alphabet[] as $symbol | .[length]=$symbol)
+    [] , kplus
 ;
 
 ########################################################################
