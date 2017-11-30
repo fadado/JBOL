@@ -180,6 +180,12 @@ def iterate($n; filter): #:: a|(number;a->a) => *a
     limit($n; iterate(filter))
 ;
 
+# Left-recursive version of iterate
+def deepen(filter): #:: a|(a->a) => *a
+    def r: . , (r|filter);
+    r
+;
+
 # f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
 def iterate1(filter): #:: a|(a->a) => *a
     filter | iterate(filter)
@@ -207,32 +213,6 @@ def unfold(filter; $seed): #:: (a->[b,a];a) => *b
 
 def unfold(filter): #:: a|(a->[b,a]) => *b
     unfold(filter; .)
-;
-
-########################################################################
-# Kleene closures
-########################################################################
-
-# Similar to `recurse` and `iterate` but accepting _relations_!
-# TODO: remove?
-
-# f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
-def reliter(filter): #:: a|(a->*a) => *a
-    def r:
-        if length == 0
-        then empty
-        else
-            .[]
-            ,
-            ([.[] | filter] | r)
-        end
-    ;
-    [filter] | r
-;
-
-# f⁰ f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
-def reliter1(filter): #:: a|(a->+a) => *a
-    . , reliter(filter)
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

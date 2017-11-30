@@ -235,8 +235,30 @@ def kplus: #:: [a]| => *[a]
 #
 def kstar: #:: [a]| => +[a]
 #   . as Σ
-    [] , kplus
+    if length == 0
+    then []
+    else
+        . as $alphabet
+        | []
+        | deepen($alphabet[] as $symbol | .[length]=$symbol)
+    end
 ;
+
+# Iterate an alphabet: (kstar/kplus)
+#   alphabet | K* => w w w w...
+#
+#   [letters...]        | kstar
+#   ("letters..."/"")   | kstar | join("")
+#
+# Iterate a word (iterate/iterate1):
+#   neutral-element | iterate(previous @ word) => w w w w...
+#
+#   [] | iterate(. + [w,o,r,d...])
+#   "" | iterate(. + "word...")
+#
+# Iterate a language:
+#
+#
 
 ########################################################################
 
@@ -253,9 +275,13 @@ def words($n): #:: [a]|(number) => *[a]
 # Infinite tuples from a set
 # All sizes permutations (variations) with reposition
 #
+# Generates Σ*
+#
 def words: #:: [a]| => +[a]
 #   . as Σ
-    [] , kplus
+#   [] , kplus
+    . as $alphabet
+    | [] | deepen($alphabet[] as $symbol | .[length]=$symbol)
 ;
 
 ########################################################################
