@@ -193,13 +193,16 @@ def product: #:: [[a]]| => *[a]
     ;
     if length == 0 then [] else _product end
 ;
+def product($a): [$a]|product;
+def product($a;$b): [$a,$b]|product;
+def product($a;$b;$c): [$a,$b,$c]|product;
+def product($a;$b;$c;$d): [$a,$b,$c,$d]|product;
+def product($a;$b;$c;$d;$e): [$a,$b,$c,$d,$e]|product;
 
-# Size n words over an alphabet Σ
-# Powers exponent n of Σ
-# Permutations (variations) with reposition
-#
 # Generates Σ⁰ or Σ¹ or … or Σⁿ
+#
 def powers($n): #:: [a]|(number) => *[a]
+#   . as Σ
     select(0 <= $n) # not defined for negative $k
     | if length == 0 or $n == 0
       then []
@@ -212,11 +215,8 @@ def powers($n): #:: [a]|(number) => *[a]
       end
 ;
 
-# Infinite words over an alphabet Σ
-# Infinite tuples from a set
-# All sizes permutations (variations) with reposition
-#
 # Generates Σ⁺
+#
 def kplus: #:: [a]| => *[a]
 #   . as Σ
     def r:
@@ -232,21 +232,33 @@ def kplus: #:: [a]| => *[a]
 ;
 
 # Generates Σ*
+#
 def kstar: #:: [a]| => +[a]
 #   . as Σ
     [] , kplus
 ;
 
-# Generates Σ⁰ or Σ¹ or … or Σⁿ
+########################################################################
+
+# Size n words over an alphabet Σ
+# Powers exponent n of Σ
+# Permutations (variations) with reposition
+#
 def words($n): #:: [a]|(number) => *[a]
+#   . as Σ
     powers($n)
 ;
 
-# Generates Σ*
+# Infinite words over an alphabet Σ
+# Infinite tuples from a set
+# All sizes permutations (variations) with reposition
+#
 def words: #:: [a]| => +[a]
 #   . as Σ
     [] , kplus
 ;
+
+########################################################################
 
 # TODO...
 # Language product?
