@@ -185,6 +185,11 @@ def deepen(filter): #:: a|(a->a) => *a
     def r: . , (r|filter);
     r
 ;
+#
+def deepen1(filter): #:: a|(a->a;a->a) => *a
+    def r: (.[]|[.]) , (r|filter);
+    r
+;
 
 # f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
 def iterate1(filter): #:: a|(a->a) => *a

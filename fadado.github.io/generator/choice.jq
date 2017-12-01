@@ -10,7 +10,8 @@ module {
 };
 
 include "fadado.github.io/prelude";
-import "fadado.github.io/generator/stream" as stream;
+import "fadado.github.io/array/set" as set;
+import "fadado.github.io/generator/chance" as chance;
 import "fadado.github.io/generator/chance" as chance;
 
 ########################################################################
@@ -172,69 +173,24 @@ def mulsets: #:: [a]| => *[a]
 # Multi-sequences
 ########################################################################
 
-# Generates cartesian product: A × B…
-#
-def product: #:: [[a]]| => *[a]
-    def _product:
-        if length == 1
-        then
-            .[0][] | [.]
-        else
-            .[0][] as $x
-            | [$x] + (.[1:]|_product)
-        end
-    ;
-    if length < 2
-    then empty
-    else _product // [] end
-;
-def product($A;$B): [$A,$B]|product;
-def product($A;$B;$C): [$A,$B,$C]|product;
-def product($A;$B;$C;$D): [$A,$B,$C,$D]|product;
-def product($A;$B;$C;$D;$E): [$A,$B,$C,$D,$E]|product;
-def product($A;$B;$C;$D;$E;$F): [$A,$B,$C,$D,$E,$F]|product;
-def product($A;$B;$C;$D;$E;$F;$G): [$A,$B,$C,$D,$E,$F,$G]|product;
-
-# Generates any cartesian power: A⁰ or A¹ … Aⁿ
-#
-def powers($n): #:: [a]|(number) => *[a]
-    select(0 <= $n) # not defined for negative $k
-    | if $n == 0
-    then []
-    elif $n == 1
-    then .
-    else
-        . as $set
-        | [range($n) | $set]
-        | product
-    end
-;
-
-# Generates Σ*
+# Generates Σ*: Σ⁰ ∪ Σ¹ ∪ Σ² ∪ Σ³ ∪ Σ⁴ ∪ Σ⁵ ∪ Σ⁶ ∪ Σ⁷ ∪ Σ⁸ ∪ Σ⁹… ∞
 #
 def kstar: #:: [a]| => +[a]
-    if length == 0
+    . as $alphabet
+    | if length == 0
     then []
-    else
-        . as $alphabet
-        | []
-        | deepen($alphabet[] as $symbol | .[length]=$symbol)
+    else []|deepen(set::insert($alphabet[]))
     end
 ;
 
-# Generates Σ⁺
+# Generates Σ⁺: Σ¹ ∪ Σ² ∪ Σ³ ∪ Σ⁴ ∪ Σ⁵ ∪ Σ⁶ ∪ Σ⁷ ∪ Σ⁸ ∪ Σ⁹… ∞
 #
 def kplus: #:: [a]| => *[a]
-    def r:
-        # Ordered version for:
-        #   def k: [], (.[]|[.]) + k;
-        (.[]|[.])           # either wrap each symbol
-        ,                   # or
-        r as $w             # for each word in previous level
-        | .[] as $symbol    # for each symbol in alphabet
-        | $w|.[length]=$symbol  # make new word
-    ;
-    if length == 0 then empty else r end
+    . as $alphabet
+    | if length == 0
+    then empty
+    else deepen1(set::insert($alphabet[]))
+    end
 ;
 
 # Iterate an alphabet: (kstar/kplus)
@@ -253,15 +209,12 @@ def kplus: #:: [a]| => *[a]
 #
 #
 
-########################################################################
-
 # Size n words over an alphabet Σ
-# Powers exponent n of Σ
 # Permutations (variations) with reposition
 #
 def words($n): #:: [a]|(number) => *[a]
 #   . as Σ
-    powers($n)
+    set::power($n)
 ;
 
 # Infinite words over an alphabet Σ
@@ -270,7 +223,7 @@ def words($n): #:: [a]|(number) => *[a]
 #
 def words: #:: [a]| => +[a]
 #   . as Σ
-    [] , kplus
+    kstar
 ;
 
 ########################################################################

@@ -81,64 +81,14 @@ include "generator/choice"; [permutations]
 # Multi-seqs
 ########################################################################
 
-#
-# product
-#
-
-# A × ∅
-include "generator/choice"; product
-[[1,2,3],[]]
-[]
-
-# A × ∅
-include "generator/choice"; product
-[[],[1,2,3]]
-[]
-
-# A × B
-include "generator/choice"; [product]
-[[1,2,3],[4]]
-[[1,4],[2,4],[3,4]]
-
-# A⁵
-include "generator/choice"; [product] | length == (5*5*5*5*5)
-[[1,2,3,4,5], [1,2,3,4,5], [1,2,3,4,5], [1,2,3,4,5], [1,2,3,4,5]]
-true
-
-# A × B
-include "generator/choice"; [product([1,2,3];[4])]
-null
-[[1,4],[2,4],[3,4]]
-
-# A × B × C
-include "generator/choice"; [product([1,2,3];[4];[5,6])]
-null
-[[1,4,5],[1,4,6],[2,4,5],[2,4,6],[3,4,5],[3,4,6]]
-
-#
-# powers
-#
-
-include "generator/choice"; powers(0)
+include "generator/choice"; [limit(13;kstar)]
 [1,2,3]
-[]
+[[],[1],[2],[3],[1,1],[1,2],[1,3],[2,1],[2,2],[2,3],[3,1],[3,2],[3,3]]
 
-include "generator/choice"; powers(1)
+include "generator/choice"; [limit(12;kplus)]
 [1,2,3]
-[1,2,3]
+[[1],[2],[3],[1,1],[1,2],[1,3],[2,1],[2,2],[2,3],[3,1],[3,2],[3,3]]
 
-include "generator/choice"; [powers(2)]
-[1,2,3]
-[[1,1],[1,2],[1,3],[2,1],[2,2],[2,3],[3,1],[3,2],[3,3]]
-
-# A⁵
-include "generator/choice"; [powers(5)] | length == (5*5*5*5*5)
-[[1,2,3,4,5], [1,2,3,4,5], [1,2,3,4,5], [1,2,3,4,5], [1,2,3,4,5]]
-true
-
-#
-#
-#
 include "generator/choice"; [words(2)]
 [1,2,3]
 [[1,1],[1,2],[1,3],[2,1],[2,2],[2,3],[3,1],[3,2],[3,3]]
