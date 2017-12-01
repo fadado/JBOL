@@ -97,6 +97,14 @@ include "generator/choice"; [words(2)]==[(limit(20;words)|select(length==2))]
 [1,2,3]
 true
 
+include "generator/choice"; catenate(0)
+[1,2,3]
+[]
+
+include "generator/choice"; catenate(1)
+[1,2,3]
+[1,2,3]
+
 ########################################################################
 #
 ########################################################################

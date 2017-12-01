@@ -173,7 +173,11 @@ def mulsets: #:: [a]| => *[a]
 # Multi-sequences
 ########################################################################
 
-# Generates Σ*: Σ⁰ ∪ Σ¹ ∪ Σ² ∪ Σ³ ∪ Σ⁴ ∪ Σ⁵ ∪ Σ⁶ ∪ Σ⁷ ∪ Σ⁸ ∪ Σ⁹… ∞
+#
+# Alphabet
+#
+
+# Generates Σ*: Σ⁰ ∪ Σ¹ ∪ Σ² ∪ Σ³ ∪ Σ⁴ ∪ Σ⁵ ∪ Σ⁶ ∪ Σ⁷ ∪ Σ⁸ ∪ Σ⁹…
 #
 def kstar: #:: [a]| => +[a]
     . as $alphabet
@@ -183,7 +187,7 @@ def kstar: #:: [a]| => +[a]
     end
 ;
 
-# Generates Σ⁺: Σ¹ ∪ Σ² ∪ Σ³ ∪ Σ⁴ ∪ Σ⁵ ∪ Σ⁶ ∪ Σ⁷ ∪ Σ⁸ ∪ Σ⁹… ∞
+# Generates Σ⁺: Σ¹ ∪ Σ² ∪ Σ³ ∪ Σ⁴ ∪ Σ⁵ ∪ Σ⁶ ∪ Σ⁷ ∪ Σ⁸ ∪ Σ⁹…
 #
 def kplus: #:: [a]| => *[a]
     . as $alphabet
@@ -193,56 +197,48 @@ def kplus: #:: [a]| => *[a]
     end
 ;
 
-# Iterate an alphabet: (kstar/kplus)
-#   alphabet | K* => w w w w...
-#
-#   [letters...]        | kstar
-#   ("letters..."/"")   | kstar | join("")
-#
-# Iterate a word (iterate/iterate1):
-#   neutral-element | iterate(previous @ word) => w w w w...
-#
-#   [] | iterate(. + [w,o,r,d...])
-#   "" | iterate(. + "word...")
-#
-# Iterate a language:
-#
-#
-
-# Size n words over an alphabet Σ
+# Size n words over an alphabet Σ (Σⁿ)
 # Permutations (variations) with reposition
 #
-def words($n): #:: [a]|(number) => *[a]
-#   . as Σ
+def words($n): #:: [a]|(number) => +[a]
+#   . as $alphabet
     set::power($n)
 ;
 
-# Infinite words over an alphabet Σ
-# Infinite tuples from a set
+# Infinite words over an alphabet Σ (Σ*: Σ⁰ ∪ Σ¹ ∪ Σ²…)
 # All sizes permutations (variations) with reposition
 #
 def words: #:: [a]| => +[a]
-#   . as Σ
+#   . as $alphabet
     kstar
 ;
 
-########################################################################
+#
+# Word
+#
 
-# TODO...
-# Language product?
-def lproduct: #:: [[a]]| => *[a]
-    def _product:
-        if length == 1
-        then
-            .[0][]
-        else
-            .[0][] as $x
-            | $x + (.[1:]|_product)
-        end
-    ;
-    if length == 0 then [] else _product end
-    # L · {ε} = L       L · [[]] = L
-    # L · ∅ = ∅         L · [] = []
+# Generates w*: w⁰ ∪ w¹ ∪ w² ∪ w³ ∪ w⁴ ∪ w⁵ ∪ w⁶ ∪ w⁷ ∪ w⁸ ∪ w⁹…
+#
+def catenate: #:: [a]| => +[a]
+    . as $word
+    | []|iterate(. + $word)
+;
+
+# wⁿ
+#
+def catenate($n): #:: [a]|(number) => +[a]
+    select(0 <= $n) # not defined for negative $n
+    | . as $word
+    | reduce range($n) as $_ ([]; . + $word)
+;
+
+#
+# TODO: Language
+#
+
+def langs($n): #:: [a]|(number) => +[a]
+#   . as $language
+    set::power($n) | reduce .[] as $w ([]; .+$w)
 ;
 
 ########################################################################

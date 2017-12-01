@@ -225,6 +225,11 @@ include "array/set";  . - [6,7,8,9,0]
 # product
 #
 
+# ×
+include "array/set"; [product]|length
+[]
+1
+
 # A × ∅
 include "array/set"; product
 [[1,2,3],[]]

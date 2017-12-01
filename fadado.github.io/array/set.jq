@@ -72,8 +72,8 @@ def sdifference($t): #:: array|(array) => array
 ########################################################################
 # Cartesian product
 
-# A × B; A × B × C; etc.
-def product: #:: [[a]]| => *[a]
+# A × B, A × B × C, …
+def product: #:: [[a]]| => +[a]
 #   . as $set
     def _product:
         if length == 1
@@ -84,8 +84,10 @@ def product: #:: [[a]]| => *[a]
             | [$x] + (.[1:]|_product)
         end
     ;
-    if length < 2
+    if length == 0
     then []
+    elif length == 1
+    then .[0]  # assume . is an array
     else _product // []
     end
 ;
@@ -96,8 +98,8 @@ def product($A;$B;$C;$D;$E): [$A,$B,$C,$D,$E]|product;
 def product($A;$B;$C;$D;$E;$F): [$A,$B,$C,$D,$E,$F]|product;
 def product($A;$B;$C;$D;$E;$F;$G): [$A,$B,$C,$D,$E,$F,$G]|product;
 
-# A⁰; A¹; A²; … Aⁿ
-def power($n): #:: [a]|(number) => *[a]
+# Aⁿ
+def power($n): #:: [a]|(number) => +[a]
 #   . as $set
     select(0 <= $n) # not defined for negative $n
     | if $n == 0
