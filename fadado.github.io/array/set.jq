@@ -72,7 +72,7 @@ def sdifference($t): #:: array|(array) => array
 ########################################################################
 # Cartesian product
 
-# A × B, A × B × C, …
+# (×), A × B, A × B × C, …
 def product: #:: [[a]]| => +[a]
 #   . as $set
     def _product:
@@ -86,8 +86,6 @@ def product: #:: [[a]]| => +[a]
     ;
     if length == 0
     then []
-    elif length == 1
-    then .[0]  # assume . is an array
     else _product // []
     end
 ;
@@ -99,17 +97,37 @@ def product($A;$B;$C;$D;$E;$F): [$A,$B,$C,$D,$E,$F]|product;
 def product($A;$B;$C;$D;$E;$F;$G): [$A,$B,$C,$D,$E,$F,$G]|product;
 
 # Aⁿ
+# Specifically size n words over an alphabet Σ (Σⁿ)
 def power($n): #:: [a]|(number) => +[a]
 #   . as $set
     select(0 <= $n) # not defined for negative $n
-    | if $n == 0
+    | . as $set
+    | [range($n) | $set]
+    | product
+;
+
+########################################################################
+# Kleene closures
+
+# Generates K*: K⁰ ∪ K¹ ∪ K² ∪ K³ ∪ K⁴ ∪ K⁵ ∪ K⁶ ∪ K⁷ ∪ K⁸ ∪ K⁹…
+# Specifically, words over an alphabet Σ (Σ*: Σ⁰ ∪ Σ¹ ∪ Σ²…)
+#
+def kstar: #:: [a]| => +[a]
+    . as $set
+    | if length == 0
     then []
-    elif $n == 1
-    then .
-    else
-        . as $set
-        | [range($n) | $set]
-        | product
+    else []|deepen(insert($set[]))
+    end
+;
+
+# Generates K⁺: K¹ ∪ K² ∪ K³ ∪ K⁴ ∪ K⁵ ∪ K⁶ ∪ K⁷ ∪ K⁸ ∪ K⁹…
+# Specifically, words over an alphabet Σ without empty word (Σ⁺: Σ¹ ∪ Σ²…)
+#
+def kplus: #:: [a]| => *[a]
+    . as $set
+    | if length == 0
+    then empty
+    else deepen1(insert($set[]))
     end
 ;
 

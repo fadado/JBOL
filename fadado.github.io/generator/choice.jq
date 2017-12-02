@@ -10,8 +10,6 @@ module {
 };
 
 include "fadado.github.io/prelude";
-import "fadado.github.io/array/set" as set;
-import "fadado.github.io/generator/chance" as chance;
 import "fadado.github.io/generator/chance" as chance;
 
 ########################################################################
@@ -173,73 +171,7 @@ def mulsets: #:: [a]| => *[a]
 # Multi-sequences
 ########################################################################
 
-#
-# Alphabet
-#
-
-# Generates Σ*: Σ⁰ ∪ Σ¹ ∪ Σ² ∪ Σ³ ∪ Σ⁴ ∪ Σ⁵ ∪ Σ⁶ ∪ Σ⁷ ∪ Σ⁸ ∪ Σ⁹…
-#
-def kstar: #:: [a]| => +[a]
-    . as $alphabet
-    | if length == 0
-    then []
-    else []|deepen(set::insert($alphabet[]))
-    end
-;
-
-# Generates Σ⁺: Σ¹ ∪ Σ² ∪ Σ³ ∪ Σ⁴ ∪ Σ⁵ ∪ Σ⁶ ∪ Σ⁷ ∪ Σ⁸ ∪ Σ⁹…
-#
-def kplus: #:: [a]| => *[a]
-    . as $alphabet
-    | if length == 0
-    then empty
-    else deepen1(set::insert($alphabet[]))
-    end
-;
-
-# Size n words over an alphabet Σ (Σⁿ)
-# Permutations (variations) with reposition
-#
-def words($n): #:: [a]|(number) => +[a]
-#   . as $alphabet
-    set::power($n)
-;
-
-# Infinite words over an alphabet Σ (Σ*: Σ⁰ ∪ Σ¹ ∪ Σ²…)
-# All sizes permutations (variations) with reposition
-#
-def words: #:: [a]| => +[a]
-#   . as $alphabet
-    kstar
-;
-
-#
-# Word
-#
-
-# Generates w*: w⁰ ∪ w¹ ∪ w² ∪ w³ ∪ w⁴ ∪ w⁵ ∪ w⁶ ∪ w⁷ ∪ w⁸ ∪ w⁹…
-#
-def catenate: #:: [a]| => +[a]
-    . as $word
-    | []|iterate(. + $word)
-;
-
-# wⁿ
-#
-def catenate($n): #:: [a]|(number) => +[a]
-    select(0 <= $n) # not defined for negative $n
-    | . as $word
-    | reduce range($n) as $_ ([]; . + $word)
-;
-
-#
-# TODO: Language
-#
-
-def langs($n): #:: [a]|(number) => +[a]
-#   . as $language
-    set::power($n) | reduce .[] as $w ([]; .+$w)
-;
+# Moved to array sets and words
 
 ########################################################################
 # Constricted permutations

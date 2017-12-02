@@ -121,7 +121,9 @@ $(LogDir)/set.log: $(LIB)/set.jq
 $(LogDir)/relations.log: $(LIB)/rel.jq
 
 # Arrays tests
-$(LogDir)/array.log: $(ARRAY)/array.jq $(ARRAY)/set.jq
+$(LogDir)/array.log: $(ARRAY)/array.jq
+$(LogDir)/array_set.log: $(ARRAY)/set.jq
+$(LogDir)/array_word.log: $(ARRAY)/word.jq
 
 # Generator tests
 $(LogDir)/stream.log: $(GEN)/stream.jq
