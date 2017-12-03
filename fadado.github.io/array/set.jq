@@ -89,6 +89,7 @@ def product: #:: [[a]]| => +[a]
     else _product // []
     end
 ;
+def product($A): [$A]|product;
 def product($A;$B): [$A,$B]|product;
 def product($A;$B;$C): [$A,$B,$C]|product;
 def product($A;$B;$C;$D): [$A,$B,$C,$D]|product;

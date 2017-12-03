@@ -14,16 +14,18 @@ import "fadado.github.io/array/set" as set;
 ########################################################################
 # Combinatorics on Words
 
-# Alphabet Σ:                   [a,b,c,...] (array/set)
-# Σ*:                           Σ|set::kstar (array/set)
-# Σ⁺:                           Σ|set::kplus (array/set)
+# Alphabet Σ:                   [a,b,c,...]
+# Σ*:                           Σ|set::kstar
+# Σ⁺:                           Σ|set::kplus
 # Σⁿ:                           w|set::power(n)
+
 # Word w:                       [...]
 # Empty word:                   []
-# Word catenation:              w + u
+# Concatenate:                  w + u
 # Length of w:                  w|length
 # Alphabet of w:                w|unique
 # Reverse of w:                 w|reverse
+
 # Language L over Σ:            [w,u...]
 
 # Number of a's in w
@@ -109,6 +111,29 @@ def star: #:: [a]| => +[a]
 def plus: #:: [a]| => +[a]
     . as $word
     | iterate(. + $word)
+;
+
+########################################################################
+# Languages
+
+def _add: # specialized add for arrays
+    reduce .[] as $w ([]; .+$w)
+;
+
+def Lconcat($L1; $L2):
+    set::product($L1; $L2) | _add
+;
+
+def Lpower($n):
+    set::power($n) | _add
+;
+
+def Lkstar:
+    set::kstar | _add
+;
+
+def Lkplus:
+    set::kplus | _add
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq
