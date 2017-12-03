@@ -116,7 +116,7 @@ def kstar: #:: [a]| => +[a]
     . as $set
     | if length == 0
     then []
-    else []|deepen(insert($set[]))
+    else deepen([]; .[length]=$set[])
     end
 ;
 
@@ -127,7 +127,8 @@ def kplus: #:: [a]| => *[a]
     . as $set
     | if length == 0
     then empty
-    else deepen1(insert($set[]))
+    else deepen(.[]|[.]; .[length]=$set[])
+#   else deepen($set[]|[.]; .[length]=$set[])
     end
 ;
 

@@ -117,4 +117,22 @@ include "array/word"; . as $u | [3,4,2]|psuffix($u)
 [2,3,4,2]
 true
 
+########################################################################
+
+include "array/word"; power(0)
+[2,3,4,2]
+[]
+
+include "array/word"; power(1)
+[2,3,4,2]
+[2,3,4,2]
+
+include "array/word"; power(2)
+[2,3,4,2]
+[2,3,4,2,2,3,4,2]
+
+include "array/word"; [[limit(13;star)][1:],[limit(12;plus)]] | .[0]==.[1]
+[1,2,3]
+true
+
 # vim:ai:sw=2:ts=2:et:syntax=jq

@@ -181,13 +181,8 @@ def iterate($n; filter): #:: a|(number;a->a) => *a
 ;
 
 # Left-recursive version of iterate
-def deepen(filter): #:: a|(a->a) => *a
-    def r: . , (r|filter);
-    r
-;
-#
-def deepen1(filter): #:: a|(a->a) => *a
-    def r: (.[]|[.]) , (r|filter);
+def deepen(root; generator): #:: a|(a->a) => *a
+    def r: root , (r|generator);
     r
 ;
 

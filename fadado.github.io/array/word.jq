@@ -89,26 +89,26 @@ def psuffix($u): #:: WORD|(WORD) => boolean
 ########################################################################
 # Word iteration
 
+# Generates wⁿ (one word: w concatenated n times)
+#
+def power($n): #:: [a]|(number) => [a]
+    . as $word
+    | select(0 <= $n) # not defined for negative $n
+    | reduce range($n) as $_ ([]; . + $word)
+;
+
 # Generates w*: w⁰ ∪ w¹ ∪ w² ∪ w³ ∪ w⁴ ∪ w⁵ ∪ w⁶ ∪ w⁷ ∪ w⁸ ∪ w⁹…
 #
-def power: #:: [a]| => +[a]
+def star: #:: [a]| => +[a]
     . as $word
     | []|iterate(. + $word)
 ;
 
 # Generates w⁺: w¹ ∪ w² ∪ w³ ∪ w⁴ ∪ w⁵ ∪ w⁶ ∪ w⁷ ∪ w⁸ ∪ w⁹…
 #
-def power1: #:: [a]| => +[a]
+def plus: #:: [a]| => +[a]
     . as $word
     | iterate(. + $word)
-;
-
-# Generates wⁿ
-#
-def power($n): #:: [a]|(number) => +[a]
-    . as $word
-    | select(0 <= $n) # not defined for negative $n
-    | reduce range($n) as $_ ([]; . + $word)
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq
