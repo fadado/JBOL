@@ -100,12 +100,12 @@ include "array/set"; [product] | length == (5*5*5*5*5)
 true
 
 # A × B
-include "array/set"; [product([1,2,3];[4])]
+include "array/set"; [[[1,2,3],[4]]|product]
 null
 [[1,4],[2,4],[3,4]]
 
 # A × B × C
-include "array/set"; [product([1,2,3];[4];[5,6])]
+include "array/set"; [[[1,2,3],[4],[5,6]]|product]
 null
 [[1,4,5],[1,4,6],[2,4,5],[2,4,6],[3,4,5],[3,4,6]]
 

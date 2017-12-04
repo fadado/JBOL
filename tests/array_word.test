@@ -16,8 +16,12 @@ length
 3
 
 # Number of a's in w
-.[["a"]] | length
+indices(["a"]) | length
 [1,"a",3,4,"a",5]
+2
+
+indices("a") | length
+"1a34a5"
 2
 
 include "array/word"; count("a")
@@ -67,6 +71,10 @@ include "array/word"; . as $u | [3,4,2]|pfactor($u)
 [1,2, 3,4,2, 5]
 true
 
+include "array/word"; . as $u | "342"|pfactor($u)
+"123425"
+true
+
 include "array/word"; . as $u | [3,4,2]|factor($u)
 [3,4,2,1,2]
 true
@@ -78,6 +86,10 @@ true
 # Prefix, proper prefix?
 include "array/word"; . as $u | [3,4,2]|prefix($u)
 [3,4,2,2,1,3,3,4,2]
+true
+
+include "array/word"; . as $u | "342"|prefix($u)
+"342213342"
 true
 
 include "array/word"; . as $u | [3,4,2]|prefix($u)
@@ -105,6 +117,10 @@ include "array/word"; . as $u | [3,4,2]|suffix($u)
 [1,2,3,4,2]
 true
 
+include "array/word"; . as $u | "342"|suffix($u)
+"12342"
+true
+
 include "array/word"; . as $u | [3,4,2]|suffix($u)
 [1,2,3,4,2,3]
 false
@@ -120,6 +136,18 @@ true
 ########################################################################
 
 include "array/word"; power(0)
+"abcd"
+""
+
+include "array/word"; power(1)
+"abcd"
+"abcd"
+
+include "array/word"; power(2)
+"abcd"
+"abcdabcd"
+
+include "array/word"; power(0)
 [2,3,4,2]
 []
 
@@ -133,6 +161,10 @@ include "array/word"; power(2)
 
 include "array/word"; [[limit(13;star)][1:],[limit(12;plus)]] | .[0]==.[1]
 [1,2,3]
+true
+
+include "array/word"; [[limit(13;star)][1:],[limit(12;plus)]] | .[0]==.[1]
+"abc"
 true
 
 # vim:ai:sw=2:ts=2:et:syntax=jq

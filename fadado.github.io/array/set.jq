@@ -89,13 +89,6 @@ def product: #:: [[a]]| => +[a]
     else _product // []
     end
 ;
-def product($A): [$A]|product;
-def product($A;$B): [$A,$B]|product;
-def product($A;$B;$C): [$A,$B,$C]|product;
-def product($A;$B;$C;$D): [$A,$B,$C,$D]|product;
-def product($A;$B;$C;$D;$E): [$A,$B,$C,$D,$E]|product;
-def product($A;$B;$C;$D;$E;$F): [$A,$B,$C,$D,$E,$F]|product;
-def product($A;$B;$C;$D;$E;$F;$G): [$A,$B,$C,$D,$E,$F,$G]|product;
 
 # Aⁿ
 # Specifically size n words over an alphabet Σ (Σⁿ)
