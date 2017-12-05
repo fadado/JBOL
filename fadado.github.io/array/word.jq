@@ -14,19 +14,12 @@ import "fadado.github.io/array/set" as set;
 ########################################################################
 # Combinatorics on Words
 
-# Alphabet Σ:                   [a,b,c,...] (a set)
-# Σ*:                           Σ|set::kstar
-# Σ⁺:                           Σ|set::kplus
-# Σⁿ:                           w|set::power(n)
-
 # Word w:                       [...] or "..."
 # Empty word:                   [] or ""
 # Concatenate:                  w + u
 # Length of w:                  w|length
 # Alphabet of w:                w|unique    (only arrays)
 # Reverse of w:                 w|reverse   (only arrays)
-
-# Language L over Σ:            [w,u...]    (a set)
 
 # Number of a's in w
 def count($a): #:: WORD|(SYMBOL) => number
@@ -89,29 +82,35 @@ def psuffix($u): #:: WORD|(WORD) => boolean
 #def suffixes:
 
 ########################################################################
-# Word iteration
 
-def _id_:
-    if type == "string"
-    then ""
-    elif type == "array"
-    then []
-    else null end
-;
+# Alphabet Σ:                   [a,b,c,...] (a set)
+# Σ*:                           Σ|set::kstar
+# Σ⁺:                           Σ|set::kplus
+# Σⁿ:                           w|set::power(n)
+# Word w:                       [...] or "..."
+# Empty word:                   [] or ""
+# Language L over Σ:            [w,u...]    (a set)
+
+########################################################################
+# Word iteration
 
 # Generates wⁿ (one word: w concatenated n times)
 #
 def power($n): #:: [a]|(number) => [a]
     . as $word
     | select(0 <= $n) # not defined for negative $n
-    | reduce range($n) as $_ (_id_; . + $word)
+    | if type == "string"
+    then if $n == 0 then "" else . * $n end
+    else reduce range($n) as $_ ([]; . + $word)
+    end
 ;
 
 # Generates w*: w⁰ ∪ w¹ ∪ w² ∪ w³ ∪ w⁴ ∪ w⁵ ∪ w⁶ ∪ w⁷ ∪ w⁸ ∪ w⁹…
 #
 def star: #:: [a]| => +[a]
     . as $word
-    | _id_|iterate(. + $word)
+    | if type == "string" then "" else [] end
+    | iterate(. + $word)
 ;
 
 # Generates w⁺: w¹ ∪ w² ∪ w³ ∪ w⁴ ∪ w⁵ ∪ w⁶ ∪ w⁷ ∪ w⁸ ∪ w⁹…
