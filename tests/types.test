@@ -21,34 +21,37 @@ include "types"; isscalar
 null
 true
 
-include "types"; isunk(2)
+include "types"; unknown(2)
 [1]
 false
 
-include "types"; isund(2)
+include "types"; undefined(2)
 [1]
 true
 
-include "types"; isunk(2)
+include "types"; unknown(2)
 [1,3,null,4]
 true
 
-include "types"; isund(2)
+include "types"; undefined(2)
 [1,3,null,4]
 false
 
-include "types"; isunk("x")
+include "types"; unknown("x")
 {"a":1,"b":2}
 false
 
-include "types"; isunk("x")
+include "types"; unknown("x")
 {"x":1,"b":2}
 false
 
-include "types"; isunk("x")
-{"x":null,"b":2}
+include "types"; ischar
+"ñ"
 true
 
+include "types"; unknown("x")
+{"x":null,"b":2}
+true
 
 ########################################################################
 # null tests

@@ -92,6 +92,7 @@ STR=$(LIB)/string
 GEN=$(LIB)/generator
 MUSIC=$(LIB)/music
 ARRAY=$(LIB)/array
+OBJECT=$(LIB)/object
 
 ########################################################################
 # Rules
@@ -117,8 +118,10 @@ $(LogDir)/prelude.log: $(LIB)/prelude.jq
 $(LogDir)/types.log: $(LIB)/types.jq
 $(LogDir)/schema.log: $(LIB)/schema.jq $(LIB)/prelude.jq $(LIB)/types.jq $(STR)/url.jq $(STR)/regexp.jq $(GEN)/stream.jq
 $(LogDir)/math.log: $(LIB)/math.jq
-$(LogDir)/set.log: $(LIB)/set.jq
 $(LogDir)/relations.log: $(LIB)/rel.jq
+
+# Object tests
+$(LogDir)/object_set.log: $(OBJECT)/set.jq
 
 # Arrays tests
 $(LogDir)/array.log: $(ARRAY)/array.jq

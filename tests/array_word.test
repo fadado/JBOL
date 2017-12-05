@@ -147,6 +147,10 @@ include "array/word"; power(2)
 "abcd"
 "abcdabcd"
 
+include "array/word"; power(4)
+"abcd"
+"abcdabcdabcdabcd"
+
 include "array/word"; power(0)
 [2,3,4,2]
 []

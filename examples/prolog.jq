@@ -1,7 +1,7 @@
 #!/usr/local/bin/jq -cnRrf
 
 include "fadado.github.io/prelude";
-import "fadado.github.io/set" as set;
+import "fadado.github.io/object/set" as set;
 
 def query(generator):
     isdot(generator)

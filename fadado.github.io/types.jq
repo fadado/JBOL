@@ -29,6 +29,9 @@ def isfloat: #:: a| => boolean
 def isstring: #:: a| => boolean
     type == "string"
 ;
+def ischar: #:: a| => boolean
+    type == "string" and length == 1
+;
 def isarray: #:: a| => boolean
     type == "array"
 ;
@@ -66,6 +69,9 @@ def isfloat($a): #:: (a) => boolean
 def isstring($a): #:: (a) => boolean
     $a|isstring
 ;
+def ischar($a): #:: (a) => boolean
+    $a|ischar
+;
 def isarray($a): #:: (a) => boolean
     $a|isarray
 ;
@@ -86,12 +92,12 @@ def isleaf($a): #:: (a) => boolean
 ;
 
 # is unknown?
-def isunk($p): #:: array^object|(number^string) => boolean
+def unknown($p): #:: array^object|(number^string) => boolean
     has($p) and .[$p] == null
 ;
 
 # is undefined?
-def isund($p): #:: array^object|(number^string) => boolean
+def undefined($p): #:: array^object|(number^string) => boolean
     has($p) | not
 ;
 

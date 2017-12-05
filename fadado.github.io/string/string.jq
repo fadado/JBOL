@@ -10,7 +10,7 @@ module {
 
 include "fadado.github.io/prelude";
 
-import "fadado.github.io/set" as set;
+import "fadado.github.io/object/set" as set;
 import "fadado.github.io/string/ascii" as ascii;
 
 ########################################################################

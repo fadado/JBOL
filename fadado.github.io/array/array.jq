@@ -14,20 +14,20 @@ include "fadado.github.io/prelude";
 
 # Remove all x from array
 def remove($x): #:: [a]|(a) => [a]
-    .[[$x]] as $ix
+    indices($x) as $ix
     | when($ix != []; del(.[$ix[]]))
 ;
 
 # Rotate in both directions
-def rotate($n): #:: array|(number) => array
+def rotate($n): #:: [a]|(number) => [a]
     .[$n:] + .[:$n]
 ;
-def rotate: #:: array => array
+def rotate: #:: [a] => [a]
     .[1:] + .[:1]
 ;
 
 # Is the array sorted?
-def sorted: #:: array| => boolean
+def sorted: #:: [a] => boolean
     every(
         range(length-1) as $i
         | ($i+1) as $j
@@ -35,7 +35,7 @@ def sorted: #:: array| => boolean
 ;
 
 # Are all elements equal?
-def uniform: #:: array => boolean
+def uniform: #:: [a] => boolean
     every (
         range(0; length-1) as $i
         | ($i+1) as $j
@@ -43,7 +43,7 @@ def uniform: #:: array => boolean
 ;
 
 # Are all elements diferent?
-def different: #:: array => boolean
+def different: #:: [a] => boolean
     every(
         range(0; length-1) as $i
         | range($i+1; length) as $j
