@@ -31,8 +31,12 @@ def insert($x): #:: SET|(a) => SET
 
 # s – e (remove element from set)
 def remove($x): #:: SET|(a) => SET
-    indices($x)[0] as $i
-    | when($i != null; del(.[$i]))
+# remove one:
+#   indices($x)[0] as $i
+#   | when($i != null; del(.[$i]))
+# remove all:
+    indices($x) as $ix
+    | when($ix != []; del(.[$ix[]]))
 ;
 
 # x ∈ S (x is element of S?)
@@ -80,7 +84,7 @@ def sdifference($t): #:: SET|(SET) => SET
 #   TUPLE: [a]
 # For operations with concatenable symbols:
 #   IDENTITY: "" or []
-#   SYMBOL: [a]^string  -- catenable symbol
+#   WORD: [a]^string  -- catenable element
 
 # (×), A × B, A × B × C, …
 # Generates tuples (using arrays)
@@ -103,7 +107,7 @@ def product: #:: [SET] => +TUPLE
 
 # For sets with catenable symbols (arrays or strings)
 # Note: empty array or string must be specified as identity value
-def product($identity): #:: [SET]|(IDENTITY) => +SYMBOL
+def product($identity): #:: [SET]|(IDENTITY) => +WORD
 #   . as $set
     def _product:
         if length == 1
@@ -130,7 +134,7 @@ def power($n): #:: SET|(number) => +TUPLE
     | product
 ;
 
-def power($n; $identity): #:: SET|(number;IDENTITY) => +SYMBOL
+def power($n; $identity): #:: SET|(number;IDENTITY) => +WORD
 #   . as $set
     select(0 <= $n) # not defined for negative $n
     | . as $set
@@ -153,7 +157,7 @@ def kstar: #:: SET => +TUPLE
 ;
 
 # For catenable symbols
-def kstar($identity): #:: SET|(IDENTITY) => +SYMBOL
+def kstar($identity): #:: SET|(IDENTITY) => +WORD
     . as $set
     | if length == 0
     then $identity
@@ -174,7 +178,7 @@ def kplus: #:: SET => *TUPLE
 ;
 
 # For catenable symbols ($identity is not used!)
-def kplus($identity): #:: SET|(IDENTITY) => *SYMBOL
+def kplus($identity): #:: SET|(IDENTITY) => *WORD
     . as $set
     | if length == 0
     then empty

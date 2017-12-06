@@ -23,7 +23,7 @@ import "fadado.github.io/array/set" as set;
 # Reverse of w:                 w|reverse   (only arrays)
 
 # Number of a's in w
-def count($a): #:: WORD|(SYMBOL) => number
+def count($a): #:: WORD|(a) => number
 #   . as $w
     indices($a) | length  # number of occurrences of $a inside $w
 ;
