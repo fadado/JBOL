@@ -11,7 +11,7 @@ module {
 include "fadado.github.io/prelude";
 import "fadado.github.io/generator/stream" as stream;
 
-# very very experimental !!!!!!!!!!!!!!!!!!!!!!!!!11
+# very very experimental !!!!!!!!!!!!!!!!!!!!!!!!!
 
 def concat(R;S): #:: a|(a->*b;a->*b) => *b
     R , S

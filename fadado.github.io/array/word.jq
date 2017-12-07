@@ -24,7 +24,6 @@ import "fadado.github.io/array/set" as set;
 
 # Number of a's in w
 def count($a): #:: WORD|(a) => number
-#   . as $w
     indices($a) | length  # number of occurrences of $a inside $w
 ;
 
@@ -72,15 +71,28 @@ def psuffix($u): #:: WORD|(WORD) => boolean
 ;
 
 ########################################################################
-# Sets of factors, prefixes ans suffixes
+# Sets of factors, prefixes ans suffixes (without the empty word)
 
-#def factors($k):
-#def prefixes($k):
-#def suffixes($k):
+def prefixes: #:: WORD => *WORD
+    range(1;length+1) as $i
+    | .[:$i]
+;
 
-#def factors:
-#def prefixes:
-#def suffixes:
+def suffixes: #:: WORD => *WORD
+    range(length-1;-1;-1) as $i
+    | .[$i:]
+;
+
+def factors: #:: WORD => *WORD
+# length order:
+    range(1;length+1) as $j
+    | range(length-$j+1) as $i
+    | .[$i:$i+$j]
+# other order:
+#   range(length+1) as $j
+#   | range($j+1; length+1) as $i
+#   | .[$j:$i]
+;
 
 ########################################################################
 # Word iteration

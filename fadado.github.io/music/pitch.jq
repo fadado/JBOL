@@ -18,11 +18,10 @@ import "fadado.github.io/string/regexp" as re;
 # PI (pitch interval): -127..127 (has direction)
 #
 # Useful primitives:
-#   + math::abs :: number => number (absolute value, to make unordered intervals)
+#   + math::abs :: PI => unordered PI
 
 # Produces a new pitch
-def new: #:: <number^string>| => PITCH
-#   . as $x
+def new: #:: <number^string> => PITCH
     if type == "number" then
         if 0 <= . and . <= 127 # . is a pitch in the range 0..127
         then .
@@ -34,7 +33,7 @@ def new: #:: <number^string>| => PITCH
             match("^(?<n>[A-G])(?<a>[#sbf])?(?<o>[0-9]|10)$")
             | re::tomap as $m
             | {"C":0,"D":2,"E":4,"F":5,"G":7,"A":9,"B":11}[$m["n"]] as $n
-            | $m["o"] | tonumber * 12
+            | $m["o"]|tonumber * 12
             + if $m["a"]=="#" or $m["a"]=="s"
               then $n+1     # sharp
               elif $m["a"]=="b" or $m["a"]=="f"
@@ -52,14 +51,12 @@ def new($x): #:: (<number^string>) => PITCH
 ;
 
 # Produces the note name
-def name: #:: PCLASS| => string
-#   . as $pitch
+def name: #:: PITCH => string
     ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"][. % 12]
 ;
 
 # Formats a pitch (C0..G10)
-def format: #:: PITCH| => string
-#   . as $pitch
+def format: #:: PITCH => string
     "\(name)\(./12|floor)"
 ;
 
@@ -67,7 +64,6 @@ def format: #:: PITCH| => string
 
 ## Add a directed pitch interval to the pitch
 def transpose($interval): #:: PITCH|(PI) => PITCH
-#   . as $pitch
     . + $interval
     | unless(0 <= . and . <= 127;
         "Pitch out of range: \(.)" | error)
@@ -75,7 +71,6 @@ def transpose($interval): #:: PITCH|(PI) => PITCH
 
 # Produces the pitch interval (-127..127) between two pitches
 def interval($p): #:: PITCH|(PITCH) => PI
-#   . as $pitch
     $p - .
 ;
 

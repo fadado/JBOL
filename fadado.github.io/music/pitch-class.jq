@@ -20,8 +20,7 @@ import "fadado.github.io/music/pitch" as pitch;
 # IC (interval-class): 0..6 (assume interval inversion equivalence)
 
 # Produces the pitch-class corresponding to a pitch
-def new: #:: <number^string>| => PCLASS
-#   . as $x
+def new: #:: <number^string> => PCLASS
     if type == "number" then
         pitch::new % 12
     elif type == "string" then
@@ -45,14 +44,12 @@ def new($x): #::(<number^string>) => PCLASS
 ;
 
 # Format a pitch-class as a string
-def format: #:: PCLASS| => string
-#   . as $pclass
+def format: #:: PCLASS => string
     ["0","1","2","3","4","5","6","7","8","9","t","e"][.]
 ;
 
 # Produces the note name
-def name: #:: PCLASS| => string
-#   . as $pclass
+def name: #:: PCLASS => string
     ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"][.]
 ;
 
@@ -60,17 +57,14 @@ def name: #:: PCLASS| => string
 
 # Transposes a pitch-class
 def transpose($interval): #:: PCLASS|(PCI) => PCLASS
-#   . as $pclass
     math::mod(. + $interval; 12)
 ;
 
 # Inverts a pitch-class
-def invert: #:: PCLASS| => PCLASS
-#   . as $pclass
+def invert: #:: PCLASS => PCLASS
     12 - .
 ;
 def invert($interval): #:: PCLASS|(PCI) => PCLASS
-#   . as $pclass
     math::mod($interval - .; 12)
 #   invert | transpose($interval)
 #   math::mod(-. + $interval; 12)
@@ -79,19 +73,16 @@ def invert($interval): #:: PCLASS|(PCI) => PCLASS
 
 # Produces the pitch-class interval (0..11) between two pitch-classes
 def interval($pc): #:: PCLASS|(PCLASS) => PCI
-#   . as $pclass
     math::mod($pc - .; 12)
 ;
 
 # Produces the interval-class (0..6) for a pitch-class interval
-def iclass: #:: PCI| => IC
-#   . as $chromatic_interval
-    when(. > 6; 12 - .) # > tritone?
+def iclass: #:: PCI => IC
+    when(. > 6; 12 - .)     # . > tritone?
 ;
 
 # Produces the interval-class (0..6) between two pitch-classes
 def interval_class($pc): #:: PCLASS|(PCLASS) => IC
-#   . as $pclass
     math::mod($pc - .; 12) | when(. > 6; 12 - .)
 #   interval($pc) | iclass
 #   math::mod(math::min($pc - .; . - $pc); 12)

@@ -10,6 +10,7 @@ module {
 
 include "fadado.github.io/prelude";
 import "fadado.github.io/math" as math;
+import "fadado.github.io/array" as array;
 import "fadado.github.io/music/pitch-class" as pc;
 
 ########################################################################
@@ -25,11 +26,10 @@ import "fadado.github.io/music/pitch-class" as pc;
 #   + index  :: PCSET|(PCLASS) => number^null
 #   + fromjson  :: string => PCSET
 #   + tojson  :: PCSET => string
-#   + all in package array
+#   + set operations defined in package array
 
 # Produces the pitch-class set
-def new: #:: <array^string>| => PCSET
-#   . as $x
+def new: #:: <array^string> => PCSET
     if type == "array"
     then
         unique | map(pc::new)
@@ -48,8 +48,7 @@ def new($x): #::(<array^string>) => PCSET
 ;
 
 # Format a pitch-class set as a string
-def format: #:: PCSET| => string
-#   . as $pcset
+def format: #:: PCSET => string
     add(.[] | pc::format; "")
 ;
 
@@ -57,36 +56,59 @@ def format: #:: PCSET| => string
 
 # Produces a transposed pitch-class set.
 def transpose($interval): #:: PCSET|(PCI) => PCSET
-#   . as $pcset
     map(pc::transpose($interval))
 ;
 
 # Counts the number of transpositions for a pitch-class set.
-def transpositions: #:: PCSET| => number
-#   . as $pcset
+def transpositions: #:: PCSET => number
     12 / math::gcd(12; length)
 ;
 
 # Produces an inverted pitch-class set.
-def invert: #:: PCSET| => PCSET
-#   . as $pcset
+def invert: #:: PCSET => PCSET
     map(pc::invert)
 ;
 def invert($interval): #:: PCSET|(PCI) => PCSET
-#   . as $pcset
     map(pc::invert($interval))
 ;
 
 ########################################################################
-# pure set operations (and array/set!)
+# Pure set operations (and array/set!)
 
 # ~p
-def complement: #:: PCSET| => PCSET
+def complement: #:: PCSET => PCSET
     . as $pcset
     | [ range(12) | reject([.]|inside($pcset)) ]
 ;
 
 ########################################################################
 # TODO: nomal, prime...
+
+def normal: #:: PCSET => PCSET
+    . as $set
+    | length as $n
+    | if $n == 0
+    then []
+    elif $n == 1
+    then $set
+    else
+    # TODO:...
+        # ensure order and uniquenes
+        unique
+        # build rotations
+        | [., foreach range($n-1) as $_
+                (.; array::rotate
+                    | when(.[$n-1]-.[0] < 0; .[$n-1] += 12))
+          ] as $r
+        # get minimal distance
+        | [$r[] | .[$n-1] - .[0]] | min as $m
+        # remove rotations with distance > min
+        | [$r[] | select((.[$n-1] - .[0]) == $m)] as $r
+        #
+        | $m,$r
+        # choose normal order
+        # normalize to 0..12
+    end
+;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

@@ -31,7 +31,6 @@ import "fadado.github.io/array" as array;
 
 # Interval-class vector
 def vector: #:: PCSET => VECTOR
-#   . as $pcset
     def _tally:
         . as $pcs
         | length as $n
@@ -40,7 +39,8 @@ def vector: #:: PCSET => VECTOR
         | $pcs[$i]|pc::interval_class($pcs[$j])
     ;
     # interval class vector
-    reduce _tally as $ic ([0,0,0,0,0,0]; .[$ic-1] += 1)
+    reduce _tally as $ic
+        ([0,0,0,0,0,0]; .[$ic-1] += 1)
 ;
 
 ########################################################################
@@ -71,10 +71,11 @@ def table: #:: PCSET => TABLE
 # Known as directed-interval vector, interval succession,  interval string,
 # etc.
 
-def pattern: #:: PCSET| => PATTERN
+def pattern: #:: PCSET => PATTERN
     . as $pcset
     | [range(length), 0] as $ndx
     | [range(length) as $i | $pcset[$ndx[$i]]|pc::interval($pcset[$ndx[$i+1]])]
 #   | assert(add == 12)
 ;
+
 # vim:ai:sw=4:ts=4:et:syntax=jq

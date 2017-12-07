@@ -171,4 +171,18 @@ include "array/word"; [[limit(13;star)][1:],[limit(12;plus)]] | .[0]==.[1]
 "abc"
 true
 
+########################################################################
+
+include "array/word"; [prefixes]
+"abcd"
+["a", "ab", "abc", "abcd"]
+
+include "array/word"; [suffixes]
+"abcd"
+["d", "cd", "bcd", "abcd"]
+
+include "array/word"; [factors]
+"abcd"
+["a","b","c","d","ab","bc","cd","abc","bcd","abcd"]
+
 # vim:ai:sw=2:ts=2:et:syntax=jq

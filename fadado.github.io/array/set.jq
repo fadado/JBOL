@@ -89,7 +89,6 @@ def sdifference($t): #:: SET|(SET) => SET
 # (×), A × B, A × B × C, …
 # Generates tuples (using arrays)
 def product: #:: [SET] => +TUPLE
-#   . as $set
     def _product:
         if length == 1
         then
@@ -108,7 +107,6 @@ def product: #:: [SET] => +TUPLE
 # For sets with catenable symbols (arrays or strings)
 # Note: empty array or string must be specified as identity value
 def product($identity): #:: [SET]|(IDENTITY) => +WORD
-#   . as $set
     def _product:
         if length == 1
         then
@@ -127,7 +125,6 @@ def product($identity): #:: [SET]|(IDENTITY) => +WORD
 # Aⁿ
 # Specifically size n words over an alphabet Σ (Σⁿ)
 def power($n): #:: SET|(number) => +TUPLE
-#   . as $set
     select(0 <= $n) # not defined for negative $n
     | . as $set
     | [range($n) | $set]
@@ -135,7 +132,6 @@ def power($n): #:: SET|(number) => +TUPLE
 ;
 
 def power($n; $identity): #:: SET|(number;IDENTITY) => +WORD
-#   . as $set
     select(0 <= $n) # not defined for negative $n
     | . as $set
     | [range($n) | $set]
