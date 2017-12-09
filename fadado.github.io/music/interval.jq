@@ -39,8 +39,12 @@ def vector: #:: PCSET => VECTOR
         | $pcs[$i]|pc::interval_class($pcs[$j])
     ;
     # interval class vector
-    reduce _tally as $ic
-        ([0,0,0,0,0,0]; .[$ic-1] += 1)
+    reduce _tally as $interval_class
+        ([0,0,0,0,0,0]; .[$interval_class-1] += 1)
+;
+
+def multiplicity($interval_class): #:: PCSET|(IC) => number
+    vector[$interval_class-1]
 ;
 
 ########################################################################

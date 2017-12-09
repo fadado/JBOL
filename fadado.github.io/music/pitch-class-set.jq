@@ -56,7 +56,7 @@ def format: #:: PCSET => string
 
 # Produces a transposed pitch-class set.
 def transpose($interval): #:: PCSET|(PCI) => PCSET
-    map(pc::transpose($interval))
+    map(pc::transpose($interval)) | sort
 ;
 
 # Counts the number of transpositions for a pitch-class set.
@@ -66,10 +66,10 @@ def transpositions: #:: PCSET => number
 
 # Produces an inverted pitch-class set.
 def invert: #:: PCSET => PCSET
-    map(pc::invert)
+    map(pc::invert) | sort
 ;
 def invert($interval): #:: PCSET|(PCI) => PCSET
-    map(pc::invert($interval))
+    map(pc::invert($interval)) | sort
 ;
 
 ########################################################################
@@ -82,33 +82,73 @@ def complement: #:: PCSET => PCSET
 ;
 
 ########################################################################
-# TODO: nomal, prime...
+# Set class
 
+# normal form
 def normal: #:: PCSET => PCSET
-    . as $set
-    | length as $n
-    | if $n == 0
-    then []
-    elif $n == 1
-    then $set
+    if length < 2
+    then .
     else
-    # TODO:...
         # ensure order and uniquenes
         unique
+
+        # store last index
+        | (length-1) as $last
+
         # build rotations
-        | [., foreach range($n-1) as $_
-                (.; array::rotate
-                    | when(.[$n-1]-.[0] < 0; .[$n-1] += 12))
-          ] as $r
-        # get minimal distance
-        | [$r[] | .[$n-1] - .[0]] | min as $m
-        # remove rotations with distance > min
-        | [$r[] | select((.[$n-1] - .[0]) == $m)] as $r
-        #
-        | $m,$r
+        | [ . , foreach range($last) as $_
+                    (.; array::rotate | .[$last] += 12) ]
+
+        # get minimal distance in all rotations
+        | (map(.[$last]-.[0]) | min) as $m
+
+        # remove rotations with last distance > min
+        | map(select(.[$last]-.[0] == $m))
+
         # choose normal order
+        | until(length == 1; 
+            label $found
+            | range(1;$last+1) as $i
+            | (.[0][$i] - .[0][0]) as $x
+            | (.[1][$i] - .[1][0]) as $y
+            | if $x < $y
+              then del(.[1]), break $found
+              elif $y < $x
+              then del(.[0]), break $found
+              else # $x == $y
+                if $i != $last
+                then empty  # try next, else firts wins
+                else del(.[1]), break $found
+                end
+              end)
+
         # normalize to 0..12
+        | [.[0][] | . % 12]
     end
+;
+
+# proto prime
+def proto_: #:: PCSET => PCSET
+#   . as $normal
+    when(.[0] != 0; transpose((12-.[0])))
+;
+def proto: #:: PCSET => PCSET
+    normal | proto_
+;
+
+# forte prime
+def prime_: #:: PCSET => PCSET
+    . as $p # proto
+    | (invert|normal|proto_) as $i
+    | if $p < $i then $p else $i end
+;
+def prime_($i): #:: PCSET|(PCSET) => PCSET
+    . as $p # proto, $i is also assumed in proto mode
+    | if $p < $i then $p else $i end
+;
+
+def prime: #:: PCSET => PCSET
+    normal | proto_ | prime_
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

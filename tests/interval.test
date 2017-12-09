@@ -49,6 +49,10 @@ include "music/interval"; include "array"; vector | uniform
 [0,1,4,6]
 true
 
+include "music/interval"; include "array"; multiplicity(1)
+[0,1,4,6]
+1
+
 ########################################################################
 
 # tritone

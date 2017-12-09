@@ -62,7 +62,7 @@ def transpose($interval): #:: PCLASS|(PCI) => PCLASS
 
 # Inverts a pitch-class
 def invert: #:: PCLASS => PCLASS
-    12 - .
+    when(. != 0; 12 - .)
 ;
 def invert($interval): #:: PCLASS|(PCI) => PCLASS
     math::mod($interval - .; 12)
