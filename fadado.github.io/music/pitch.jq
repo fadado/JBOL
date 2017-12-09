@@ -63,8 +63,8 @@ def format: #:: PITCH => string
 ########################################################################
 
 ## Add a directed pitch interval to the pitch
-def transpose($interval): #:: PITCH|(PI) => PITCH
-    . + $interval
+def transpose($i): #:: PITCH|(PI) => PITCH
+    . + $i
     | unless(0 <= . and . <= 127;
         "Pitch out of range: \(.)" | error)
 ;

@@ -43,7 +43,7 @@ def new: #:: <array^string> => PCSET
     else type | "Type error: expected array or string, not \(.)" | error
     end
 ;
-def new($x): #::(<array^string>) => PCSET
+def new($x): #:: (<array^string>) => PCSET
     $x | new
 ;
 
@@ -55,8 +55,8 @@ def format: #:: PCSET => string
 ########################################################################
 
 # Produces a transposed pitch-class set.
-def transpose($interval): #:: PCSET|(PCI) => PCSET
-    map(pc::transpose($interval)) | sort
+def transpose($i): #:: PCSET|(PCI) => PCSET
+    map(pc::transpose($i)) | sort
 ;
 
 # Counts the number of transpositions for a pitch-class set.
@@ -68,8 +68,8 @@ def transpositions: #:: PCSET => number
 def invert: #:: PCSET => PCSET
     map(pc::invert) | sort
 ;
-def invert($interval): #:: PCSET|(PCI) => PCSET
-    map(pc::invert($interval)) | sort
+def invert($i): #:: PCSET|(PCI) => PCSET
+    map(pc::invert($i)) | sort
 ;
 
 ########################################################################

@@ -39,7 +39,7 @@ def new: #:: <number^string> => PCLASS
     else type | "Type error: expected number or string, not \(.)" | error
     end
 ;
-def new($x): #::(<number^string>) => PCLASS
+def new($x): #:: (<number^string>) => PCLASS
     $x | new
 ;
 
@@ -56,19 +56,19 @@ def name: #:: PCLASS => string
 ########################################################################
 
 # Transposes a pitch-class
-def transpose($interval): #:: PCLASS|(PCI) => PCLASS
-    math::mod(. + $interval; 12)
+def transpose($i): #:: PCLASS|(PCI) => PCLASS
+    math::mod(. + $i; 12)
 ;
 
 # Inverts a pitch-class
 def invert: #:: PCLASS => PCLASS
     when(. != 0; 12 - .)
 ;
-def invert($interval): #:: PCLASS|(PCI) => PCLASS
-    math::mod($interval - .; 12)
-#   invert | transpose($interval)
-#   math::mod(-. + $interval; 12)
-#   math::mod(12 - . + $interval; 12)
+def invert($i): #:: PCLASS|(PCI) => PCLASS
+    math::mod($i - .; 12)
+#   invert | transpose($i)
+#   math::mod(-. + $i; 12)
+#   math::mod(12 - . + $i; 12)
 ;
 
 # Produces the pitch-class interval (0..11) between two pitch-classes

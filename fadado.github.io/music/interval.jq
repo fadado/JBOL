@@ -9,9 +9,7 @@ module {
 };
 
 include "fadado.github.io/prelude";
-import "fadado.github.io/math" as math;
 import "fadado.github.io/music/pitch-class" as pc;
-import "fadado.github.io/array" as array;
 
 ########################################################################
 # Names used in type declarations
@@ -43,8 +41,24 @@ def vector: #:: PCSET => VECTOR
         ([0,0,0,0,0,0]; .[$interval_class-1] += 1)
 ;
 
-def multiplicity($interval_class): #:: PCSET|(IC) => number
-    vector[$interval_class-1]
+def multiplicity($ic): #:: PCSET|(IC) => number
+    vector[$ic-1]
+;
+
+# Howard Hanson format
+def hhformat: #:: VECTOR => string
+    . as $v # vector
+    | ["d","s","n","m","p","t"] as $n # name
+    | ["⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹","¹⁰","¹¹","¹²"] as $d # digit
+    | reduce (
+        (4,3,2,1,0,5) as $i
+        | $v[$i]
+        | if . == 0
+          then empty
+          elif . == 1
+          then $n[$i]
+          else $n[$i] , $d[.] end
+      ) as $s (""; . + $s)
 ;
 
 ########################################################################
