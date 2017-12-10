@@ -1,0 +1,28 @@
+#########################################################################
+# Interval patterns
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+#########################################################################
+
+include "music/interval-pattern"; new | add
+[0,2,4,5,7,9,11]
+12
+
+include "music/interval-pattern"; new
+[0,2,4,5,7,9,11]
+[2,2,1,2,2,2,1]
+
+include "music/interval-pattern"; new | map(tostring) | join("")
+[0,2,4,5,7,9,11]
+"2212221"
+
+include "music/interval-pattern"; new
+[5,7,9,10,0,2,4]
+[2,2,1,2,2,2,1]
+
+include "music/interval-pattern"; new | map(tostring) | join("")
+[5,7,9,10,0,2,4]
+"2212221"
+
+# vim:ai:sw=2:ts=2:et:syntax=jq
