@@ -53,9 +53,6 @@ def format: #:: PCSET => string
 ;
 
 # Howard Hanson format for pitch-class-sets
-# ₀ ₁ ₂ ₃ ₄ ₅ ₆ ₇ ₈ ₉ ₁₀ ₁₁ ₁₂
-
-# Produces string with note names
 def name($flats): #:: PCSET|(boolean) => string
     . as $pcset
     | [range(length), 0] as $ndx
@@ -64,6 +61,7 @@ def name($flats): #:: PCSET|(boolean) => string
     | ["₀","₁","₂","₃","₄","₅","₆","₇","₈","₉","₁₀","₁₁","₁₂"] as $d # digit
     | reduce range(length) as $i
         (""; . + $n[$i] + $d[$p[$i]])
+#   | .[:-1]
 ;
 def name: #:: PCSET => string
     name(false)

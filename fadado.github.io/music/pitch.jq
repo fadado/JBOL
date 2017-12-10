@@ -28,16 +28,16 @@ def new: #:: <number^string> => PITCH
         else "Pitch out of range: \(.)" | error
         end
     elif type == "string" then
-        if test("^[A-G][#sbf]?(?:[0-9]|10)$") # . is a note name with octave
+        if test("^[A-G][♯♭]?(?:[0-9]|10)$") # . is a note name with octave
         then
-            match("^(?<n>[A-G])(?<a>[#sbf])?(?<o>[0-9]|10)$")
+            match("^(?<n>[A-G])(?<a>[♯♭])?(?<o>[0-9]|10)$")
             | re::tomap as $m
             | {"C":0,"D":2,"E":4,"F":5,"G":7,"A":9,"B":11}[$m["n"]] as $n
             | $m["o"]|tonumber * 12
-            + if $m["a"]=="#" or $m["a"]=="s"
-              then $n+1     # sharp
-              elif $m["a"]=="b" or $m["a"]=="f"
-              then $n-1     # flat
+            + if $m["a"]=="♯"
+              then $n+1
+              elif $m["a"]=="♭"
+              then $n-1
               else $n
               end
         else
@@ -51,13 +51,24 @@ def new($x): #:: (<number^string>) => PITCH
 ;
 
 # Produces the note name
+def name($flats): #:: PITCH|(boolean) => string
+    if $flats
+    then ["C","D♭","D","E♭","E","F","G♭","G","A♭","A","B♭","B"][. % 12]
+    else ["C","C♯","D","D♯","E","F","F♯","G","G♯","A","A♯","B"][. % 12]
+    end
+;
 def name: #:: PITCH => string
-    ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"][. % 12]
+    name(false)
+;
+
+# Produces the note octave
+def octave: #:: PITCH => number
+    ./12|floor
 ;
 
 # Formats a pitch (C0..G10)
 def format: #:: PITCH => string
-    "\(name)\(./12|floor)"
+    "\(name(false))\(octave)"
 ;
 
 ########################################################################

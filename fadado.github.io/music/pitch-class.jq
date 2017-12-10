@@ -51,8 +51,8 @@ def format: #:: PCLASS => string
 # Produces the note name
 def name($flats): #:: PCLASS|(boolean) => string
     if $flats
-    then ["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"][.]
-    else ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"][.]
+    then ["C","D♭","D","E♭","E","F","G♭","G","A♭","A","B♭","B"][.]
+    else ["C","C♯","D","D♯","E","F","F♯","G","G♯","A","A♯","B"][.]
     end
 ;
 def name: #:: PCLASS => string

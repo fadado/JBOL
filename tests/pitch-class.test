@@ -63,16 +63,16 @@ include "music/pitch-class"; name
 "G"
 
 include "music/pitch-class"; [.[] | new ]
-["C0","C#0","D0","D#0","E0","F0","F#0","G0","G#0","A0","A#0","B0"]
+["C0","C♯0","D0","D♯0","E0","F0","F♯0","G0","G♯0","A0","A♯0","B0"]
 [0,1,2,3,4,5,6,7,8,9,10,11]
 
 include "music/pitch-class"; [.[] | new | name ]
-["C1","C#1","D1","D#1","E1","F1","F#1","G1","G#1","A1","A#1","B1"]
-["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"]
+["C1","C♯1","D1","D♯1","E1","F1","F♯1","G1","G♯1","A1","A♯1","B1"]
+["C","C♯","D","D♯","E","F","F♯","G","G♯","A","A♯","B"]
 
 include "music/pitch-class"; [range(60;72) | new | name]
 null
-["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"]
+["C","C♯","D","D♯","E","F","F♯","G","G♯","A","A♯","B"]
 
 include "music/pitch-class"; interval(7)
 0

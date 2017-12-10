@@ -17,15 +17,15 @@ include "music/pitch"; new
 127
 
 include "music/pitch"; map(new)
-["C#0","C#1","C#2"]
+["C♯0","C♯1","C♯2"]
 [1,13,25]
 
 include "music/pitch"; map(new | format)
-["Db0","Db1","Db2"]
-["C#0","C#1","C#2"]
+["D♭0","D♭1","D♭2"]
+["C♯0","C♯1","C♯2"]
 
 include "music/pitch"; map(new)
-["Db0","Db1","Db2"]
+["D♭0","D♭1","D♭2"]
 [1,13,25]
 
 include "music/pitch"; new
