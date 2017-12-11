@@ -5,7 +5,7 @@
 import "fadado.github.io/string" as str;
 
 def chars:
-    split("")[]
+    (./"")[]
 ;
 
 def lpad($n):

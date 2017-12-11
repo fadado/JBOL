@@ -16,6 +16,7 @@ import "fadado.github.io/music/pitch-class" as pc;
 #
 # PCLASS (pitch-class): 0..11
 # PCSET (pitch-class set): [PCLASS]
+# PCI (pitch-class interval): 0..11 (has not direction) 
 # PATTERN: [PCI]
 
 ########################################################################

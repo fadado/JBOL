@@ -24,7 +24,7 @@ def new: #:: <number^string> => PCLASS
     if type == "number" then
         pitch::new % 12
     elif type == "string" then
-        if test("^[0-9te]$")    # representative
+        if test("^[0-9te]$")
         then
             if .=="t"           # ten
             then 10
@@ -56,7 +56,7 @@ def name($flats): #:: PCLASS|(boolean) => string
     end
 ;
 def name: #:: PCLASS => string
-    name(false)
+    ["C","C♯","D","D♯","E","F","F♯","G","G♯","A","A♯","B"][.]
 ;
 
 ########################################################################

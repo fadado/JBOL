@@ -58,7 +58,7 @@ def name($flats): #:: PITCH|(boolean) => string
     end
 ;
 def name: #:: PITCH => string
-    name(false)
+    ["C","C♯","D","D♯","E","F","F♯","G","G♯","A","A♯","B"][. % 12]
 ;
 
 # Produces the note octave
@@ -68,7 +68,7 @@ def octave: #:: PITCH => number
 
 # Formats a pitch (C0..G10)
 def format: #:: PITCH => string
-    "\(name(false))\(octave)"
+    "\(name)\(octave)"
 ;
 
 ########################################################################

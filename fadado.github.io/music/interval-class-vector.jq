@@ -60,8 +60,8 @@ def name: #:: VECTOR => string
 ;
 
 # Multiplicity of interval-class in one pitch-class set
-def multiplicity($ic): #:: VECTOR|(IC) => number
-    .[$ic-1]
+def multiplicity($i): #:: VECTOR|(IC) => number
+    .[$i-1]
 ;
 
 #  Deep scale property

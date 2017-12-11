@@ -71,7 +71,7 @@ def name: #:: PCSET => string
 
 # Produces a transposed pitch-class set.
 def transpose($i): #:: PCSET|(PCI) => PCSET
-    map(pc::transpose($i)) | sort
+    map(pc::transpose($i))
 ;
 
 # Counts the number of transpositions for a pitch-class set.
@@ -81,14 +81,14 @@ def transpositions: #:: PCSET => number
 
 # Produces an inverted pitch-class set.
 def invert: #:: PCSET => PCSET
-    map(pc::invert) | sort
+    map(pc::invert)
 ;
 def invert($i): #:: PCSET|(PCI) => PCSET
-    map(pc::invert($i)) | sort
+    map(pc::invert($i))
 ;
 
 ########################################################################
-# Pure set operations (and array/set!)
+# Pure set operations (plus all in array/set!)
 
 # ~p
 def complement: #:: PCSET => PCSET
@@ -123,7 +123,7 @@ def normal: #:: PCSET => PCSET
         # choose normal order
         | until(length == 1; 
             label $found
-            | range(1;$last+1) as $i
+            | range(1; $last+1) as $i
             | (.[0][$i] - .[0][0]) as $x
             | (.[1][$i] - .[1][0]) as $y
             | if $x < $y
@@ -132,7 +132,7 @@ def normal: #:: PCSET => PCSET
               then del(.[0]), break $found
               else # $x == $y
                 if $i != $last
-                then empty  # try next, else firts wins
+                then empty  # try next, else first wins
                 else del(.[1]), break $found
                 end
               end)
@@ -144,7 +144,7 @@ def normal: #:: PCSET => PCSET
 
 # proto prime
 def proto_: #:: PCSET => PCSET
-#   . as $normal
+    # assume . is in normal form
     when(.[0] != 0; transpose((12-.[0])))
 ;
 def proto: #:: PCSET => PCSET
@@ -152,14 +152,12 @@ def proto: #:: PCSET => PCSET
 ;
 
 # forte prime
-def prime_: #:: PCSET => PCSET
-    . as $p # proto
-    | (invert|normal|proto_) as $i
-    | if $p < $i then $p else $i end
-;
 def prime_($i): #:: PCSET|(PCSET) => PCSET
-    . as $p # proto, $i is also assumed in proto mode
-    | if $p < $i then $p else $i end
+    # assume . and $i are in proto form
+    if . < $i then . else $i end
+;
+def prime_: #:: PCSET => PCSET
+    prime_(invert|normal|proto_)
 ;
 
 def prime: #:: PCSET => PCSET

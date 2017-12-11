@@ -1,6 +1,6 @@
 module {
-    name: "music/interval",
-    description: "Interval-class count vector",
+    name: "music/interval-table",
+    description: "Intervals table",
     namespace: "fadado.github.io",
     author: {
         name: "Joan Josep Ordinas Rosa",
@@ -23,7 +23,7 @@ import "fadado.github.io/music/pitch-class" as pc;
 
 # indices: generic intervals - 1
 # values:  a list of specific intervals
-def table: #:: PCSET => TABLE
+def new: #:: PCSET => TABLE
     def _table:
         . as $pcs
         | length as $n
