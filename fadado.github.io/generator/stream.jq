@@ -27,16 +27,23 @@ def length(stream): #:: a|(a->*b) => number!
 ;
 
 # . inside?
-def member(s): #:: a|(*a) => boolean
-    . as $a | any(s; . == $a)
+def member(stream): #:: a|(*a) => boolean
+    . as $a | any(stream; . == $a)
 ;
-def member($a; s): #:: a|(a;*a) => boolean
-    any(s; . == $a)
+def member($a; stream): #:: a|(a;*a) => boolean
+    any(stream; . == $a)
 ;
 
 # some common?
-def sharing(s; t):  #:: a|(*a;*a) => boolean
-    some(s | member(t))
+def sharing(stream; t):  #:: a|(*a;*a) => boolean
+    some(stream | member(t))
+;
+
+# Unique for streams
+def distinct(stream):
+    reduce stream as $x
+        ({}; .[$x | (type[0:1]+tostring)] = $x)
+    | .[]
 ;
 
 # One result?

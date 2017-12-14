@@ -26,29 +26,31 @@ import "fadado.github.io/string" as str;
 
 # Anchored subject
 def A($subject): #:: (string) => CURSOR
-{
-    $subject,               # string to scan
-    slen:($subject|length), # subject length
-    offset:0,               # subject start scanning position
-    start:null,             # current pattern start scanning position
-    position:0              # current cursor position
-};
-def A: #:: string| => CURSOR
+    {
+        $subject,               # string to scan
+        slen:($subject|length), # subject length
+        offset:0,               # subject start scanning position
+        start:null,             # current pattern start scanning position
+        position:0              # current cursor position
+    }
+;
+def A: #:: string => CURSOR
     A(.)
 ;
 
 # Unanchored subject
 def U($subject): #:: (string) => *CURSOR
-    ($subject|length) as $slen   |
-    range(0; $slen+1) as $offset |
-{
-    $subject,           # string to scan
-    $slen,              # subject length
-    $offset,            # subject start scanning position
-    start:null,         # current pattern start scanning position
-    position:$offset    # current cursor position
-};
-def U: #:: string| => *CURSOR
+    ($subject|length) as $slen
+    | range(0; $slen+1) as $offset
+    | {
+        $subject,           # string to scan
+        $slen,              # subject length
+        $offset,            # subject start scanning position
+        start:null,         # current pattern start scanning position
+        position:$offset    # current cursor position
+    }
+;
+def U: #:: string => *CURSOR
     U(.)
 ;
 
@@ -57,38 +59,33 @@ def U: #:: string| => *CURSOR
 #
 
 # Returns the cursor position; similar to the @ operator in SNOBOL
-def AT: #:: CURSOR| => number
+def AT: #:: CURSOR => number
     .position
 ;
 
 # Return a string with the whole pattern match (like & in regexes)
-def M: #:: CURSOR| => string
+def M: #:: CURSOR => string
     .subject[.offset:.position]
 ;
 
 # Return a string with the last (nearest) pattern match
-def N: #:: CURSOR| => string
+def N: #:: CURSOR => string
     .subject[.start:.position]
 ;
 
 # Return a string with the matches string prefix, like $` in Perl
-def P: #:: CURSOR| => string
+def P: #:: CURSOR => string
     .subject[0:.offset]
 ;
 
 # Return a string with the matches string prefix, like $' in Perl
-def S: #:: CURSOR| => string
+def S: #:: CURSOR => string
     .subject[.position:]
 ;
 
 #
 # jq specific patterns
 #
-
-# Matches the empty string (always matches), like the empty pattern in SNOBOL
-def NULL: #:: CURSOR| => CURSOR
-    .
-;
 
 # Match a literal, necessary to "wrap" all string literals
 def L($literal): #:: CURSOR|(string) => CURSOR
@@ -101,7 +98,7 @@ def L($literal): #:: CURSOR|(string) => CURSOR
 
 # Group patterns; blend a composite pattern into an atomic pattern
 def G(pattern): #:: CURSOR|(CURSOR->CURSOR) => CURSOR
-    (.position//0) as $p
+    (.position // 0) as $p
     | pattern   # any expression using `,` and/or `|` if necessary
     | .start = $p
 ;
@@ -274,7 +271,7 @@ def BREAK($s): #:: CURSOR|(string) => CURSOR
     | select(.position != .slen)
     | .position as $p
     | TAB(first(.subject|str::upto($s; $p)))
-    //.
+    // .
 ;
 
 def SPAN($s): #:: CURSOR|(string) => CURSOR
@@ -288,14 +285,14 @@ def SPAN($s): #:: CURSOR|(string) => CURSOR
 # Patterns concerned with specific types of matching
 #
 
-def ARB: #:: CURSOR| => *CURSOR
+def ARB: #:: CURSOR => *CURSOR
     # equivalent to TAB(range(.position; .slen))
     range(.position; .slen) as $n
     | .start = .position
     | .position = $n
 ;
 
-def BAL: #:: CURSOR| => *CURSOR
+def BAL: #:: CURSOR => *CURSOR
     def _bal:
         NOTANY("()")
         , (L("(") | iterate(_bal) | L(")"))
@@ -303,7 +300,7 @@ def BAL: #:: CURSOR| => *CURSOR
     G(iterate1(_bal))
 ;
 
-def REM: #:: CURSOR| => CURSOR
+def REM: #:: CURSOR => CURSOR
     # equivalent to RTAB(0)
     .start = .position
     | .position = .slen
@@ -313,20 +310,26 @@ def REM: #:: CURSOR| => CURSOR
 # Patterns concerned with control of the matching process 
 #
 
-def ABORT: #:: CURSOR| => !
-    cancel  # from prelude
+# Always matches, like the empty pattern in SNOBOL
+def NULL: #:: CURSOR => CURSOR
+    .
 ;
 
-def FAIL: #:: CURSOR| => @
+# Never matches
+def FAIL: #:: CURSOR => @
     empty   # builtin
 ;
 
-def FENCE: #:: CURSOR| => CURSOR!
-    fence   # from prelude
+def SUCCEED: #::CURSOR => *CURSOR
+    iterate(.)  # from prelude
 ;
 
-def SUCCEED: #::CURSOR| => *CURSOR
-    iterate(.)  # from prelude
+def ABORT: #:: CURSOR => !
+    cancel  # from prelude
+;
+
+def FENCE: #:: CURSOR => CURSOR^!
+    fence   # from prelude
 ;
 
 # By default SNOBOL tries only once to match, but by default jq tries all
@@ -347,7 +350,7 @@ def BREAKX($s): #:: CURSOR|(string) => *CURSOR
     | select(.position != .slen)
     | .position as $p
     | TAB(.subject|str::upto($s; $p))
-    //.
+    // .
 ;
 
 def LEQ($s; $t): #:: CURSOR|(string;string) => CURSOR
