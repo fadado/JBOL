@@ -41,8 +41,10 @@ def sharing(stream; t):  #:: a|(*a;*a) => boolean
 
 # Unique for streams
 def distinct(stream):
-    reduce stream as $x
-        ({}; .[$x | (type[0:1]+tostring)] = $x)
+    reduce stream as $x ({};
+        ($x|type[0:1]+tostring) as $k
+        | unless(has($k);
+            .[$k] = $x))
     | .[]
 ;
 

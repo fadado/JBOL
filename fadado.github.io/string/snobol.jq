@@ -78,7 +78,7 @@ def P: #:: CURSOR => string
     .subject[0:.offset]
 ;
 
-# Return a string with the matches string prefix, like $' in Perl
+# Return a string with the matches string suffix, like $' in Perl
 def S: #:: CURSOR => string
     .subject[.position:]
 ;
