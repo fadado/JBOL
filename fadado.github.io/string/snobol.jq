@@ -14,6 +14,51 @@ include "fadado.github.io/types";
 import "fadado.github.io/string" as str;
 
 ########################################################################
+# Patterns concerned with control of the matching process 
+########################################################################
+
+# Always matches, like the empty pattern in SNOBOL
+def NULL: #:: a => a
+    .
+;
+
+# Never matches
+def FAIL: #:: a => @
+    empty
+;
+
+def SUCCEED: #::a => *a
+#   repeat(.)
+    def r: . , r;
+    r
+;
+
+def ABORT: #:: a => !
+    error("!") # cancel in prelude
+;
+
+def FENCE: #:: a => a!
+    . , ABORT # fence in prelude
+;
+
+def NOT(g): #:: a|(a->*b) => ?a
+    select(isempty(g))
+;
+
+def IF(g): #:: a|(a->*b) => ?a
+    select(isdot(g))
+;
+
+def ARBNO(f): #:: a|(a->a) => *a
+    iterate(f)
+;
+
+# By default SNOBOL tries only once to match, but by default jq tries all
+# alternatives. To restrict evaluation to one value use the function `first` or
+# this construct:
+#   label $fence | P | Q | (NULL , break $fence);
+
+########################################################################
 # Patterns implementation
 ########################################################################
 
@@ -178,9 +223,9 @@ def DIFFER($s): #:: CURSOR|(string;string) => CURSOR
 ;
 def INTEGER($a): #:: CURSOR|(a) => CURSOR
     def test:
-       (isnumber and . == floor)
-       or (tonumber? // false)
-       and (contains(".")|not)
+       $a | (isnumber and . == floor)
+            or (tonumber? // false)
+            and (contains(".")|not)
     ;
     select(test)
 ;
@@ -201,14 +246,6 @@ def REPLACE($s; $t; $u): #:: (string;string;string) => string
 ;
 def SIZE($s): #:: (string) => number
     $s|length
-;
-
-#
-# Patterns that control the application of other patterns 
-#
-
-def ARBNO(pattern): #:: CURSOR|(CURSOR->CURSOR) => *CURSOR
-    iterate(pattern)
 ;
 
 #
@@ -278,7 +315,7 @@ def SPAN($s): #:: CURSOR|(string) => CURSOR
     assert($s != ""; "SPAN requires a non empty string as argument")
     | select(.position != .slen)
     | select(.subject[.position:.position+1] | inside($s))
-    | G(last(iterate1(ANY($s)))|select(.!=null))    # empty if last == null
+    | G(last(ANY($s)|iterate(ANY($s)))|select(.!=null))    # empty if last == null
 ;
 
 #
@@ -297,7 +334,7 @@ def BAL: #:: CURSOR => *CURSOR
         NOTANY("()")
         , (L("(") | iterate(_bal) | L(")"))
     ;
-    G(iterate1(_bal))
+    G(_bal|iterate(_bal))
 ;
 
 def REM: #:: CURSOR => CURSOR
@@ -305,37 +342,6 @@ def REM: #:: CURSOR => CURSOR
     .start = .position
     | .position = .slen
 ;
-
-#
-# Patterns concerned with control of the matching process 
-#
-
-# Always matches, like the empty pattern in SNOBOL
-def NULL: #:: CURSOR => CURSOR
-    .
-;
-
-# Never matches
-def FAIL: #:: CURSOR => @
-    empty   # builtin
-;
-
-def SUCCEED: #::CURSOR => *CURSOR
-    iterate(.)  # from prelude
-;
-
-def ABORT: #:: CURSOR => !
-    cancel  # from prelude
-;
-
-def FENCE: #:: CURSOR => CURSOR^!
-    fence   # from prelude
-;
-
-# By default SNOBOL tries only once to match, but by default jq tries all
-# alternatives. To restrict evaluation to one value use the function `first` or
-# this construct:
-#   label $exit | P | Q | NULL , break $exit;
 
 ########################################################################
 # Extensions

@@ -40,7 +40,8 @@ def new($pcs):  #:: (PCSET) => VECTOR
 
 # Hexadecimal format
 def format: #:: VECTOR => string
-    add(.[] | math::tobase(16); "")
+    reduce (.[] | math::tobase(16)) as $s
+        (""; .+$s)
 ;
 
 # Howard Hanson format

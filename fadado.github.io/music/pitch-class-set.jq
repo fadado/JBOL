@@ -49,7 +49,8 @@ def new($x): #:: (<array^string>) => PCSET
 
 # Format a pitch-class set as a string
 def format: #:: PCSET => string
-    add(.[] | pc::format; "")
+    reduce (.[] | pc::format) as $s
+        (""; .+$s)
 ;
 
 # Howard Hanson format for pitch-class-sets
@@ -121,21 +122,21 @@ def normal: #:: PCSET => PCSET
         | map(select(.[$last]-.[0] == $m))
 
         # choose normal order
-        | until(length == 1; 
-            label $found
-            | range(1; $last+1) as $i
+        | label $fence
+        | iterate(
+            range(1; $last+1) as $i
             | (.[0][$i] - .[0][0]) as $x
             | (.[1][$i] - .[1][0]) as $y
             | if $x < $y
-              then del(.[1]), break $found
-              elif $y < $x
-              then del(.[0]), break $found
-              else # $x == $y
-                if $i != $last
-                then empty  # try next, else first wins
-                else del(.[1]), break $found
-                end
-              end)
+            then del(.[1])
+            elif $x > $y
+            then del(.[0])
+            elif $i == $last # $x == $y
+            then del(.[1])
+            else empty # try next
+            end)
+        | select(length == 1)
+        | . , break $fence
 
         # normalize to 0..12
         | [.[0][] | . % 12]

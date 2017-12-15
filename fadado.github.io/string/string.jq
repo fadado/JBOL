@@ -204,17 +204,17 @@ def translate($from; $to): #:: string|(string;string) => string
 # Classical trim and strip
 
 def _lndx(predicate): # left index or empty if not found
-    label $exit
+    label $fence
     | range(length-1) as $i
     | reject(.[$i:$i+1] | predicate)
-    | $i , break $exit
+    | ($i , break $fence)
 ;
 
 def _rndx(predicate): # rigth index or empty if not found
-    label $exit
+    label $fence
     | range(length-1; 0; -1) as $i
     | reject(.[$i:$i+1] | predicate)
-    | $i+1 , break $exit
+    | ($i+1 , break $fence)
 ;
 
 def lstrip($s): #:: string|(string) => string

@@ -50,9 +50,9 @@ def distinct(stream):
 
 # One result?
 def singleton(stream): #:: a|(a->*b) => boolean
-    [   label $exit |
+    [   label $cancel |
         foreach stream as $item
-            (2; if . >= 1 then .-1 else break $exit end; null)
+            (2; if . >= 1 then .-1 else break $cancel end; null)
     ] | length == 1
 ;
 
@@ -60,9 +60,9 @@ def singleton(stream): #:: a|(a->*b) => boolean
 #
 def nth($n; stream): #:: a|(number;a->*b) => ?b
     select($n >= 0) | # not defined for n<0 and n>=#stream
-    label $exit
+    label $cancel
     | foreach stream as $item
-        ($n; .-1; select(. == -1) | $item , break $exit)
+        ($n; .-1; select(. == -1) | $item , break $cancel)
 ;
 
 # Produces enumerated items from `stream`.
@@ -104,10 +104,10 @@ def take($n; stream): #:: a|(number;a->*b) => *b
     if $n == 0
     then stream
     else
-        label $exit
+        label $cancel
         | foreach stream as $item
             ($n;
-             if . >= 1 then .-1 else break $exit end;
+             if . >= 1 then .-1 else break $cancel end;
              $item)
     end
 ;
@@ -115,10 +115,9 @@ def take($n; stream): #:: a|(number;a->*b) => *b
 # Returns the prefix of `stream` while `predicate` is true.
 #
 def takeWhile(predicate; stream): #:: a|(b->boolean;a->*b) => *b
-#   try ( stream | unless(predicate; cancel) ) catch cancelled
-    label $exit
+    label $cancel
     | stream
-    | unless(predicate; break $exit)
+    | unless(predicate; break $cancel)
 ;
 
 # Analogous to array[start; stop] applied to streams.

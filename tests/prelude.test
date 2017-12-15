@@ -5,9 +5,9 @@
 # Blank lines and lines starting with # are ignored.
 #########################################################################
 
-include "prelude"; reduce .[] as $n (0; .+$n) == fold(.[0]+.[1]; 0; .[])
-[1,2,3,4]
-true
+#include "prelude"; reduce .[] as $n (0; .+$n) == fold(.[0]+.[1]; 0; .[])
+#[1,2,3,4]
+#true
 
 include "prelude"; [limit(6; tabulate(pow(.;2)))]
 null

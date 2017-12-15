@@ -5,6 +5,10 @@
 # Blank lines and lines starting with # are ignored.
 #########################################################################
 
+include "string/snobol"; [limit(10; SUCCEED)] == [limit(10; recurse(.))]
+0
+true
+
 include "string/snobol"; REMOVE("aeiou")
 "loquenomesabiayo"
 "lqnmsby"
@@ -357,7 +361,7 @@ include "string/snobol"; A | LEN(3) | M
 "ABC"
 "ABC"
 
-include "prelude"; include "string/snobol"; U | POS(0) | deny(LEN(3)) | M
+include "prelude"; include "string/snobol"; U | POS(0) | NOT(LEN(3)) | M
 "ABC"
 #
 

@@ -33,7 +33,8 @@ def new: #:: PCSET => PATTERN
 
 # Hexadecimal format
 def format: #:: PATTERN => string
-    add(.[] | math::tobase(16); "")
+    reduce (.[] | math::tobase(16)) as $s
+        (""; .+$s)
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

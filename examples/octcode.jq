@@ -14,13 +14,13 @@ def octcode:
 ;
 
 def deccode:
-    label $pipe |
+    label $cancel |
     ("01"|chars) as $d2 |
     ("0123456789"|chars) as $d1 |
     ("0123456789"|chars) as $d0 |
     if $d2 != "1" and $d1 != "2" and $d0 != "8"
     then $d2+$d1+$d0
-    else break $pipe end
+    else break $cancel end
 ;
 
 def hexcode:

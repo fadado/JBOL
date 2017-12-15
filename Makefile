@@ -88,6 +88,7 @@ Logs := $(subst tests/,$(LogDir)/,$(Tests:.test=.log))
 
 # Packages
 LIB=fadado.github.io
+XLIB=fadado.github.io/x
 STR=$(LIB)/string
 GEN=$(LIB)/generator
 MUSIC=$(LIB)/music
@@ -118,7 +119,7 @@ $(LogDir)/prelude.log: $(LIB)/prelude.jq
 $(LogDir)/types.log: $(LIB)/types.jq
 $(LogDir)/schema.log: $(LIB)/schema.jq $(LIB)/prelude.jq $(LIB)/types.jq $(STR)/url.jq $(STR)/regexp.jq $(GEN)/stream.jq
 $(LogDir)/math.log: $(LIB)/math.jq
-$(LogDir)/relations.log: $(LIB)/rel.jq
+$(LogDir)/relations.log: $(XLIB)/rel.jq
 
 # Object tests
 $(LogDir)/object_set.log: $(OBJECT)/set.jq

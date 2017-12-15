@@ -14,35 +14,11 @@ module {
 
 # Builtin `isempty`
 #def isempty(stream): #:: a|(a->*b) => boolean
-#    0 == ((label $exit | stream | 1 , break $exit)//0);
+#    0 == ((label $fence | stream | (1 , break $fence))//0);
 
-# Inverse of `isempty`
+# Reverse of `isempty`
 def isdot(stream): #:: a|(a->*b) => boolean
-    1 == ((label $exit | stream | 1 , break $exit)//0)
-;
-
-def deny(s): #:: a|(a->*b) => ?a
-    if isempty(s) then . else empty end
-;
-
-def all(stream; predicate): #:: a|(a->*b;b->boolean) => boolean
-    isempty(stream | predicate and empty)
-;
-def all: #:: [boolean]| => boolean
-    all(.[]; .)
-;
-def all(predicate): #:: [a]|(a->boolean) => boolean
-    all(.[]; predicate)
-;
-
-def any(stream; predicate): #:: a|(a->*b;b->boolean) => boolean
-    isdot(stream | predicate or empty)
-;
-def any: #:: [boolean]| => boolean
-    any(.[]; .)
-;
-def any(predicate): #:: [a]|(a->boolean) => boolean
-    any(.[]; predicate)
+    1 == ((label $fence | stream | (1 , break $fence))//0)
 ;
 
 # all(stream; .)
@@ -53,16 +29,6 @@ def every(stream): #:: a|(a->*boolean) => boolean
 # any(stream; .)
 def some(stream): #:: a|(a->*boolean) => boolean
     isdot(stream | . or empty)
-;
-
-#
-def add(generator): #:: a|(a->*b) => b^null
-    reduce generator as $item
-        (null; . + $item)
-;
-def add(generator; $b): #:: a|(a->*b; b) => b
-    reduce generator as $item
-        ($b; . + $item)
 ;
 
 ########################################################################
@@ -114,7 +80,8 @@ def upto(predicate): #:: a|(a->boolean) => a!
 
 # Fence at predicate
 def till(predicate): #:: a|(a->boolean) => a!
-    if predicate then (. , cancel) else empty end
+#   select(predicate) | fence
+    if predicate then fence else empty end
 ;
 
 ########################################################################
@@ -152,23 +119,23 @@ def assert(predicate; $message): #:: a|(a->boolean;string) => a!
 # while/2
 # until/2
 
+#def fold(filter; $a; generator): #:: x|([a,b]->a;a;x->*b) => a
+#    reduce generator as $b
+#        ($a; [.,$b]|filter)
+#;
+#
+#def scan(filter; generator): #:: x|([a,b]->a;x->*b) => *a
+#    foreach generator as $b
+#        (.; [.,$b]|filter; .)
+#;
+#def scan(filter; $a; generator): #:: x|([a,b]->a;a;x->*b) => *a
+#    $a|scan(filter; generator)
+#;
+
 # Like Haskell concatMap, Scala flatmap, etc.
 def mapcat(filter):
     reduce (.[] | filter) as $x
         (null; . + $x)
-;
-
-def fold(filter; $a; generator): #:: x|([a,b]->a;a;x->*b) => a
-    reduce generator as $b
-        ($a; [.,$b]|filter)
-;
-
-def scan(filter; generator): #:: x|([a,b]->a;x->*b) => *a
-    foreach generator as $b
-        (.; [.,$b]|filter; .)
-;
-def scan(filter; $a; generator): #:: x|([a,b]->a;a;x->*b) => *a
-    $a|scan(filter; generator)
 ;
 
 # f⁰ f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
@@ -213,6 +180,30 @@ def unfold(filter; $seed): #:: (a->[b,a];a) => *b
 
 def unfold(filter): #:: a|(a->[b,a]) => *b
     unfold(filter; .)
+;
+
+########################################################################
+# Better versions for builtins, to be removed...
+########################################################################
+
+def all(stream; predicate): #:: a|(a->*b;b->boolean) => boolean
+    isempty(stream | predicate and empty)
+;
+def all: #:: [boolean]| => boolean
+    all(.[]; .)
+;
+def all(predicate): #:: [a]|(a->boolean) => boolean
+    all(.[]; predicate)
+;
+
+def any(stream; predicate): #:: a|(a->*b;b->boolean) => boolean
+    isdot(stream | predicate or empty)
+;
+def any: #:: [boolean]| => boolean
+    any(.[]; .)
+;
+def any(predicate): #:: [a]|(a->boolean) => boolean
+    any(.[]; predicate)
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

@@ -7,13 +7,13 @@ def chars:
 ;
 
 def main:
-    label $pipe
+    label $cancel
 
     | ("012"|chars) as $h1
     | ("0123456789"|chars) as $h2
 
     | when($h1 == "2" and $h2 == "4";
-        break $pipe)
+        break $cancel)
 
     | ("012345"|chars) as $m1
     | ("0123456789"|chars) as $m2

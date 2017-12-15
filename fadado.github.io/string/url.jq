@@ -8,6 +8,7 @@ module {
     }
 };
 
+include "fadado.github.io/prelude";
 import "fadado.github.io/math" as math;
 
 # Inspired in https://www.rosettacode.org/wiki/URL_decoding#jq
@@ -15,7 +16,9 @@ def decode: #:: string| => string
     .  as $in
     | length as $length
     | {i: 0, answer: ""}
-    | until (.i >= $length;
+
+    | label $fence
+    | iterate(
         if $in[.i:.i+1] == "%"
         then
             .answer += ([$in[.i+1:.i+3] | math::frombase(16)] | implode)
@@ -23,8 +26,10 @@ def decode: #:: string| => string
         else
             .answer += $in[.i:.i+1]
             | .i += 1
-        end
-      )
+        end)
+    | select(.i >= $length)
+    | . , break $fence
+
     | .answer
 ;
 

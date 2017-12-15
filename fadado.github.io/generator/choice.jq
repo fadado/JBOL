@@ -10,6 +10,7 @@ module {
 };
 
 include "fadado.github.io/prelude";
+import "fadado.github.io/generator/stream" as stream;
 import "fadado.github.io/generator/chance" as chance;
 
 ########################################################################

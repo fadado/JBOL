@@ -51,9 +51,9 @@ def negatives: #:: => *number
 #    arithmetic(0; 1) # range(1; infinite; 1)
 #;
 #def to($m; $n): #:: (number;number) => *number
-#    label $exit # range($m; $n+1)
+#    label $cancel # range($m; $n+1)
 #    | arithmetic($m; 1)
-#    | when(. > $n; break $exit)
+#    | when(. > $n; break $cancel)
 #;
 
 # CF:
@@ -211,7 +211,7 @@ def fibstr: #:: => *number
 def primes: #:: => *number
     def sieve(g):
         #first(g) as $n
-        (label $exit | g | . , break $exit) as $n
+        (label $fence | g | (. , break $fence)) as $n
         | $n, sieve(g|select((. % $n) != 0))
     ;
     sieve(range(2; infinite))

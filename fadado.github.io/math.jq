@@ -40,6 +40,20 @@ def gcd($m; $n): #:: (number;number) => number
     end
 ;
 
+#def gcd($m; $n): #:: (number;number) => number
+#    def step:
+#        .x = .n      |
+#        .n = .m % .n |
+#        .m = .x
+#        
+#    ;
+#    label $cancel
+#    | {$m, $n}
+#    | iterate(step)
+#    | select(.n == 0)
+#    | .m, break $cancel
+#;
+
 def mod($m; $n): #:: (number;number) => number
     ($m % $n)
     | when(. < 0; . + $n)
@@ -48,28 +62,6 @@ def mod($m; $n): #:: (number;number) => number
 def div($m; $n): #:: (number;number) => number
     ($m / $n) | floor
 ;
-
-#def gcd($m; $n): #:: (number;number) => number
-#    def step:
-#        .x = .n      |
-#        .n = .m % .n |
-#        .m = .x
-#        
-#    ;
-#    label $pipe
-#    | {$m, $n}
-#    | iterate(step)
-#    | select(.n == 0)
-#    | (.m, break $pipe)
-#;
-
-#def gcd($m; $n): #:: (number;number) => number
-#    def step:
-#        .n as $x     |
-#        .n = .m % .n |
-#        .m = $x;
-#    {$m, $n} | until(.n == 0; step) | .m
-#;
 
 def sign($n): #:: (number) => number
     $n|if isnan or type!="number" then nan

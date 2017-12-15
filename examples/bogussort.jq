@@ -17,12 +17,14 @@ def issorted:
 
 def bogussort:
     choice::shuffle
-    | try (
-        choice::permutation | select(issorted) | fence
-    ) catch canceled
+
+    | label $fence
+    | choice::permutations
+    | select(issorted)
+    | . , break $fence
 
 #   | first(
-#       choice::permutation
+#       choice::permutations
 #       | select(issorted)
 #   )
 ;
