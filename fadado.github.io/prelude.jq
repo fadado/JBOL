@@ -17,7 +17,7 @@ module {
 #    0 == ((label $fence | stream | (1 , break $fence))//0);
 
 # Reverse of `isempty`
-def isdot(stream): #:: a|(a->*b) => boolean
+def notempty(stream): #:: a|(a->*b) => boolean
     1 == ((label $fence | stream | (1 , break $fence))//0)
 ;
 
@@ -28,7 +28,7 @@ def every(stream): #:: a|(a->*boolean) => boolean
 
 # any(stream; .)
 def some(stream): #:: a|(a->*boolean) => boolean
-    isdot(stream | . or empty)
+    notempty(stream | . or empty)
 ;
 
 ########################################################################
@@ -73,17 +73,6 @@ def unless(predicate; action): #:: a|(a->boolean;a->*b) => a^*b
     if predicate then . else action end
 ;
 
-# Like select but cancelling
-def upto(predicate): #:: a|(a->boolean) => a!
-    if predicate then . else cancel end
-;
-
-# Fence at predicate
-def till(predicate): #:: a|(a->boolean) => a!
-#   select(predicate) | fence
-    if predicate then fence else empty end
-;
-
 ########################################################################
 # Assertions
 ########################################################################
@@ -114,29 +103,10 @@ def assert(predicate; $message): #:: a|(a->boolean;string) => a!
 # Builtin
 # =======================
 # recurse/1: f⁰ f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
-# recurse/2
+# recurse/2: f⁰ ?f¹ ?f² ?f³ ?f⁴ ?f⁵ ?f⁶ ?f⁷ ?f⁸ ?f⁹…
 # repeat/1: f f f f f f…
 # while/2
 # until/2
-
-#def fold(filter; $a; generator): #:: x|([a,b]->a;a;x->*b) => a
-#    reduce generator as $b
-#        ($a; [.,$b]|filter)
-#;
-#
-#def scan(filter; generator): #:: x|([a,b]->a;x->*b) => *a
-#    foreach generator as $b
-#        (.; [.,$b]|filter; .)
-#;
-#def scan(filter; $a; generator): #:: x|([a,b]->a;a;x->*b) => *a
-#    $a|scan(filter; generator)
-#;
-
-# Like Haskell concatMap, Scala flatmap, etc.
-def mapcat(filter):
-    reduce (.[] | filter) as $x
-        (null; . + $x)
-;
 
 # f⁰ f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
 def iterate(filter): #:: a|(a->a) => *a
@@ -182,6 +152,23 @@ def unfold(filter): #:: a|(a->[b,a]) => *b
     unfold(filter; .)
 ;
 
+#def fold(filter; $a; generator): #:: x|([a,b]->a;a;x->*b) => a
+#    reduce generator as $b
+#        ($a; [.,$b]|filter)
+#;
+#
+#def scan(filter; generator): #:: x|([a,b]->a;x->*b) => *a
+#    foreach generator as $b
+#        (.; [.,$b]|filter; .)
+#;
+#def scan(filter; $a; generator): #:: x|([a,b]->a;a;x->*b) => *a
+#    $a|scan(filter; generator)
+#;
+#def mapcat(filter):
+#    reduce (.[] | filter) as $x
+#        (null; . + $x)
+#;
+
 ########################################################################
 # Better versions for builtins, to be removed...
 ########################################################################
@@ -197,7 +184,7 @@ def all(predicate): #:: [a]|(a->boolean) => boolean
 ;
 
 def any(stream; predicate): #:: a|(a->*b;b->boolean) => boolean
-    isdot(stream | predicate or empty)
+    notempty(stream | predicate or empty)
 ;
 def any: #:: [boolean]| => boolean
     any(.[]; .)
