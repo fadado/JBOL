@@ -65,11 +65,21 @@ def reject(predicate): #:: a|(a->*boolean) => ?a
     if predicate then empty else . end
 ;
 
+# Like select for generators
+def accept(generator): #:: a|(a->*b) => ?a
+    reject(isempty(generator))
+;
+
+# Complement of accept
+def refuse(generator): #:: a|(a->*b) => ?a
+    select(isempty(generator))
+;
+
 # One branch conditionals
-def when(predicate; action): #:: a|(a->boolean;a->*b) => a^*b
+def when(predicate; action): #:: a|(a->boolean;a->*a) => *a
     if predicate then action else . end
 ;
-def unless(predicate; action): #:: a|(a->boolean;a->*b) => a^*b 
+def unless(predicate; action): #:: a|(a->boolean;a->*a) => *a 
     if predicate then . else action end
 ;
 

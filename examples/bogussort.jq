@@ -16,9 +16,8 @@ def issorted:
 ;
 
 def bogussort:
-    choice::shuffle
-
-    | label $fence
+    label $fence
+    | choice::shuffle
     | choice::permutations
     | select(issorted)
     | . , break $fence
