@@ -35,21 +35,24 @@ def some(stream): #:: a|(a->*boolean) => boolean
 # Stolen from SNOBOL: ABORT (renamed `cancel`) and FENCE
 ########################################################################
 
-# Exits current filter
+# Breaks out the current filter
+# For constructs like:
+#   try (A | possible cancellation | B)
 def cancel: #:: => !
     error("!")
-;
-
-# For constructs like:
-#   try (A | possible cancellation | B) catch canceled
-def canceled: #:: string| => @!
-    if . == "!" then empty else error end
 ;
 
 # One way pass. Usage:
 #   try (A | fence | B) catch canceled
 def fence: #:: a| => a!
     (. , cancel)
+;
+
+# For constructs like:
+#   try (A | possible cancellation | B) catch canceled
+def canceled: #:: string| => @!
+    if . == "!" then empty
+    else error end
 ;
 
 ########################################################################
@@ -65,16 +68,6 @@ def reject(predicate): #:: a|(a->*boolean) => ?a
     if predicate then empty else . end
 ;
 
-# Like select for generators
-def accept(generator): #:: a|(a->*b) => ?a
-    reject(isempty(generator))
-;
-
-# Complement of accept
-def refuse(generator): #:: a|(a->*b) => ?a
-    select(isempty(generator))
-;
-
 # One branch conditionals
 def when(predicate; action): #:: a|(a->boolean;a->*a) => *a
     if predicate then action else . end
@@ -83,13 +76,22 @@ def unless(predicate; action): #:: a|(a->boolean;a->*a) => *a
     if predicate then . else action end
 ;
 
+## Like select for generators
+#def accept(generator): #:: a|(a->*b) => ?a
+#    reject(isempty(generator))
+#;
+#
+## Complement of accept
+#def refuse(generator): #:: a|(a->*b) => ?a
+#    select(isempty(generator))
+#;
+
 ########################################################################
 # Assertions
 ########################################################################
 
 def assert(predicate; $location; $message): #:: a|(a->boolean;LOCATION;string) => a!
-    if predicate
-    then .
+    if predicate then .
     else
         $location
         | "Assertion failed: "+$message+", file \(.file), line \(.line)"
@@ -98,8 +100,7 @@ def assert(predicate; $location; $message): #:: a|(a->boolean;LOCATION;string) =
 ;
 
 def assert(predicate; $message): #:: a|(a->boolean;string) => a!
-    if predicate
-    then .
+    if predicate then .
     else
         "Assertion failed: "+$message
         | error
@@ -110,13 +111,9 @@ def assert(predicate; $message): #:: a|(a->boolean;string) => a!
 # Recursion schemata
 ########################################################################
 
-# Builtin
-# =======================
-# recurse/1: f⁰ f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
-# recurse/2: f⁰ ?f¹ ?f² ?f³ ?f⁴ ?f⁵ ?f⁶ ?f⁷ ?f⁸ ?f⁹…
-# repeat/1: f f f f f f…
-# while/2
-# until/2
+#
+# Series of function powers
+#
 
 # f⁰ f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
 def iterate(filter): #:: a|(a->a) => *a
@@ -127,12 +124,6 @@ def iterate($n; filter): #:: a|(number;a->a) => *a
     limit($n; iterate(filter))
 ;
 
-# Left-recursive version of iterate
-def deepen(root; generator): #:: a|(a->a) => *a
-    def r: root , (r|generator);
-    r
-;
-
 # f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
 def iterate1(filter): #:: a|(a->a) => *a
     filter | iterate(filter)
@@ -141,18 +132,74 @@ def iterate1($n; filter): #:: a|(number;a->a) => *a
     limit($n; iterate1(filter))
 ;
 
+#
+# Apply functions to ℕ
+#
+
+# fₙ₍₊₀₎ fₙ₊₁ fₙ₊₂ fₙ₊₃ fₙ₊₄ fₙ₊₅ fₙ₊₆ fₙ₊₇ fₙ₊₈ fₙ₊₉…
 def tabulate($start; filter): #:: (number;number->a) => *a
 #   $start | iterate(.+1) | filter
     def r: filter , (.+1|r);
     $start|r
 ;
-# tabulate starting at 0
+# f₀ f₁ f₂ f₃ f₄ f₅ f₆ f₇ f₈ f₉…
 def tabulate(filter): #:: (number->a) => *a
 #   0 | iterate(.+1) | filter
     def r: filter , (.+1|r);
     0|r
 ;
 
+#
+# Relational versions of iterate
+#
+
+# f⁰⁺ f¹⁺ f²⁺ f³⁺ f⁴⁺ f⁵⁺ f⁶⁺ f⁷⁺ f⁸⁺ f⁹⁺…
+# Warning: inefficient and possible stack-overflow
+def deepen(root; filter): #:: a|(a->a) => *a
+    def r: root , (r|filter);
+    r
+;
+
+# f¹⁺ f²⁺ f³⁺ f⁴⁺ f⁵⁺ f⁶⁺ f⁷⁺ f⁸⁺ f⁹⁺…
+def deepen1(filter): #:: a|(a->*a) => *a
+    def r:
+        if length == 0
+        then empty
+        else
+            .[] , ([.[]|filter] | r)
+        end
+    ;
+    [filter] | r
+;
+
+# f⁰⁺ f¹⁺ f²⁺ f³⁺ f⁴⁺ f⁵⁺ f⁶⁺ f⁷⁺ f⁸⁺ f⁹⁺…
+def deepen(filter): #:: a|(a->+a) => *a
+    . , deepen1(filter)
+;
+
+#
+# Folding family of patterns
+#
+
+#def fold(filter; $a; generator): #:: x|([a,b]->a;a;x->*b) => a
+#    reduce generator as $b
+#        ($a; [.,$b]|filter)
+#;
+
+#def scan(filter; generator): #:: x|([a,b]->a;x->*b) => *a
+#    foreach generator as $b
+#        (.; [.,$b]|filter; .)
+#;
+#def scan(filter; $a; generator): #:: x|([a,b]->a;a;x->*b) => *a
+#    $a|scan(filter; generator)
+#;
+
+#def mapcat(filter):
+#    reduce (.[] | filter) as $x
+#        (null; . + $x)
+#;
+
+# Fold opposite
 def unfold(filter; $seed): #:: (a->[b,a];a) => *b
     def r: filter | .[0] , (.[1]|r);
     $seed|r
@@ -161,23 +208,6 @@ def unfold(filter; $seed): #:: (a->[b,a];a) => *b
 def unfold(filter): #:: a|(a->[b,a]) => *b
     unfold(filter; .)
 ;
-
-#def fold(filter; $a; generator): #:: x|([a,b]->a;a;x->*b) => a
-#    reduce generator as $b
-#        ($a; [.,$b]|filter)
-#;
-#
-#def scan(filter; generator): #:: x|([a,b]->a;x->*b) => *a
-#    foreach generator as $b
-#        (.; [.,$b]|filter; .)
-#;
-#def scan(filter; $a; generator): #:: x|([a,b]->a;a;x->*b) => *a
-#    $a|scan(filter; generator)
-#;
-#def mapcat(filter):
-#    reduce (.[] | filter) as $x
-#        (null; . + $x)
-#;
 
 ########################################################################
 # Better versions for builtins, to be removed...
