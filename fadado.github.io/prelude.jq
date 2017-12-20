@@ -17,7 +17,7 @@ module {
 #    0 == ((label $fence | stream | (1 , break $fence))//0);
 
 # Reverse of `isempty`
-def notempty(stream): #:: a|(a->*b) => boolean
+def nonempty(stream): #:: a|(a->*b) => boolean
     1 == ((label $fence | stream | (1 , break $fence))//0)
 ;
 
@@ -28,7 +28,7 @@ def every(stream): #:: a|(a->*boolean) => boolean
 
 # any(stream; .)
 def some(stream): #:: a|(a->*boolean) => boolean
-    notempty(stream | . or empty)
+    nonempty(stream | . or empty)
 ;
 
 ########################################################################
@@ -136,7 +136,7 @@ def iterate1($n; filter): #:: a|(number;a->a) => *a
 # Apply functions to ℕ
 #
 
-# fₙ₍₊₀₎ fₙ₊₁ fₙ₊₂ fₙ₊₃ fₙ₊₄ fₙ₊₅ fₙ₊₆ fₙ₊₇ fₙ₊₈ fₙ₊₉…
+# fₙ fₙ₊₁ fₙ₊₂ fₙ₊₃ fₙ₊₄ fₙ₊₅ fₙ₊₆ fₙ₊₇ fₙ₊₈ fₙ₊₉…
 def tabulate($start; filter): #:: (number;number->a) => *a
 #   $start | iterate(.+1) | filter
     def r: filter , (.+1|r);
@@ -154,27 +154,25 @@ def tabulate(filter): #:: (number->a) => *a
 #
 
 # f⁰⁺ f¹⁺ f²⁺ f³⁺ f⁴⁺ f⁵⁺ f⁶⁺ f⁷⁺ f⁸⁺ f⁹⁺…
-# Warning: inefficient and possible stack-overflow
-def deepen(root; filter): #:: a|(a->a) => *a
-    def r: root , (r|filter);
-    r
-;
-
-# f¹⁺ f²⁺ f³⁺ f⁴⁺ f⁵⁺ f⁶⁺ f⁷⁺ f⁸⁺ f⁹⁺…
-def deepen1(filter): #:: a|(a->*a) => *a
-    def r:
-        if length == 0
-        then empty
-        else
-            .[] , ([.[]|filter] | r)
-        end
-    ;
-    [filter] | r
+# Warnings:
+#   + inefficient  (recalculates again and again)
+#   + possible stack-overflow
+#   + never stops
+def deepen(root; childs): #:: (a;a->a) => *a
+    def nodes: root , (nodes|childs);
+    nodes
 ;
 
 # f⁰⁺ f¹⁺ f²⁺ f³⁺ f⁴⁺ f⁵⁺ f⁶⁺ f⁷⁺ f⁸⁺ f⁹⁺…
-def deepen(filter): #:: a|(a->+a) => *a
-    . , deepen1(filter)
+def xdeepen(root; childs): #:: a|(a->*a) => *a
+    def nodes:
+        if length == 0
+        then empty
+        else
+            .[] , ([.[]|childs] | nodes)
+        end
+    ;
+    [root] | nodes
 ;
 
 #
@@ -224,7 +222,7 @@ def all(predicate): #:: [a]|(a->boolean) => boolean
 ;
 
 def any(stream; predicate): #:: a|(a->*b;b->boolean) => boolean
-    notempty(stream | predicate or empty)
+    nonempty(stream | predicate or empty)
 ;
 def any: #:: [boolean]| => boolean
     any(.[]; .)

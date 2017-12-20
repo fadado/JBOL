@@ -169,7 +169,6 @@ def kplus: #:: SET => *TUPLE
     | if length == 0
     then empty
     else deepen(.[]|[.]; .[length]=$set[])
-#   else deepen($set[]|[.]; .[length]=$set[])
     end
 ;
 

@@ -4,7 +4,7 @@ include "fadado.github.io/prelude";
 import "fadado.github.io/object/set" as set;
 
 def query(generator):
-    notempty(generator)
+    nonempty(generator)
 ;
 
 # Database
