@@ -192,9 +192,9 @@ def xdeepen(root; childs): #:: a|(a->*a) => *a
 #    $a|scan(filter; generator)
 #;
 
-#def mapcat(filter):
+#def mapcat(filter; $id):
 #    reduce (.[] | filter) as $x
-#        (null; . + $x)
+#        ($id; . + $x)
 #;
 
 # Fold opposite

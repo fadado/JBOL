@@ -68,32 +68,32 @@ def ARBNO(f): #:: a|(a->a) => *a
 # &ANCHOR keyword.
 
 # Anchored subject
-def A($subject): #:: (string) => CURSOR
+def A($subject): #:: (array^string) => CURSOR
     {
-        $subject,               # string to scan
+        $subject,               # array^string to scan
         slen:($subject|length), # subject length
         offset:0,               # subject start scanning position
         start:null,             # current pattern start scanning position
         position:0              # current cursor position
     }
 ;
-def A: #:: string => CURSOR
+def A: #:: array^string => CURSOR
     A(.)
 ;
 
 # Unanchored subject
-def U($subject): #:: (string) => *CURSOR
+def U($subject): #:: (array^string) => *CURSOR
     ($subject|length) as $slen
     | range(0; $slen+1) as $offset
     | {
-        $subject,           # string to scan
+        $subject,           # array^string to scan
         $slen,              # subject length
         $offset,            # subject start scanning position
         start:null,         # current pattern start scanning position
         position:$offset    # current cursor position
     }
 ;
-def U: #:: string => *CURSOR
+def U: #:: array^string => *CURSOR
     U(.)
 ;
 
@@ -107,22 +107,22 @@ def AT: #:: CURSOR => number
 ;
 
 # Return a string with the whole pattern match (like & in regexes)
-def M: #:: CURSOR => string
+def M: #:: CURSOR => array^string
     .subject[.offset:.position]
 ;
 
 # Return a string with the last (nearest) pattern match
-def N: #:: CURSOR => string
+def N: #:: CURSOR => array^string
     .subject[.start:.position]
 ;
 
 # Return a string with the matches string prefix, like $` in Perl
-def P: #:: CURSOR => string
+def P: #:: CURSOR => array^string
     .subject[0:.offset]
 ;
 
 # Return a string with the matches string suffix, like $' in Perl
-def S: #:: CURSOR => string
+def S: #:: CURSOR => array^string
     .subject[.position:]
 ;
 
@@ -131,7 +131,7 @@ def S: #:: CURSOR => string
 #
 
 # Match a literal, necessary to "wrap" all string literals
-def L($literal): #:: CURSOR|(string) => CURSOR
+def L($literal): #:: CURSOR|(array^string) => CURSOR
     ($literal|length) as $tlen
     | select(.position+$tlen <= .slen)
     | select(.subject[.position:.position+$tlen] == $literal)
@@ -221,11 +221,10 @@ def DIFFER($s): #:: CURSOR|(string;string) => CURSOR
 ;
 def INTEGER($a): #:: CURSOR|(a) => CURSOR
     def test:
-       $a | (isnumber and . == floor)
-            or (tonumber? // false)
-            and (contains(".")|not)
+        (isnumber and . == floor)
+        or (tonumber? // false) and (contains(".")|not)
     ;
-    select(test)
+    select($a|test)
 ;
 
 #
@@ -242,7 +241,7 @@ def DUPL($s; $n): #:: (string;number) => string
 def REPLACE($s; $t; $u): #:: (string;string;string) => string
     $s|str::translate($t; $u)
 ;
-def SIZE($s): #:: (string) => number
+def SIZE($s): #:: (array^string) => number
     $s|length
 ;
 
@@ -285,35 +284,35 @@ def RPOS($n): #:: CURSOR|(number) => CURSOR
 # Patterns whose actions depend on the character structure of the subject 
 #
 
-def ANY($s): #:: CURSOR|(string) => CURSOR
-    assert($s != ""; "ANY requires a non empty string as argument")
+def ANY($s): #:: CURSOR|(array^string) => CURSOR
+    assert($s|length>0; "ANY requires a non empty string as argument")
     | select(.position != .slen)
     | select(.subject[.position:.position+1] | inside($s))
     | .start = .position
     | .position += 1
 ;
 
-def NOTANY($s): #:: CURSOR|(string) => CURSOR
-    assert($s != ""; "NOTANY requires a non empty string as argument")
+def NOTANY($s): #:: CURSOR|(array^string) => CURSOR
+    assert($s|length>0; "NOTANY requires a non empty string as argument")
     | select(.position != .slen)
     | reject(.subject[.position:.position+1] | inside($s))
     | .start = .position
     | .position += 1
 ;
 
-def BREAK($s): #:: CURSOR|(string) => CURSOR
-    assert($s != ""; "BREAK requires a non empty string as argument")
+def BREAK($s): #:: CURSOR|(array^string) => CURSOR
+    assert($s|length>0; "BREAK requires a non empty string as argument")
     | select(.position != .slen)
     | .position as $p
     | TAB(first(.subject|str::upto($s; $p)))
     // .
 ;
 
-def SPAN($s): #:: CURSOR|(string) => CURSOR
-    assert($s != ""; "SPAN requires a non empty string as argument")
+def SPAN($s): #:: CURSOR|(array^string) => CURSOR
+    assert($s|length>0; "SPAN requires a non empty string as argument")
     | select(.position != .slen)
     | select(.subject[.position:.position+1] | inside($s))
-    | G(last(ANY($s)|iterate(ANY($s)))|select(.!=null))    # empty if last == null
+    | G(last(iterate1(ANY($s))) | select(.!=null))    # empty if last == null
 ;
 
 #
@@ -322,9 +321,8 @@ def SPAN($s): #:: CURSOR|(string) => CURSOR
 
 def ARB: #:: CURSOR => *CURSOR
     # equivalent to TAB(range(.position; .slen))
-    range(.position; .slen) as $n
-    | .start = .position
-    | .position = $n
+    .start = .position
+    | .position = range(.position; .slen)
 ;
 
 def BAL: #:: CURSOR => *CURSOR
@@ -332,7 +330,7 @@ def BAL: #:: CURSOR => *CURSOR
         NOTANY("()")
         , (L("(") | iterate(_bal) | L(")"))
     ;
-    G(_bal|iterate(_bal))
+    G(iterate1(_bal))
 ;
 
 def REM: #:: CURSOR => CURSOR
@@ -349,8 +347,8 @@ def REM: #:: CURSOR => CURSOR
 # SPITBOL extensions
 #
 
-def BREAKX($s): #:: CURSOR|(string) => *CURSOR
-    assert($s != ""; "BREAKX requires a non empty string as argument")
+def BREAKX($s): #:: CURSOR|(array^string) => *CURSOR
+    assert($s|length>0; "BREAKX requires a non empty string as argument")
     | select(.position != .slen)
     | .position as $p
     | TAB(.subject|str::upto($s; $p))
