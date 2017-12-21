@@ -148,7 +148,7 @@ def kstar: #:: SET => +TUPLE
     . as $set
     | if length == 0
     then []
-    else deepen([]; .[length]=$set[])
+    else []|deepen(.[length]=$set[])
     end
 ;
 
@@ -157,7 +157,7 @@ def kstar($identity): #:: SET|(IDENTITY) => +WORD
     . as $set
     | if length == 0
     then $identity
-    else deepen($identity; . + $set[])
+    else $identity|deepen(. + $set[])
     end
 ;
 
@@ -173,7 +173,7 @@ def kplus: #:: SET => *TUPLE
 ;
 
 # For catenable symbols ($identity is not used!)
-def kplus($identity): #:: SET|(IDENTITY) => *WORD
+def kplus($ignored): #:: SET|(IDENTITY) => *WORD
     . as $set
     | if length == 0
     then empty

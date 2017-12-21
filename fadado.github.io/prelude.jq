@@ -153,16 +153,33 @@ def tabulate(filter): #:: (number->a) => *a
 # Relational versions of iterate
 #
 
-# f⁰⁺ f¹⁺ f²⁺ f³⁺ f⁴⁺ f⁵⁺ f⁶⁺ f⁷⁺ f⁸⁺ f⁹⁺…
 # Warnings:
 #   + inefficient  (recalculates again and again)
 #   + possible stack-overflow
 #   + never stops
+
+# f⁰ f¹⁺ f²⁺ f³⁺ f⁴⁺ f⁵⁺ f⁶⁺ f⁷⁺ f⁸⁺ f⁹⁺…
+def deepen(childs): #:: (a;a->a) => *a
+    def nodes: . , (nodes|childs);
+    nodes
+;
+# f⁰⁺ f¹⁺ f²⁺ f³⁺ f⁴⁺ f⁵⁺ f⁶⁺ f⁷⁺ f⁸⁺ f⁹⁺…
 def deepen(root; childs): #:: (a;a->a) => *a
     def nodes: root , (nodes|childs);
     nodes
 ;
 
+# f⁰ f¹⁺ f²⁺ f³⁺ f⁴⁺ f⁵⁺ f⁶⁺ f⁷⁺ f⁸⁺ f⁹⁺…
+def xdeepen(childs): #:: a|(a->*a) => *a
+    def nodes:
+        if length == 0
+        then empty
+        else
+            .[] , ([.[]|childs] | nodes)
+        end
+    ;
+    [.] | nodes
+;
 # f⁰⁺ f¹⁺ f²⁺ f³⁺ f⁴⁺ f⁵⁺ f⁶⁺ f⁷⁺ f⁸⁺ f⁹⁺…
 def xdeepen(root; childs): #:: a|(a->*a) => *a
     def nodes:

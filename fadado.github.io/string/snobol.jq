@@ -179,7 +179,7 @@ def G(pattern): #:: CURSOR|(CURSOR->CURSOR) => CURSOR
 # Standard SNOBOL
 ########################################################################
 
-# For documentation see <http://snobol4.org> or <http://snobol4.org>.
+# For documentation see <http://snobol4.org> or <http://snobol4.com>.
 
 #
 # Predicates
@@ -256,28 +256,28 @@ def LEN($n): #:: CURSOR|(number) => CURSOR
     | .position += $n
 ;
 
-def TAB($n): #:: CURSOR|(number) => CURSOR
-    assert($n >= 0; "TAB requires a non negative number as argument")
-    | select($n >= .position)
+def TAB($p): #:: CURSOR|(number) => CURSOR
+    assert($p >= 0; "TAB requires a non negative number as argument")
+    | select($p >= .position)
     | .start = .position
-    | .position = $n
+    | .position = $p
 ;
 
-def RTAB($n): #:: CURSOR|(number) => CURSOR
-    assert($n >= 0; "RTAB requires a non negative number as argument")
-    | select(.slen-$n >= .position)
+def RTAB($r): #:: CURSOR|(number) => CURSOR
+    assert($r >= 0; "RTAB requires a non negative number as argument")
+    | select(.slen-$r >= .position)
     | .start = .position
-    | .position = .slen-$n
+    | .position = .slen-$r
 ;
 
-def POS($n): #:: CURSOR|(number) => CURSOR
-    assert($n >= 0; "POS requires a non negative number as argument")
-    | select(.position == $n)
+def POS($p): #:: CURSOR|(number) => CURSOR
+    assert($p >= 0; "POS requires a non negative number as argument")
+    | select(.position == $p)
 ;
 
-def RPOS($n): #:: CURSOR|(number) => CURSOR
-    assert($n >= 0; "RPOS requires a non negative number as argument")
-    | select($n == .slen-.position)
+def RPOS($r): #:: CURSOR|(number) => CURSOR
+    assert($r >= 0; "RPOS requires a non negative number as argument")
+    | select(.slen-.position == $r)
 ;
 
 #
@@ -304,8 +304,7 @@ def BREAK($s): #:: CURSOR|(array^string) => CURSOR
     assert($s|length>0; "BREAK requires a non empty string as argument")
     | select(.position != .slen)
     | .position as $p
-    | TAB(first(.subject|str::upto($s; $p)))
-    // .
+    | TAB(first(.subject|str::upto($s; $p))) // .
 ;
 
 def SPAN($s): #:: CURSOR|(array^string) => CURSOR
@@ -351,8 +350,7 @@ def BREAKX($s): #:: CURSOR|(array^string) => *CURSOR
     assert($s|length>0; "BREAKX requires a non empty string as argument")
     | select(.position != .slen)
     | .position as $p
-    | TAB(.subject|str::upto($s; $p))
-    // .
+    | TAB(.subject|str::upto($s; $p)) // .
 ;
 
 def LEQ($s; $t): #:: CURSOR|(string;string) => CURSOR

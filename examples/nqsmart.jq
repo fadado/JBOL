@@ -4,7 +4,7 @@ include "fadado.github.io/prelude";
 
 # Smart N-Queens
 
-def queens($n):
+def queens($n; $columns):
     def safe($i; $j):
         every(
             range($i) as $k
@@ -12,22 +12,25 @@ def queens($n):
             | (($i-$k)|length) != (($j-$l)|length)
         )
     ;
-    def qput($row; $avail):
-        unless($row == $n; # $avail == []
-            $avail[] as $col # choose a column
-            | select(safe($row; $col))
-            | .[$row]=$col
-            | qput($row+1; $avail-[$col])
-        )
+    def available_columns:
+        . as $board
+        | $columns - $board
+    ;
+    def qput:
+        length as $row
+        | if $row == $n # assert(available_columns == [])
+          then . # one solution found
+          else
+            available_columns[] as $column
+            | select(safe($row; $column))
+            | .[$row]=$column
+            | qput
+          end
     ;
     #
-    [] as $board |
-    0  as $first_row |
-    [range($n)] as $available_columns |
-    #
-    $board|qput($first_row; $available_columns)
+    [] | qput
 ;
 
-queens(8)
+8 as $N | queens($N; [range($N)])
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

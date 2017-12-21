@@ -9,7 +9,7 @@ import "fadado.github.io/generator/choice" as choice;
 def queens($n):
     def generate:
         [range(0; $n)]
-        | choice::permutation
+        | choice::permutations
     ;
     def all_safe:
         every(

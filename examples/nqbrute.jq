@@ -8,14 +8,14 @@ import "fadado.github.io/generator/choice" as choice;
 def queens($n):
     def generate:
         [range(0; $n)]
-        | choice::permutation
+        | choice::permutations
     ;
     def all_safe:
         def ascending:
-            [range(0; length) as $row | .[$row] as $col | $row+$col]
+            [range(0; length) as $row | .[$row] as $column | $row+$column]
         ;
         def descending:
-            [range(0; length) as $row | .[$row] as $col | $row-$col]
+            [range(0; length) as $row | .[$row] as $column | $row-$column]
         ;
         def repeated:
             sort
