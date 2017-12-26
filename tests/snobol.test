@@ -9,18 +9,9 @@ include "string/snobol"; [limit(10; SUCCEED)] == [limit(10; recurse(.))]
 0
 true
 
-include "string/snobol"; REMOVE("aeiou")
-"loquenomesabiayo"
-"lqnmsby"
-
 include "string/snobol"; A | L("abc. ") | MOVE(-2) | REM | N
 "abc. Y"
 ". Y"
-
-include "string/snobol"; A | FIND("o") | AT
-"kaleidoscope"
-6
-9
 
 include "string/snobol"; include "prelude"; "abcdefghijklmnoprstuvwxyz" as $a |A|unfold(BREAK($a)|SPAN($a)|[N,.])| .
 "one or tree words"
@@ -453,6 +444,10 @@ include "string/snobol"; A | BREAKX(",") | N
 "a,bc"
 "a,bc,def"
 "a,bc,def,ghij"
+
+include "string/snobol"; first(A | BREAKX("E") | M) == (A | BREAK("E") | M)
+"INTEGERS"
+true
 
 include "string/snobol"; A | BREAKX("E") | M
 "INTEGERS"

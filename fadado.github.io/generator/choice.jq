@@ -10,7 +10,6 @@ module {
 };
 
 include "fadado.github.io/prelude";
-import "fadado.github.io/generator/stream" as stream;
 import "fadado.github.io/generator/chance" as chance;
 
 ########################################################################
@@ -224,7 +223,7 @@ def shuffle($seed): #:: [a]|(number) => [a]
     ;
     . as $array
     | length as $len
-    | [stream::take($len; chance::rand($seed))] as $r
+    | [limit($len; chance::rand($seed))] as $r
     # https://en.wikipedia.org/wiki/Fisher-Yates_shuffle
     # To shuffle an array a of n elements (indices 0..n-1)
     # for i from n−1 downto 1 do
@@ -264,7 +263,7 @@ def take($k; $seed): #:: [a]|(number;number) => *a
     ;
     . as $a
     | length as $len
-    | [stream::take($len; chance::rnd($seed))] as $r
+    | [limit($len; chance::rnd($seed))] as $r
     | _take($a; $r; $len)
 ;
 

@@ -12,46 +12,20 @@ include "fadado.github.io/prelude";
 
 import "fadado.github.io/object/set" as set;
 import "fadado.github.io/string/ascii" as ascii;
+import "fadado.github.io/word" as word;
 
 ########################################################################
-# Icon style text operations 
+# Icon style operations 
 # See http://www.cs.arizona.edu/icon/refernce/funclist.htm
 
-# Find string
-def find($s; $i; $j): #:: array^string|($s|length>0;number;number) => *number
-    select(0 <= $i and $i < $j and $j <= length)
-    | .[$i:$j]
-    | indices($s)[]
-;
-def find($s; $i): #:: array^string|(array^string;number) => *number
-    find($s; $i; length)
-;
-def find($s): #:: array^string|(array^string) => *number
-    find($s;  0; length)
-;
-
-# Locate characters
-def upto($s; $i; $j): #:: array^string|(array^string;number;number) => *number
-    assert($s|length>0; "upto requires a non empty string as argument")
-    | select(0 <= $i and $i < $j and $j <= length)
-    | range($i; $j) as $p
-    | select(.[$p:$p+1] | inside($s))
-    | $p
-;
-def upto($s; $i): #:: array^string|(array^string;number) => *number
-    upto($s; $i; length)
-;
-def upto($s): #:: array^string|(array^string) => *number
-    upto($s; 0; length)
-;
-
-# Match initial string
-def match($s; $i): #:: string|(string;number) => number
+# Match initial word
+def match($s; $i): #:: WORD|(WORD;number) => number
     select(0 <= $i and $i < length)
-    | select(.[$i:] | startswith($s))
-    | $i+($s|length)
+    | ($s|length) as $n
+    | select($i+$n <= length and .[$i:$i+$n] == $s)
+    | $i+$n
 ;
-def match($s): #:: string|(string) => number
+def match($s): #:: WORD|(WORD) => number
     match($s; 0)
 ;
 
@@ -157,20 +131,12 @@ def table($from; $to): #:: (string;string) => {string}
         ({}; . += {($s[$i]):($t[$i]//"")})
 ;
 
-# Rotate strings (and arrays) in both directions
-#
-def rotate($n): #:: <string^array>|(number) => <string^array>
-    .[$n:] + .[:$n]
-;
-
-def rotate($s; $n): #:: (<string^array>;number) => <string^array>
-    $s | rotate($n)
-;
-
 # Translation table for rotate by 13 places
 #
 def rot13: #:: {string}
-    table(ascii::ALPHA; rotate(ascii::upper; 13)+rotate(ascii::lower; 13))
+    table(ascii::ALPHA;
+        (ascii::upper|word::rotate(13))
+            + (ascii::lower|word::rotate(13)))
 ;
 
 # Preserve tables
@@ -199,6 +165,12 @@ def translate($from; $to): #:: string|(string;string) => string
 # remove:   s|translate("to delete"; "")
 # preserve: s|translate(s|translate("to preserve"; "")); "")
 # preserve: s|translate(ptable(s; "to preserve"))
+
+# TODO: compare with translate version
+def remove($s): #:: string|(string) => string
+    reduce ((./"")[] | reject(inside($s))) as $c
+        (""; . + $c)
+;
 
 ########################################################################
 # Classical trim and strip
@@ -266,19 +238,6 @@ def join($separator): #:: [string]|(string) => string
     ;
     reduce .[] as $s (null; sep + $s)
         // ""
-;
-
-########################################################################
-
-# Unordered stream of words over an alphabet
-#
-def kstar: #:: string| => +string
-    def k: "", .[] + k;
-    # . as $alphabet
-    if length == 0
-    then .
-    else (./"")|k
-    end
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

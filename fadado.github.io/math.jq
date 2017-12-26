@@ -47,11 +47,11 @@ def gcd($m; $n): #:: (number;number) => number
 #        .m = .x
 #        
 #    ;
-#    label $cancel
+#    label $fence
 #    | {$m, $n}
 #    | iterate(step)
 #    | select(.n == 0)
-#    | .m, break $cancel
+#    | .m, break $fence
 #;
 
 def mod($m; $n): #:: (number;number) => number

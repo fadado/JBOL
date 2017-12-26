@@ -140,12 +140,12 @@ def split($regex; $flags; $limit): #:: string|(string;string;number) => *string
     else
         . as $subject
         | [ 0, # first index
-            (label $cancel
+            (label $out
                 | foreach match($regex; $flags+"g") as $m
                     ($limit; .-1; # init and update
                      # yield if conditions are ok
                      if . < 0
-                     then break $cancel
+                     then break$out
                      else $m.offset, $m.captures, $m.offset+$m.length
                      end)),
             ($subject|length), # last index

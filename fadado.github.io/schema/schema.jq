@@ -26,7 +26,8 @@ def imply(antecedent; consequent): #:: a|(a->boolean;a->boolean) => boolean
 def generate: #:: a| => SCHEMA
     { "type": type }
     + if isobject then
-        if length == 0 then null
+        if length == 0
+        then null
         else
             . as $object |
             { "properties": (
@@ -38,7 +39,8 @@ def generate: #:: a| => SCHEMA
             }
         end
     elif isarray then
-        if length == 0 then null
+        if length == 0
+        then null
         else
             { "items": (
                 if every(.[] | isscalar)
@@ -66,7 +68,8 @@ def generate: #:: a| => SCHEMA
 def generate($options): #:: a|(OPTIONS) => SCHEMA
     { "type": type }
     + if isobject then
-        if length == 0 then null
+        if length == 0
+        then null
         else
             . as $object |
             { "properties": (
@@ -90,7 +93,8 @@ def generate($options): #:: a|(OPTIONS) => SCHEMA
             else null end
         end
     elif isarray then
-        if length == 0 then null
+        if length == 0
+        then null
         else
             { "items": (
                 if every(.[] | isscalar)

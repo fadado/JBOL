@@ -18,14 +18,6 @@ def remove($x): #:: [a]|(a) => [a]
     | when($ix != []; del(.[$ix[]]))
 ;
 
-# Rotate in both directions
-def rotate($n): #:: [a]|(number) => [a]
-    .[$n:] + .[:$n]
-;
-def rotate: #:: [a] => [a]
-    .[1:] + .[:1]
-;
-
 # Is the array sorted?
 def sorted: #:: [a] => boolean
     every(
@@ -61,18 +53,6 @@ def pop: #:: [a] => [a]
 ;
 def top: #:: [a] => a^null
     .[-1]
-;
-
-########################################################################
-
-# Find "words"
-def find($a): #:: [a]|([a]) => *number
-    .[$a][]
-;
-
-# Find "symbols"
-def upto($a): #:: [a]|([a]) => *number
-    [find($a[]|[.])] | sort[]
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

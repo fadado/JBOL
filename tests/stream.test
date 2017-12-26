@@ -41,23 +41,23 @@ isempty(empty)
 null
 true
 
-include "generator/stream"; length(empty) == 0
+include "generator/stream"; count(empty) == 0
 null
 true
 
-include "generator/stream"; length(range(3)) == 3
+include "generator/stream"; count(range(3)) == 3
 null
 true
 
-include "generator/stream"; length(empty) == 0
+include "generator/stream"; count(empty) == 0
 null
 true
 
-include "generator/stream"; length(range(3;10)) == 9-3+1
+include "generator/stream"; count(range(3;10)) == 9-3+1
 null
 true
 
-include "generator/stream"; length(range(8), range(4;11)) == length(range(8)) + length(range(4;11))
+include "generator/stream"; count(range(8), range(4;11)) == count(range(8)) + count(range(4;11))
 null
 true
 
@@ -97,7 +97,7 @@ null
 false
 
 #
-# first, take, drop, nth
+# first, drop, nth
 #
 
 first([][])
@@ -112,11 +112,7 @@ include "generator/stream"; nth(0; range(5;100))
 null
 5
 
-include "generator/stream"; [take(4;range(100))] == [limit(4; range(77))]
-null
-true
-
-include "generator/stream"; [take(4;range(10))] == [0,1,2,3]
+include "generator/stream"; [limit(4;range(10))] == [0,1,2,3]
 null
 true
 
@@ -152,19 +148,19 @@ null
 # repeat
 #
 
-include "generator/stream"; [take(6; repeat(range(3)))]
+[limit(6; repeat(range(3)))]
 null
 [0,1,2,0,1,2]
 
-include "generator/stream"; [take(6; repeat(range(3)))]
+[limit(6; repeat(range(3)))]
 null
 [0,1,2,0,1,2]
 
-include "generator/stream"; [take(6; repeat([0,1,2][]))]
+[limit(6; repeat([0,1,2][]))]
 null
 [0,1,2,0,1,2]
 
-include "generator/stream"; [take(4; repeat(8))]
+[limit(4; repeat(8))]
 null
 [8,8,8,8]
 

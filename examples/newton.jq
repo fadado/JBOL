@@ -9,7 +9,7 @@ def nrsqrt:
         def next: (.+$N/.) / 2;
         #
         def search(xs):
-            [stream::take(2; xs)] as $ab |
+            [limit(2; xs)] as $ab |
             if ($ab|diff) <= $eps
             then $ab[1]
             else search(stream::rest(xs))

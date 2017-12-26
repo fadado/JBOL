@@ -8,6 +8,10 @@
 # Blank lines and lines starting with # are ignored.
 #########################################################################
 
+include "string"; remove("aeiou")
+"loquenomesabiayo"
+"lqnmsby"
+
 #
 # Icon style
 #
@@ -75,42 +79,10 @@ include "string"; match("mi ma"; 9)
 "no se si mi mama me mima"
 14
 
-include "string"; [find("on")]
-"one motion is optional"
-[0, 8, 18]
-
-include "string"; [find("ma")]
-"mi mama me mima"
-[3, 5, 13]
-
-include "string"; [find("ab")]
-"abaabbaaabbbaaaabbbb" 
-[0, 3, 8, 15]
-
-include "string"; [upto("on")]
-"one motion is optional"
-[0, 1, 5, 8, 9, 14, 18, 19]
-
-include "string"; [upto("aeiou")]
-"kaleidoscope"
-[1, 3, 4, 6, 9, 11]
-
-include "string"; [find("o")]
-"kaleidoscope"
-[6, 9]
-
 #
 # translate
 #
 
-
-include "string"; rotate(2)
-"kaleidoscope"
-"leidoscopeka"
-
-include "string"; rotate(-2)
-"kaleidoscope"
-"pekaleidosco"
 
 include "string"; import "string/ascii" as ascii; translate(ascii::ttupper)
 "kaleidoscope"

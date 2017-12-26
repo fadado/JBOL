@@ -1,6 +1,6 @@
 module {
-    name: "array/word",
-    description: "Combinatorics on Words",
+    name: "word",
+    description: "Generic operations on strings and arrays",
     namespace: "fadado.github.io",
     author: {
         name: "Joan Josep Ordinas Rosa",
@@ -9,18 +9,68 @@ module {
 };
 
 include "fadado.github.io/prelude";
-import "fadado.github.io/array/set" as set;
 
 ########################################################################
-# Combinatorics on Words
+# Generic operations on strings and arrays
 
-# WORD:                         [a]^string
+# WORD:                         array^string
+
 # Word w:                       [...] or "..."
 # Empty word:                   [] or ""
 # Concatenate:                  w + u
 # Length of w:                  w|length
-# Alphabet of w:                w|unique    (only arrays)
-# Reverse of w:                 w|reverse   (only arrays)
+# Alphabet of w (arrays):       w|unique
+# Alphabet of w (strings):      (w/"")|unique
+# Reverse of w (only arrays):   w|reverse
+
+# Rotate in both directions
+def rotate($n): #:: WORD|(number) => WORD
+    .[$n:] + .[:$n]
+;
+def rotate: #:: WORD => WORD
+    .[1:] + .[:1]
+;
+
+########################################################################
+# Icon style operations 
+# See http://www.cs.arizona.edu/icon/refernce/funclist.htm
+
+# Find word
+def find($u; $i; $j): #:: WORD|(WORD;number;number) => *number
+    select(0 <= $i and $i < $j and $j <= length)
+    | .[$i:$j]|indices($u)[]
+;
+def find($u; $i): #:: WORD|(WORD;number) => *number
+    select(0 <= $i)
+    | .[$i:]|indices($u)[]
+;
+def find($u): #:: WORD|(WORD) => *number
+    find($u; 0; length)
+;
+
+# Find symbols
+def upto($u): #:: WORD|(WORD) => *number
+    def symbols:
+        if type == "array"
+        then $u[] | [.]
+        else ($u/"")[]  # string
+        end
+    ;
+    assert($u|length>0; "upto requires a non empty word as argument")
+    | [indices(symbols)[]]
+    | unique[]
+;
+def upto($u; $i; $j): #:: WORD|(WORD;number;number) => *number
+    select(0 <= $i and $i < $j and $j <= length)
+    | .[$i:$j] | upto($u)+$i
+;
+def upto($u; $i): #:: WORD|(WORD;number) => *number
+    select(0 <= $i)
+    | .[$i:] | upto($u)+$i
+;
+
+########################################################################
+# Combinatorics on Words
 
 # Number of a's in w
 def count($a): #:: WORD|(a) => number
@@ -31,35 +81,36 @@ def count($a): #:: WORD|(a) => number
 def factor($u): #:: WORD|(WORD) => boolean
     . as $w
     | length == 0   # $w is the empty word and factor of any word
-    or ($u|indices($w)) != []  # or is inside $u
+      or ($u|indices($w)) != []  # or is inside $u
 ;
 
 # Proper factor?
 def pfactor($u): #:: WORD|(WORD) => boolean
     . as $w
     | ($u|length) > length      # $u is larger than $w
-    and ($u|indices($w)) != []  # and $w is inside $u
+      and ($u|indices($w)) != []  # and $w is inside $u
 ;
 
 # Prefix?
 def prefix($u): #:: WORD|(WORD) => boolean
     . as $w
     | length == 0               # $w is the empty word and prefix of any word
-    or ($u|indices($w))[0] == 0 # or $w is at the beggining of $u
+      or $u[0:$w|length] == $w
+#     or ($u|indices($w))[0] == 0 # or $w is at the beggining of $u
 ;
 
 # Proper prefix?
 def pprefix($u): #:: WORD|(WORD) => boolean
     . as $w
     | ($u|length) > length          # $u is larger than $w
-    and ($u|indices($w))[0] == 0    # and $w is prefix of $u
+      and ($u|indices($w))[0] == 0    # and $w is prefix of $u
 ;
 
 # Suffix?
 def suffix($u): #:: WORD|(WORD) => boolean
     . as $w
     | length == 0     # $w is the empty word and suffix of any word
-    or (($u|length) - length) == ($u|indices($w))[-1] # or $w is at $u end
+      or (($u|length) - length) == ($u|indices($w))[-1] # or $w is at $u end
 ;
 
 # Proper suffix?

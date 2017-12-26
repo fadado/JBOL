@@ -51,9 +51,9 @@ def negatives: #:: => *number
 #    arithmetic(0; 1) # range(1; infinite; 1)
 #;
 #def to($m; $n): #:: (number;number) => *number
-#    label $cancel # range($m; $n+1)
+#    label $out # range($m; $n+1)
 #    | arithmetic($m; 1)
-#    | when(. > $n; break $cancel)
+#    | when(. > $n; break$out)
 #;
 
 # CF:

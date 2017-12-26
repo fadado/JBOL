@@ -13,14 +13,6 @@ reverse
 [1,2,3,4,5]
 [5,4,3,2,1]
 
-include "array"; rotate(1)
-[1,2,3,4,5]
-[2,3,4,5,1]
-
-include "array"; rotate(-1)
-[1,2,3,4,5]
-[5,1,2,3,4]
-
 include "array"; sorted
 [1,9,3,4,5]
 false

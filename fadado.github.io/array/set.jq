@@ -20,8 +20,8 @@ include "fadado.github.io/prelude";
 # |S|       length
 # {x...}    [x...]
 # {x...}    [x...] | unique
-# S ⊂ T     S|contains(T)
-# S ⊃ T     S|inside(T)
+# S ⊂ T     S|inside(T)
+# S ⊃ T     S|contains(T)
 # S – T     S - T
 
 # s + e (add element to set)
@@ -160,6 +160,11 @@ def kstar($identity): #:: SET|(IDENTITY) => +WORD
     else $identity|deepen(. + $set[])
     end
 ;
+
+#def kstar: #:: string| => +string
+#    def k: "", .[] + k;
+#    if length == 0 then .  else (./"")|k end
+#;
 
 # Generates K⁺: K¹ ∪ K² ∪ K³ ∪ K⁴ ∪ K⁵ ∪ K⁶ ∪ K⁷ ∪ K⁸ ∪ K⁹…
 # Specifically, words over an alphabet Σ without empty word (Σ⁺: Σ¹ ∪ Σ²…)

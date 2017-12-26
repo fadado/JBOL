@@ -2,9 +2,7 @@
 
 import "fadado.github.io/generator/stream" as stream;
 
-def chars:
-    split("")[]
-;
+def chars: (./"")[];
 
 def octcode:
     ("01"|chars) as $d2 |
@@ -14,13 +12,14 @@ def octcode:
 ;
 
 def deccode:
-    label $cancel |
+    label $out |
     ("01"|chars) as $d2 |
     ("0123456789"|chars) as $d1 |
     ("0123456789"|chars) as $d0 |
-    if $d2 != "1" and $d1 != "2" and $d0 != "8"
-    then $d2+$d1+$d0
-    else break $cancel end
+    if $d2 == "1" and $d1 == "2" and $d0 == "8"
+    then break$out
+    else $d2+$d1+$d0
+    end
 ;
 
 def hexcode:

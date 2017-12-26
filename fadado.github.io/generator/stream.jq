@@ -22,7 +22,7 @@ include "fadado.github.io/prelude";
 
 # Count stream items.
 #
-def length(stream): #:: a|(a->*b) => number!
+def count(stream): #:: a|(a->*b) => number!
     reduce stream as $_ (0; .+1)
 ;
 
@@ -50,9 +50,9 @@ def distinct(stream):
 
 # One result?
 def singleton(stream): #:: a|(a->*b) => boolean
-    [   label $cancel |
+    [   label $out |
         foreach stream as $item
-            (2; if . >= 1 then .-1 else break $cancel end; null)
+            (2; if . >= 1 then .-1 else break$out end; null)
     ] | length == 1
 ;
 
@@ -60,9 +60,9 @@ def singleton(stream): #:: a|(a->*b) => boolean
 #
 def nth($n; stream): #:: a|(number;a->*b) => ?b
     select($n >= 0) | # not defined for n<0 and n>=#stream
-    label $cancel
+    label $fence
     | foreach stream as $item
-        ($n; .-1; select(. == -1) | $item , break $cancel)
+        ($n; .-1; select(. == -1) | $item , break $fence)
 ;
 
 # Produces enumerated items from `stream`.
@@ -97,34 +97,19 @@ def rest(stream): #:: a|(a->*b) => *b
         (1; .-1; select(. < 0) | $item)
 ;
 
-# Returns the prefix of `stream` of length `n`.
-#
-def take($n; stream): #:: a|(number;a->*b) => *b
-    select($n >= 0) | # not defined for n<0
-    if $n == 0
-    then stream
-    else
-        label $cancel
-        | foreach stream as $item
-            ($n;
-             if . >= 1 then .-1 else break $cancel end;
-             $item)
-    end
-;
-
 # Returns the prefix of `stream` while `predicate` is true.
 #
 def takeWhile(predicate; stream): #:: a|(b->boolean;a->*b) => *b
-    label $cancel
+    label $out
     | stream
-    | unless(predicate; break $cancel)
+    | unless(predicate; break$out)
 ;
 
 # Analogous to array[start; stop] applied to streams.
 #
 def slice($i; $j; stream): #:: a|(number;number;a->*b) => *b
     select($i < $j)
-    | take($j-$i; drop($i; stream))
+    | limit($j-$i; drop($i; stream))
 ;
 
 #

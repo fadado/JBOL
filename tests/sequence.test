@@ -111,18 +111,18 @@ include "generator/sequence"; nth(70; fibonacci)
 null
 190392490709135
 
-include "generator/sequence"; include "generator/stream"; take(2; drop(70; fibonacci))
+include "generator/sequence"; include "generator/stream"; limit(2; drop(70; fibonacci))
 null
 190392490709135
 308061521170129
 
 ## Golden ratio
-include "generator/sequence"; include "generator/stream"; [take(2; drop(70; fibonacci))] | (.[1]/.[0])*100000|floor|./100000
+include "generator/sequence"; include "generator/stream"; [limit(2; drop(70; fibonacci))] | (.[1]/.[0])*100000|floor|./100000
 null
 1.61803
 
 # fibstr
-include "generator/sequence"; include "generator/stream"; [take(5; fibstr)]
+include "generator/sequence"; include "generator/stream"; [limit(5; fibstr)]
 null
 ["a","b","ba","bab","babba"]
 
@@ -152,11 +152,11 @@ include "generator/sequence"; [range(4)]+[0,1,2,3] == [limit(8;moduli(4))]
 null
 true
 
-include "generator/sequence"; include "generator/stream"; [take(8; moduli(4))] == [take(8; repeat(range(4)))]
+include "generator/sequence"; include "generator/stream"; [limit(8; moduli(4))] == [limit(8; repeat(range(4)))]
 null
 true
 
-include "generator/sequence"; include "generator/stream"; [take(16; leibniz)]
+include "generator/sequence"; include "generator/stream"; [limit(16; leibniz)]
 null
 [0,1,1,2,1,2,2,3,1,2,2,3,2,3,3,4]
 

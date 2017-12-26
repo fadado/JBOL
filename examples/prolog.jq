@@ -3,10 +3,6 @@
 include "fadado.github.io/prelude";
 import "fadado.github.io/object/set" as set;
 
-def query(generator):
-    nonempty(generator)
-;
-
 # Database
 
 def biblical_family:
@@ -83,6 +79,6 @@ def grandparent($x; $y):
 # A query
 
 biblical_family |
-query(grandparent("terach"; "isaac"))
+succeeds(grandparent("terach"; "isaac"))
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

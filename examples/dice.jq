@@ -11,12 +11,12 @@ def dice:
 # test
 def main($N):
     def average(g):
-        math::sum(g) / stream::length(g)
+        math::sum(g) / stream::count(g)
     ;
     range(4) |
-    average(stream::take($N; dice))
+    average(limit($N; dice))
     ,
-    [ stream::take($N; dice) ]
+    [ limit($N; dice) ]
 ;
 
 main(149)

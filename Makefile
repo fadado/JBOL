@@ -94,6 +94,7 @@ GEN=$(LIB)/generator
 MUSIC=$(LIB)/music
 ARRAY=$(LIB)/array
 OBJECT=$(LIB)/object
+WORD=$(LIB)/word
 
 ########################################################################
 # Rules
@@ -117,7 +118,7 @@ $(LogDir)/%.log: tests/%.test
 # Common tests
 $(LogDir)/prelude.log: $(LIB)/prelude.jq
 $(LogDir)/types.log: $(LIB)/types.jq
-$(LogDir)/schema.log: $(LIB)/schema.jq $(LIB)/prelude.jq $(LIB)/types.jq $(STR)/url.jq $(STR)/regexp.jq $(GEN)/stream.jq
+$(LogDir)/schema.log: $(LIB)/schema/schema.jq $(LIB)/prelude.jq $(LIB)/types.jq $(STR)/url.jq $(STR)/regexp.jq $(GEN)/stream.jq
 $(LogDir)/math.log: $(LIB)/math.jq
 $(LogDir)/relations.log: $(XLIB)/rel.jq
 
@@ -127,7 +128,9 @@ $(LogDir)/object_set.log: $(OBJECT)/set.jq
 # Arrays tests
 $(LogDir)/array.log: $(ARRAY)/array.jq
 $(LogDir)/array_set.log: $(ARRAY)/set.jq
-$(LogDir)/array_word.log: $(ARRAY)/word.jq
+
+# Word tests
+$(LogDir)/word.log: $(WORD)/word.jq
 
 # Generator tests
 $(LogDir)/stream.log: $(GEN)/stream.jq

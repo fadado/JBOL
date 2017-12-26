@@ -1,0 +1,228 @@
+#########################################################################
+# Combinatorics on Words
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+#########################################################################
+
+include "word"; rotate(1)
+[1,2,3,4,5]
+[2,3,4,5,1]
+
+include "word"; rotate(-1)
+[1,2,3,4,5]
+[5,1,2,3,4]
+
+include "word"; rotate(2)
+"kaleidoscope"
+"leidoscopeka"
+
+include "word"; rotate(-2)
+"kaleidoscope"
+"pekaleidosco"
+
+include "word"; [find("on")]
+"one motion is optional"
+[0, 8, 18]
+
+include "word"; [find("ma")]
+"mi mama me mima"
+[3, 5, 13]
+
+include "word"; [find("ab")]
+"abaabbaaabbbaaaabbbb" 
+[0, 3, 8, 15]
+
+include "word"; [upto("on")]
+"one motion is optional"
+[0, 1, 5, 8, 9, 14, 18, 19]
+
+include "word"; [upto("aeiou")]
+"kaleidoscope"
+[1, 3, 4, 6, 9, 11]
+
+include "word"; [find("o")]
+"kaleidoscope"
+[6, 9]
+
+# Catenation
+. + [1,2,3]
+[3,4,5]
+[3,4,5,1,2,3]
+
+# Length of w
+length
+[3,4,5]
+3
+
+# Number of a's in w
+indices(["a"]) | length
+[1,"a",3,4,"a",5]
+2
+
+indices("a") | length
+"1a34a5"
+2
+
+include "word"; count("a")
+[1,"a",3,4,"a",5]
+2
+
+include "word"; count("x")
+[1,"a",3,4,"a",5]
+0
+
+# Alphabet of w
+unique
+[1,5,2,3,4,2,5]
+[1,2,3,4,5]
+
+# Reverse
+reverse
+[1,2,3,4,5]
+[5,4,3,2,1]
+
+# Factor, proper factor?
+include "word"; . as $u | []|factor($u)
+[1,2, 3,4,2, 5]
+true
+
+include "word"; . as $u | [3,4,2]|factor($u)
+[]
+false
+
+include "word"; . as $u | []|pfactor($u)
+[1,2, 3,4,2, 5]
+false
+
+include "word"; . as $u | [3,4,2]|pfactor($u)
+[]
+false
+
+include "word"; . as $u | [3,4,2]|factor($u)
+[1,2, 3,4,2, 5]
+true
+
+include "word"; . as $u | [3,4,2]|pfactor($u)
+[3,4,2]
+false
+
+include "word"; . as $u | [3,4,2]|pfactor($u)
+[1,2, 3,4,2, 5]
+true
+
+include "word"; . as $u | "342"|pfactor($u)
+"123425"
+true
+
+include "word"; . as $u | [3,4,2]|factor($u)
+[3,4,2,1,2]
+true
+
+include "word"; . as $u | [3,4,2]|factor($u)
+[2,1,3,3,4,2]
+true
+
+# Prefix, proper prefix?
+include "word"; . as $u | [3,4,2]|prefix($u)
+[3,4,2,2,1,3,3,4,2]
+true
+
+include "word"; . as $u | "342"|prefix($u)
+"342213342"
+true
+
+include "word"; . as $u | [3,4,2]|prefix($u)
+[3,4,2]
+true
+
+include "word"; . as $u | [3,4,2]|prefix($u)
+[3,2]
+false
+
+include "word"; . as $u | [3,4,2]|pprefix($u)
+[3,4,2,2,1,3,3,4,2]
+true
+
+include "word"; . as $u | [3,4,2]|pprefix($u)
+[3,4,2]
+false
+
+include "word"; . as $u | [3,4,2]|prefix($u)
+[3,2]
+false
+
+# Suffix, proper suffix?
+include "word"; . as $u | [3,4,2]|suffix($u)
+[1,2,3,4,2]
+true
+
+include "word"; . as $u | "342"|suffix($u)
+"12342"
+true
+
+include "word"; . as $u | [3,4,2]|suffix($u)
+[1,2,3,4,2,3]
+false
+
+include "word"; . as $u | [3,4,2]|psuffix($u)
+[1,2,3,4,2,3]
+false
+
+include "word"; . as $u | [3,4,2]|psuffix($u)
+[2,3,4,2]
+true
+
+########################################################################
+
+include "word"; power(0)
+"abcd"
+""
+
+include "word"; power(1)
+"abcd"
+"abcd"
+
+include "word"; power(2)
+"abcd"
+"abcdabcd"
+
+include "word"; power(4)
+"abcd"
+"abcdabcdabcdabcd"
+
+include "word"; power(0)
+[2,3,4,2]
+[]
+
+include "word"; power(1)
+[2,3,4,2]
+[2,3,4,2]
+
+include "word"; power(2)
+[2,3,4,2]
+[2,3,4,2,2,3,4,2]
+
+include "word"; [[limit(13;star)][1:],[limit(12;plus)]] | .[0]==.[1]
+[1,2,3]
+true
+
+include "word"; [[limit(13;star)][1:],[limit(12;plus)]] | .[0]==.[1]
+"abc"
+true
+
+########################################################################
+
+include "word"; [prefixes]
+"abcd"
+["a", "ab", "abc", "abcd"]
+
+include "word"; [suffixes]
+"abcd"
+["d", "cd", "bcd", "abcd"]
+
+include "word"; [factors]
+"abcd"
+["a","b","c","d","ab","bc","cd","abc","bcd","abcd"]
+
+# vim:ai:sw=2:ts=2:et:syntax=jq

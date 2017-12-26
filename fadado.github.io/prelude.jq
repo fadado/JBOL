@@ -17,7 +17,7 @@ module {
 #    0 == ((label $fence | stream | (1 , break $fence))//0);
 
 # Reverse of `isempty`
-def nonempty(stream): #:: a|(a->*b) => boolean
+def succeeds(stream): #:: a|(a->*b) => boolean
     1 == ((label $fence | stream | (1 , break $fence))//0)
 ;
 
@@ -28,31 +28,35 @@ def every(stream): #:: a|(a->*boolean) => boolean
 
 # any(stream; .)
 def some(stream): #:: a|(a->*boolean) => boolean
-    nonempty(stream | . or empty)
+    succeeds(stream | . or empty)
 ;
 
 ########################################################################
-# Stolen from SNOBOL: ABORT (renamed `cancel`) and FENCE
+# Stolen from SNOBOL: ABORT and FENCE
 ########################################################################
 
 # Breaks out the current filter
 # For constructs like:
-#   try (A | possible cancellation | B)
-def cancel: #:: => !
+#   try (A | possible abortion | B)
+def abort: #:: a => !
     error("!")
 ;
 
 # One way pass. Usage:
-#   try (A | fence | B) catch canceled
+#   try (A | fence | B)
 def fence: #:: a| => a!
-    (. , cancel)
+    (. , abort)
 ;
 
-# For constructs like:
-#   try (A | possible cancellation | B) catch canceled
-def canceled: #:: string| => @!
-    if . == "!" then empty
-    else error end
+# Catch helpers. Usage:
+#   try (...) catch _abort_(result)
+#   . as $_ | try (A | possible abortion | B) catch _abort_($_)
+def _abort_(result): #:: string| => a!
+    if . == "!" then result else error end
+;
+#   try (...) catch _abort_
+def _abort_: #:: string| => @!
+    if . == "!" then empty else error end
 ;
 
 ########################################################################
@@ -76,14 +80,11 @@ def unless(predicate; action): #:: a|(a->boolean;a->*a) => *a
     if predicate then . else action end
 ;
 
-## Like select for generators
-#def accept(generator): #:: a|(a->*b) => ?a
-#    reject(isempty(generator))
+#def neg(generator): #:: a|(a->*b) => ?a
+#    reject(succeeds(generator))
 #;
-#
-## Complement of accept
-#def refuse(generator): #:: a|(a->*b) => ?a
-#    select(isempty(generator))
+#def yep(generator): #:: a|(a->*b) => ?a
+#    select(succeeds(generator))
 #;
 
 ########################################################################
@@ -239,7 +240,7 @@ def all(predicate): #:: [a]|(a->boolean) => boolean
 ;
 
 def any(stream; predicate): #:: a|(a->*b;b->boolean) => boolean
-    nonempty(stream | predicate or empty)
+    succeeds(stream | predicate or empty)
 ;
 def any: #:: [boolean]| => boolean
     any(.[]; .)

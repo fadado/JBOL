@@ -10,7 +10,7 @@ module {
 
 include "fadado.github.io/prelude";
 import "fadado.github.io/math" as math;
-import "fadado.github.io/array" as array;
+import "fadado.github.io/word" as word;
 import "fadado.github.io/music/pitch-class" as pc;
 
 ########################################################################
@@ -113,7 +113,7 @@ def normal: #:: PCSET => PCSET
 
         # build rotations
         | [ . , foreach range($last) as $_
-                    (.; array::rotate | .[$last] += 12) ]
+                    (.; word::rotate | .[$last] += 12) ]
 
         # get minimal distance in all rotations
         | (map(.[$last]-.[0]) | min) as $m
