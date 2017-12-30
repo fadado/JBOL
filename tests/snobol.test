@@ -9,10 +9,6 @@ include "string/snobol"; [limit(10; SUCCEED)] == [limit(10; recurse(.))]
 0
 true
 
-include "string/snobol"; A | L("abc. ") | MOVE(-2) | REM | N
-"abc. Y"
-". Y"
-
 include "string/snobol"; include "prelude"; "abcdefghijklmnoprstuvwxyz" as $a |A|unfold(BREAK($a)|SPAN($a)|[N,.])| .
 "one or tree words"
 "one"
@@ -25,12 +21,20 @@ include "string/snobol"; A | BREAK(",") | M
 ""
 
 include "string/snobol"; A | BREAK(",") | M
+"A,Z"
+"A"
+
+include "string/snobol"; A | BREAK(",") | LEN(1) | REM | N
+"A,Z"
+"Z"
+
+include "string/snobol"; A | BREAK(",") | M
 "AZ"
-""
+# BREAK empty
 
 include "string/snobol"; A | BREAK(",") | AT 
 "AZ"
-0
+# BREAK empty
 
 include "string/snobol"; A | BREAK(",") | AT 
 "A,Z"
@@ -441,6 +445,13 @@ include "string/snobol"; A | BREAKX("A") | M as $s | L("AS") | $s
 include "string/snobol"; A | BREAKX(",") | N
 "a,bc,def,ghij,"
 "a"
+"bc"
+"def"
+"ghij"
+
+include "string/snobol"; A | BREAKX(",") | M
+"a,bc,def,ghij,"
+"a"
 "a,bc"
 "a,bc,def"
 "a,bc,def,ghij"
@@ -456,7 +467,7 @@ include "string/snobol"; A | BREAKX("E") | M
 
 include "string/snobol"; A | BREAK("123") | SPAN("ASDFGHJKLQWERTYUIOPZXCVBNM") | N as $s | RTAB(0) | $s
 "AZ"
-"AZ"
+# BREAK empty
 
 include "string/snobol"; A | BREAK(",") | N as $item | LEN(1) | REM | N as $rest | $rest+$item+","
 "RED,ORANGE,YELLOW,GREEN,BLUE,INDIGO,VIOLET,"

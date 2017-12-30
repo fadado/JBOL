@@ -12,24 +12,22 @@ include "fadado.github.io/prelude";
 include "fadado.github.io/types";
 
 import "fadado.github.io/string" as str;
-import "fadado.github.io/word" as word;
 
 ########################################################################
 # Patterns concerned with control of the matching process 
 ########################################################################
 
-# Always matches, like the empty pattern in SNOBOL
 def NULL: #:: a => a
     .
 ;
 
-# Never matches
 def FAIL: #:: a => @
     empty
 ;
 
 def SUCCEED: #::a => *a
-    . , SUCCEED # repeat(.)
+#   repeat(NULL)
+    NULL , SUCCEED
 ;
 
 def ABORT: #:: a => !
@@ -37,11 +35,13 @@ def ABORT: #:: a => !
 ;
 
 def FENCE: #:: a => a!
-    . , ABORT
+    NULL , ABORT
 ;
 
+# select(p): if p then NULL else FAIL end
+
 def NOT(g): #:: a|(a->*b) => ?a
-    reject(succeeds(g))
+    select(isempty(g))
 ;
 
 def IF(g): #:: a|(a->*b) => ?a
@@ -49,7 +49,9 @@ def IF(g): #:: a|(a->*b) => ?a
 ;
 
 def ARBNO(f): #:: a|(a->a) => *a
-    iterate(f)
+#   iterate(f)
+    def r: . , (f|r);
+    r
 ;
 
 # By default SNOBOL tries only once to match, but by default jq tries all
@@ -221,11 +223,11 @@ def DIFFER($s): #:: CURSOR|(string;string) => CURSOR
     select($s != "")
 ;
 def INTEGER($a): #:: CURSOR|(a) => CURSOR
-    def test:
+    def _int:
         (isnumber and . == floor)
         or (tonumber? // false) and (contains(".")|not)
     ;
-    select($a|test)
+    select($a|_int)
 ;
 
 #
@@ -259,7 +261,7 @@ def LEN($n): #:: CURSOR|(number) => CURSOR
 
 def TAB($p): #:: CURSOR|(number) => CURSOR
     assert($p >= 0; "TAB requires a non negative number as argument")
-    | select($p >= .position)
+    | select($p >= .position and $p <= .slen)
     | .start = .position
     | .position = $p
 ;
@@ -296,7 +298,7 @@ def ANY($s): #:: CURSOR|(string) => CURSOR
 def NOTANY($s): #:: CURSOR|(string) => CURSOR
     assert($s!=""; "NOTANY requires a non empty string as argument")
     | select(.position != .slen)
-    | reject(.subject[.position:.position+1] | inside($s))
+    | select(.subject[.position:.position+1] | inside($s) | not)
     | .start = .position
     | .position += 1
 ;
@@ -304,15 +306,14 @@ def NOTANY($s): #:: CURSOR|(string) => CURSOR
 def SPAN($s): #:: CURSOR|(string) => CURSOR
     assert($s!=""; "SPAN requires a non empty string as argument")
     | select(.position != .slen)
-    | G(last(iterate1(ANY($s))) // empty)  # empty if last == null
+    | G(last(ANY($s)|ARBNO(ANY($s))) // FAIL)  # fail if last == null
 ;
 
 def BREAK($s): #:: CURSOR|(string) => CURSOR
     assert($s!=""; "BREAK requires a non empty string as argument")
     | select(.position != .slen)
-    | .position as $p
-    | TAB(first(.subject|word::upto($s;$p))) // .
-#   | G(last(iterate(NOTANY($s)))) // .
+    | G(last(ARBNO(NOTANY($s))))
+    | when(.position == .slen; FAIL)
 ;
 
 #
@@ -328,9 +329,9 @@ def ARB: #:: CURSOR => *CURSOR
 def BAL: #:: CURSOR => *CURSOR
     def _bal:
         NOTANY("()")
-        , (L("(") | iterate(_bal) | L(")"))
+        , (L("(") | ARBNO(_bal) | L(")"))
     ;
-    G(iterate1(_bal))
+    G(_bal | ARBNO(_bal))
 ;
 
 def REM: #:: CURSOR => CURSOR
@@ -348,10 +349,14 @@ def REM: #:: CURSOR => CURSOR
 #
 
 def BREAKX($s): #:: CURSOR|(string) => *CURSOR
+    def _b:
+        G(last(ARBNO(NOTANY($s))))
+        | when(.position == .slen; FAIL)
+        | . , (.position += 1 | _b)
+    ;
     assert($s!=""; "BREAKX requires a non empty string as argument")
     | select(.position != .slen)
-    | .position as $p
-    | TAB(.subject|word::upto($s;$p)) // .
+    | _b
 ;
 
 def LEQ($s; $t): #:: CURSOR|(string;string) => CURSOR
@@ -402,22 +407,16 @@ def TRIM($s): #:: (string) => string
 ;
 
 #
-# Extensions found in the literature
+# More extensions
 #
 
 def BAL($lhs; $rhs): #:: CURSOR|(string;string) => *CURSOR
-    def _bal($delimiters):
-        NOTANY($delimiters)
-        , (L($lhs) | iterate(_bal) | L($rhs))
+    def _bal($parens):
+        NOTANY($parens)
+        , (L($lhs) | ARBNO(_bal) | L($rhs))
     ;
-    G(iterate1(_bal($lhs+$rhs)))
-;
-
-# TODO: not really tested!!!
-def MOVE($n): #:: CURSOR|(number) => CURSOR
-    .position += $n
-    # ???
-    # if .position < .start then .start = .position else . end
+    ($lhs+$rhs) as $s
+    | G(_bal($s) | ARBNO(_bal($s)))
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq
