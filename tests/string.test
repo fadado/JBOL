@@ -2,7 +2,7 @@
 # Text functions
 #
 # Classic string functions are easy to implement. Also functions
-# inspired in the Icon Language, like `find`.
+# inspired in the Icon Language.
 #
 # Tests are groups of three lines: program, input, expected output.
 # Blank lines and lines starting with # are ignored.

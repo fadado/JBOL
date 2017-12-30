@@ -21,30 +21,6 @@ include "word"; rotate(-2)
 "kaleidoscope"
 "pekaleidosco"
 
-include "word"; [find("on")]
-"one motion is optional"
-[0, 8, 18]
-
-include "word"; [find("ma")]
-"mi mama me mima"
-[3, 5, 13]
-
-include "word"; [find("ab")]
-"abaabbaaabbbaaaabbbb" 
-[0, 3, 8, 15]
-
-include "word"; [upto("on")]
-"one motion is optional"
-[0, 1, 5, 8, 9, 14, 18, 19]
-
-include "word"; [upto("aeiou")]
-"kaleidoscope"
-[1, 3, 4, 6, 9, 11]
-
-include "word"; [find("o")]
-"kaleidoscope"
-[6, 9]
-
 # Catenation
 . + [1,2,3]
 [3,4,5]
@@ -62,6 +38,10 @@ indices(["a"]) | length
 
 indices("a") | length
 "1a34a5"
+2
+
+include "word"; count("as")
+"kjhkjhasiouoiuasuyt"
 2
 
 include "word"; count("a")
@@ -82,94 +62,134 @@ reverse
 [1,2,3,4,5]
 [5,4,3,2,1]
 
+#########################################################################
+
+include "word"; symbol(.==9)
+[11,9,2,3]
+# empty
+
+include "word"; symbol(.==9)
+[9,2,3]
+1
+
+include "word"; [upto("on")]
+"one motion is optional"
+[0, 1, 5, 8, 9, 14, 18, 19]
+
+include "word"; [upto("aeiou")]
+"kaleidoscope"
+[1, 3, 4, 6, 9, 11]
+
+#########################################################################
+
+include "word"; [gfactor("on")]
+"one motion is optional"
+[0, 8, 18]
+
+include "word"; [gfactor("ma")]
+"mi mama me mima"
+[3, 5, 13]
+
+include "word"; [gfactor("ab")]
+"abaabbaaabbbaaaabbbb" 
+[0, 3, 8, 15]
+
+include "word"; [gfactor("o")]
+"kaleidoscope"
+[6, 9]
+
 # Factor, proper factor?
-include "word"; . as $u | []|factor($u)
+include "word"; factor([])
 [1,2, 3,4,2, 5]
-true
+0
 
-include "word"; . as $u | [3,4,2]|factor($u)
+include "word"; factor([1])
+[1,2, 3,4,2, 5]
+1
+
+include "word"; factor([3,4,2])
+[]
+# empty
+
+include "word"; pfactor([])
+[1,2, 3,4,2, 5]
+false
+
+include "word"; pfactor([3,4,2])
 []
 false
 
-include "word"; . as $u | []|pfactor($u)
+include "word"; gfactor([3,4,2])
 [1,2, 3,4,2, 5]
-false
+2
 
-include "word"; . as $u | [3,4,2]|pfactor($u)
-[]
-false
-
-include "word"; . as $u | [3,4,2]|factor($u)
-[1,2, 3,4,2, 5]
-true
-
-include "word"; . as $u | [3,4,2]|pfactor($u)
+include "word"; pfactor([3,4,2])
 [3,4,2]
 false
 
-include "word"; . as $u | [3,4,2]|pfactor($u)
+include "word"; pfactor([3,4,2])
 [1,2, 3,4,2, 5]
 true
 
-include "word"; . as $u | "342"|pfactor($u)
+include "word"; pfactor("342")
 "123425"
 true
 
-include "word"; . as $u | [3,4,2]|factor($u)
+include "word"; factor([3,4,2])
 [3,4,2,1,2]
-true
+3
 
-include "word"; . as $u | [3,4,2]|factor($u)
+include "word"; gfactor([3,4,2])
 [2,1,3,3,4,2]
-true
+3
 
 # Prefix, proper prefix?
-include "word"; . as $u | [3,4,2]|prefix($u)
+include "word"; prefix([3,4,2])
 [3,4,2,2,1,3,3,4,2]
 true
 
-include "word"; . as $u | "342"|prefix($u)
+include "word"; prefix("342")
 "342213342"
 true
 
-include "word"; . as $u | [3,4,2]|prefix($u)
+include "word"; prefix([3,4,2])
 [3,4,2]
 true
 
-include "word"; . as $u | [3,4,2]|prefix($u)
+include "word"; prefix([3,4,2])
 [3,2]
 false
 
-include "word"; . as $u | [3,4,2]|pprefix($u)
+include "word"; pprefix([3,4,2])
 [3,4,2,2,1,3,3,4,2]
 true
 
-include "word"; . as $u | [3,4,2]|pprefix($u)
+include "word"; pprefix([3,4,2])
 [3,4,2]
 false
 
-include "word"; . as $u | [3,4,2]|prefix($u)
+include "word"; prefix([3,4,2])
 [3,2]
 false
 
 # Suffix, proper suffix?
-include "word"; . as $u | [3,4,2]|suffix($u)
+include "word"; suffix([3,4,2])
 [1,2,3,4,2]
 true
 
-include "word"; . as $u | "342"|suffix($u)
+include "word"; suffix("342")
 "12342"
 true
 
-include "word"; . as $u | [3,4,2]|suffix($u)
+include "word"; suffix([3,4,2])
 [1,2,3,4,2,3]
 false
 
-include "word"; . as $u | [3,4,2]|psuffix($u)
+include "word"; psuffix([3,4,2])
 [1,2,3,4,2,3]
 false
 
-include "word"; . as $u | [3,4,2]|psuffix($u)
+include "word"; psuffix([3,4,2])
 [2,3,4,2]
 true
 

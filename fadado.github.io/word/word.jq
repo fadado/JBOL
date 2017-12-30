@@ -31,94 +31,96 @@ def rotate: #:: WORD => WORD
     .[1:] + .[:1]
 ;
 
-########################################################################
-# Icon style operations 
-# See http://www.cs.arizona.edu/icon/refernce/funclist.htm
+# Number of u's in w
+def count($u): #:: WORD|(WORD) => number
+    indices($u) | length
+;
 
+########################################################################
+# Find symbol(s)
+
+def symbol(t): #:: WORD|(SYMBOL->boolean) => ?number
+    select(length > 0)
+    | (if type == "string" then .[0:1] else .[0] end) as $symbol
+    | select($symbol|t)
+    | 1
+;
+
+def gsymbol(t): #:: WORD|(SYMBOL->boolean) => *number
+    select(length > 0)
+    | (if type == "string" then (./"") else . end) as $symbols
+    | range(length)
+    | select($symbols[.]|t)
+;
+def gsymbol(t; $i): #:: WORD|(SYMBOL->boolean;number) => *number
+    select(0 <= $i)
+    | .[$i:]
+    | gsymbol(t)+$i
+;
+def gsymbol(t; $i; $j): #:: WORD|(SYMBOL->boolean;number;number) => *number
+    select(0 <= $i and $i < $j and $j <= length)
+    | .[$i:$j]
+    | gsymbol(t)+$i
+;
+
+def upto($u): #:: WORD|(WORD) => *number
+    gsymbol(inside($u))
+;
+def upto($u; $i): #:: WORD|(WORD;number) => *number
+    gsymbol(inside($u); $i)
+;
+def upto($u; $i; $j): #:: WORD|(WORD;number;number) => *number
+    gsymbol(inside($u); $i; $j)
+;
+
+########################################################################
 # Find word
-def find($u; $i; $j): #:: WORD|(WORD;number;number) => *number
+
+def gfactor($u; $i; $j): #:: WORD|(WORD;number;number) => *number
     select(0 <= $i and $i < $j and $j <= length)
     | .[$i:$j]|indices($u)[]
 ;
-def find($u; $i): #:: WORD|(WORD;number) => *number
+def gfactor($u; $i): #:: WORD|(WORD;number) => *number
     select(0 <= $i)
     | .[$i:]|indices($u)[]
 ;
-def find($u): #:: WORD|(WORD) => *number
-    find($u; 0; length)
-;
-
-# Find symbols
-def upto($u): #:: WORD|(WORD) => *number
-    def symbols:
-        if type == "array"
-        then $u[] | [.]
-        else ($u/"")[]  # string
-        end
-    ;
-    assert($u|length>0; "upto requires a non empty word as argument")
-    | [indices(symbols)[]]
-    | unique[]
-;
-def upto($u; $i; $j): #:: WORD|(WORD;number;number) => *number
-    select(0 <= $i and $i < $j and $j <= length)
-    | .[$i:$j] | upto($u)+$i
-;
-def upto($u; $i): #:: WORD|(WORD;number) => *number
-    select(0 <= $i)
-    | .[$i:] | upto($u)+$i
-;
-
-########################################################################
-# Combinatorics on Words
-
-# Number of a's in w
-def count($a): #:: WORD|(a) => number
-    indices($a) | length  # number of occurrences of $a inside $w
+def gfactor($u): #:: WORD|(WORD) => *number
+    indices($u)[]
 ;
 
 # Factor?
 def factor($u): #:: WORD|(WORD) => boolean
-    . as $w
-    | length == 0   # $w is the empty word and factor of any word
-      or ($u|indices($w)) != []  # or is inside $u
+    ($u|length) as $n
+    | select(0 == $n or $n <= length and .[:$n] == $u)
+    | $n
 ;
 
 # Proper factor?
 def pfactor($u): #:: WORD|(WORD) => boolean
-    . as $w
-    | ($u|length) > length      # $u is larger than $w
-      and ($u|indices($w)) != []  # and $w is inside $u
+    ($u|length) as $n
+    | 0 < $n and $n < length and contains($u)
 ;
 
 # Prefix?
 def prefix($u): #:: WORD|(WORD) => boolean
-    . as $w
-    | length == 0               # $w is the empty word and prefix of any word
-      or $u[0:$w|length] == $w
-#     or ($u|indices($w))[0] == 0 # or $w is at the beggining of $u
+    ($u|length) as $n
+    | $n == 0 or .[0:$n] == $u
 ;
 
 # Proper prefix?
 def pprefix($u): #:: WORD|(WORD) => boolean
-    . as $w
-    | ($u|length) > length          # $u is larger than $w
-      and ($u|indices($w))[0] == 0    # and $w is prefix of $u
+    length > ($u|length) and prefix($u)
 ;
 
 # Suffix?
 def suffix($u): #:: WORD|(WORD) => boolean
-    . as $w
-    | length == 0     # $w is the empty word and suffix of any word
-      or (($u|length) - length) == ($u|indices($w))[-1] # or $w is at $u end
+    ($u|length) as $n
+    | $n == 0 or .[-$n:] == $u
 ;
 
 # Proper suffix?
 def psuffix($u): #:: WORD|(WORD) => boolean
-    . as $w
-    | (($u|length) - length) as $n
-    | $n > 0                          # $u is larger than $w
-      and $n == ($u|indices($w))[-1]  # and $w is at $u end
+    length > ($u|length) and suffix($u)
 ;
 
 ########################################################################
