@@ -12,78 +12,21 @@ include "fadado.github.io/prelude";
 
 import "fadado.github.io/object/set" as set;
 import "fadado.github.io/string/ascii" as ascii;
-import "fadado.github.io/word" as word;
 
 ########################################################################
-# Icon style operations 
-# See http://www.cs.arizona.edu/icon/refernce/funclist.htm
+# Conversions code <=> character
 
-# Match initial word
-def match($s; $i): #:: WORD|(WORD;number) => number
-    select(0 <= $i and $i < length)
-    | ($s|length) as $n
-    | select($i+$n <= length and .[$i:$i+$n] == $s)
-    | $i+$n
-;
-def match($s): #:: WORD|(WORD) => number
-    match($s; 0)
+def ord($s): #:: (string) => number
+    $s[0:1] | explode[0]
 ;
 
-# Locate initial character
-def any($s; $i): #:: string|(string;number) => number
-    select(0 <= $i and $i < length)
-    | select(.[$i:$i+1] | inside($s))
-    | $i+1
-;
-def any($s): #:: string|(string) => number
-    any($s; 0)
+def char($n): #:: (number) => string
+    [$n] | implode
 ;
 
-def notany($s; $i): #:: string|(string;number) => number
-    select(0 <= $i and $i < length)
-    | reject(.[$i:$i+1] | inside($s))
-    | $i+1
-;
-def notany($s): #:: string|(string) => number
-    notany($s; 0)
-;
-
-# Locate many characters
-def many($s; $i): #:: string|(string;number) => number
-    def _many($t; $n):
-        def r:
-            if . == $n                then $n
-            elif $t[.:.+1]|inside($s) then .+1|r
-            elif . != $i              then .
-            else empty end
-        ;
-        $i|r
-    ;
-    select(0 <= $i and $i < length)
-    | _many(.; length)
-;
-def many($s): #:: string|(string) => number
-    many($s; 0)
-;
-
-def none($s; $i): #:: string|(string;number) => number
-    def _none($t; $n):
-        def r:
-            if . == $n                    then $n
-            elif $t[.:.+1]|inside($s)|not then .+1|r
-            elif . != $i                  then .
-            else empty end
-        ;
-        $i|r
-    ;
-    select(0 <= $i and $i < length)
-    | _none(.; length)
-;
-def none($s): #:: string|(string) => number
-    none($s; 0)
-;
-
+########################################################################
 # Pad strings
+
 def left($n; $t): #:: string|(number;string) => string
     when($n > length;
         ($t*($n-length)) + .)
@@ -111,19 +54,10 @@ def center($n): #:: string|(number) => string
     center($n; " ")
 ;
 
-def ord($s): #:: (string) => number
-    $s[0:1] | explode[0]
-;
-
-def char($n): #:: (number) => string
-    [$n] | implode
-;
-
 ########################################################################
 # Translation tables
 
 # Translate/remove tables
-#
 def table($from; $to): #:: (string;string) => {string}
    ($from/"") as $s
    | ($to/"") as $t
@@ -132,15 +66,14 @@ def table($from; $to): #:: (string;string) => {string}
 ;
 
 # Translation table for rotate by 13 places
-#
 def rot13: #:: {string}
+    def rotate: .[13:] + .[:13];
     table(ascii::ALPHA;
-        (ascii::upper|word::rotate(13))
-            + (ascii::lower|word::rotate(13)))
+        (ascii::upper|rotate)
+            + (ascii::lower|rotate))
 ;
 
 # Preserve tables
-#
 def ptable($from; $preserve): #:: (string;string) => {string}
    set::set($preserve) as $t
    | reduce (($from/"") | unique)[] as $c
@@ -148,7 +81,6 @@ def ptable($from; $preserve): #:: (string;string) => {string}
 ;
 
 # Translate characters in input string using translation table
-#
 def translate($table): #:: string|({string}) => string
     [ (./"")[] | $table[.]//. ]
     | join("")
@@ -227,8 +159,12 @@ def rtrim: #:: string| => string
 
 ########################################################################
 
+# Fast add, only for string arrays
+def concat: #:: [string] => string
+    reduce .[] as $s (""; sep + $s)
+;
+
 # Fast join, only for string arrays
-#
 def join($separator): #:: [string]|(string) => string
     def sep:
         if . == null

@@ -39,46 +39,6 @@ include "string"; right(10)
 "AEIOU"
 "AEIOU     "
 
-include "string"; none("aeiou")
-"xxoops"
-2
-
-include "string"; none("aeiou")
-"axixo"
-# empty
-
-include "string"; many("aeiou")
-"oops"
-2
-
-include "string"; many("aeiou")
-"xixo"
-# empty
-
-include "string"; notany("aeiou")
-"Asperger"
-1
-
-include "string"; notany("aeiou")
-"Asperger"
-1
-
-include "string"; any("aeiou")
-"asperger"
-1
-
-include "string"; any("aeiou")
-"Asperger"
-# empty
-
-include "string"; match("mi ma")
-"mi mama me mima"
-5
-
-include "string"; match("mi ma"; 9)
-"no se si mi mama me mima"
-14
-
 #
 # translate
 #

@@ -64,11 +64,15 @@ reverse
 
 #########################################################################
 
-include "word"; symbol(.==9)
+include "word"; symbol(.==[9])
 [11,9,2,3]
 # empty
 
-include "word"; symbol(.==9)
+include "word"; symbol(.==[9])
+[9,2,3]
+1
+
+include "word"; factor([9])
 [9,2,3]
 1
 
@@ -79,6 +83,39 @@ include "word"; [upto("on")]
 include "word"; [upto("aeiou")]
 "kaleidoscope"
 [1, 3, 4, 6, 9, 11]
+
+
+include "word"; notany("aeiou")
+"Asperger"
+1
+
+include "word"; notany("aeiou")
+"Asperger"
+1
+
+include "word"; anyone("aeiou")
+"asperger"
+1
+
+include "word"; anyone("aeiou")
+"Asperger"
+# empty
+
+include "word"; none("aeiou")
+"xxoops"
+2
+
+include "word"; none("aeiou")
+"axixo"
+# empty
+
+include "word"; many("aeiou")
+"oops"
+2
+
+include "word"; many("aeiou")
+"xixo"
+# empty
 
 #########################################################################
 
@@ -99,6 +136,15 @@ include "word"; [gfactor("o")]
 [6, 9]
 
 # Factor, proper factor?
+
+include "word"; factor("mi ma")
+"mi mama me mima"
+5
+
+include "word"; factor("mi ma"; 9)
+"no se si mi mama me mima"
+14
+
 include "word"; factor([])
 [1,2, 3,4,2, 5]
 0
