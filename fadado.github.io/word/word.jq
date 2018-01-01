@@ -56,18 +56,18 @@ def symbol(t; $i): #:: WORD|(SYMBOL->boolean;number) => ?number
 ;
 
 # Icon `any`
-def anyone($s): #:: WORD|(WORD) => number
+def anyone($s): #:: WORD|(WORD) => ?number
     symbol(inside($s))
 ;
-def anyone($s; $i): #:: WORD|(WORD;number) => number
+def anyone($s; $i): #:: WORD|(WORD;number) => ?number
     symbol(inside($s); $i)
 ;
 
 # Icon `notany`
-def notany($s): #:: WORD|(WORD) => number
+def notany($s): #:: WORD|(WORD) => ?number
     symbol(inside($s)|not)
 ;
-def notany($s; $i): #:: WORD|(WORD;number) => number
+def notany($s; $i): #:: WORD|(WORD;number) => ?number
     symbol(inside($s)|not; $i)
 ;
 
@@ -110,16 +110,16 @@ def upto($u; $i; $j): #:: WORD|(WORD;number;number) => *number
 # Match one word
 
 # Matches u at the beggining of w?
+def factor($u): #:: WORD|(WORD) => ?number
+    ($u|length) as $j
+    | select($j <= length and .[0:$j] == $u)
+    | $j
+;
 def factor($u; $i): #:: WORD|(WORD;number) => ?number
     select(0 <= $i and $i < length)
     | ($u|length) as $j
     | select($i+$j <= length and .[$i:$i+$j] == $u)
     | $i+$j
-;
-def factor($u): #:: WORD|(WORD) => ?number
-    ($u|length) as $j
-    | select($j <= length and .[0:$j] == $u)
-    | $j
 ;
 
 # Prefix?
@@ -147,18 +147,18 @@ def psuffix($u): #:: WORD|(WORD) => boolean
 # Find word in all positions
 
 # Global search factor (Icon `find`)
-def gfactor($u; $i; $j): #:: WORD|(WORD;number;number) => *number
-    select(0 <= $i and $i < $j and $j <= length)
-    | .[$i:$j]
-    | indices($u)[]
+def gfactor($u): #:: WORD|(WORD) => *number
+    indices($u)[]
 ;
 def gfactor($u; $i): #:: WORD|(WORD;number) => *number
     select(0 <= $i)
     | .[$i:]
     | indices($u)[]
 ;
-def gfactor($u): #:: WORD|(WORD) => *number
-    indices($u)[]
+def gfactor($u; $i; $j): #:: WORD|(WORD;number;number) => *number
+    select(0 <= $i and $i < $j and $j <= length)
+    | .[$i:$j]
+    | indices($u)[]
 ;
 
 # Proper factor?
@@ -171,14 +171,13 @@ def pfactor($u): #:: WORD|(WORD) => boolean
 # Generalized Icon `many` or SNOBOL SPAN
 
 def span(t; $i): #:: WORD|(SYMBOL->boolean;number) => ?number
-    def next: empty;
     select(0 <= $i and $i < length)
     | label $out
     | range($i; length+1) as $j
     | if $j == length
       then $j , break$out   # fence
       elif .[$j:$j+1] | t
-      then next
+      then empty            # next
       elif $j != $i
       then $j , break$out   # fence
       else break$out        # abort
@@ -207,21 +206,45 @@ def none($s): #:: WORD|(WORD) => ?number
 ########################################################################
 # Generalized SNOBOL BREAK
 
-# TODO
+def skip(t; $i): #:: WORD|(SYMBOL->boolean;number) => ?number
+    select(0 <= $i and $i < length)
+    | label $out
+    | range($i; length+1) as $j
+    | if $j == length
+      then break$out        # abort
+      elif .[$j:$j+1] | t
+      then $j , break$out
+      else empty            # next
+      end
+;
+def skip(t): #:: WORD|(SYMBOL->boolean) => ?number
+    skip(t; 0)
+;
+
+# Not in Icon but...
+def stop($s; $i): #:: WORD|(WORD;number) => ?number
+    skip(inside($s); $i)
+;
+def stop($s): #:: WORD|(WORD) => ?number
+    skip(inside($s); 0)
+;
 
 ########################################################################
-# Sets of factors, prefixes ans suffixes (without the empty word)
+# Word sequences
 
+# Sets of prefixes (without the empty word)
 def prefixes: #:: WORD => *WORD
     range(1;length+1) as $i
     | .[:$i]
 ;
 
+# Sets of suffixes (without the empty word)
 def suffixes: #:: WORD => *WORD
     range(length-1;-1;-1) as $i
     | .[$i:]
 ;
 
+# Sets of factors, (without the empty word)
 def factors: #:: WORD => *WORD
 # length order:
     range(1;length+1) as $j
@@ -231,6 +254,16 @@ def factors: #:: WORD => *WORD
 #   range(length+1) as $j
 #   | range($j+1; length+1) as $i
 #   | .[$j:$i]
+;
+
+# Fibbonacci strings
+def fibstr($w; $u): #:: (WORD;WORD) => +WORD
+    [$w,$u]
+    | iterate([.[-1], .[-2]+.[-1]])
+    | .[-2]
+;
+def fibstr: #:: => +WORD
+    fibstr("a"; "b")
 ;
 
 ########################################################################

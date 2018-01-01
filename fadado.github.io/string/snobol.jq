@@ -25,7 +25,7 @@ def FAIL: #:: a => @
     empty
 ;
 
-def SUCCEED: #::a => *a
+def SUCCEED: #::a => +a
 #   repeat(NULL)
     NULL , SUCCEED
 ;
@@ -144,9 +144,7 @@ def L($literal): #:: CURSOR|(string) => CURSOR
 
 # Group patterns; blend a composite pattern into an atomic pattern
 def G(pattern): #:: CURSOR|(CURSOR->CURSOR) => CURSOR
-    .position as $p
-    | pattern   # any expression using `,` and/or `|` if necessary
-    | .start = $p
+    .position as $p | pattern | .start = $p
 ;
 
 ########################################################################
@@ -157,20 +155,20 @@ def G(pattern): #:: CURSOR|(CURSOR->CURSOR) => CURSOR
 # operators for alternation and concatenation:
 #
 #                   SNOBOL  jq
-# ===============================
+# ====================================
 # alternation       P | Q   P , Q
 # concatenation     P Q     P | Q
 
 # To replace the SNOBOL patterns that perform assignments use the following
 # equivalences:
 #
-# SNOBOL           jq
-# =============================
-# P @V             P | AT as $v
-# P $ V            P | N as $v
-# P . V            P | N as $v
-# (P...Q) . V      P...Q | M as $v
-# (P...Q) . V      G(P...Q) | N as $v
+# SNOBOL            jq
+# ====================================
+# P @V              P | AT as $v
+# P $ V             P | N as $v
+# P . V             P | N as $v
+# (P...Q) . V       P...Q | M as $v
+# (P...Q) . V       G(P...Q) | N as $v
 
 # In jq you don't need unevaluated references. For example, replace the
 # following SNOBOL statement:
@@ -223,11 +221,11 @@ def DIFFER($s): #:: CURSOR|(string;string) => CURSOR
     select($s != "")
 ;
 def INTEGER($a): #:: CURSOR|(a) => CURSOR
-    def _int:
+    def _integer:
         (isnumber and . == floor)
         or (tonumber? // false) and (contains(".")|not)
     ;
-    select($a|_int)
+    select($a|_integer)
 ;
 
 #
@@ -236,10 +234,7 @@ def INTEGER($a): #:: CURSOR|(a) => CURSOR
 
 def DUPL($s; $n): #:: (string;number) => string
     select($n >= 0)
-    | if $n == 0
-      then ""
-      else $s*$n
-      end
+    | $s*$n // ""
 ;
 def REPLACE($s; $t; $u): #:: (string;string;string) => string
     $s|str::translate($t; $u)
@@ -349,14 +344,14 @@ def REM: #:: CURSOR => CURSOR
 #
 
 def BREAKX($s): #:: CURSOR|(string) => *CURSOR
-    def _b:
+    def _breakx:
         G(last(ARBNO(NOTANY($s))))
         | when(.position == .slen; FAIL)
-        | . , (.position += 1 | _b)
+        | . , (.position += 1 | _breakx)
     ;
     assert($s!=""; "BREAKX requires a non empty string as argument")
     | select(.position != .slen)
-    | _b
+    | _breakx
 ;
 
 def LEQ($s; $t): #:: CURSOR|(string;string) => CURSOR

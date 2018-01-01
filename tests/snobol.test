@@ -397,6 +397,10 @@ include "string/snobol"; A | NULL | true
 ""
 true
 
+include "string/snobol"; DUPL(.; 0)
+"AEIOU"
+""
+
 include "string/snobol"; DUPL(.; 2)
 "AEIOU"
 "AEIOUAEIOU"

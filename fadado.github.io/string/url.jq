@@ -14,10 +14,11 @@ import "fadado.github.io/math" as math;
 # Inspired in https://www.rosettacode.org/wiki/URL_decoding#jq
 def decode: #:: string| => string
     .  as $in
+    | label $fence
+
     | length as $length
     | {i: 0, answer: ""}
 
-    | label $fence
     | iterate(
         if $in[.i:.i+1] == "%"
         then

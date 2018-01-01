@@ -196,16 +196,6 @@ def fibonacci: #:: => *number
 #   0, ([0,1] | unfold([.[-1], [.[-1], .[-1]+.[-2]]]))
 ;
 
-# Fibbonacci strings
-def fibstr($s; $t): #:: (string;string) => *number
-    [$s,$t]
-    | iterate([.[-1], .[-1]+.[-2]])
-    | .[-2]
-;
-def fibstr: #:: => *number
-    fibstr("a"; "b")
-;
-
 # The famous sieve
 #
 def primes: #:: => *number
