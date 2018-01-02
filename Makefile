@@ -87,14 +87,15 @@ LogDir := .logs
 Logs := $(subst tests/,$(LogDir)/,$(Tests:.test=.log))
 
 # Packages
-LIB=fadado.github.io
-XLIB=fadado.github.io/x
-STR=$(LIB)/string
-GEN=$(LIB)/generator
-MUSIC=$(LIB)/music
 ARRAY=$(LIB)/array
+GEN=$(LIB)/generator
+LIB=fadado.github.io
+MATH=$(LIB)/math
+MUSIC=$(LIB)/music
 OBJECT=$(LIB)/object
+STR=$(LIB)/string
 WORD=$(LIB)/word
+XLIB=fadado.github.io/x
 
 ########################################################################
 # Rules
@@ -118,9 +119,16 @@ $(LogDir)/%.log: tests/%.test
 # Common tests
 $(LogDir)/prelude.log: $(LIB)/prelude.jq
 $(LogDir)/types.log: $(LIB)/types.jq
-$(LogDir)/schema.log: $(LIB)/schema/schema.jq $(LIB)/prelude.jq $(LIB)/types.jq $(STR)/url.jq $(STR)/regexp.jq $(GEN)/stream.jq
-$(LogDir)/math.log: $(LIB)/math.jq
-$(LogDir)/relations.log: $(XLIB)/rel.jq
+$(LogDir)/stream.log: $(LIB)/stream.jq
+$(LogDir)/schema.log: $(LIB)/schema/schema.jq $(LIB)/prelude.jq $(LIB)/types.jq $(STR)/url.jq $(STR)/regexp.jq $(LIB)/stream.jq
+
+# x
+$(LogDir)/relations.log: $(XLIB)/rel.jq $(LIB)/stream.jq
+
+# Math tests
+$(LogDir)/math.log: $(MATH)/math.jq
+$(LogDir)/chance.log: $(MATH)/chance.jq $(LIB)/prelude.jq
+$(LogDir)/sequence.log: $(MATH)/sequence.jq $(LIB)/prelude.jq
 
 # Object tests
 $(LogDir)/object_set.log: $(OBJECT)/set.jq
@@ -128,15 +136,11 @@ $(LogDir)/object_set.log: $(OBJECT)/set.jq
 # Arrays tests
 $(LogDir)/array.log: $(ARRAY)/array.jq
 $(LogDir)/array_set.log: $(ARRAY)/set.jq
+$(LogDir)/array_kleene.log: $(ARRAY)/kleene.jq
+$(LogDir)/array_tuple.log: $(ARRAY)/tuple.jq
 
 # Word tests
 $(LogDir)/word.log: $(WORD)/word.jq
-
-# Generator tests
-$(LogDir)/stream.log: $(GEN)/stream.jq
-$(LogDir)/choice.log: $(GEN)/choice.jq $(GEN)/stream.jq $(GEN)/chance.jq 
-$(LogDir)/sequence.log: $(GEN)/sequence.jq $(LIB)/prelude.jq
-$(LogDir)/chance.log: $(GEN)/chance.jq $(LIB)/prelude.jq
 
 # String tests
 $(LogDir)/ascii.log: $(STR)/ascii.jq $(STR)/ascii.json $(LIB)/prelude.jq
@@ -144,13 +148,13 @@ $(LogDir)/latin1.log: $(STR)/latin1.jq $(STR)/latin1.json $(LIB)/prelude.jq
 $(LogDir)/regexp.log: $(STR)/regexp.jq $(LIB)/prelude.jq $(STR)/string.jq
 $(LogDir)/string.log: $(STR)/string.jq $(LIB)/prelude.jq $(STR)/ascii.jq $(STR)/ascii.json
 $(LogDir)/snobol.log: $(STR)/snobol.jq $(LIB)/prelude.jq  $(STR)/string.jq
-$(LogDir)/url.log: $(STR)/url.jq $(LIB)/math.jq
+$(LogDir)/url.log: $(STR)/url.jq $(MATH)/math.jq
 
 # Music tests
 $(LogDir)/pitch.log: $(MUSIC)/pitch.jq $(LIB)/prelude.jq $(STR)/regexp.jq 
-$(LogDir)/pitch-class.log: $(MUSIC)/pitch-class.jq $(MUSIC)/pitch.jq $(LIB)/prelude.jq $(ARRAY)/set.jq $(LIB)/math.jq
-$(LogDir)/pitch-class-set.log: $(MUSIC)/pitch-class-set.jq $(MUSIC)/pitch-class.jq $(LIB)/prelude.jq $(ARRAY)/set.jq $(LIB)/math.jq
-$(LogDir)/interval-class-vector.log: $(MUSIC)/interval-class-vector.jq $(MUSIC)/pitch-class.jq $(ARRAY)/array.jq $(LIB)/math.jq $(LIB)/prelude.jq 
+$(LogDir)/pitch-class.log: $(MUSIC)/pitch-class.jq $(MUSIC)/pitch.jq $(LIB)/prelude.jq $(ARRAY)/set.jq $(MATH)/math.jq
+$(LogDir)/pitch-class-set.log: $(MUSIC)/pitch-class-set.jq $(MUSIC)/pitch-class.jq $(LIB)/prelude.jq $(ARRAY)/set.jq $(MATH)/math.jq
+$(LogDir)/interval-class-vector.log: $(MUSIC)/interval-class-vector.jq $(MUSIC)/pitch-class.jq $(ARRAY)/array.jq $(MATH)/math.jq $(LIB)/prelude.jq 
 $(LogDir)/interval-pattern.log: $(MUSIC)/interval-pattern.jq $(MUSIC)/pitch-class.jq $(LIB)/prelude.jq 
 $(LogDir)/interval-table.log: $(MUSIC)/interval-table.jq $(MUSIC)/pitch-class.jq $(ARRAY)/array.jq $(LIB)/prelude.jq 
 
@@ -218,7 +222,6 @@ cross: ; $(JQ) -nRrf examples/$@.jq
 cut: ; $(JQ) -cnRrf examples/$@.jq
 dice: ; $(JQ) -cnRrf examples/$@.jq
 newton: ; $(JQ) -cnRrf examples/$@.jq
-nondet: ; $(JQ) -cnrf examples/$@.jq
 nqbrute: ; $(JQ) -cnRrf examples/$@.jq
 nqsmart: ; $(JQ) -cnRrf examples/$@.jq
 octcode: ; $(JQ) -cnRrf examples/$@.jq

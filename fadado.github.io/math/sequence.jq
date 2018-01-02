@@ -1,5 +1,5 @@
 module {
-    name: "sequence",
+    name: "math/sequence",
     description: "Mathematical sequences",
     namespace: "fadado.github.io",
     author: {

@@ -1,5 +1,5 @@
 module {
-    name: "ascii",
+    name: "string/ascii",
     description: "Functions in the ctype.h style for the ASCII encoding",
     namespace: "fadado.github.io",
     author: {

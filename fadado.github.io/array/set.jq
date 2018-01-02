@@ -11,10 +11,12 @@ module {
 include "fadado.github.io/prelude";
 
 ########################################################################
-# Basic algebra of sets
-
 # Types used in declarations:
-#   SET: [a]
+#   SET:    [a]
+#   MULSET: [a]
+
+########################################################################
+# Basic algebra of sets
 
 # ∅         []
 # |S|       length
@@ -45,7 +47,7 @@ def element($s): #:: a|(SET) => boolean
 ;
 
 # S ∋ x (S contains x as member?)
-def member($x): #:: a|(SET) => boolean
+def member($x): #:: SET|(a) => boolean
     indices($x) != []
 ;
 
@@ -77,128 +79,98 @@ def sdifference($t): #:: SET|(SET) => SET
 ;
 
 ########################################################################
-# Cartesian product
+# Subsets
 
-# Types used in declarations:
-#   SET: [a]
-#   TUPLE: [a]
-# For operations with concatenable symbols:
-#   IDENTITY: "" or []
-#   WORD: [a]^string  -- catenable element
+# Size (n-1) subsets
+#
+def minus1: #:: SET => *SET
+    if length == 0  # none to pick?
+    then empty      # then fail
+    else
+        # either one picked with what's left with one removed
+        .[0:1] + (.[1:]|minus1)
+        # or  what's left after picking one
+        , .[1:]
+    end
+;
 
-# (×), A × B, A × B × C, …
-# Generates tuples (using arrays)
-def product: #:: [SET] => +TUPLE
-    def _product:
-        if length == 1
-        then
-            .[0][] | [.]
+# Size k subsets
+# Combinations
+#
+def combinations($k): #:: SET|(number) => *SET
+    def _combs($k):
+        if $k == 0
+        then []
+        elif length == 0 # none to pick?
+        then empty       # then fail (no results for k > n)
         else
-            .[0][] as $x
-            | [$x] + (.[1:]|_product)
+            # either .[0:1] one and add to what's left combinations
+            .[0:1] + (.[1:]|_combs($k-1))
+            # or what's left combined
+            , (.[1:]|_combs($k))
         end
     ;
+    select(0 <= $k and $k <= length) # not defined for all $k
+    | _combs($k)
+;
+
+# All subsets, stable
+#
+def powerset: #:: SET => *SET
+    combinations(range(0; 1+length))
+;
+
+# All subsets, unstable output
+#
+def powerset_u: #:: SET => *SET
     if length == 0
     then []
-    else _product // []
+    else
+        (.[1:]|powerset_u) as $s
+        | $s , .[0:1] + $s
     end
-;
-
-# For sets with catenable symbols (arrays or strings)
-# Note: empty array or string must be specified as identity value
-def product($identity): #:: [SET]|(IDENTITY) => +WORD
-    def _product:
-        if length == 1
-        then
-            .[0][]
-        else
-            .[0][] as $x
-            | $x + (.[1:]|_product)
-        end
-    ;
-    if length == 0
-    then $identity
-    else _product // $identity
-    end
-;
-
-# Aⁿ
-# Specifically size n words over an alphabet Σ (Σⁿ)
-def power($n): #:: SET|(number) => +TUPLE
-    select(0 <= $n) # not defined for negative $n
-    | . as $set
-    | [range($n) | $set]
-    | product
-;
-
-def power($n; $identity): #:: SET|(number;IDENTITY) => +WORD
-    select(0 <= $n) # not defined for negative $n
-    | . as $set
-    | [range($n) | $set]
-    | product($identity)
 ;
 
 ########################################################################
-# Kleene closures
+# Multisets
 
-# Generates K*: K⁰ ∪ K¹ ∪ K² ∪ K³ ∪ K⁴ ∪ K⁵ ∪ K⁶ ∪ K⁷ ∪ K⁸ ∪ K⁹…
-# Specifically, words over an alphabet Σ (Σ*: Σ⁰ ∪ Σ¹ ∪ Σ²…)
+# Size k multisets
+# Combinations with reposition
+def mulsets($k): #:: SET|(number) => *MULSET
+    def _mulset($k):
+        if $k == 0
+        then []
+        elif length == 0 # none to pick?
+        then empty       # then fail
+        else
+            # either .[0:1] one and add to other multisets minus one
+            .[0:1] + _mulset($k-1)
+            # or what's left multisets
+            , (.[1:]|_mulset($k))
+        end
+    ;
+    select(0 <= $k) # not defined for all $k
+    | _mulset($k)
+;
+
+# Infinite multisets from a set
+def mulsets: #:: SET => *MULSET
+    mulsets(range(0; infinite))
+;
+
+# Multiset permutations (naïve implementation)
 #
-def kstar: #:: SET => +TUPLE
-    . as $set
-    | if length == 0
-    then []
-    else []|deepen(.[length]=$set[])
-    end
-;
-
-# For catenable symbols
-def kstar($identity): #:: SET|(IDENTITY) => +WORD
-    . as $set
-    | if length == 0
-    then $identity
-    else $identity|deepen(. + $set[])
-    end
-;
-
-#def kstar: #:: string| => +string
-#    def k: "", .[] + k;
-#    if length == 0 then .  else (./"")|k end
+#def arrangement: #:: [a] => *[a]
+#    [permutations]
+#    | unique[]
 #;
 
-# Generates K⁺: K¹ ∪ K² ∪ K³ ∪ K⁴ ∪ K⁵ ∪ K⁶ ∪ K⁷ ∪ K⁸ ∪ K⁹…
-# Specifically, words over an alphabet Σ without empty word (Σ⁺: Σ¹ ∪ Σ²…)
+# Multiset combinations (naïve implementation)
 #
-def kplus: #:: SET => *TUPLE
-    . as $set
-    | if length == 0
-    then empty
-    else deepen(.[]|[.]; .[length]=$set[])
-    end
-;
-
-# For catenable symbols ($identity is not used!)
-def kplus($ignored): #:: SET|(IDENTITY) => *WORD
-    . as $set
-    | if length == 0
-    then empty
-    else deepen(.[]; . + $set[])
-    end
-;
-
-########################################################################
-
-# Alphabet Σ:                   [a,b,c,...] (a set)
-# Σ*:                           Σ | kstar
-# Σ⁺:                           Σ | kplus
-# Σⁿ:                           Σ | power(n)
-
-# Word w:                       [...] or "..."
-
-# Language L over Σ:            [w,u...]    (a set of words)
-# L1 × L2:                      [L1,l2] | product([] or "")
-# L*:                           L | kstar([] or "")
-# L⁺:                           L | kplus([] or "")
-# Lⁿ:                           L | power(n; [] or "")
+#def disposition: #:: [a] => *[a]
+#    [powerset]
+#    | unique
+#    | sort_by(length)[]
+#;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

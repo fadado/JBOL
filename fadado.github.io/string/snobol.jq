@@ -1,5 +1,5 @@
 module {
-    name: "snobol",
+    name: "string/snobol",
     description: "Pattern matching in the SNOBOL style",
     namespace: "fadado.github.io",
     author: {

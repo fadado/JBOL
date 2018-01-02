@@ -1,7 +1,8 @@
 #!/usr/local/bin/jq -cnRrf
 
 include "fadado.github.io/prelude";
-import "fadado.github.io/generator/choice" as choice;
+import "fadado.github.io/array/tuple" as tuple;
+import "fadado.github.io/array/choice" as choice;
 
 def issorted:
     def _issorted($xs; $len):
@@ -18,12 +19,12 @@ def issorted:
 def bogussort:
     label $fence
     | choice::shuffle
-    | choice::permutations
+    | tuple::permutations
     | select(issorted)
     | . , break $fence
 
 #   | first(
-#       choice::permutations
+#       tuple::permutations
 #       | select(issorted)
 #   )
 ;

@@ -1,0 +1,100 @@
+#########################################################################
+# Kleene closures
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+#########################################################################
+
+#
+# product
+#
+
+# ×
+include "array/kleene"; [product]|length
+[]
+1
+
+# A × ∅
+include "array/kleene"; product
+[[1,2,3],[]]
+[]
+
+# A × ∅
+include "array/kleene"; product
+[[],[1,2,3]]
+[]
+
+# A × B
+include "array/kleene"; [product]
+[[1,2,3],[4]]
+[[1,4],[2,4],[3,4]]
+
+# A⁵
+include "array/kleene"; [product] | length == (5*5*5*5*5)
+[[1,2,3,4,5], [1,2,3,4,5], [1,2,3,4,5], [1,2,3,4,5], [1,2,3,4,5]]
+true
+
+# A × B
+include "array/kleene"; [[[1,2,3],[4]]|product]
+null
+[[1,4],[2,4],[3,4]]
+
+# A × B × C
+include "array/kleene"; [[[1,2,3],[4],[5,6]]|product]
+null
+[[1,4,5],[1,4,6],[2,4,5],[2,4,6],[3,4,5],[3,4,6]]
+
+#
+# power
+#
+
+include "array/kleene"; power(0)
+[1,2,3]
+[]
+
+include "array/kleene"; [power(1)]
+[1,2,3]
+[[1],[2],[3]]
+
+include "array/kleene"; [power(2)]
+[1,2,3]
+[[1,1],[1,2],[1,3],[2,1],[2,2],[2,3],[3,1],[3,2],[3,3]]
+
+# A⁵
+include "array/kleene"; [power(5)] | length == (5*5*5*5*5)
+[[1,2,3,4,5], [1,2,3,4,5], [1,2,3,4,5], [1,2,3,4,5], [1,2,3,4,5]]
+true
+
+include "array/kleene"; power(0)
+[1,2,3]
+[]
+
+include "array/kleene"; [power(2)]
+[1,2,3]
+[[1,1],[1,2],[1,3],[2,1],[2,2],[2,3],[3,1],[3,2],[3,3]]
+
+#
+# closures
+#
+
+include "array/kleene"; [limit(13;star)]
+[1,2,3]
+[[],[1],[2],[3],[1,1],[1,2],[1,3],[2,1],[2,2],[2,3],[3,1],[3,2],[3,3]]
+
+include "array/kleene"; [[limit(13;star)],[[],limit(12;plus)]] | .[0]==.[1]
+[1,2,3]
+true
+
+include "array/kleene"; [[limit(13;star)][1:],[limit(12;plus)]] | .[0]==.[1]
+[1,2,3]
+true
+
+include "array/kleene"; [limit(12;plus)]
+[1,2,3]
+[[1],[2],[3],[1,1],[1,2],[1,3],[2,1],[2,2],[2,3],[3,1],[3,2],[3,3]]
+
+include "array/kleene"; include "array/kleene"; [power(2)]==[(limit(20;star)|select(length==2))]
+[1,2,3]
+true
+
+# vim:ai:sw=2:ts=2:et:syntax=jq

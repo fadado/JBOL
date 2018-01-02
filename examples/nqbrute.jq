@@ -1,14 +1,14 @@
 #!/usr/local/bin/jq -cnRrf
 
 include "fadado.github.io/prelude";
-import "fadado.github.io/generator/choice" as choice;
+import "fadado.github.io/array/tuple" as tuple;
 
 # N-Queens by brute force
 
 def queens($n):
     def generate:
         [range(0; $n)]
-        | choice::permutations
+        | tuple::permutations
     ;
     def all_safe:
         def ascending:

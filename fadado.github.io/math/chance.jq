@@ -1,5 +1,5 @@
 module {
-    name: "chance",
+    name: "math/chance",
     description: "Basic pseudo-random generators",
     namespace: "fadado.github.io",
     author: {

@@ -1,5 +1,5 @@
 module {
-    name: "string",
+    name: "string/url",
     description: "URL string operations",
     namespace: "fadado.github.io",
     author: {

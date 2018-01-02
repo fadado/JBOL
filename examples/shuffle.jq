@@ -1,6 +1,6 @@
 #!/usr/local/bin/jq -cnRrf
 
-import "fadado.github.io/generator/choice" as choice;
+import "fadado.github.io/array/choice" as choice;
 
 # test
 def main($N):

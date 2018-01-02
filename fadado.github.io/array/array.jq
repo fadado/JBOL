@@ -1,6 +1,6 @@
 module {
     name: "array",
-    description: "Generic array operations",
+    description: "Generic and stack array operations",
     namespace: "fadado.github.io",
     author: {
         name: "Joan Josep Ordinas Rosa",

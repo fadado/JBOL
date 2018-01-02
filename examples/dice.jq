@@ -1,8 +1,8 @@
 #!/usr/local/bin/jq -cnRrf
 
 import "fadado.github.io/math" as math;
-import "fadado.github.io/generator/stream" as stream;
-import "fadado.github.io/generator/chance" as chance;
+import "fadado.github.io/stream" as stream;
+import "fadado.github.io/math/chance" as chance;
 
 def dice:
     1+chance::random(6; chance::randomize)

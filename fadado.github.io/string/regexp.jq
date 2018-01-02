@@ -1,5 +1,5 @@
 module {
-    name: "regular expressions",
+    name: "string/regexp",
     description: "Pattern matching using regular expressions",
     namespace: "fadado.github.io",
     author: {

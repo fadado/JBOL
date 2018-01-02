@@ -11,10 +11,13 @@ module {
 include "fadado.github.io/prelude";
 
 ########################################################################
-# Generic operations on strings and arrays
+# Types used in declarations:
+#   TUPLE: [a]
+#   WORD: TUPLE^string
+#   SYMBOL: singleton WORD
 
-# WORD:                         array^string
-# SYMBOL:                       singleton WORD
+########################################################################
+# Generic operations on strings and arrays
 
 # Word w:                       [...] or "..."
 # Empty word:                   [] or ""
@@ -294,5 +297,19 @@ def plus: #:: WORD => +WORD
     . as $word
     | iterate(. + $word)
 ;
+
+########################################################################
+# Operations on alphabets and languages
+
+# Alphabet Σ:                   [a]
+# Σⁿ:                           Σ | kleene::power(n)
+# Σ*:                           Σ | kleene::star
+# Σ⁺:                           Σ | kleene::plus
+
+# Language L over Σ:            [WORD]
+# L1 × L2:                      [L1,l2] | kleene::product(ε)
+# Lⁿ:                           L | kleene::power(n; ε)
+# L*:                           L | kleene::star(ε)
+# L⁺:                           L | kleene::plus(ε)
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

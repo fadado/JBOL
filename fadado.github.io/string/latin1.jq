@@ -1,5 +1,5 @@
 module {
-    name: "latin1",
+    name: "string/latin1",
     description: "Functions in the ctype style for the ISO-8859-1 encoding",
     namespace: "fadado.github.io",
     author: {

@@ -1,0 +1,56 @@
+#########################################################################
+# Tuples
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+#########################################################################
+
+include "array/tuple"; [permutations(2)]
+[]
+[]
+
+include "array/tuple"; [permutations(2)]
+[1]
+[]
+
+include "array/tuple"; [permutations(1)]
+[1]
+[[1]]
+
+include "array/tuple"; [permutations(1)]
+[1,2]
+[[1],[2]]
+
+include "array/tuple"; [permutations(2)]
+[1,2]
+[[1,2],[2,1]]
+
+include "array/tuple"; [permutations(2)]
+[1,2,3]
+[[1,2],[1,3],[2,1],[2,3],[3,1],[3,2]]
+
+include "array/tuple"; [permutations(2)]==([(limit(10;subseqs)|select(length==2))])
+[1,2,3]
+true
+
+include "array/tuple"; [permutations]
+[1,2,3]
+[[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]
+
+include "array/tuple"; [derangement]
+[1,2,3]
+[[2,3,1],[3,1,2]]
+
+include "array/tuple"; [cicles]
+[1,2,3]
+[[1,2,3],[1,3,2]]
+
+#include "array/tuple"; [arrangement]
+#[1,1,2]
+#[[1,1,2],[1,2,1],[2,1,1]]
+
+#include "array/tuple"; [disposition]
+#[1,1,2]
+#[[],[1],[2],[1,1],[1,2],[1,1,2]]
+
+# vim:ai:sw=2:ts=2:et:syntax=jq
