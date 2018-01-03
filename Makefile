@@ -122,16 +122,10 @@ $(LogDir)/types.log: $(LIB)/types.jq
 $(LogDir)/stream.log: $(LIB)/stream.jq
 $(LogDir)/schema.log: $(LIB)/schema/schema.jq $(LIB)/prelude.jq $(LIB)/types.jq $(STR)/url.jq $(STR)/regexp.jq $(LIB)/stream.jq
 
-# x
-$(LogDir)/relations.log: $(XLIB)/rel.jq $(LIB)/stream.jq
-
 # Math tests
 $(LogDir)/math.log: $(MATH)/math.jq
-$(LogDir)/chance.log: $(MATH)/chance.jq $(LIB)/prelude.jq
-$(LogDir)/sequence.log: $(MATH)/sequence.jq $(LIB)/prelude.jq
-
-# Object tests
-$(LogDir)/object_set.log: $(OBJECT)/set.jq
+$(LogDir)/math_chance.log: $(MATH)/chance.jq $(LIB)/prelude.jq
+$(LogDir)/math_sequence.log: $(MATH)/sequence.jq $(LIB)/prelude.jq
 
 # Arrays tests
 $(LogDir)/array.log: $(ARRAY)/array.jq
@@ -139,24 +133,30 @@ $(LogDir)/array_set.log: $(ARRAY)/set.jq
 $(LogDir)/array_kleene.log: $(ARRAY)/kleene.jq
 $(LogDir)/array_tuple.log: $(ARRAY)/tuple.jq
 
+# Object tests
+$(LogDir)/object_set.log: $(OBJECT)/set.jq
+
 # Word tests
 $(LogDir)/word.log: $(WORD)/word.jq
 
 # String tests
-$(LogDir)/ascii.log: $(STR)/ascii.jq $(STR)/ascii.json $(LIB)/prelude.jq
-$(LogDir)/latin1.log: $(STR)/latin1.jq $(STR)/latin1.json $(LIB)/prelude.jq
-$(LogDir)/regexp.log: $(STR)/regexp.jq $(LIB)/prelude.jq $(STR)/string.jq
 $(LogDir)/string.log: $(STR)/string.jq $(LIB)/prelude.jq $(STR)/ascii.jq $(STR)/ascii.json
-$(LogDir)/snobol.log: $(STR)/snobol.jq $(LIB)/prelude.jq  $(STR)/string.jq
-$(LogDir)/url.log: $(STR)/url.jq $(MATH)/math.jq
+$(LogDir)/string_ascii.log: $(STR)/ascii.jq $(STR)/ascii.json $(LIB)/prelude.jq
+$(LogDir)/string_latin1.log: $(STR)/latin1.jq $(STR)/latin1.json $(LIB)/prelude.jq
+$(LogDir)/string_regexp.log: $(STR)/regexp.jq $(LIB)/prelude.jq $(STR)/string.jq
+$(LogDir)/string_snobol.log: $(STR)/snobol.jq $(LIB)/prelude.jq  $(STR)/string.jq
+$(LogDir)/string_url.log: $(STR)/url.jq $(MATH)/math.jq
 
 # Music tests
-$(LogDir)/pitch.log: $(MUSIC)/pitch.jq $(LIB)/prelude.jq $(STR)/regexp.jq 
-$(LogDir)/pitch-class.log: $(MUSIC)/pitch-class.jq $(MUSIC)/pitch.jq $(LIB)/prelude.jq $(ARRAY)/set.jq $(MATH)/math.jq
-$(LogDir)/pitch-class-set.log: $(MUSIC)/pitch-class-set.jq $(MUSIC)/pitch-class.jq $(LIB)/prelude.jq $(ARRAY)/set.jq $(MATH)/math.jq
-$(LogDir)/interval-class-vector.log: $(MUSIC)/interval-class-vector.jq $(MUSIC)/pitch-class.jq $(ARRAY)/array.jq $(MATH)/math.jq $(LIB)/prelude.jq 
-$(LogDir)/interval-pattern.log: $(MUSIC)/interval-pattern.jq $(MUSIC)/pitch-class.jq $(LIB)/prelude.jq 
-$(LogDir)/interval-table.log: $(MUSIC)/interval-table.jq $(MUSIC)/pitch-class.jq $(ARRAY)/array.jq $(LIB)/prelude.jq 
+$(LogDir)/music_pitch.log: $(MUSIC)/pitch.jq $(LIB)/prelude.jq $(STR)/regexp.jq 
+$(LogDir)/music_pitch-class.log: $(MUSIC)/pitch-class.jq $(MUSIC)/pitch.jq $(LIB)/prelude.jq $(ARRAY)/set.jq $(MATH)/math.jq
+$(LogDir)/music_pitch-class-set.log: $(MUSIC)/pitch-class-set.jq $(MUSIC)/pitch-class.jq $(LIB)/prelude.jq $(ARRAY)/set.jq $(MATH)/math.jq
+$(LogDir)/music_interval-class-vector.log: $(MUSIC)/interval-class-vector.jq $(MUSIC)/pitch-class.jq $(ARRAY)/array.jq $(MATH)/math.jq $(LIB)/prelude.jq 
+$(LogDir)/music_interval-pattern.log: $(MUSIC)/interval-pattern.jq $(MUSIC)/pitch-class.jq $(LIB)/prelude.jq 
+$(LogDir)/music_interval-table.log: $(MUSIC)/interval-table.jq $(MUSIC)/pitch-class.jq $(ARRAY)/array.jq $(LIB)/prelude.jq 
+
+# x
+$(LogDir)/relations.log: $(XLIB)/rel.jq $(LIB)/stream.jq
 
 ########################################################################
 # Utilities
