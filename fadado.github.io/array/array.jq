@@ -13,6 +13,7 @@ include "fadado.github.io/prelude";
 ########################################################################
 
 # Remove all x from array
+# Use set::remove/1 to remove one `x`
 def remove($x): #:: [a]|(a) => [a]
     indices($x) as $ix
     | when($ix != []; del(.[$ix[]]))
@@ -48,11 +49,13 @@ def different: #:: [a] => boolean
 def push($x): #:: [a]|(a) => [a]
     .[length] = $x
 ;
+
 def pop: #:: [a] => [a]
-    .[:-1]
+    .[:-1] # [] if empty
 ;
+
 def top: #:: [a] => a^null
-    .[-1]
+    .[-1] # null if empty
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

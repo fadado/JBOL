@@ -14,7 +14,7 @@ include "fadado.github.io/prelude";
 # Types used in declarations:
 #   SET: [a]
 #   TUPLE: [a]
-#   WORD: TUPLE^string
+#   WORD: array^string
 #   IDENTITY: "" or []
 
 # (×), A × B, A × B × C, …
@@ -56,6 +56,7 @@ def product($identity): #:: [SET]|(IDENTITY) => +WORD
 
 # Aⁿ
 # Specifically size n words over an alphabet Σ (Σⁿ)
+# W(n,k) = k^n
 def power($n): #:: SET|(number) => +TUPLE
     select(0 <= $n) # not defined for negative $n
     | . as $set
@@ -73,20 +74,22 @@ def power($n; $identity): #:: SET|(number;IDENTITY) => +WORD
 # Generates K*: K⁰ ∪ K¹ ∪ K² ∪ K³ ∪ K⁴ ∪ K⁵ ∪ K⁶ ∪ K⁷ ∪ K⁸ ∪ K⁹…
 # Specifically, words over an alphabet Σ (Σ*: Σ⁰ ∪ Σ¹ ∪ Σ²…)
 def star: #:: SET => +TUPLE
-    . as $set
-    | if length == 0
-    then []
-    else []|deepen(.[length]=$set[])
-    end
+    power(range(0; infinite))
+#   . as $set
+#   | if length == 0
+#   then []
+#   else []|deepen(.[length]=$set[])
+#   end
 ;
 
 # For catenable symbols
 def star($identity): #:: SET|(IDENTITY) => +WORD
-    . as $set
-    | if length == 0
-    then $identity
-    else $identity|deepen(. + $set[])
-    end
+    power(range(0; infinite); $identity)
+#   . as $set
+#   | if length == 0
+#   then $identity
+#   else $identity|deepen(. + $set[])
+#   end
 ;
 
 #def star: #:: string => +string
@@ -97,20 +100,22 @@ def star($identity): #:: SET|(IDENTITY) => +WORD
 # Generates K⁺: K¹ ∪ K² ∪ K³ ∪ K⁴ ∪ K⁵ ∪ K⁶ ∪ K⁷ ∪ K⁸ ∪ K⁹…
 # Specifically, words over an alphabet Σ without empty word (Σ⁺: Σ¹ ∪ Σ²…)
 def plus: #:: SET => *TUPLE
-    . as $set
-    | if length == 0
-    then empty
-    else deepen(.[]|[.]; .[length]=$set[])
-    end
+    power(range(1; infinite))
+#   . as $set
+#   | if length == 0
+#   then empty
+#   else deepen(.[]|[.]; .[length]=$set[])
+#   end
 ;
 
 # For catenable symbols ($identity is ignored!)
 def plus($identity): #:: SET|(IDENTITY) => *WORD
-    . as $set
-    | if length == 0
-    then empty
-    else deepen(.[]; . + $set[])
-    end
+    power(range(1; infinite); $identity)
+#   . as $set
+#   | if length == 0
+#   then empty
+#   else deepen(.[]; . + $set[])
+#   end
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

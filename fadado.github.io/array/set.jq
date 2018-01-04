@@ -28,27 +28,24 @@ include "fadado.github.io/prelude";
 
 # s + e (add element to set)
 def insert($x): #:: SET|(a) => SET
-    .[length] = $x
+    when(indices($x) == []; .[length] = $x)
 ;
 
-# s – e (remove element from set)
+# s – e (remove one element from set)
+# Use array::remove/1 to remove all `x`
 def remove($x): #:: SET|(a) => SET
-# remove one:
-#   indices($x)[0] as $i
-#   | when($i != null; del(.[$i]))
-# remove all:
-    indices($x) as $ix
-    | when($ix != []; del(.[$ix[]]))
+    indices($x)[0] as $i
+    | when($i != null; del(.[$i]))
 ;
 
 # x ∈ S (x is element of S?)
 def element($s): #:: a|(SET) => boolean
-    . as $e | $s|indices($e) != []
+    [.] | inside($s)
 ;
 
 # S ∋ x (S contains x as member?)
 def member($x): #:: SET|(a) => boolean
-    indices($x) != []
+    contains([$x])
 ;
 
 # S ≡ T (S is equal to T?)
@@ -82,21 +79,25 @@ def sdifference($t): #:: SET|(SET) => SET
 # Subsets
 
 # Size (n-1) subsets
-#
+# M(n) = n
 def minus1: #:: SET => *SET
     if length == 0  # none to pick?
     then empty      # then fail
     else
-        # either one picked with what's left with one removed
-        .[0:1] + (.[1:]|minus1)
-        # or  what's left after picking one
-        , .[1:]
+        range(length-1;-1;-1) as $i
+        | del(.[$i])
+# Alternative compatible with strings
+#       # either pick first and add to what's left with one removed
+#       .[0:1] + (.[1:]|minus1)
+#       # or  what's left after picking the first
+#       , .[1:]
     end
 ;
 
-# Size k subsets
-# Combinations
-#
+# Size k subsets, Combinations
+# C(n,k) = P(n,k)/P(k) = (n!/(n-k)!)/k! = n!/((n-k)!k!)
+# C(n,n) = C(n,0) = 1
+# C(n,k) = 0 for k > n
 def combinations($k): #:: SET|(number) => *SET
     def _combs($k):
         if $k == 0
@@ -104,7 +105,7 @@ def combinations($k): #:: SET|(number) => *SET
         elif length == 0 # none to pick?
         then empty       # then fail (no results for k > n)
         else
-            # either .[0:1] one and add to what's left combinations
+            # either pick one and add to what's left combinations
             .[0:1] + (.[1:]|_combs($k-1))
             # or what's left combined
             , (.[1:]|_combs($k))
@@ -115,27 +116,26 @@ def combinations($k): #:: SET|(number) => *SET
 ;
 
 # All subsets, stable
-#
-def powerset: #:: SET => *SET
-    combinations(range(0; 1+length))
+# S(n) = 2^n
+def powerset: #:: SET => +SET
+    combinations(range(0; length+1))
 ;
 
 # All subsets, unstable output
-#
-def powerset_u: #:: SET => *SET
+def powerset_u: #:: SET => +SET
     if length == 0
     then []
     else
         (.[1:]|powerset_u) as $s
-        | $s , .[0:1] + $s
+        | $s , .[0:1]+$s
     end
 ;
 
 ########################################################################
 # Multisets
 
-# Size k multisets
-# Combinations with reposition
+# Size k multisets, Combinations with reposition
+# M(n,k) = C(n+k-1,k) = (n+k-1)!/(k!(n-1)!)
 def mulsets($k): #:: SET|(number) => *MULSET
     def _mulset($k):
         if $k == 0
@@ -143,7 +143,7 @@ def mulsets($k): #:: SET|(number) => *MULSET
         elif length == 0 # none to pick?
         then empty       # then fail
         else
-            # either .[0:1] one and add to other multisets minus one
+            # either pick one and add to other multisets minus one
             .[0:1] + _mulset($k-1)
             # or what's left multisets
             , (.[1:]|_mulset($k))
@@ -159,14 +159,12 @@ def mulsets: #:: SET => *MULSET
 ;
 
 # Multiset permutations (naïve implementation)
-#
 #def arrangement: #:: [a] => *[a]
 #    [permutations]
 #    | unique[]
 #;
 
 # Multiset combinations (naïve implementation)
-#
 #def disposition: #:: [a] => *[a]
 #    [powerset]
 #    | unique

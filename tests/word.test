@@ -292,7 +292,7 @@ include "word"; [factors]
 ["a","b","c","d","ab","bc","cd","abc","bcd","abcd"]
 
 # fibstr
-include "word"; [limit(5; fibstr)]
+include "word"; [limit(5; fibstr("a";"b"))]
 null
 ["a","b","ab","bab","abbab"]
 

@@ -15,31 +15,31 @@ include "fadado.github.io/prelude";
 #   TUPLE: [a]
 
 # Permutations
-#
+# P(n) = n!
 def permutations: #:: TUPLE => *TUPLE
     def choose: range(0; length);
     #
     if length == 0
     then []
     else
-        # choose one and add to what's left permuted
+        # pick one and add to what's left permuted
         choose as $i
         | .[$i:$i+1] + (del(.[$i])|permutations)
     end
 ;
 
-# Partial permutations
-# Variations
-#
+# Partial permutations, Variations
+# V(n,k) = n!/(n-k)!
+# V(n,1) = n
+# V(n,0) = 1
+# V(n,n) = P(n)
 def permutations($k): #:: TUPLE|(number) => *TUPLE
     def _perm($k):
-        def choose: # empty if none to choose
-            range(0; length)
-        ;
+        def choose: range(0; length);
+        #
         if $k == 1
         then
-            #choose as $i | .[$i:$i+1]
-            .[] | [.]
+            .[] | [.] #choose as $i | .[$i:$i+1]
         else
             # choose one and add to what's left permuted
             choose as $i
@@ -50,23 +50,16 @@ def permutations($k): #:: TUPLE|(number) => *TUPLE
     | if $k == 0 then [] else _perm($k) end
 ;
 
-# All sizes permutations
-#
-def subseqs: #:: TUPLE => *TUPLE
-    permutations(range(0; 1+length))
-;
-
 # Circular permutations (necklaces)
-#
+# Q(n) = n!/n = P(n-1)
+# Q(n,k) = P(n,k)/k (TODO: implement)
 def cicles: #:: TUPLE => *TUPLE
-    .[0:1] as $first
-    | .[1:]|permutations
-    | $first + .
+    .[0:1] + (.[1:]|permutations)
 ;
 
 # Derangements
-#
-def derangement: #:: TUPLE => *TUPLE
+# TODO: formula?
+def derangements: #:: TUPLE => *TUPLE
     def choose($i): #:: [a]|(number) => [[number,a]]
         range(length) as $j
         | select(.[$j][0] != $i)

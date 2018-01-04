@@ -13,7 +13,7 @@ import "fadado.github.io/math/chance" as chance;
 
 # Shuffle array contents.
 #
-def shuffle($seed): #:: TUPLE|(number) => TUPLE
+def shuffle($seed): #:: [a]|(number) => [a]
     # Swaps two array positions
     def swap($i; $j):
         when($i != $j;
@@ -32,13 +32,13 @@ def shuffle($seed): #:: TUPLE|(number) => TUPLE
          # exchange a[j] and a[i]
          | swap($i; $j))
 ;
-def shuffle: #:: TUPLE => TUPLE
+def shuffle: #:: [a] => [a]
     shuffle(chance::randomize)
 ;
 
 # Choose in order k random elements from the input array.
 #
-def take($k; $seed): #:: TUPLE|(number;number) => *a
+def take($k; $seed): #:: [a]|(number;number) => *a
     # Print in order k random elements from A[1]..A[n]
     # for (i=1; n>0; i++)
     #     if (rand() < k/n--) {
@@ -48,7 +48,7 @@ def take($k; $seed): #:: TUPLE|(number;number) => *a
     def _take($a; $r; $m):
         def t($n; $k):
             if $n < 1
-            then emtpy
+            then empty
             else
                 ($m-$n) as $i
                 | if $r[$i] < ($k/$n)
@@ -65,7 +65,7 @@ def take($k; $seed): #:: TUPLE|(number;number) => *a
     | _take($a; $r; $len)
 ;
 
-def take($k): #:: TUPLE|(number) => *a
+def take($k): #:: [a]|(number) => *a
     take($k; chance::randomize)    
 ;
 

@@ -129,9 +129,9 @@ def tostr: #:: MATCH| => string
 #   * Include matched groups if present
 
 def split($regex; $flags; $limit): #:: string|(string;string;number) => *string
-    def segment:
+    def nwise: # n = 3
         when(length > 3;
-             .[0:3] , (.[3:] | segment))
+             .[0:3] , (.[3:] | nwise))
     ;
     if $limit < 0
     then empty
@@ -151,7 +151,7 @@ def split($regex; $flags; $limit): #:: string|(string;string;number) => *string
             ($subject|length), # last index
             [] # empty captures for last segment
         ]
-        | segment as [$i, $j, $groups]
+        | nwise as [$i, $j, $groups]
         | $subject[$i:$j], ($groups[] | .string)
     end
 ;

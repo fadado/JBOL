@@ -12,8 +12,7 @@ include "fadado.github.io/prelude";
 
 ########################################################################
 # Types used in declarations:
-#   TUPLE: [a]
-#   WORD: TUPLE^string
+#   WORD: array^string
 #   SYMBOL: singleton WORD
 
 ########################################################################
@@ -260,20 +259,17 @@ def factors: #:: WORD => *WORD
 ;
 
 # Fibbonacci strings
+# fibstr("a"; "b") => "a","b","ab","bab","abbab"…
 def fibstr($w; $u): #:: (WORD;WORD) => +WORD
     [$w,$u]
     | iterate([.[-1], .[-2]+.[-1]])
     | .[-2]
-;
-def fibstr: #:: => +WORD
-    fibstr("a"; "b")
 ;
 
 ########################################################################
 # Word iteration
 
 # Generates wⁿ (one word: w concatenated n times)
-#
 def power($n): #:: WORD|(number) => WORD
     . as $word
     | select(0 <= $n) # not defined for negative $n
@@ -284,7 +280,6 @@ def power($n): #:: WORD|(number) => WORD
 ;
 
 # Generates w*: w⁰ ∪ w¹ ∪ w² ∪ w³ ∪ w⁴ ∪ w⁵ ∪ w⁶ ∪ w⁷ ∪ w⁸ ∪ w⁹…
-#
 def star: #:: WORD => +WORD
     . as $word
     | if type == "string" then "" else [] end
@@ -292,7 +287,6 @@ def star: #:: WORD => +WORD
 ;
 
 # Generates w⁺: w¹ ∪ w² ∪ w³ ∪ w⁴ ∪ w⁵ ∪ w⁶ ∪ w⁷ ∪ w⁸ ∪ w⁹…
-#
 def plus: #:: WORD => +WORD
     . as $word
     | iterate(. + $word)
@@ -300,16 +294,23 @@ def plus: #:: WORD => +WORD
 
 ########################################################################
 # Operations on alphabets and languages
+########################################################################
 
-# Alphabet Σ:                   [a]
-# Σⁿ:                           Σ | kleene::power(n)
-# Σ*:                           Σ | kleene::star
-# Σ⁺:                           Σ | kleene::plus
+# Alphabet Σ:           [a]
+# Σⁿ:                   Σ | array/kleene::power(n)          => *[a1,a2...an]
+# Σ*:                   Σ | array/kleene::star              => *[a1,a2...an]
+# Σ⁺:                   Σ | array/kleene::plus              => *[a1,a2...an]
 
-# Language L over Σ:            [WORD]
-# L1 × L2:                      [L1,l2] | kleene::product(ε)
-# Lⁿ:                           L | kleene::power(n; ε)
-# L*:                           L | kleene::star(ε)
-# L⁺:                           L | kleene::plus(ε)
+# Alphabet Σ:           "abc..."
+# Σⁿ:                   (Σ/"") | array/kleene::power(n;"")  => *WORD
+# Σ*:                   (Σ/"") | array/kleene::star("")     => *WORD
+# Σ⁺:                   (Σ/"") | array/kleene::plus("")     => *WORD
+
+# Language L over Σ:    [WORD]
+# Identity ε:           "" for string WORD, [] for array WORD
+# L1 × L2:              [L1,l2] | array/kleene::product(ε)  => *WORD
+# Lⁿ:                   L | array/kleene::power(n; ε)       => *WORD
+# L*:                   L | array/kleene::star(ε)           => *WORD
+# L⁺:                   L | array/kleene::plus(ε)           => *WORD
 
 # vim:ai:sw=4:ts=4:et:syntax=jq
