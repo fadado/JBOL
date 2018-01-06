@@ -14,7 +14,7 @@ include "fadado.github.io/prelude";
 # Types used in declarations:
 #   SET: [a]
 #   TUPLE: [a]
-#   WORD: array^string
+#   WORD: [a]^string
 #   IDENTITY: "" or []
 
 # (×), A × B, A × B × C, …
