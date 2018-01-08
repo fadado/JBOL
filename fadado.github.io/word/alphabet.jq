@@ -21,30 +21,33 @@ include "fadado.github.io/prelude";
 
 # Σⁿ
 def power($n): #:: ALPHABET|(number) => *WORD
-    if length == 0 # empty alphabet
-    then empty
+# assert $n >= 0
+    if n == 0   # S⁰
+    then .[0:0] # empty word
+    elif length == 0 # S × ∅
+    then empty       # ∅
     elif type == "string"
-    then (./"")|kleene::power($n; "")
+    then explode|kleene::power($n)|implode
     else kleene::power($n)
     end
 ;
 
 # Σ*
 def star: #:: ALPHABET => *WORD
-    if length == 0 # empty alphabet
-    then empty
+    if length == 0 # S⁰
+    then empty     # empty word
     elif type == "string"
-    then (./"")|kleene::star("")
+    then explode|kleene::star|implode
     else kleene::star
     end
 ;
 
 # Σ⁺
 def plus: #:: ALPHABET => *WORD
-    if length == 0 # empty alphabet
-    then empty
+    if length == 0 # S⁰
+    then empty     # empty word
     elif type == "string"
-    then (./"")|kleene::plus("")
+    then explode|kleene::plus|implode
     else kleene::plus
     end
 ;

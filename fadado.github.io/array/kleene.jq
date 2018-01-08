@@ -37,42 +37,20 @@ def product: #:: [SET] => +TUPLE
     end
 ;
 
-# For sets with catenable symbols (arrays or strings)
-# Generates words
-# Note: empty array or string must be specified as identity value
-def product($identity): #:: [SET]|(IDENTITY) => +WORD
-    def _product:
-        if length == 1
-        then
-            .[0][]
-        else
-            .[0][] as $x
-            | $x + (.[1:]|_product)
-        end
-    ;
-    if length == 0
-    then $identity
-    elif any(.[]; length==0)
-    then empty
-    else _product
-    end
-;
-
 # Aⁿ
 # Specifically size n words over an alphabet Σ (Σⁿ)
 # W(n,k) = k^n
 def power($n): #:: SET|(number) => +TUPLE
-    select(0 <= $n) # not defined for negative $n
-    | . as $set
-    | [range($n) | $set]
-    | product
-;
-
-def power($n; $identity): #:: SET|(number;IDENTITY) => +WORD
-    select(0 <= $n) # not defined for negative $n
-    | . as $set
-    | [range($n) | $set]
-    | product($identity)
+# assert $n >= 0
+    if $n == 0
+    then .[0:0] # empty tuple
+    elif length == 0
+    then empty  # no results
+    else
+        . as $set
+        | [range($n) | $set]
+        | product
+    end
 ;
 
 # Generates K*: K⁰ ∪ K¹ ∪ K² ∪ K³ ∪ K⁴ ∪ K⁵ ∪ K⁶ ∪ K⁷ ∪ K⁸ ∪ K⁹…
@@ -83,16 +61,6 @@ def star: #:: SET => +TUPLE
 #   | if length == 0
 #   then []
 #   else []|deepen(.[length]=$set[])
-#   end
-;
-
-# For catenable symbols
-def star($identity): #:: SET|(IDENTITY) => +WORD
-    power(range(0; infinite); $identity)
-#   . as $set
-#   | if length == 0
-#   then $identity
-#   else $identity|deepen(. + $set[])
 #   end
 ;
 
@@ -109,16 +77,6 @@ def plus: #:: SET => *TUPLE
 #   | if length == 0
 #   then empty
 #   else deepen(.[]|[.]; .[length]=$set[])
-#   end
-;
-
-# For catenable symbols ($identity is ignored!)
-def plus($identity): #:: SET|(IDENTITY) => *WORD
-    power(range(1; infinite); $identity)
-#   . as $set
-#   | if length == 0
-#   then empty
-#   else deepen(.[]; . + $set[])
 #   end
 ;
 
