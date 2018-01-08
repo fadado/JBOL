@@ -14,15 +14,22 @@ include "array/kleene"; [product]|length
 []
 1
 
+# A ×
+include "array/kleene"; product
+[[1,2,3]]
+[1]
+[2]
+[3]
+
 # A × ∅
 include "array/kleene"; product
 [[1,2,3],[]]
-[]
+# empty
 
 # A × ∅
 include "array/kleene"; product
 [[],[1,2,3]]
-[]
+# empty
 
 # A × B
 include "array/kleene"; [product]

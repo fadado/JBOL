@@ -17,7 +17,7 @@ include "fadado.github.io/prelude";
 #   WORD: [a]^string
 #   IDENTITY: "" or []
 
-# (×), A × B, A × B × C, …
+# ×, A ×, A × B, A × B × C, …
 # Generates tuples
 def product: #:: [SET] => +TUPLE
     def _product:
@@ -30,8 +30,10 @@ def product: #:: [SET] => +TUPLE
         end
     ;
     if length == 0
-    then []
-    else _product // []
+    then [] # empty tuple
+    elif any(.[]; length==0) # A × ∅
+    then empty
+    else _product
     end
 ;
 
@@ -50,7 +52,9 @@ def product($identity): #:: [SET]|(IDENTITY) => +WORD
     ;
     if length == 0
     then $identity
-    else _product // $identity
+    elif any(.[]; length==0)
+    then empty
+    else _product
     end
 ;
 
