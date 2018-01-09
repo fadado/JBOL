@@ -40,6 +40,14 @@ def count($u): #:: WORD|(WORD) => number
     indices($u) | length
 ;
 
+# Generic reverse
+def mirror: #:: WORD => WORD
+    if type == "string"
+    then explode|reverse|implode
+    else reverse
+    end
+;
+
 ########################################################################
 # Find symbol(s)
 
@@ -273,8 +281,8 @@ def fibstr($w; $u): #:: (WORD;WORD) => +WORD
 
 # Generates wⁿ (one word: w concatenated n times)
 def power($n): #:: WORD|(number) => WORD
+# assert $n >= 0
     . as $word
-    | select(0 <= $n) # not defined for negative $n
     | if type == "string"
     then if $n == 0 then "" else . * $n end
     else reduce range($n) as $_ ([]; . + $word)

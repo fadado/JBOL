@@ -8,8 +8,9 @@ module {
     }
 };
 
-import "fadado.github.io/array/kleene" as kleene;
 include "fadado.github.io/prelude";
+
+import "fadado.github.io/array/kleene" as kleene;
 
 ########################################################################
 # Types used in declarations:
@@ -34,15 +35,16 @@ def concat: #:: [LANGUAGE] => *WORD
     if length == 0
     then error("language::concat Not defined for zero languages")
     elif any(.[]; length==0) # L × ∅
+    then empty               # ∅
     else _concat
     end
 ;
 
 # Lⁿ
-def power($n): #:: LANGUAGE|(number) => *WORD
+def power($n; $epsilon): #:: LANGUAGE|(number;WORD) => *WORD
 # assert $n >= 0
     if $n == 0 # L⁰
-    then .[0][0:0] // [] # ε (defaults to array)
+    then .[0][0:0] // $epsilon # ε
     elif length == 0 # L × ∅
     then empty       # ∅
     else
@@ -51,17 +53,26 @@ def power($n): #:: LANGUAGE|(number) => *WORD
         | concat
     end
 ;
+def power($n): #:: LANGUAGE|(number) => *WORD
+# assert $n >= 0
+    power($n;[]) # empty WORD defaults to array
+;
 
 # L*
-def star: #:: LANGUAGE => *WORD
+def star($epsilon): #:: LANGUAGE|(WORD) => *WORD
+# TODO: implement using `deepen`
     if length == 0 # ∅ (empty language)
-    then []        # ε (returns array as an empty word)
+    then .[0][0:0] // $epsilon # ε
     else power(range(0; infinite))
     end
+;
+def star: #:: LANGUAGE => *WORD
+    star([]) # empty WORD defaults to array
 ;
 
 # L⁺
 def plus: #:: LANGUAGE => *WORD
+# TODO: implement using `deepen`
     if length == 0 # ∅ (empty language)
     then empty     # ∅
     else power(range(1; infinite))

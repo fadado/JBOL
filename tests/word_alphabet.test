@@ -9,6 +9,10 @@ include "word/alphabet"; power(0)
 "123"
 ""
 
+include "word/alphabet"; limit(1;star)
+"123"
+""
+
 include "word/alphabet"; power(0)
 [1,2,3]
 []

@@ -9,6 +9,7 @@ module {
 };
 
 include "fadado.github.io/prelude";
+
 import "fadado.github.io/math/chance" as chance;
 
 # Shuffle array contents.

@@ -17,7 +17,7 @@ include "fadado.github.io/prelude";
 
 # ×, A ×, A × B, A × B × C, …
 # Generates tuples
-def product: #:: [SET] => +TUPLE
+def product: #:: [SET] => *TUPLE
     def _product:
         if length == 1
         then
@@ -50,30 +50,40 @@ def power($n): #:: SET|(number) => +TUPLE
     end
 ;
 
-# Generates K*: K⁰ ∪ K¹ ∪ K² ∪ K³ ∪ K⁴ ∪ K⁵ ∪ K⁶ ∪ K⁷ ∪ K⁸ ∪ K⁹…
-# Specifically, words over an alphabet Σ (Σ*: Σ⁰ ∪ Σ¹ ∪ Σ²…)
-def star: #:: SET => +TUPLE
-    power(range(0; infinite))
-#   . as $set
-#   | if length == 0
-#   then []
-#   else []|deepen(.[length]=$set[])
-#   end
-;
-
 #def star: #:: string => +string
 #    def k: "", .[] + k;
 #    if length == 0 then .  else (./"")|k end
 #;
 
+# Generates K*: K⁰ ∪ K¹ ∪ K² ∪ K³ ∪ K⁴ ∪ K⁵ ∪ K⁶ ∪ K⁷ ∪ K⁸ ∪ K⁹…
+# Specifically, words over an alphabet Σ (Σ*: Σ⁰ ∪ Σ¹ ∪ Σ²…)
+def star: #:: SET => +TUPLE
+    if length == 0 # ∅
+    then .         # ε
+    else
+        . as $set
+        | []|deepen(.[length]=$set[])
+    end
+# Very slow:
+#   if length == 0 # ∅
+#   then .         # ε
+#   else power(range(0; infinite))
+#   end
+;
+
 # Generates K⁺: K¹ ∪ K² ∪ K³ ∪ K⁴ ∪ K⁵ ∪ K⁶ ∪ K⁷ ∪ K⁸ ∪ K⁹…
 # Specifically, words over an alphabet Σ without empty word (Σ⁺: Σ¹ ∪ Σ²…)
 def plus: #:: SET => *TUPLE
-    power(range(1; infinite))
-#   . as $set
-#   | if length == 0
-#   then empty
-#   else deepen(.[]|[.]; .[length]=$set[])
+    if length == 0 # ∅
+    then empty     # ∅
+    else
+        . as $set
+        | deepen(.[]|[.]; .[length]=$set[])
+    end
+# Very slow:
+#   if length == 0 # ∅
+#   then empty     # ∅
+#   else power(range(1; infinite))
 #   end
 ;
 
