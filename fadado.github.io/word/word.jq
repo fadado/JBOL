@@ -269,6 +269,8 @@ def fibstr($w; $u): #:: (WORD;WORD) => +WORD
 ########################################################################
 # Word iteration
 
+# Product, catenate: w + u
+
 # Generates wⁿ (one word: w concatenated n times)
 def power($n): #:: WORD|(number) => WORD
     . as $word

@@ -19,12 +19,12 @@ include "fadado.github.io/prelude";
 ########################################################################
 # Operations on alphabets
 
-# Σⁿ
+# Σⁿ: size n words over an alphabet
 def power($n): #:: ALPHABET|(number) => *WORD
 # assert $n >= 0
-    if n == 0   # S⁰
-    then .[0:0] # empty word
-    elif length == 0 # S × ∅
+    if $n == 0  # Σ⁰
+    then .[0:0] # ε
+    elif length == 0 # Σ × ∅
     then empty       # ∅
     elif type == "string"
     then explode|kleene::power($n)|implode
@@ -34,21 +34,17 @@ def power($n): #:: ALPHABET|(number) => *WORD
 
 # Σ*
 def star: #:: ALPHABET => *WORD
-    if length == 0 # S⁰
-    then empty     # empty word
-    elif type == "string"
-    then explode|kleene::star|implode
-    else kleene::star
+    if length == 0 # ∅
+    then .         # ε
+    else power(range(0; infinite))
     end
 ;
 
 # Σ⁺
 def plus: #:: ALPHABET => *WORD
-    if length == 0 # S⁰
-    then empty     # empty word
-    elif type == "string"
-    then explode|kleene::plus|implode
-    else kleene::plus
+    if length == 0 # ∅
+    then empty     # ∅
+    else power(range(1; infinite))
     end
 ;
 

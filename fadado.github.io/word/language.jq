@@ -20,49 +20,51 @@ include "fadado.github.io/prelude";
 ########################################################################
 # Operations on languages
 
-# ε
-def _epsilon:
-    # is first word in . a string or is an array?
-    .[0]|type |
-    if . == "string"
-    then ""
-    elif . == "array"
-    then []
-    else "Type error: expected string or array, not \(.)" | error
-    end
-;
-
-# L1 × L2
-def product($l1; $l2): #:: (LANGUAGE;LANGUAGE) => *WORD
-    if $l1 == [] or $l2 == []
-    then empty
-    else
-        ($l1|_epsilon) as $e
-        | [$l1,$l2]|kleene::product($e)
+# L1 × L2...
+def concat: #:: [LANGUAGE] => *WORD
+    def _concat:
+        if length == 1
+        then
+            .[0][]
+        else
+            .[0][] as $x
+            | $x + (.[1:]|_concat)
+        end
+    ;
+    if length == 0
+    then error("language::concat Not defined for zero languages")
+    elif any(.[]; length==0) # L × ∅
+    else _concat
     end
 ;
 
 # Lⁿ
 def power($n): #:: LANGUAGE|(number) => *WORD
-    if length == 0 # empty language
-    then empty
-    else kleene::power($n; _epsilon)
+# assert $n >= 0
+    if $n == 0 # L⁰
+    then .[0][0:0] // [] # ε (defaults to array)
+    elif length == 0 # L × ∅
+    then empty       # ∅
+    else
+        . as $lang
+        | [range($n) | $lang]
+        | concat
     end
 ;
 
 # L*
 def star: #:: LANGUAGE => *WORD
-    if length == 0 # empty language
-    then empty
-    else kleene::star(_epsilon)
+    if length == 0 # ∅ (empty language)
+    then []        # ε (returns array as an empty word)
+    else power(range(0; infinite))
     end
 ;
 
 # L⁺
 def plus: #:: LANGUAGE => *WORD
-    if length == 0 # empty language
-    then empty
-    else kleene::plus(_epsilon)
+    if length == 0 # ∅ (empty language)
+    then empty     # ∅
+    else power(range(1; infinite))
     end
 ;
 

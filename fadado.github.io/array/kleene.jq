@@ -14,8 +14,6 @@ include "fadado.github.io/prelude";
 # Types used in declarations:
 #   SET: [a]
 #   TUPLE: [a]
-#   WORD: [a]^string
-#   IDENTITY: "" or []
 
 # ×, A ×, A × B, A × B × C, …
 # Generates tuples
@@ -29,23 +27,22 @@ def product: #:: [SET] => +TUPLE
             | [$x] + (.[1:]|_product)
         end
     ;
-    if length == 0
+    if length == 0 # empty product?
     then [] # empty tuple
     elif any(.[]; length==0) # A × ∅
-    then empty
+    then empty               # ∅
     else _product
     end
 ;
 
 # Aⁿ
-# Specifically size n words over an alphabet Σ (Σⁿ)
-# W(n,k) = k^n
+# W(n,k) = kⁿ
 def power($n): #:: SET|(number) => +TUPLE
 # assert $n >= 0
-    if $n == 0
-    then .[0:0] # empty tuple
-    elif length == 0
-    then empty  # no results
+    if $n == 0 # A⁰
+    then []    # empty tuple
+    elif length == 0 # A × ∅
+    then empty       # ∅
     else
         . as $set
         | [range($n) | $set]
