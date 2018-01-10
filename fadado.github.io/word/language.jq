@@ -21,7 +21,7 @@ import "fadado.github.io/array/kleene" as kleene;
 ########################################################################
 # Operations on languages
 
-# L1 × L2...
+# L, L1 × L2, L1 × L2 × L3, ...
 def concat: #:: [LANGUAGE] => *WORD
     def _concat:
         if length == 1
@@ -33,7 +33,7 @@ def concat: #:: [LANGUAGE] => *WORD
         end
     ;
     if length == 0
-    then error("language::concat Not defined for zero languages")
+    then error("language::concat not defined for zero languages")
     elif any(.[]; length==0) # L × ∅
     then empty               # ∅
     else _concat

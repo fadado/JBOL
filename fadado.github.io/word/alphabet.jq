@@ -21,6 +21,7 @@ import "fadado.github.io/array/kleene" as kleene;
 # Operations on alphabets
 
 # Σⁿ: size n words over an alphabet
+# W(n,k) = kⁿ
 def power($n): #:: ALPHABET|(number) => *WORD
 # assert $n >= 0
     if $n == 0  # Σ⁰
@@ -33,7 +34,7 @@ def power($n): #:: ALPHABET|(number) => *WORD
     end
 ;
 
-# Σ*
+# Σ*: Σ⁰ ∪ Σ¹ ∪ Σ² ∪ Σ³ ∪ Σ⁴ ∪ Σ⁵ ∪ Σ⁶ ∪ Σ⁷ ∪ Σ⁸ ∪ Σ⁹…
 def star: #:: ALPHABET => *WORD
     if length == 0 # ∅
     then .         # ε
@@ -55,7 +56,7 @@ def star: #:: ALPHABET => *WORD
 #   end
 ;
 
-# Σ⁺
+# Σ⁺: Σ¹ ∪ Σ² ∪ Σ³ ∪ Σ⁴ ∪ Σ⁵ ∪ Σ⁶ ∪ Σ⁷ ∪ Σ⁸ ∪ Σ⁹…
 def plus: #:: ALPHABET => *WORD
     if length == 0 # ∅
     then empty     # ∅

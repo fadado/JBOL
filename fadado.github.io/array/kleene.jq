@@ -55,8 +55,7 @@ def power($n): #:: SET|(number) => +TUPLE
 #    if length == 0 then .  else (./"")|k end
 #;
 
-# Generates K*: K⁰ ∪ K¹ ∪ K² ∪ K³ ∪ K⁴ ∪ K⁵ ∪ K⁶ ∪ K⁷ ∪ K⁸ ∪ K⁹…
-# Specifically, words over an alphabet Σ (Σ*: Σ⁰ ∪ Σ¹ ∪ Σ²…)
+# A*: A⁰ ∪ A¹ ∪ A² ∪ A³ ∪ A⁴ ∪ A⁵ ∪ A⁶ ∪ A⁷ ∪ A⁸ ∪ A⁹…
 def star: #:: SET => +TUPLE
     if length == 0 # ∅
     then .         # ε
@@ -71,8 +70,7 @@ def star: #:: SET => +TUPLE
 #   end
 ;
 
-# Generates K⁺: K¹ ∪ K² ∪ K³ ∪ K⁴ ∪ K⁵ ∪ K⁶ ∪ K⁷ ∪ K⁸ ∪ K⁹…
-# Specifically, words over an alphabet Σ without empty word (Σ⁺: Σ¹ ∪ Σ²…)
+# A⁺: A¹ ∪ A² ∪ A³ ∪ A⁴ ∪ A⁵ ∪ A⁶ ∪ A⁷ ∪ A⁸ ∪ A⁹…
 def plus: #:: SET => *TUPLE
     if length == 0 # ∅
     then empty     # ∅
