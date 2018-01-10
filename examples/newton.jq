@@ -22,9 +22,9 @@ def nrsqrt:
     . as $n |
     0.00001 as $e |
 # within
-    square_root($n; $e; math::abs(.[0]-.[1]))
+    square_root($n; $e; (.[0]-.[1])|fabs)
 # relative
-    #square_root($n; $e; math::abs(.[0]/.[1]-1))
+    #square_root($n; $e; (.[0]/.[1]-1)|fabs)
 ;
 
 ########################################################################

@@ -258,7 +258,7 @@ def partition($i): #:: (number) => *[number]
         else
             choose(1; mx) as $m
             | (n-$m) as $k
-            | min($k; $m) as $b
+            | fmin($k; $m) as $b
             | [$m]+pmax($k; $b)
         end
     ;

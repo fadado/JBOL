@@ -13,24 +13,12 @@ include "fadado.github.io/prelude";
 ########################################################################
 # Simple utilities
 
-def abs($n): #:: (number) => number
-    $n|length
-;
-
 def even($n): #:: (number) => boolean
     $n%2 == 0
 ;
 
 def odd($n): #:: (number) => boolean
     $n%2 == 1
-;
-
-def min($m; $n): #:: (number;number) => number
-    if $m < $n then $m else $n end
-;
-
-def max($m; $n): #:: (number;number) => number
-    if $m > $n then $m else $n end
 ;
 
 def gcd($m; $n): #:: (number;number) => number
@@ -112,12 +100,12 @@ def product(generator): #:: a|(a->*number) => number
 
 def maximum(generator): #:: a|(a->*number) => number
     reduce generator as $item
-        (0-infinite; max($item; .))
+        (0-infinite; fmax($item; .))
 ;
 
 def minimum(generator): #:: a|(a->*number) => number
     reduce generator as $item
-        (infinite; min($item; .))
+        (infinite; fmin($item; .))
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

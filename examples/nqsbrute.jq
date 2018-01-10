@@ -17,7 +17,7 @@ def queens($n):
             | .[$i] as $j
             | range($i+1; length) as $k
             | .[$k] as $l
-            | math::abs($i-$k) != math::abs($j-$l)
+            | (($i-$k)|fabs) != (($j-$l)|fabs)
         )
     ;
     def and_test:

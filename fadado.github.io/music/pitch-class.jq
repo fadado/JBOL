@@ -91,7 +91,7 @@ def iclass: #:: PCI => IC
 def interval_class($pc): #:: PCLASS|(PCLASS) => IC
     math::mod($pc - .; 12) | when(. > 6; 12 - .)
 #   interval($pc) | iclass
-#   math::mod(math::min($pc - .; . - $pc); 12)
+#   math::mod(fmin($pc - .; . - $pc); 12)
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

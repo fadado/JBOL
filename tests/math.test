@@ -61,12 +61,12 @@ include "math"; gcd(-12;6)
 null
 6
 
-include "math"; abs(.)
+include "math"; fabs
 -3
 3
 
-include "math"; abs(-3.3)
-null
+include "math"; fabs
+-3.3
 3.3
 
 include "math"; mod(12;6)

@@ -18,7 +18,6 @@ import "fadado.github.io/string/regexp" as re;
 # PI (pitch interval): -127..127 (has direction)
 #
 # Useful primitives:
-#   + math::abs :: PI => unordered PI
 
 # Produces a new pitch
 def new: #:: <number^string> => PITCH
