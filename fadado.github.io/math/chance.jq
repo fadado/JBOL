@@ -21,7 +21,7 @@ include "fadado.github.io/prelude";
 def _NXTGEN: #:: number| => [number,number]
     . as $seed
     | (((214013 * $seed) + 2531011) % 2147483648) as $state # mod 2^31
-    | ($state / 65536 | trunc) as $value  # >> 16
+    | ($state / 65536 | floor) as $value  # >> 16
     | [ $value, $state ]
 ;
 

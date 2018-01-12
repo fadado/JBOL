@@ -117,7 +117,7 @@ null
 308061521170129
 
 ## Golden ratio
-include "math/sequence"; include "stream"; [limit(2; drop(70; fibonacci))] | (.[1]/.[0])*100000|trunc|./100000
+include "math/sequence"; include "stream"; [limit(2; drop(70; fibonacci))] | (.[1]/.[0])*100000|floor|./100000
 null
 1.61803
 
