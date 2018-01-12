@@ -21,10 +21,10 @@ def isnumber: #:: a| => boolean
     type == "number"
 ;
 def isinteger: #:: a| => boolean
-    type == "number" and . == floor
+    type == "number" and . == trunc
 ;
 def isfloat: #:: a| => boolean
-    type == "number" and . != floor
+    type == "number" and . != trunc
 ;
 def isstring: #:: a| => boolean
     type == "string"

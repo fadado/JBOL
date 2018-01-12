@@ -62,7 +62,7 @@ def name: #:: PITCH => string
 
 # Produces the note octave
 def octave: #:: PITCH => number
-    ./12|floor
+    ./12|trunc
 ;
 
 # Formats a pitch (C0..G10)

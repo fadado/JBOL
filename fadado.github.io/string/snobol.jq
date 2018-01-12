@@ -222,7 +222,7 @@ def DIFFER($s): #:: CURSOR|(string;string) => CURSOR
 ;
 def INTEGER($a): #:: CURSOR|(a) => CURSOR
     def _integer:
-        (isnumber and . == floor)
+        (isnumber and . == trunc)
         or (tonumber? // false) and (contains(".")|not)
     ;
     select($a|_integer)

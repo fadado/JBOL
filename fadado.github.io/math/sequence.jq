@@ -230,7 +230,7 @@ def divisors($n):
     then empty
     else
         1 ,
-        (range(2; 1 + ($n|sqrt|floor)) as $i
+        (range(2; 1 + ($n|sqrt|trunc)) as $i
          | select(($n % $i) == 0)
          | $i , (($n / $i) | select(. != $i)))
     end
@@ -241,7 +241,7 @@ def divisors1($n):
     if $n <= 1
     then empty
     else
-        range(2; 1 + ($n|sqrt|floor)) as $i
+        range(2; 1 + ($n|sqrt|trunc)) as $i
         | select(($n % $i) == 0)
         | $i , (($n / $i) | select(. != $i))
     end

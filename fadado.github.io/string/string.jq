@@ -45,7 +45,7 @@ def right($n): #:: string|(number) => string
 
 def center($n; $t): #:: string|(number;string) => string
     when($n > length;
-        ((($n-length)/2) | floor) as $i
+        ((($n-length)/2) | trunc) as $i
         | ($t*$i) + . + ($t*$i)
         | when(length != $n; .+$t)
     )

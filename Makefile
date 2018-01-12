@@ -126,6 +126,7 @@ $(LogDir)/schema.log: $(LIB)/schema/schema.jq $(LIB)/prelude.jq $(LIB)/types.jq 
 $(LogDir)/math.log: $(MATH)/math.jq
 $(LogDir)/math_chance.log: $(MATH)/chance.jq $(LIB)/prelude.jq
 $(LogDir)/math_sequence.log: $(MATH)/sequence.jq $(LIB)/prelude.jq
+$(LogDir)/math_bitwise.log: $(MATH)/bitwise.jq
 
 # Arrays tests
 $(LogDir)/array.log: $(ARRAY)/array.jq

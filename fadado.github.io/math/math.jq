@@ -48,7 +48,7 @@ def mod($m; $n): #:: (number;number) => number
 ;
 
 def div($m; $n): #:: (number;number) => number
-    ($m / $n) | floor
+    ($m / $n) | trunc
 ;
 
 def sign($n): #:: (number) => number
@@ -61,7 +61,7 @@ def sign($n): #:: (number) => number
 
 def tobase($b): #:: number|(number) => ?string
     def digit: "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"[.:.+1];
-    def div: (. / $b)|floor;
+    def div: (. / $b)|trunc;
     def mod: . % $b;
     def r: if . < $b then digit else (div|r)+(mod|digit) end;
     # do nothing if base out of range
