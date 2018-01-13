@@ -9,7 +9,6 @@ module {
 };
 
 include "fadado.github.io/prelude";
-
 import "fadado.github.io/string/latin1" as $C;
 
 def cntrl: #:: string

@@ -9,7 +9,6 @@ module {
 };
 
 include "fadado.github.io/prelude";
-
 import "fadado.github.io/array/kleene" as kleene;
 
 ########################################################################
