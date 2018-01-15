@@ -36,7 +36,7 @@ def _mask($size): #:: (number) => BitField
 ;
 
 ########################################################################
-# Common LISP imported functions
+# Common LISP borrowed functions
 #
 # CLTL: 12.7. Logical Operations on Numbers
 #       http://www.cs.cmu.edu/Groups/AI/html/cltl/clm/node131.html
@@ -165,8 +165,42 @@ def logcount($n): #:: (BitField) => number
 #       http://www.cs.cmu.edu/Groups/AI/html/cltl/clm/node132.html
 ########################################################################
 
+def byte($size; $position):
+    {
+        $size, $position, mask: ash($position; _mask($size))
+    }
+;
+
+def byte_size($bytespec):
+    $bytespec.size
+;
+
+def byte_position($bytespec):
+    $bytespec.position
+;
+
+def ldb($bytespec; $n):
+    0
+;
+
+def ldb_test($bytespec; $n):
+    0
+;
+
+def mask_field($bytespec; $n):
+    logand($bytespec.mask; $n)
+;
+
+def dpb($newbyte; $bytespec; $n):
+    0
+;
+
+def deposit_field($newbyte; $bytespec; $n):
+    0
+;
+
 ########################################################################
-# Bitset operations
+# Bitset operations, not borrowed from LISP
 ########################################################################
 
 # New empty bitset: 0
