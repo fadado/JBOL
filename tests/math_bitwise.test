@@ -124,5 +124,5 @@ null
 include "math/bitwise"; tglbit(1;5)
 null
 7
-#
+
 # vim:ai:sw=2:ts=2:et:syntax=jq
