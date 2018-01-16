@@ -9,21 +9,9 @@
 # Low level private functions
 ########################################################################
 
-include "math/bitwise"; [range(53)|_bit(.)|_pos(.)]==[range(53)]
-null
-true
-
-include "math/bitwise"; _test(2;3)
-null
-true
-
 include "math/bitwise"; _mask(2)
 null
 3
-
-include "math/bitwise"; _test(1; _mask(4)) and _test(2; _mask(4)) and _test(4; _mask(4)) and _test(8; _mask(4)) and (_test(64; _mask(4))|not)
-null
-true
 
 ########################################################################
 # Common LISP imported functions

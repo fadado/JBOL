@@ -11,29 +11,17 @@ module {
 ########################################################################
 # Bitwise operations
 
-# BitField: 53 bits unsigned integer
-# Bit:      2^0..2^52
+# BitField: 0..(2^53-1) (53 bits unsigned integer)
+# Bit:      2^0, 2^1, 2^2, ...2^52
 # Position: 0..52
 
-#
+########################################################################
 # Low level private functions
-#
+########################################################################
 
-def _bit($position): #:: (Position) => Bit
-    $position|exp2
-;
-
-def _pos($bit): #:: (Bit) => Position
-    $bit|log2
-;
-
-def _test($bit; $n): #:: (Bit;BitField) => boolean
-    fmod($n/$bit|floor; 2) != 0
-;
-
-def _mask($size): #:: (number) => BitField
-    ($size|exp2) - 1
-;
+def _bit($position): ($position|exp2);
+def _pos($bit): ($bit|log2);
+def _mask($size): ($size|exp2)-1;
 
 ########################################################################
 # Common LISP borrowed functions
@@ -44,9 +32,7 @@ def _mask($size): #:: (number) => BitField
 
 # See: http://clhs.lisp.se/Body/f_logand.htm
 def lognot($n): #:: (BitField) => BitField
-    9007199254740991 - $n # use precalculated constant 2^53-1
-#   -1 - $n
-#   _mask(53) - $n
+    9007199254740991 - $n # use precalculated constant (53|exp2)-1
 ;
 
 # See: http://clhs.lisp.se/Body/f_logand.htm
@@ -55,8 +41,8 @@ def logand($m; $n): #:: (BitField;BitField) => BitField
         if $x < 1 or $y < 1
         then $result
         elif fmod($x;2)!=0 and fmod($y;2)!=0
-        then r($x/2|floor; $y/2|floor; $result+$pow2; $pow2*2) 
-        else r($x/2|floor; $y/2|floor; $result; $pow2*2) 
+        then r(ldexp($x;-1)|floor; ldexp($y;-1)|floor; $result+$pow2; $pow2*2) 
+        else r(ldexp($x;-1)|floor; ldexp($y;-1)|floor; $result; $pow2*2) 
         end
     ;
     r($m; $n; 0; 1)
@@ -68,8 +54,8 @@ def logior($m; $n): #:: (BitField;BitField) => BitField
         if $x < 1 and $y < 1
         then $result
         elif fmod($x;2)!=0 or fmod($y;2)!=0
-        then r($x/2|floor; $y/2|floor; $result+$pow2; $pow2*2) 
-        else r($x/2|floor; $y/2|floor; $result; $pow2*2) 
+        then r(ldexp($x;-1)|floor; ldexp($y;-1)|floor; $result+$pow2; $pow2*2) 
+        else r(ldexp($x;-1)|floor; ldexp($y;-1)|floor; $result; $pow2*2) 
         end
     ;
     r($m; $n; 0; 1)
@@ -81,13 +67,11 @@ def logxor($m; $n): #:: (BitField;BitField) => BitField
         if $x < 1 and $y < 1
         then $result
         elif (fmod($x;2)!=0) != (fmod($y;2)!=0)
-        then r($x/2|floor; $y/2|floor; $result+$pow2; $pow2*2) 
-        else r($x/2|floor; $y/2|floor; $result; $pow2*2) 
+        then r(ldexp($x;-1)|floor; ldexp($y;-1)|floor; $result+$pow2; $pow2*2) 
+        else r(ldexp($x;-1)|floor; ldexp($y;-1)|floor; $result; $pow2*2) 
         end
     ;
     r($m; $n; 0; 1)
-# Alternative hack:
-#   $m + $n  - 2 * logand($m; $n)
 ;
 
 # See: http://clhs.lisp.se/Body/f_logand.htm
@@ -132,13 +116,12 @@ def logtest($m; $n): #:: (BitField;BitField) => boolean
 
 # See: http://clhs.lisp.se/Body/f_logbtp.htm
 def logbitp($position; $n): #:: (Position;BitField) => boolean
-    _test(_bit($position); $n)
+    fmod(ldexp($n;-$position)|floor;2) != 0
 ;
 
 # See: http://clhs.lisp.se/Body/f_ash.htm
 def ash($count; $n): #:: (number;BitField) => BitField
-#   $n * ($count|exp2) | floor
-    ldexp($n; $count) | floor
+    ldexp($n; $count)|floor
 ;
 
 # See: http://clhs.lisp.se/Body/f_intege.htm
@@ -153,8 +136,8 @@ def logcount($n): #:: (BitField) => number
         if $x < 1
         then $result
         elif fmod($x;2) != 0
-        then r($x/2|floor; $result+1)
-        else r($x/2|floor; $result)
+        then r(ldexp($x;-1)|floor; $result+1)
+        else r(ldexp($x;-1)|floor; $result)
         end
     ;
     r($n; 0)
@@ -167,7 +150,9 @@ def logcount($n): #:: (BitField) => number
 
 def byte($size; $position):
     {
-        $size, $position, mask: ash($position; _mask($size))
+        $size,
+        $position,
+        mask: ash($position; _mask($size))
     }
 ;
 
@@ -180,11 +165,11 @@ def byte_position($bytespec):
 ;
 
 def ldb($bytespec; $n):
-    0
+    ash(-$bytespec.position; logand($bytespec.mask; $n))
 ;
 
 def ldb_test($bytespec; $n):
-    0
+    logand($bytespec.mask; $n) != 0
 ;
 
 def mask_field($bytespec; $n):
@@ -207,35 +192,31 @@ def deposit_field($newbyte; $bytespec; $n):
 
 # Set bit at $position
 def setbit($position; $n): #:: (Position;BitField) => BitField
-    _bit($position) as $bit
-    | if _test($bit; $n)
+    if logbitp($position; $n)
     then $n
-    else $n + $bit
+    else $n + ($position|exp2)
     end
 ;
 
 # Clear bit at $position
 def clrbit($position; $n): #:: (Position;BitField) => BitField
-    _bit($position) as $bit
-    | if  _test($bit; $n)
-    then $n - $bit
+    if logbitp($position; $n)
+    then $n - ($position|exp2)
     else $n
     end
 ;
 
 # Toggle bit at $position
 def tglbit($position; $n): #:: (Position;BitField) => BitField
-    _bit($position) as $bit
-    | if  _test($bit; $n)
-    then $n - $bit
-    else $n + $bit
+    if  logbitp($position; $n)
+    then $n - ($position|exp2)
+    else $n + ($position|exp2)
     end
 ;
 
 # Get bit at $position as 0 or 1
 def getbit($position; $n): #:: (Position;BitField) => 0^1
-#   if _test(_bit($position); $n) then 1 else 0 end
-    fmod($n/_bit($position)|floor; 2) | fabs
+    fmod(ldexp($n;-$position)|floor;2) | fabs
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq
