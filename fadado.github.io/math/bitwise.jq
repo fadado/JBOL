@@ -145,7 +145,9 @@ def logcount($n): #:: (BitField) => number
 ;
 
 ########################################################################
-# TODO? CLTL 12.8. Byte Manipulation Functions
+# Common LISP borrowed functions
+#
+# CLTL 12.8. Byte Manipulation Functions
 #       http://www.cs.cmu.edu/Groups/AI/html/cltl/clm/node132.html
 ########################################################################
 
@@ -166,7 +168,8 @@ def byte_position($bytespec):
 ;
 
 def ldb($bytespec; $n):
-    ash(-$bytespec.position; logand($bytespec.mask; $n))
+    logand($bytespec.mask; $n) as $b
+    | ash(-$bytespec.position; $b)
 ;
 
 def ldb_test($bytespec; $n):
@@ -178,11 +181,15 @@ def mask_field($bytespec; $n):
 ;
 
 def dpb($newbyte; $bytespec; $n):
-    0
+    logand(lognot($bytespec.mask); $n) $m
+    | logand($bytespec.mask; ash($bytespec.position; $newbyte);) as $b
+    | logior($b; $m)
 ;
 
 def deposit_field($newbyte; $bytespec; $n):
-    0
+    logand(lognot($bytespec.mask); $n) $m
+    | logand($bytespec.mask; $newbyte) as $b
+    | logior($b; $m)
 ;
 
 ########################################################################
