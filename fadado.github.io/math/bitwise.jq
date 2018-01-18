@@ -24,6 +24,11 @@ def mask($size): #:: (number) => BitField
     $size|exp2-1
 ;
 
+# Get bit at $position as 0 or 1
+def getbit($position; $n): #:: (Position;BitField) => 0^1
+    fmod($n/($position|exp2)|floor;2) | fabs
+;
+
 # Set bit at $position
 def setbit($position; $n): #:: (Position;BitField) => BitField
     if fmod($n/($position|exp2)|floor;2) != 0
@@ -46,11 +51,6 @@ def tglbit($position; $n): #:: (Position;BitField) => BitField
     then $n - ($position|exp2)
     else $n + ($position|exp2)
     end
-;
-
-# Get bit at $position as 0 or 1
-def getbit($position; $n): #:: (Position;BitField) => 0^1
-    fmod($n/($position|exp2)|floor;2) | fabs
 ;
 
 ########################################################################
