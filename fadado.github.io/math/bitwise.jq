@@ -67,12 +67,12 @@ def lognot($n): #:: (BitField) => BitField
 
 # See: http://clhs.lisp.se/Body/f_logand.htm
 def logand($m; $n): #:: (BitField;BitField) => BitField
-    def r($x; $y; $result; $pow2):
-        if $x < 1 or $y < 1
+    def r($m; $n; $result; $pow2):
+        if $m < 1 or $n < 1
         then $result
-        elif fmod($x;2)!=0 and fmod($y;2)!=0
-        then r($x/2|floor; $y/2|floor; $result+$pow2; $pow2*2) 
-        else r($x/2|floor; $y/2|floor; $result; $pow2*2) 
+        elif fmod($m;2)!=0 and fmod($n;2)!=0
+        then r($m/2|floor; $n/2|floor; $result+$pow2; $pow2*2) 
+        else r($m/2|floor; $n/2|floor; $result; $pow2*2) 
         end
     ;
     r($m; $n; 0e0; 1)
@@ -80,12 +80,12 @@ def logand($m; $n): #:: (BitField;BitField) => BitField
 
 # See: http://clhs.lisp.se/Body/f_logand.htm
 def logior($m; $n): #:: (BitField;BitField) => BitField
-    def r($x; $y; $result; $pow2):
-        if $x < 1 and $y < 1
+    def r($m; $n; $result; $pow2):
+        if $m < 1 and $n < 1
         then $result
-        elif fmod($x;2)!=0 or fmod($y;2)!=0
-        then r($x/2|floor; $y/2|floor; $result+$pow2; $pow2*2) 
-        else r($x/2|floor; $y/2|floor; $result; $pow2*2) 
+        elif fmod($m;2)!=0 or fmod($n;2)!=0
+        then r($m/2|floor; $n/2|floor; $result+$pow2; $pow2*2) 
+        else r($m/2|floor; $n/2|floor; $result; $pow2*2) 
         end
     ;
     r($m; $n; 0e0; 1)
@@ -93,12 +93,12 @@ def logior($m; $n): #:: (BitField;BitField) => BitField
 
 # See: http://clhs.lisp.se/Body/f_logand.htm
 def logxor($m; $n): #:: (BitField;BitField) => BitField
-    def r($x; $y; $result; $pow2):
-        if $x < 1 and $y < 1
+    def r($m; $n; $result; $pow2):
+        if $m < 1 and $n < 1
         then $result
-        elif (fmod($x;2)!=0) != (fmod($y;2)!=0)
-        then r($x/2|floor; $y/2|floor; $result+$pow2; $pow2*2) 
-        else r($x/2|floor; $y/2|floor; $result; $pow2*2) 
+        elif (fmod($m;2)!=0) != (fmod($n;2)!=0)
+        then r($m/2|floor; $n/2|floor; $result+$pow2; $pow2*2) 
+        else r($m/2|floor; $n/2|floor; $result; $pow2*2) 
         end
     ;
     r($m; $n; 0e0; 1)
@@ -156,18 +156,20 @@ def ash($count; $n): #:: (number;BitField) => BitField
 
 # See: http://clhs.lisp.se/Body/f_intege.htm
 def integer_length($n): #:: (BitField) => number
-    if $n < 0 then -$n else $n+1 end
-    | log2 | ceil
+    if $n < 0
+    then -$n
+    else $n+1
+    end | log2 | ceil
 ;
 
 # See: http://clhs.lisp.se/Body/f_logcou.htm
 def logcount($n): #:: (BitField) => number
-    def r($x; $result):
-        if $x < 1
+    def r($n; $result):
+        if $n < 1
         then $result
-        elif fmod($x;2) != 0
-        then r($x/2|floor; $result+1)
-        else r($x/2|floor; $result)
+        elif fmod($n;2) != 0
+        then r($n/2|floor; $result+1)
+        else r($n/2|floor; $result)
         end
     ;
     r($n; 0)
