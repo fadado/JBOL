@@ -14,15 +14,44 @@ module {
 # BitField: 0..(2^53-1) (53 bits unsigned integer)
 # Bit:      2^0, 2^1, 2^2, ...2^52
 # Position: 0..52
+# New empty bitset: 0e0
 
-########################################################################
-# Low level private functions
-########################################################################
+# def _bit($position): $position|exp2;
+# def _pos($bit): $bit|log2;
 
-def _mask($size): $size|exp2-1;
+# Build mask with $size bits (mask(53) == -1 in signed integers)
+def mask($size): #:: (number) => BitField
+    $size|exp2-1
+;
 
-#def _bit($position): $position|exp2;
-#def _pos($bit): $bit|log2;
+# Set bit at $position
+def setbit($position; $n): #:: (Position;BitField) => BitField
+    if fmod($n/($position|exp2)|floor;2) != 0
+    then $n
+    else $n + ($position|exp2)
+    end
+;
+
+# Clear bit at $position
+def clrbit($position; $n): #:: (Position;BitField) => BitField
+    if fmod($n/($position|exp2)|floor;2) != 0
+    then $n - ($position|exp2)
+    else $n
+    end
+;
+
+# Toggle bit at $position
+def tglbit($position; $n): #:: (Position;BitField) => BitField
+    if fmod($n/($position|exp2)|floor;2) != 0
+    then $n - ($position|exp2)
+    else $n + ($position|exp2)
+    end
+;
+
+# Get bit at $position as 0 or 1
+def getbit($position; $n): #:: (Position;BitField) => 0^1
+    fmod($n/($position|exp2)|floor;2) | fabs
+;
 
 ########################################################################
 # Common LISP borrowed functions
@@ -33,7 +62,7 @@ def _mask($size): $size|exp2-1;
 
 # See: http://clhs.lisp.se/Body/f_logand.htm
 def lognot($n): #:: (BitField) => BitField
-    9007199254740991 - $n # use precalculated constant (53|exp2)-1
+    9007199254740991 - $n # use precalculated constant 53|exp2-1
 ;
 
 # See: http://clhs.lisp.se/Body/f_logand.htm
@@ -154,85 +183,48 @@ def logcount($n): #:: (BitField) => number
 # See: http://clhs.lisp.se/Body/f_by_by.htm
 def byte($size; $position):
     {
-        $size,
-        $position,
-        mask: ash($position; _mask($size))
-    }
+        siz: $size,
+        pos: $position,
+        msk: ash($position; $size|exp2-1), # precomputed mask
+        neg: null # precomputed negated mask
+    } | .neg = lognot(.msk)
 ;
 
 # See: http://clhs.lisp.se/Body/f_by_by.htm
 def byte_size($bytespec):
-    $bytespec.size
+    $bytespec.siz
 ;
 
 # See: http://clhs.lisp.se/Body/f_by_by.htm
 def byte_position($bytespec):
-    $bytespec.position
+    $bytespec.pos
 ;
 
 # See: http://clhs.lisp.se/Body/f_ldb.htm
 def ldb($bytespec; $n):
-    logand($bytespec.mask; $n) as $m
-    | ash(-$bytespec.position; $m)
+    ash(-$bytespec.pos; logand($bytespec.msk; $n))
 ;
 
 # See: http://clhs.lisp.se/Body/f_ldb_te.htm
 def ldb_test($bytespec; $n):
-    logand($bytespec.mask; $n) != 0
+    logand($bytespec.msk; $n) != 0
 ;
 
 # See: http://clhs.lisp.se/Body/f_mask_f.htm
 def mask_field($bytespec; $n):
-    logand($bytespec.mask; $n)
+    logand($bytespec.msk; $n)
 ;
 
 # See: http://clhs.lisp.se/Body/f_dpb.htm
 def dpb($newbyte; $bytespec; $n):
-    logand(lognot($bytespec.mask); $n) as $m
-    | logand($bytespec.mask; ash($bytespec.position; $newbyte)) as $b
-    | logior($m; $b)
+    logior(logand($bytespec.neg; $n);
+           logand($bytespec.msk; ash($bytespec.pos; $newbyte)))
 ;
 
 # See: http://clhs.lisp.se/Body/f_deposi.htm
 def deposit_field($newbyte; $bytespec; $n):
-    logand(lognot($bytespec.mask); $n) as $m
-    | logand($bytespec.mask; $newbyte) as $b
-    | logior($m; $b)
-;
-
-########################################################################
-# Bitset operations, not borrowed from LISP
-########################################################################
-
-# New empty bitset: 0e0
-
-# Set bit at $position
-def setbit($position; $n): #:: (Position;BitField) => BitField
-    if fmod($n/($position|exp2)|floor;2) != 0
-    then $n
-    else $n + ($position|exp2)
-    end
-;
-
-# Clear bit at $position
-def clrbit($position; $n): #:: (Position;BitField) => BitField
-    if fmod($n/($position|exp2)|floor;2) != 0
-    then $n - ($position|exp2)
-    else $n
-    end
-;
-
-# Toggle bit at $position
-def tglbit($position; $n): #:: (Position;BitField) => BitField
-    if fmod($n/($position|exp2)|floor;2) != 0
-    then $n - ($position|exp2)
-    else $n + ($position|exp2)
-    end
-;
-
-# Get bit at $position as 0 or 1
-def getbit($position; $n): #:: (Position;BitField) => 0^1
-    fmod($n/($position|exp2)|floor;2) | fabs
+    logior(logand($bytespec.neg; $n);
+           logand($bytespec.msk; $newbyte))
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq
