@@ -93,6 +93,61 @@ include "math/bitwise"; logcount(_mask(.)) == .
 50
 true
 
+# byte...
+
+include "math/bitwise"; byte_size(byte(10;20))
+null
+10
+
+include "math/bitwise"; byte_position(byte(10;20))
+null
+20
+
+include "math/bitwise"; deposit_field(7; byte(2;1); 0e0)
+null
+6
+
+include "math/bitwise"; deposit_field(_mask(53); byte(4;0); 0e0)
+null
+15
+
+
+include "math/bitwise"; ldb(byte(4;4); _mask(10))
+null
+15
+
+include "math/bitwise"; ldb(byte(4;4); _mask(10))
+null
+15
+
+include "math/bitwise"; ldb_test(byte(4;4); _mask(8))
+null
+true
+
+include "math/bitwise"; mask_field(byte(1;5); _mask(53))
+null
+32
+
+include "math/bitwise"; mask_field(byte(4;4); _mask(8))
+null
+240
+
+include "math/bitwise"; dpb(15; byte(4;4); 128)
+null
+240
+
+include "math/bitwise"; dpb(1; byte(1;10); 0e0)
+null
+1024
+
+include "math/bitwise"; dpb(_mask(53)-1; byte(2;10); 0e0)
+null
+2048
+
+include "math/bitwise"; dpb(1; byte(2;10); 2048)
+null
+1024
+
 ########################################################################
 # Bitset operations
 ########################################################################

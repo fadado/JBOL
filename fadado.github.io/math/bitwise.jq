@@ -151,6 +151,7 @@ def logcount($n): #:: (BitField) => number
 #       http://www.cs.cmu.edu/Groups/AI/html/cltl/clm/node132.html
 ########################################################################
 
+# See: http://clhs.lisp.se/Body/f_by_by.htm
 def byte($size; $position):
     {
         $size,
@@ -159,37 +160,44 @@ def byte($size; $position):
     }
 ;
 
+# See: http://clhs.lisp.se/Body/f_by_by.htm
 def byte_size($bytespec):
     $bytespec.size
 ;
 
+# See: http://clhs.lisp.se/Body/f_by_by.htm
 def byte_position($bytespec):
     $bytespec.position
 ;
 
+# See: http://clhs.lisp.se/Body/f_ldb.htm
 def ldb($bytespec; $n):
-    logand($bytespec.mask; $n) as $b
-    | ash(-$bytespec.position; $b)
+    logand($bytespec.mask; $n) as $m
+    | ash(-$bytespec.position; $m)
 ;
 
+# See: http://clhs.lisp.se/Body/f_ldb_te.htm
 def ldb_test($bytespec; $n):
     logand($bytespec.mask; $n) != 0
 ;
 
+# See: http://clhs.lisp.se/Body/f_mask_f.htm
 def mask_field($bytespec; $n):
     logand($bytespec.mask; $n)
 ;
 
+# See: http://clhs.lisp.se/Body/f_dpb.htm
 def dpb($newbyte; $bytespec; $n):
-    logand(lognot($bytespec.mask); $n) $m
-    | logand($bytespec.mask; ash($bytespec.position; $newbyte);) as $b
-    | logior($b; $m)
+    logand(lognot($bytespec.mask); $n) as $m
+    | logand($bytespec.mask; ash($bytespec.position; $newbyte)) as $b
+    | logior($m; $b)
 ;
 
+# See: http://clhs.lisp.se/Body/f_deposi.htm
 def deposit_field($newbyte; $bytespec; $n):
-    logand(lognot($bytespec.mask); $n) $m
+    logand(lognot($bytespec.mask); $n) as $m
     | logand($bytespec.mask; $newbyte) as $b
-    | logior($b; $m)
+    | logior($m; $b)
 ;
 
 ########################################################################
