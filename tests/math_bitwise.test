@@ -7,6 +7,14 @@
 
 ########################################################################
 
+include "math/bitwise"; (53|exp2-1) as $universe | [range(53)|exp2]|add == $universe
+null
+true
+
+include "math/bitwise"; (53|exp2-1) as $universe | [range(53)] == [positions($universe)]
+null
+true
+
 include "math/bitwise"; mask(2)
 null
 3

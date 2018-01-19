@@ -53,6 +53,19 @@ def tglbit($position; $n): #:: (Position;BitField) => BitField
     end
 ;
 
+# Produces all positions in bitfield
+def positions($n): #:: (BitField) => *number
+    def r($n; $position):
+        if $n < 1
+        then empty
+        elif fmod($n;2)!=0
+        then $position , r($n/2|floor; $position+1)
+        else r($n/2|floor; $position+1)
+        end
+    ;
+    r($n; 0)
+;
+
 ########################################################################
 # Common LISP borrowed functions
 #
