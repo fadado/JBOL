@@ -84,7 +84,7 @@ def upto($u; $i; $j): #:: WORD|(WORD;number;number) => *number
 ;
 
 ########################################################################
-# Match one word
+# Find word(s)
 
 # Matches u at the beggining of w?
 def factor($u): #:: WORD|(WORD) => ?number
@@ -100,7 +100,6 @@ def factor($u; $i): #:: WORD|(WORD;number) => ?number
 ;
 
 ########################################################################
-# Find word in all positions
 
 # Global search factor (Icon `find`)
 def gfactor($u): #:: WORD|(WORD) => *number
@@ -115,12 +114,6 @@ def gfactor($u; $i; $j): #:: WORD|(WORD;number;number) => *number
     select(0 <= $i and $i < $j and $j <= length)
     | .[$i:$j]
     | indices($u)[]
-;
-
-# Proper factor?
-def pfactor($u): #:: WORD|(WORD) => boolean
-    ($u|length) as $j
-    | 0 < $j and $j < length and contains($u)
 ;
 
 ########################################################################
