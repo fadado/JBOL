@@ -139,6 +139,7 @@ $(LogDir)/object_set.log: $(OBJECT)/set.jq
 
 # Word tests
 $(LogDir)/word.log: $(WORD)/word.jq $(LIB)/prelude.jq
+$(LogDir)/word_scanner.log: $(WORD)/scanner.jq $(LIB)/prelude.jq
 $(LogDir)/word_alphabet.log: $(WORD)/alphabet.jq $(ARRAY)/kleene.jq $(LIB)/prelude.jq
 $(LogDir)/word_language.log: $(WORD)/language.jq $(ARRAY)/kleene.jq $(LIB)/prelude.jq
 
