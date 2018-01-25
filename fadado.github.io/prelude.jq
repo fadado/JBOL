@@ -112,117 +112,117 @@ def assert(predicate; $message): #:: a|(a->boolean;string) => a!
 # Recursion schemata
 ########################################################################
 
-#
-# Series of function powers
-#
+########################################################################
+# Stream of function powers
 
 # f⁰ f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
-def iterate(filter): #:: a|(a->a) => *a
-    def r: . , (filter|r);
-    r
+def iterate(f): #:: a|(a->a) => +a
+    # . as $base
+    def r: #:: a => +a
+        . , (f|r) # until `f` fails
+    ; r
 ;
-def iterate($n; filter): #:: a|(number;a->a) => *a
-    limit($n; iterate(filter))
+def iterate($n; f): #:: a|(number;a->a) => *a
+    select($n > 0)
+    | limit($n; iterate(f))
 ;
 
 # f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
-def iterate1(filter): #:: a|(a->a) => *a
-    filter | iterate(filter)
+def iterate1(f): #:: a|(a->a) => *a
+    f | iterate(f)
 ;
-def iterate1($n; filter): #:: a|(number;a->a) => *a
-    limit($n; iterate1(filter))
+def iterate1($n; f): #:: a|(number;a->a) => *a
+    select($n > 0)
+    | limit($n; iterate1(f))
 ;
 
-#
+########################################################################
+# Stream of relation powers
+
+# g⁰ g¹⁺ g²⁺ g³⁺ g⁴⁺ g⁵⁺ g⁶⁺ g⁷⁺ g⁸⁺ g⁹⁺…
+def deepen(g): #:: a|(a->*a) => +a
+    # . as $base
+    def r: #:: a => +a
+        . , (r|g)
+    ; r
+;
+# g⁰⁺ g¹⁺ g²⁺ g³⁺ g⁴⁺ g⁵⁺ g⁶⁺ g⁷⁺ g⁸⁺ g⁹⁺…
+def deepen(base; g): #:: x|(x->*a;a->*a) => *a
+    def r: #:: a => +a
+        base , (r|g)
+    ; r
+;
+
+########################################################################
+# Variant
+
+# g⁰ g¹⁺ g²⁺ g³⁺ g⁴⁺ g⁵⁺ g⁶⁺ g⁷⁺ g⁸⁺ g⁹⁺…
+def xdeepen(g): #:: a|(a->*a) => +a
+    # [.] as $base
+    def r: #:: [a] => +a
+        # .[] , ( [.[]|g] | select(length > 0) | r )
+        if length != 0
+        then # until `g` fails
+            .[] , ( [.[]|g] | r )
+        else empty end
+    ; [.] | r
+;
+# g⁰⁺ g¹⁺ g²⁺ g³⁺ g⁴⁺ g⁵⁺ g⁶⁺ g⁷⁺ g⁸⁺ g⁹⁺…
+def xdeepen(base; g): #:: x|(x->*a;a->*a) => *a
+    def r: #:: [a] => *a
+        # .[] , ( [.[]|g] | select(length > 0) | r )
+        if length != 0
+        then # until `g` fails
+            .[] , ( [.[]|g] | r )
+        else empty end
+    ; [base] | r
+;
+
+########################################################################
 # Apply functions to ℕ
-#
 
 # fₙ fₙ₊₁ fₙ₊₂ fₙ₊₃ fₙ₊₄ fₙ₊₅ fₙ₊₆ fₙ₊₇ fₙ₊₈ fₙ₊₉…
-def tabulate($start; filter): #:: (number;number->a) => *a
-#   $start | iterate(.+1) | filter
-    def r: filter , (.+1|r);
-    $start|r
+def tabulate($n; f): #:: (number;number->a) => *a
+#   $n | iterate(.+1) | f
+    def r: f , (.+1|r);
+    $n|r
 ;
 # f₀ f₁ f₂ f₃ f₄ f₅ f₆ f₇ f₈ f₉…
-def tabulate(filter): #:: (number->a) => *a
-#   0 | iterate(.+1) | filter
-    def r: filter , (.+1|r);
+def tabulate(f): #:: (number->a) => *a
+#   0 | iterate(.+1) | f
+    def r: f , (.+1|r);
     0|r
 ;
 
-#
-# Relational versions of iterate
-#
+########################################################################
+# Fold/unfold family of patterns
 
-# Warnings:
-#   + inefficient  (recalculates again and again)
-#   + possible stack-overflow
-#   + never stops
-
-# f⁰ f¹⁺ f²⁺ f³⁺ f⁴⁺ f⁵⁺ f⁶⁺ f⁷⁺ f⁸⁺ f⁹⁺…
-def deepen(childs): #:: (a;a->a) => *a
-    def nodes: . , (nodes|childs);
-    nodes
-;
-# f⁰⁺ f¹⁺ f²⁺ f³⁺ f⁴⁺ f⁵⁺ f⁶⁺ f⁷⁺ f⁸⁺ f⁹⁺…
-def deepen(root; childs): #:: (a;a->a) => *a
-    def nodes: root , (nodes|childs);
-    nodes
-;
-
-# f⁰ f¹⁺ f²⁺ f³⁺ f⁴⁺ f⁵⁺ f⁶⁺ f⁷⁺ f⁸⁺ f⁹⁺…
-def xdeepen(childs): #:: a|(a->*a) => *a
-    def nodes:
-        if length == 0
-        then empty
-        else
-            .[] , ([.[]|childs] | nodes)
-        end
-    ;
-    [.] | nodes
-;
-# f⁰⁺ f¹⁺ f²⁺ f³⁺ f⁴⁺ f⁵⁺ f⁶⁺ f⁷⁺ f⁸⁺ f⁹⁺…
-def xdeepen(root; childs): #:: a|(a->*a) => *a
-    def nodes:
-        if length == 0
-        then empty
-        else
-            .[] , ([.[]|childs] | nodes)
-        end
-    ;
-    [root] | nodes
-;
-
-#
-# Folding family of patterns
-#
-
-#def fold(filter; $a; generator): #:: x|([a,b]->a;a;x->*b) => a
+#def fold(f; $a; generator): #:: x|([a,b]->a;a;x->*b) => a
 #    reduce generator as $b
-#        ($a; [.,$b]|filter)
+#        ($a; [.,$b]|f)
 #;
 
-#def scan(filter; generator): #:: x|([a,b]->a;x->*b) => *a
+#def scan(f; generator): #:: x|([a,b]->a;x->*b) => *a
 #    foreach generator as $b
-#        (.; [.,$b]|filter; .)
+#        (.; [.,$b]|f; .)
 #;
-#def scan(filter; $a; generator): #:: x|([a,b]->a;a;x->*b) => *a
-#    $a|scan(filter; generator)
+#def scan(f; $a; generator): #:: x|([a,b]->a;a;x->*b) => *a
+#    $a|scan(f; generator)
 #;
 
-#def mapcat(filter; $id):
-#    reduce (.[] | filter) as $x
+#def mapcat(f; $id):
+#    reduce (.[] | f) as $x
 #        ($id; . + $x)
 #;
 
 # Fold opposite
-def unfold(filter; $seed): #:: (a->[b,a];a) => *b
-    def r: filter | .[0] , (.[1]|r);
+def unfold(f; $seed): #:: (a->[b,a];a) => *b
+    def r: f | .[0] , (.[1]|r);
     $seed|r
 ;
 
-def unfold(filter): #:: a|(a->[b,a]) => *b
-    unfold(filter; .)
+def unfold(f): #:: a|(a->[b,a]) => *b
+    unfold(f; .)
 ;
 
 ########################################################################
