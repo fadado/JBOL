@@ -41,10 +41,10 @@ def star: #:: ALPHABET => *WORD
         if type == "string"
         then
             (./"") as $set
-            | ""|deepen(.+$set[])
+            | deepen(""; .+$set[])
         else
             . as $set
-            | []|deepen(.[length]=$set[])
+            | deepen([]; .[length]=$set[])
         end
     end
 # Slow:

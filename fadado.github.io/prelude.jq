@@ -139,43 +139,26 @@ def iterate1($n; f): #:: a|(number;a->a) => *a
 ########################################################################
 # Stream of relation powers
 
-# g⁰ g¹⁺ g²⁺ g³⁺ g⁴⁺ g⁵⁺ g⁶⁺ g⁷⁺ g⁸⁺ g⁹⁺…
-def deepen(g): #:: a|(a->*a) => +a
-    # . as $base
-    def r: #:: a => +a
-        . , (r|g)
-    ; r
+# Level traverse the search space
+def search_levels(base; g): #:: x|(x->*a;a->*a) => +[a]
+    def r: #:: [a] => *a
+        if length == 0 then empty
+        else . , ( [.[]|g] | r ) end
+    ; [base] | r
 ;
-# g⁰⁺ g¹⁺ g²⁺ g³⁺ g⁴⁺ g⁵⁺ g⁶⁺ g⁷⁺ g⁸⁺ g⁹⁺…
+
+# g⁰ g¹ g² g³ g⁴ g⁵ g⁶ g⁷ g⁸ g⁹…
+# Iterate values in each level
+def traverse(base; g): #:: x|(x->*a;a->*a) => *a
+    search_levels(base; g)[]
+;
+
+# g⁰ g¹ g² g³ g⁴ g⁵ g⁶ g⁷ g⁸ g⁹…
+# Using left recursion
 def deepen(base; g): #:: x|(x->*a;a->*a) => *a
     def r: #:: a => +a
-        base , (r|g)
+        base , (r|g) # only stops if `base` fails
     ; r
-;
-
-########################################################################
-# Variant
-
-# g⁰ g¹⁺ g²⁺ g³⁺ g⁴⁺ g⁵⁺ g⁶⁺ g⁷⁺ g⁸⁺ g⁹⁺…
-def xdeepen(g): #:: a|(a->*a) => +a
-    # [.] as $base
-    def r: #:: [a] => +a
-        # .[] , ( [.[]|g] | select(length > 0) | r )
-        if length != 0
-        then # until `g` fails
-            .[] , ( [.[]|g] | r )
-        else empty end
-    ; [.] | r
-;
-# g⁰⁺ g¹⁺ g²⁺ g³⁺ g⁴⁺ g⁵⁺ g⁶⁺ g⁷⁺ g⁸⁺ g⁹⁺…
-def xdeepen(base; g): #:: x|(x->*a;a->*a) => *a
-    def r: #:: [a] => *a
-        # .[] , ( [.[]|g] | select(length > 0) | r )
-        if length != 0
-        then # until `g` fails
-            .[] , ( [.[]|g] | r )
-        else empty end
-    ; [base] | r
 ;
 
 ########################################################################

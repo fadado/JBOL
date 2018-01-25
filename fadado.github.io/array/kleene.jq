@@ -61,7 +61,7 @@ def star: #:: SET => +TUPLE
     then .         # ε
     else
         . as $set
-        | []|deepen(.[length]=$set[])
+        | deepen([]; .[length]=$set[])
     end
 # Very slow:
 #   if length == 0 # ∅
