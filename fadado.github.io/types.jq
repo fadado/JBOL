@@ -8,8 +8,6 @@ module {
     }
 };
 
-include "fadado.github.io/prelude";
-
 # Data type predicates
 def isnull: #:: a| => boolean
     type == "null"
@@ -52,53 +50,53 @@ def isleaf: #:: a| => boolean
 ;
 
 def isnull($a): #:: (a) => boolean
-    $a|isnull
+    $a|type == "null"
 ;
 def isboolean($a): #:: (a) => boolean
-    $a|isboolean
+    $a|type == "boolean"
 ;
 def isnumber($a): #:: (a) => boolean
-    $a|isnumber
+    $a|type == "number"
 ;
 def isinteger($a): #:: (a) => boolean
-    $a|isinteger
+    $a|type == "number" and . == trunc
 ;
 def isfloat($a): #:: (a) => boolean
-    $a|isfloat
+    $a|type == "number" and . != trunc
 ;
 def isstring($a): #:: (a) => boolean
-    $a|isstring
+    $a|type == "string"
 ;
 def ischar($a): #:: (a) => boolean
-    $a|ischar
+    $a|type == "string" and length == 1
 ;
 def isarray($a): #:: (a) => boolean
-    $a|isarray
+    $a|type == "array"
 ;
 def isobject($a): #:: (a) => boolean
-    $a|isobject
+    $a|type == "object"
 ;
 def isscalar($a): #:: (a) => boolean
-    $a|isscalar
+    $a|type| . == "null" or . == "boolean" or . == "number" or . == "string"
 ;
 def isiterable($a): #:: (a) => boolean
-    $a|isiterable
+    $a|type| . == "array" or . == "object"
 ;
 def isvoid($a): #:: (a) => boolean
-    $a|isvoid
+    $a|isiterable and length == 0
 ;
 def isleaf($a): #:: (a) => boolean
-    $a|isleaf
+    $a|isscalar or isvoid
 ;
 
 # is unknown?
-def unknown($p): #:: array^object|(number^string) => boolean
-    has($p) and .[$p] == null
+def unknown($x): #:: array^object|(number^string) => boolean
+    has($x) and .[$x] == null
 ;
 
 # is undefined?
-def undefined($p): #:: array^object|(number^string) => boolean
-    has($p) | not
+def undefined($x): #:: array^object|(number^string) => boolean
+    has($x) | not
 ;
 
 # coerce to bool (exactly true or false)

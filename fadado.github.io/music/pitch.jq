@@ -9,6 +9,7 @@ module {
 };
 
 include "fadado.github.io/prelude";
+include "fadado.github.io/types";
 import "fadado.github.io/string/regexp" as re;
 
 ########################################################################
@@ -21,12 +22,12 @@ import "fadado.github.io/string/regexp" as re;
 
 # Produces a new pitch
 def new: #:: <number^string> => PITCH
-    if type == "number" then
+    if isnumber then
         if 0 <= . and . <= 127 # . is a pitch in the range 0..127
         then .
         else "Pitch out of range: \(.)" | error
         end
-    elif type == "string" then
+    elif isstring then
         if test("^[A-G][♯♭]?(?:[0-9]|10)$") # . is a note name with octave
         then
             match("^(?<n>[A-G])(?<a>[♯♭])?(?<o>[0-9]|10)$")

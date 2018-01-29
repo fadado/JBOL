@@ -162,22 +162,6 @@ def deepen(base; g): #:: x|(x->*a;a->*a) => *a
 ;
 
 ########################################################################
-# Apply functions to ℕ
-
-# fₙ fₙ₊₁ fₙ₊₂ fₙ₊₃ fₙ₊₄ fₙ₊₅ fₙ₊₆ fₙ₊₇ fₙ₊₈ fₙ₊₉…
-def tabulate($n; f): #:: (number;number->a) => *a
-#   $n | iterate(.+1) | f
-    def r: f , (.+1|r);
-    $n|r
-;
-# f₀ f₁ f₂ f₃ f₄ f₅ f₆ f₇ f₈ f₉…
-def tabulate(f): #:: (number->a) => *a
-#   0 | iterate(.+1) | f
-    def r: f , (.+1|r);
-    0|r
-;
-
-########################################################################
 # Fold/unfold family of patterns
 
 #def fold(f; $a; generator): #:: x|([a,b]->a;a;x->*b) => a
@@ -200,8 +184,9 @@ def tabulate(f): #:: (number->a) => *a
 
 # Fold opposite
 def unfold(f; $seed): #:: (a->[b,a];a) => *b
-    def r: f | .[0] , (.[1]|r);
-    $seed|r
+    def r:
+        f | .[0] , (.[1]|r)
+    ; $seed|r
 ;
 
 def unfold(f): #:: a|(a->[b,a]) => *b

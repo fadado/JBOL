@@ -9,6 +9,7 @@ module {
 };
 
 include "fadado.github.io/prelude";
+include "fadado.github.io/types";
 
 ########################################################################
 # Types used in declarations:
@@ -42,7 +43,7 @@ def count($u): #:: WORD|(WORD) => number
 
 # Generic reverse
 def mirror: #:: WORD => WORD
-    if type == "string"
+    if isstring
     then explode|reverse|implode
     else reverse
     end
@@ -130,7 +131,7 @@ def fibstr($w; $u): #:: (WORD;WORD) => +WORD
 def power($n): #:: WORD|(number) => WORD
 # assert $n >= 0
     . as $word
-    | if type == "string"
+    | if isstring
     then if $n == 0 then "" else . * $n end
     else reduce range($n) as $_ ([]; . + $word)
     end
@@ -139,7 +140,7 @@ def power($n): #:: WORD|(number) => WORD
 # Generates w*: w⁰ ∪ w¹ ∪ w² ∪ w³ ∪ w⁴ ∪ w⁵ ∪ w⁶ ∪ w⁷ ∪ w⁸ ∪ w⁹…
 def star: #:: WORD => +WORD
     . as $word
-    | if type == "string" then "" else [] end
+    | if isstring then "" else [] end
     | iterate(. + $word)
 ;
 

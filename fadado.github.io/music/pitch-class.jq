@@ -9,6 +9,7 @@ module {
 };
 
 include "fadado.github.io/prelude";
+include "fadado.github.io/types";
 import "fadado.github.io/math" as math;
 import "fadado.github.io/music/pitch" as pitch;
 
@@ -21,9 +22,9 @@ import "fadado.github.io/music/pitch" as pitch;
 
 # Produces the pitch-class corresponding to a pitch
 def new: #:: <number^string> => PCLASS
-    if type == "number" then
+    if isnumber then
         pitch::new % 12
-    elif type == "string" then
+    elif isstring then
         if test("^[0-9te]$")
         then
             if .=="t"           # ten

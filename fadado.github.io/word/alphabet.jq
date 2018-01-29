@@ -9,6 +9,7 @@ module {
 };
 
 include "fadado.github.io/prelude";
+include "fadado.github.io/types";
 import "fadado.github.io/array/kleene" as kleene;
 
 ########################################################################
@@ -27,7 +28,7 @@ def power($n): #:: ALPHABET|(number) => *WORD
     then .[0:0] # ε
     elif length == 0 # Σ × ∅
     then empty       # ∅
-    elif type == "string"
+    elif isstring
     then explode|kleene::power($n)|implode
     else kleene::power($n)
     end
@@ -38,7 +39,7 @@ def star: #:: ALPHABET => *WORD
     if length == 0 # ∅
     then .         # ε
     else
-        if type == "string"
+        if isstring
         then
             (./"") as $set
             | deepen(""; .+$set[])
@@ -60,7 +61,7 @@ def plus: #:: ALPHABET => *WORD
     if length == 0 # ∅
     then empty     # ∅
     else
-        if type == "string"
+        if isstring
         then
             (./"") as $set
             | deepen($set[]; .+$set[])

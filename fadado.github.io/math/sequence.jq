@@ -11,6 +11,22 @@ module {
 include "fadado.github.io/prelude";
 include "fadado.github.io/math";
 
+########################################################################
+# Apply functions to ℕ
+
+# fₙ fₙ₊₁ fₙ₊₂ fₙ₊₃ fₙ₊₄ fₙ₊₅ fₙ₊₆ fₙ₊₇ fₙ₊₈ fₙ₊₉…
+def tabulate($n; f): #:: (number;number->a) => *a
+#   $n | iterate(.+1) | f
+    def r: f , (.+1|r);
+    $n|r
+;
+# f₀ f₁ f₂ f₃ f₄ f₅ f₆ f₇ f₈ f₉…
+def tabulate(f): #:: (number->a) => *a
+#   0 | iterate(.+1) | f
+    def r: f , (.+1|r);
+    0|r
+;
+
 # Arithmetic sequences #################################################
 
 # CF:

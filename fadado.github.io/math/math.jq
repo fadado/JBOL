@@ -9,6 +9,7 @@ module {
 };
 
 include "fadado.github.io/prelude";
+include "fadado.github.io/types";
 
 ########################################################################
 # Simple utilities
@@ -52,7 +53,7 @@ def div($m; $n): #:: (number;number) => number
 ;
 
 def sign($n): #:: (number) => number
-    $n|if isnan or type!="number" then nan
+    $n|if isnan or (isnumber|not) then nan
     elif . > 0                    then 1
     elif . == 0                   then 0
                                   else -1

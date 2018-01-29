@@ -9,6 +9,7 @@ module {
 };
 
 include "fadado.github.io/prelude";
+include "fadado.github.io/types";
 import "fadado.github.io/math" as math;
 import "fadado.github.io/word" as word;
 import "fadado.github.io/music/pitch-class" as pc;
@@ -30,10 +31,10 @@ import "fadado.github.io/music/pitch-class" as pc;
 
 # Produces the pitch-class set
 def new: #:: <array^string> => PCSET
-    if type == "array"
+    if isarray
     then
         unique | map(pc::new)
-    elif type == "string" then
+    elif isstring then
         if test("^[0-9te]+$")
         then # compact string
             (./"") | map(pc::new)
