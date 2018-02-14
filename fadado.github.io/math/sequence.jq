@@ -216,11 +216,10 @@ def fibonacci: #:: => *number
 #
 def primes: #:: => *number
     def sieve(g):
-        #first(g) as $n
-        (label $fence | g | (. , break $fence)) as $n
+        first(g) as $n
         | $n, sieve(g|select((. % $n) != 0))
     ;
-    sieve(range(2; infinite))
+    2, sieve(3|iterate(.+2))
 ;
 
 # Number of bits equal to 1 in all naturals (number of ones)
