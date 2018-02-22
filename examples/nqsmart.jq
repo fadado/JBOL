@@ -9,7 +9,7 @@ def queens($n; $columns):
         every(
             range($i) as $k
             | .[$k] as $l
-            | (($i-$k)|length) != (($j-$l)|length)
+            | (($i-$k)|fabs) != (($j-$l)|fabs)
         )
     ;
     def available_columns:

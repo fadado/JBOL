@@ -18,18 +18,18 @@ Places                                      Value->Stream'1        boolean
     Input|(Parameters) => Output            @'3                    [Value]
 Parameters                                  Value                  {Value}
     Parameter                               ?Value'4               <Value>'6
-    Parameter; Parameters                   *Value                 Letter'7
-Input                                       +Value                 Value^Value'8
-    Value                                   stream!'5              TYPE_NAME'9
+    Parameter; Parameters                   *Value                 Value^Value'7 
+Input                                       +Value                 Letter'8
+    Value                                   stream!'5              Name'9
 ```
 
 Notes:
 
 1. Parameters passed by name are like parameterless filters.
 2. The character `!` is the display symbol for non-terminating filters type.
-3. The character `@` denotes the empty stream. Use only in filters that never produce values.
+3. The character `@` denotes the empty stream.  Use only when results are never expected.
 4. Occurrence indicators (`?`, `*`, `+`) have the usual meaning.
-5. Streams output type always have an implicit union with `!`. Add only when cancellation is expected.
+5. Streams output type always have an implicit union with `!`.  To add only when abortion is expected.
 6. Indistinct array or object: `<a> = [a]^{a}`.
 7. Union of two value types.
 8. Single lowercase letters are type variables representing indeterminate JSON value types.

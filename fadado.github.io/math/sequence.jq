@@ -214,12 +214,28 @@ def fibonacci: #:: => *number
 
 # The famous sieve
 #
+#def primes: #:: => *number
+#    def sieve(g):
+#        first(g) as $n
+#        | $n, sieve(g|select((. % $n) != 0))
+#    ;
+#    2, sieve(3|iterate(.+2))
+#;
+
+# Very fast alternative!
 def primes: #:: => *number
-    def sieve(g):
-        first(g) as $n
-        | $n, sieve(g|select((. % $n) != 0))
+    def isprime(g):
+        . as $n
+        | label $out
+        | g as $p
+        | if ($p * $p) > $n
+          then true , break$out
+          elif ($n % $p) == 0
+          then false , break$out
+          else empty # next
+          end
     ;
-    2, sieve(3|iterate(.+2))
+    2, (3|iterate(.+2) | select(isprime(primes)))
 ;
 
 # Number of bits equal to 1 in all naturals (number of ones)
