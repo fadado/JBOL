@@ -62,7 +62,7 @@ def factor($u): #:: WORD|(WORD) => ?number
 
 # Prefix?
 def prefix($u): #:: WORD|(WORD) => boolean
-    succeeds(factor($u))
+    nonempty(factor($u))
 ;
 
 # Suffix?
@@ -118,7 +118,7 @@ def factors: #:: WORD => *WORD
 # fibstr("a"; "b") => "a","b","ab","bab","abbab"…
 def fibstr($w; $u): #:: (WORD;WORD) => +WORD
     [$w,$u]
-    | iterate([.[-1], .[-2]+.[-1]])
+    | recurse([.[-1], .[-2]+.[-1]])
     | .[-2]
 ;
 
@@ -141,13 +141,13 @@ def power($n): #:: WORD|(number) => WORD
 def star: #:: WORD => +WORD
     . as $word
     | if isstring then "" else [] end
-    | iterate(. + $word)
+    | recurse(. + $word)
 ;
 
 # Generates w⁺: w¹ ∪ w² ∪ w³ ∪ w⁴ ∪ w⁵ ∪ w⁶ ∪ w⁷ ∪ w⁸ ∪ w⁹…
 def plus: #:: WORD => +WORD
     . as $word
-    | iterate(. + $word)
+    | recurse(. + $word)
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

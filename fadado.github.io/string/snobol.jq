@@ -44,11 +44,11 @@ def NOT(g): #:: a|(a->*b) => ?a
 ;
 
 def IF(g): #:: a|(a->*b) => ?a
-    select(succeeds(g))
+    select(nonempty(g))
 ;
 
 def ARBNO(f): #:: a|(a->a) => *a
-#   iterate(f)
+#   recurse(f)
     def r: . , (f|r);
     r
 ;

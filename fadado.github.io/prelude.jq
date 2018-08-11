@@ -9,15 +9,11 @@ module {
 };
 
 ########################################################################
-# Redefine some jq primitives
+# Variations on some JQ primitives
 ########################################################################
 
-# Builtin `isempty`
-#def isempty(stream): #:: a|(a->*b) => boolean
-#    0 == ((label $fence | stream | (1 , break $fence))//0);
-
 # Reverse of `isempty`
-def succeeds(stream): #:: a|(a->*b) => boolean
+def nonempty(stream): #:: a|(a->*b) => boolean
     1 == ((label $fence | stream | (1 , break $fence))//0)
 ;
 
@@ -28,7 +24,20 @@ def every(stream): #:: a|(a->*boolean) => boolean
 
 # any(stream; .)
 def some(stream): #:: a|(a->*boolean) => boolean
-    succeeds(stream | . or empty)
+    nonempty(stream | . or empty)
+;
+
+# Complement of select
+def reject(predicate): #:: a|(a->*boolean) => ?a
+    if predicate then empty else . end
+;
+
+# One branch conditionals
+def when(predicate; action): #:: a|(a->boolean;a->*a) => *a
+    if predicate then action else . end
+;
+def unless(predicate; action): #:: a|(a->boolean;a->*a) => *a 
+    if predicate then . else action end
 ;
 
 ########################################################################
@@ -60,34 +69,6 @@ def _abort_: #:: string| => @!
 ;
 
 ########################################################################
-# Predicate based conditionals
-########################################################################
-
-# Builtin `select`
-#def select(predicate): #:: a|(a->*boolean) => ?a
-#    if predicate then . else empty end;
-
-# Complement of select
-def reject(predicate): #:: a|(a->*boolean) => ?a
-    if predicate then empty else . end
-;
-
-# One branch conditionals
-def when(predicate; action): #:: a|(a->boolean;a->*a) => *a
-    if predicate then action else . end
-;
-def unless(predicate; action): #:: a|(a->boolean;a->*a) => *a 
-    if predicate then . else action end
-;
-
-#def neg(generator): #:: a|(a->*b) => ?a
-#    reject(succeeds(generator))
-#;
-#def yep(generator): #:: a|(a->*b) => ?a
-#    select(succeeds(generator))
-#;
-
-########################################################################
 # Assertions
 ########################################################################
 
@@ -112,57 +93,54 @@ def assert(predicate; $message): #:: a|(a->boolean;string) => a!
 # Recursion schemata
 ########################################################################
 
-########################################################################
-# Stream of function powers
+# Additions to builtin recurse, while, until...
 
-# f⁰ f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
-def iterate(f): #:: a|(a->a) => +a
-    # . as $base
-    def r: #:: a => +a
-        . , (f|r) # until `f` fails
-    ; r
-;
-def iterate($n; f): #:: a|(number;a->a) => *a
-    select($n > 0)
-    | limit($n; iterate(f))
-;
+#
+# Apply functions to ℕ
+#
 
-# f¹ f² f³ f⁴ f⁵ f⁶ f⁷ f⁸ f⁹…
-def iterate1(f): #:: a|(a->a) => *a
-    f | iterate(f)
+# fₙ fₙ₊₁ fₙ₊₂ fₙ₊₃ fₙ₊₄ fₙ₊₅ fₙ₊₆ fₙ₊₇ fₙ₊₈ fₙ₊₉…
+def tabulate($n; f): #:: (number;number->a) => *a
+#   $n | recurse(.+1) | f
+    def r: f , (.+1|r);
+    $n|r
 ;
-def iterate1($n; f): #:: a|(number;a->a) => *a
-    select($n > 0)
-    | limit($n; iterate1(f))
+# f₀ f₁ f₂ f₃ f₄ f₅ f₆ f₇ f₈ f₉…
+def tabulate(f): #:: (number->a) => *a
+#   0 | recurse(.+1) | f
+    def r: f , (.+1|r);
+    0|r
 ;
 
-########################################################################
+#
 # Stream of relation powers
+#
 
-# Level traverse the search space
-def search_levels(base; g): #:: x|(x->*a;a->*a) => +[a]
+# Level after level breath-first search
+def bfs_levels(base; g): #:: x|(x->*a;a->*a) => +[a]
     def r: #:: [a] => *a
-        if length == 0 then empty
-        else . , ( [.[]|g] | r ) end
-    ; [base] | r
+        select(length > 0) | . , (map(g)|r)
+    ;
+    [base] | r
 ;
 
 # g⁰ g¹ g² g³ g⁴ g⁵ g⁶ g⁷ g⁸ g⁹…
-# Iterate values in each level
-def traverse(base; g): #:: x|(x->*a;a->*a) => *a
-    search_levels(base; g)[]
+# Breadth-first search
+def breath(base; g): #:: x|(x->*a;a->*a) => *a
+    bfs_levels(base; g)[]
 ;
 
 # g⁰ g¹ g² g³ g⁴ g⁵ g⁶ g⁷ g⁸ g⁹…
-# Using left recursion
-def deepen(base; g): #:: x|(x->*a;a->*a) => *a
+# Depth-first search using left recursion
+def depth(base; g): #:: x|(x->*a;a->*a) => *a
     def r: #:: a => +a
         base , (r|g) # only stops if `base` fails
     ; r
 ;
 
-########################################################################
+#
 # Fold/unfold family of patterns
+#
 
 #def fold(f; $a; generator): #:: x|([a,b]->a;a;x->*b) => a
 #    reduce generator as $b
@@ -186,7 +164,8 @@ def deepen(base; g): #:: x|(x->*a;a->*a) => *a
 def unfold(f; $seed): #:: (a->[b,a];a) => *b
     def r:
         f | .[0] , (.[1]|r)
-    ; $seed|r
+    ;
+    $seed | r
 ;
 
 def unfold(f): #:: a|(a->[b,a]) => *b
@@ -201,20 +180,20 @@ def all(stream; predicate): #:: a|(a->*b;b->boolean) => boolean
     isempty(stream | predicate and empty)
 ;
 def all: #:: [boolean]| => boolean
-    all(.[]; .)
+    isempty(.[] | . and empty)
 ;
 def all(predicate): #:: [a]|(a->boolean) => boolean
-    all(.[]; predicate)
+    isempty(.[] | predicate and empty)
 ;
 
 def any(stream; predicate): #:: a|(a->*b;b->boolean) => boolean
-    succeeds(stream | predicate or empty)
+    nonempty(stream | predicate or empty)
 ;
 def any: #:: [boolean]| => boolean
-    any(.[]; .)
+    nonempty(.[] | . or empty)
 ;
 def any(predicate): #:: [a]|(a->boolean) => boolean
-    any(.[]; predicate)
+    nonempty(.[] | predicate or empty)
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

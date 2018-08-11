@@ -38,7 +38,7 @@ def gcd($m; $n): #:: (number;number) => number
 #    ;
 #    label $fence
 #    | {$m, $n}
-#    | iterate(step)
+#    | recurse(step)
 #    | select(.n == 0)
 #    | .m, break $fence
 #;

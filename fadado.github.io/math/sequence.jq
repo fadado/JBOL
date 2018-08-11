@@ -11,22 +11,6 @@ module {
 include "fadado.github.io/prelude";
 include "fadado.github.io/math";
 
-########################################################################
-# Apply functions to ℕ
-
-# fₙ fₙ₊₁ fₙ₊₂ fₙ₊₃ fₙ₊₄ fₙ₊₅ fₙ₊₆ fₙ₊₇ fₙ₊₈ fₙ₊₉…
-def tabulate($n; f): #:: (number;number->a) => *a
-#   $n | iterate(.+1) | f
-    def r: f , (.+1|r);
-    $n|r
-;
-# f₀ f₁ f₂ f₃ f₄ f₅ f₆ f₇ f₈ f₉…
-def tabulate(f): #:: (number->a) => *a
-#   0 | iterate(.+1) | f
-    def r: f , (.+1|r);
-    0|r
-;
-
 # Arithmetic sequences #################################################
 
 # CF:
@@ -36,7 +20,7 @@ def tabulate(f): #:: (number->a) => *a
 #   a(n) = a(n-1)+d
 #
 def arithmetic($a; $d): #:: (number;number) => *number
-    $a|iterate(. + $d) # range($a; infinite; $d)
+    $a|recurse(. + $d) # range($a; infinite; $d)
 ;
 
 # CF:
@@ -114,7 +98,7 @@ def multiples: #:: number| => *number
 #   a(n) = a(n-1)*r
 #
 def geometric($a; $r): #:: (number;number) => *number
-    $a|iterate(. * $r)
+    $a|recurse(. * $r)
 ;
 
 # CF:
@@ -177,7 +161,7 @@ def harmonic: #:: => *number
 def moduli($m): #:: (number) => *number
 #   tabulate(. % $m)
 #   repeat(range(0; $m))
-    0|iterate(. + 1 | when(. == $m; 0))
+    0|recurse(. + 1 | when(. == $m; 0))
 ;
 def moduli: #:: number| => *number
     moduli(.)
@@ -207,7 +191,7 @@ def triangulars: #:: => *number
 #
 def fibonacci: #:: => *number
     [0,1]
-    | iterate([.[-1], .[-1]+.[-2]])
+    | recurse([.[-1], .[-1]+.[-2]])
     | .[-2]
 #   0, ([0,1] | unfold([.[-1], [.[-1], .[-1]+.[-2]]]))
 ;
@@ -219,7 +203,7 @@ def fibonacci: #:: => *number
 #        first(g) as $n
 #        | $n, sieve(g|select((. % $n) != 0))
 #    ;
-#    2, sieve(3|iterate(.+2))
+#    2, sieve(3|recurse(.+2))
 #;
 
 # Very fast alternative!
@@ -235,7 +219,7 @@ def primes: #:: => *number
           else empty # next
           end
     ;
-    2, (3|iterate(.+2) | select(isprime(primes)))
+    2, (3|recurse(.+2) | select(isprime(primes)))
 ;
 
 # Number of bits equal to 1 in all naturals (number of ones)

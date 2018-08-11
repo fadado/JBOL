@@ -28,7 +28,8 @@ def count(stream): #:: a|(a->*b) => number!
 
 # . inside?
 def member(stream): #:: a|(*a) => boolean
-    . as $a | any(stream; . == $a)
+    . as $a
+    | any(stream; . == $a)
 ;
 def member($a; stream): #:: a|(a;*a) => boolean
     any(stream; . == $a)
@@ -43,8 +44,7 @@ def sharing(stream; t):  #:: a|(*a;*a) => boolean
 def distinct(stream):
     reduce stream as $x ({};
         ($x|type[0:1]+tostring) as $k
-        | unless(has($k);
-            .[$k] = $x))
+        | unless(has($k); .[$k] = $x))
     | .[]
 ;
 
@@ -59,8 +59,8 @@ def singleton(stream): #:: a|(a->*b) => boolean
 # Extract the nth element of a stream.
 #
 def nth($n; stream): #:: a|(number;a->*b) => ?b
-    select($n >= 0) | # not defined for n<0 and n>=#stream
-    label $fence
+    select($n >= 0) # not defined for n<0 and n>=#stream
+    | label $fence
     | foreach stream as $item
         ($n; .-1; select(. == -1) | $item , break $fence)
 ;
@@ -76,19 +76,14 @@ def enum(stream): #:: a|(a->*b) => *[number,b]
 # `empty` after all elements are dropped
 #
 def drop($n; stream): #:: a|(number;a->*b) => *b
-    select($n >= 0) | # not defined for n < 0 or n >= #stream
-    if $n == 0
+    select($n >= 0) # not defined for n < 0 or n >= #stream
+    | if $n == 0
     then stream
     else
         foreach stream as $item
             ($n; .-1; select(. < 0) | $item)
     end
 ;
-
-#!def dropWhile(predicate; stream):
-#!# Warning: is in fact `filter`
-#!    stream | select(predicate)
-#!;
 
 # Remove the first element of a stream.
 #
@@ -131,39 +126,47 @@ def zip(g; h): #:: x|(x->*a;x->*b) => *[a,b]
 
 # Generalized `zip` for 2 or more streams.
 #
-def zip: #:: [[a],[b]...]| => *[a,b,...]
+def _zip: #:: [[a],[b]...]| => *[a,b,...]
     . as $in
     | (map(length) | max) as $longest
-    | length as $N
+    | length as $n
     | foreach range($longest) as $j (null;
-        reduce range($N) as $i
+        reduce range($n) as $i
             ([]; . + [$in[$i][$j]]))
 ;
 def zip(g1; g2; g3): #:: x|(x->*a;x->*b;...) => *[a,b,...]
-    [[g1], [g2], [g3]] | zip
+    [[g1], [g2], [g3]]
+    | _zip
 ;
 def zip(g1; g2; g3; g4): #:: x|(x->*a;x->*b;...) => *[a,b,...]
-    [[g1], [g2], [g3], [g4]] | zip
+    [[g1], [g2], [g3], [g4]]
+    | _zip
 ;
 def zip(g1; g2; g3; g4; g5): #:: x|(x->*a;x->*b;...) => *[a,b,...]
-    [[g1], [g2], [g3], [g4], [g5]] | zip
+    [[g1], [g2], [g3], [g4], [g5]]
+    | _zip
 ;
 def zip(g1; g2; g3; g4; g5; g6): #:: x|(x->*a;x->*b;...) => *[a,b,...]
-    [[g1], [g2], [g3], [g4], [g5], [g6]] | zip
+    [[g1], [g2], [g3], [g4], [g5], [g6]]
+    | _zip
 ;
 def zip(g1; g2; g3; g4; g5; g6; g7): #:: x|(x->*a;x->*b;...) => *[a,b,...]
-    [[g1], [g2], [g3], [g4], [g5], [g6], [g7]] | zip
+    [[g1], [g2], [g3], [g4], [g5], [g6], [g7]]
+    | _zip
 ;
 
 # Dot product (very inefficient zip on infinite streams)
 def parallel(g1; g2): #:: x|(x->*a,x->*b) => *[a,b]
-  first(g1) as $g1 | first(g2) as $g2
-  | [$g1, $g2], parallel(rest(g1); rest(g2))
+    first(g1) as $g1
+  | first(g2) as $g2
+  | [$g1, $g2] , parallel(rest(g1);rest(g2))
 ;
 
 def parallel(g1; g2; g3): #:: x|(x->*a,x->*b,...) => *[a,b,...]
-  first(g1) as $g1 | first(g2) as $g2 | first(g3) as $g3
-  | [$g1, $g2, $g3], parallel(rest(g1); rest(g2); rest(g3))
+    first(g1) as $g1
+  | first(g2) as $g2
+  | first(g3) as $g3
+  | [$g1, $g2, $g3] , parallel(rest(g1);rest(g2);rest(g3))
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

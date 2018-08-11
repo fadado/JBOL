@@ -144,42 +144,46 @@ true
 0
 true
 
-include "prelude"; [recurse(.+1;.<7)] == [label $x | iterate(.+1) | if .<7 then . else break $x end]
+include "prelude"; [recurse(.+1;.<7)] == [label $x | recurse(.+1) | if .<7 then . else break $x end]
 0
 true
 
-include "prelude"; [while(.<7;.+1)] == [try(iterate(.+1) | unless(.<7; abort))]
+include "prelude"; [while(.<7;.+1)] == [try(recurse(.+1) | unless(.<7; abort))]
 0
 true
 
 ########################################################################
 
-include "prelude"; [0|limit(10;iterate(.+1))] == [limit(10;deepen(0;.+1))]
+include "prelude"; [0|limit(10;recurse(.+1))] == [limit(10;depth(0;.+1))]
 0
 true
 
-include "prelude"; [limit(10;iterate(.+1))]   == [limit(10;deepen(0;.+1))]
+include "prelude"; [limit(10;recurse(.+1))]   == [limit(10;depth(0;.+1))]
 0
 true
 
-include "prelude"; [0|limit(10;iterate(.+1))] == [limit(10;traverse(0;.+1))]
+include "prelude"; [0|limit(10;recurse(.+1))] == [limit(10;breath(0;.+1))]
 0
 true
 
-include "prelude"; [limit(10;iterate(.+1))]   == [limit(10;traverse(0;.+1))]
+include "prelude"; [limit(10;recurse(.+1))]   == [limit(10;breath(0;.+1))]
 0
 true
 
-include "prelude"; [0|limit(10; deepen(0;.+1))] == [limit(10; traverse(0;.+1))]
+include "prelude"; [0|limit(10; depth(0;.+1))] == [limit(10; breath(0;.+1))]
 0
 true
 
-include "prelude"; [0|limit(10; deepen(1;.+2,.*2))] == [limit(10; traverse(1;.+2,.*2))]
+include "prelude"; [0|limit(10; depth(1;.+2,.*2))] == [limit(10; breath(1;.+2,.*2))]
 0
 true
 
-include "prelude"; [0|limit(10; deepen(range(7);.+2,.*2))] == [limit(10; traverse(range(7);.+2,.*2))]
+include "prelude"; [0|limit(10; depth(range(7);.+2,.*2))] == [limit(10; breath(range(7);.+2,.*2))]
 0
 true
+
+include "prelude"; [limit(6; tabulate(pow(.;2)))]
+null
+[0,1,4,9,16,25]
 
 # vim:ai:sw=2:ts=2:et:syntax=jq

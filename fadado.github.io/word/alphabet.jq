@@ -42,10 +42,10 @@ def star: #:: ALPHABET => *WORD
         if isstring
         then
             (./"") as $set
-            | deepen(""; .+$set[])
+            | depth(""; .+$set[])
         else
             . as $set
-            | deepen([]; .[length]=$set[])
+            | depth([]; .[length]=$set[])
         end
     end
 # Slow:
@@ -64,10 +64,10 @@ def plus: #:: ALPHABET => *WORD
         if isstring
         then
             (./"") as $set
-            | deepen($set[]; .+$set[])
+            | depth($set[]; .+$set[])
         else
             . as $set
-            | deepen(.[]|[.]; .[length]=$set[])
+            | depth(.[]|[.]; .[length]=$set[])
         end
     end
 # Slow:

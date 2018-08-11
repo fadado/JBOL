@@ -124,7 +124,7 @@ def normal: #:: PCSET => PCSET
 
         # choose normal order
         | label $fence
-        | iterate(
+        | recurse(
             range(1; $last+1) as $i
             | (.[0][$i] - .[0][0]) as $x
             | (.[1][$i] - .[1][0]) as $y

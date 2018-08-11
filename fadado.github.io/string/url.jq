@@ -19,7 +19,7 @@ def decode: #:: string| => string
     | length as $length
     | {i: 0, answer: ""}
 
-    | iterate(
+    | recurse(
         if $in[.i:.i+1] == "%"
         then
             .answer += ([$in[.i+1:.i+3] | math::frombase(16)] | implode)

@@ -8,47 +8,52 @@ module {
     }
 };
 
+#
 # Data type predicates
-def isnull: #:: a| => boolean
+#
+
+# querying .
+def isnull: #:: a => boolean
     type == "null"
 ;
-def isboolean: #:: a| => boolean
+def isboolean: #:: a => boolean
     type == "boolean"
 ;
-def isnumber: #:: a| => boolean
+def isnumber: #:: a => boolean
     type == "number"
 ;
-def isinteger: #:: a| => boolean
+def isinteger: #:: a => boolean
     type == "number" and . == trunc
 ;
-def isfloat: #:: a| => boolean
+def isreal: #:: a => boolean
     type == "number" and . != trunc
 ;
-def isstring: #:: a| => boolean
+def isstring: #:: a => boolean
     type == "string"
 ;
-def ischar: #:: a| => boolean
+def ischar: #:: a => boolean
     type == "string" and length == 1
 ;
-def isarray: #:: a| => boolean
+def isarray: #:: a => boolean
     type == "array"
 ;
-def isobject: #:: a| => boolean
+def isobject: #:: a => boolean
     type == "object"
 ;
-def isscalar: #:: a| => boolean
+def isscalar: #:: a => boolean
     type| . == "null" or . == "boolean" or . == "number" or . == "string"
 ;
-def isiterable: #:: a| => boolean
+def isiterable: #:: a => boolean
     type| . == "array" or . == "object"
 ;
-def isvoid: #:: a| => boolean
+def isvoid: #:: a => boolean
     isiterable and length == 0
 ;
-def isleaf: #:: a| => boolean
+def isleaf: #:: a => boolean
     isscalar or isvoid
 ;
 
+# querying parameter
 def isnull($a): #:: (a) => boolean
     $a|type == "null"
 ;
@@ -61,7 +66,7 @@ def isnumber($a): #:: (a) => boolean
 def isinteger($a): #:: (a) => boolean
     $a|type == "number" and . == trunc
 ;
-def isfloat($a): #:: (a) => boolean
+def isreal($a): #:: (a) => boolean
     $a|type == "number" and . != trunc
 ;
 def isstring($a): #:: (a) => boolean
@@ -90,20 +95,19 @@ def isleaf($a): #:: (a) => boolean
 ;
 
 # is unknown?
-def unknown($x): #:: array^object|(number^string) => boolean
+def unknown($x): #:: array|(number) => boolean; object|(string) => boolean
     has($x) and .[$x] == null
 ;
 
 # is undefined?
-def undefined($x): #:: array^object|(number^string) => boolean
+def undefined($x): #:: array|(number) => boolean; object|(string) => boolean
     has($x) | not
 ;
 
 # coerce to bool (exactly true or false)
-def tobool: #:: a| => boolean
+def tobool: #:: a => boolean
     if . then true else false end
 ;
-
 def tobool(a): #:: (a) => boolean
     if first(a)//false then true else false end
 ;
@@ -117,21 +121,21 @@ def mapobj(filter): #:: object|(PAIR->PAIR) => object
             | {name: $k, value: .[$k]}
             | filter
             | {(.name): .value})
-        as $pair
-        ({}; . + $pair)
+        as $pair ({}; . + $pair)
 ;
 
 # Variation on `walk`
 #
-def mapdoc(filter): #:: a|(a->b) => b
+# JSON: any type
+#
+def mapdoc(filter): #:: JSON|(JSON->JSON) => JSON
     . as $doc |
     if isobject then
         reduce keys_unsorted[] as $k
             ({}; . + {($k): ($doc[$k] | mapdoc(filter))})
         | filter
     elif isarray then
-        [.[] | mapdoc(filter)]
-        | filter
+        map(mapdoc(filter)) | filter
     else
         filter
     end

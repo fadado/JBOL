@@ -7,11 +7,6 @@
 
 # N, Z+, Z- #############################################################
 
-include "math/sequence"; [limit(6; tabulate(pow(.;2)))]
-null
-[0,1,4,9,16,25]
-
-
 include "math/sequence"; limit(1; naturals)
 null
 0
