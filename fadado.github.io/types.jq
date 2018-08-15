@@ -49,8 +49,8 @@ def isiterable: #:: a => boolean
 def isvoid: #:: a => boolean
     isiterable and length == 0
 ;
-def isleaf: #:: a => boolean
-    isscalar or isvoid
+def novoid: #:: a => boolean
+    isiterable and length > 0
 ;
 
 # querying parameter
@@ -90,8 +90,8 @@ def isiterable($a): #:: (a) => boolean
 def isvoid($a): #:: (a) => boolean
     $a|isiterable and length == 0
 ;
-def isleaf($a): #:: (a) => boolean
-    $a|isscalar or isvoid
+def novoid($a): #:: (a) => boolean
+    $a|isiterable and length > 0
 ;
 
 # is unknown?

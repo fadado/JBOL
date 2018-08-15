@@ -41,21 +41,6 @@ def negatives: #:: => *number
     arithmetic(-1; -1) # range(-1; 0-infinite; -1)
 ;
 
-#def seq($a; $d): #:: (number;$number) => *number
-#    arithmetic($a; $d) # range($a; infinite; $d)
-#;
-#def seq($a): #:: (number) => *number
-#    arithmetic($a; 1) # range($a; infinite; 1)
-#;
-#def seq: #:: => *number
-#    arithmetic(0; 1) # range(1; infinite; 1)
-#;
-#def to($m; $n): #:: (number;number) => *number
-#    label $out # range($m; $n+1)
-#    | arithmetic($m; 1)
-#    | when(. > $n; break$out)
-#;
-
 # CF:
 #   a(n) = 2n+1
 # RR:
@@ -123,7 +108,7 @@ def powers: #:: number| => *number
 #   a(n) = a(n-1)+2n-1
 #
 def squares: #:: => *number
-#   tabulate(pow(.; 2))
+#   seq | pow(.; 2)
 #   0, foreach positives as $n (0; .+$n+$n-1)
     0, foreach odds as $n (0; .+$n)
 ;
@@ -135,7 +120,7 @@ def squares: #:: => *number
 #   a(n) = n(a(n-1)+2n-1)
 #
 def cubes: #:: => *number
-#   tabulate(pow(.; 3))
+#   seq | pow(.; 3)
 #   0, foreach positives as $n (0; .+$n+$n-1; .*$n)
     foreach squares as $s (-1; .+1; $s*.)
 ;
@@ -159,7 +144,7 @@ def harmonic: #:: => *number
 #   a(n) = 0 if a(n-1)+1 = m else a(n-1)+1
 #
 def moduli($m): #:: (number) => *number
-#   tabulate(. % $m)
+#   seq | (. % $m)
 #   repeat(range(0; $m))
     0|recurse(. + 1 | when(. == $m; 0))
 ;
@@ -219,7 +204,7 @@ def primes: #:: => *number
           else empty # next
           end
     ;
-    2, (3|recurse(.+2) | select(isprime(primes)))
+    2, (seq(3;2)|select(isprime(primes)))
 ;
 
 # Number of bits equal to 1 in all naturals (number of ones)

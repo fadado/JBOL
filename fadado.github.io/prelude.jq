@@ -40,6 +40,18 @@ def unless(predicate; action): #:: a|(a->boolean;a->*a) => *a
     if predicate then . else action end
 ;
 
+# Relational "conditionals"
+def accept(action): #:: a|(a->*b) => ?a
+    if isempty(action) then empty else . end
+;
+def toggle(action): #:: a|(a->*b) => ?a
+    if isempty(action) then . else empty end
+;
+
+def guard(predicate): #:: a|(a->boolean) => a!
+    if predicate then . else abort end
+;
+
 ########################################################################
 # Stolen from SNOBOL: ABORT and FENCE
 ########################################################################
@@ -95,44 +107,36 @@ def assert(predicate; $message): #:: a|(a->boolean;string) => a!
 
 # Additions to builtin recurse, while, until...
 
-#
-# Apply functions to ℕ
-#
-
-# fₙ fₙ₊₁ fₙ₊₂ fₙ₊₃ fₙ₊₄ fₙ₊₅ fₙ₊₆ fₙ₊₇ fₙ₊₈ fₙ₊₉…
-def tabulate($n; f): #:: (number;number->a) => *a
-#   $n | recurse(.+1) | f
-    def r: f , (.+1|r);
-    $n|r
+# Generate ℕ
+def seq: #:: => *number
+    0|recurse(.+1) # range(1; infinite; 1)
 ;
-# f₀ f₁ f₂ f₃ f₄ f₅ f₆ f₇ f₈ f₉…
-def tabulate(f): #:: (number->a) => *a
-#   0 | recurse(.+1) | f
-    def r: f , (.+1|r);
-    0|r
+def seq($a): #:: (number) => *number
+    $a|recurse(.+1) # range($a; infinite; 1)
+;
+def seq($a; $d): #:: (number;$number) => *number
+    $a|recurse(.+$d) # range($a; infinite; $d)
 ;
 
 #
 # Stream of relation powers
 #
 
-# Level after level breath-first search
-def bfs_levels(base; g): #:: x|(x->*a;a->*a) => +[a]
+# g⁰ g¹ g² g³ g⁴ g⁵ g⁶ g⁷ g⁸ g⁹…
+# Breadth-first search
+def traverse(base; g): #:: b|(b->*a;a->*a) => +[a]
     def r: #:: [a] => *a
-        select(length > 0) | . , (map(g)|r)
+         . , (map(g)|select(length > 0)|r)
     ;
     [base] | r
 ;
-
-# g⁰ g¹ g² g³ g⁴ g⁵ g⁶ g⁷ g⁸ g⁹…
-# Breadth-first search
-def breath(base; g): #:: x|(x->*a;a->*a) => *a
-    bfs_levels(base; g)[]
+def traverse(g): #:: a|(a->*a) => +[a]
+    traverse(.; g)
 ;
 
 # g⁰ g¹ g² g³ g⁴ g⁵ g⁶ g⁷ g⁸ g⁹…
-# Depth-first search using left recursion
-def depth(base; g): #:: x|(x->*a;a->*a) => *a
+# Buggy!!!
+def traverse_with_stack_leak(base; g): #:: x|(x->*a;a->*a) => *a
     def r: #:: a => +a
         base , (r|g) # only stops if `base` fails
     ; r

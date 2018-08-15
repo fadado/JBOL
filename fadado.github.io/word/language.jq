@@ -59,7 +59,7 @@ def power($n): #:: LANGUAGE|(number) => *WORD
 
 # L*
 def star($epsilon): #:: LANGUAGE|(WORD) => *WORD
-# TODO: implement using `deepen`
+# TODO: implement using `traverse`
     if length == 0 # ∅ (empty language)
     then .[0][0:0] // $epsilon # ε
     else power(range(0; infinite))
@@ -71,7 +71,7 @@ def star: #:: LANGUAGE => *WORD
 
 # L⁺
 def plus: #:: LANGUAGE => *WORD
-# TODO: implement using `deepen`
+# TODO: implement using `traverse`
     if length == 0 # ∅ (empty language)
     then empty     # ∅
     else power(range(1; infinite))
