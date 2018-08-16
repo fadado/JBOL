@@ -36,8 +36,13 @@ def member($a; stream): #:: a|(a;*a) => boolean
 ;
 
 # some common?
+def common(stream; t):  #:: a|(*a;*a) => *a
+    stream | select(member(t))
+;
+
 def sharing(stream; t):  #:: a|(*a;*a) => boolean
-    some(stream | member(t))
+#   some(stream | member(t))
+    nonempty(common(stream; t))
 ;
 
 # Unique for streams
@@ -48,12 +53,16 @@ def distinct(stream):
     | .[]
 ;
 
+# Remove the first element of a stream.
+#
+def rest(stream): #:: a|(a->*b) => *b
+    foreach stream as $item
+        (1; .-1; select(. < 0) | $item)
+;
+
 # One result?
 def singleton(stream): #:: a|(a->*b) => boolean
-    [   label $out |
-        foreach stream as $item
-            (2; if . >= 1 then .-1 else break$out end; null)
-    ] | length == 1
+    isempty(rest(stream))
 ;
 
 # Extract the nth element of a stream.
@@ -85,19 +94,11 @@ def drop($n; stream): #:: a|(number;a->*b) => *b
     end
 ;
 
-# Remove the first element of a stream.
-#
-def rest(stream): #:: a|(a->*b) => *b
-    foreach stream as $item
-        (1; .-1; select(. < 0) | $item)
-;
-
 # Returns the prefix of `stream` while `predicate` is true.
 #
 def takeWhile(predicate; stream): #:: a|(b->boolean;a->*b) => *b
-    label $out
-    | stream
-    | unless(predicate; break$out)
+    try (stream | guard(predicate)) catch _abort_
+#   label $out | stream | unless(predicate; break$out)
 ;
 
 # Analogous to array[start; stop] applied to streams.

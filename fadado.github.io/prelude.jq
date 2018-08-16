@@ -40,18 +40,6 @@ def unless(predicate; action): #:: a|(a->boolean;a->*a) => *a
     if predicate then . else action end
 ;
 
-# Relational "conditionals"
-def accept(action): #:: a|(a->*b) => ?a
-    if isempty(action) then empty else . end
-;
-def toggle(action): #:: a|(a->*b) => ?a
-    if isempty(action) then . else empty end
-;
-
-def guard(predicate): #:: a|(a->boolean) => a!
-    if predicate then . else abort end
-;
-
 ########################################################################
 # Stolen from SNOBOL: ABORT and FENCE
 ########################################################################
@@ -78,6 +66,22 @@ def _abort_(result): #:: string| => a!
 #   try (...) catch _abort_
 def _abort_: #:: string| => @!
     if . == "!" then empty else error end
+;
+
+########################################################################
+# Relational "conditionals"
+########################################################################
+
+def accept(action): #:: a|(a->*b) => ?a
+    if isempty(action) then empty else . end
+;
+
+def toggle(action): #:: a|(a->*b) => ?a
+    if isempty(action) then . else empty end
+;
+
+def guard(predicate): #:: a|(a->boolean) => a!
+    if predicate then . else abort end
 ;
 
 ########################################################################
