@@ -31,7 +31,4 @@ def hexcode:
 # Fast:
 [ [octcode], [deccode], [hexcode] ] | stream::zip
 
-# Very slow:
-#parallel(octcode; deccode; hexcode)
-
 # vim:ai:sw=4:ts=4:et:syntax=jq

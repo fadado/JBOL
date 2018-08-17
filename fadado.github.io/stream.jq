@@ -47,10 +47,17 @@ def sharing(stream; t):  #:: a|(*a;*a) => boolean
 
 # Unique for streams
 def distinct(stream):
-    reduce stream as $x ({};
+#   reduce stream as $x ({};
+#       ($x|type[0:1]+tostring) as $k
+#       | unless(has($k); .[$k] = $x))
+#   | .[]
+    foreach stream as $x (
+        {};
         ($x|type[0:1]+tostring) as $k
-        | unless(has($k); .[$k] = $x))
-    | .[]
+            | if has($k)
+              then .["~"]=false
+              else .[$k]=$x | .["~"]=true end;
+        select(.["~"]) | $x)
 ;
 
 # Remove the first element of a stream.
@@ -92,13 +99,6 @@ def drop($n; stream): #:: a|(number;a->*b) => *b
         foreach stream as $item
             ($n; .-1; select(. < 0) | $item)
     end
-;
-
-# Returns the prefix of `stream` while `predicate` is true.
-#
-def takeWhile(predicate; stream): #:: a|(b->boolean;a->*b) => *b
-    try (stream | guard(predicate)) catch _abort_
-#   label $out | stream | unless(predicate; break$out)
 ;
 
 # Analogous to array[start; stop] applied to streams.
@@ -154,20 +154,6 @@ def zip(g1; g2; g3; g4; g5; g6): #:: x|(x->*a;x->*b;...) => *[a,b,...]
 def zip(g1; g2; g3; g4; g5; g6; g7): #:: x|(x->*a;x->*b;...) => *[a,b,...]
     [[g1], [g2], [g3], [g4], [g5], [g6], [g7]]
     | _zip
-;
-
-# Dot product (very inefficient zip on infinite streams)
-def parallel(g1; g2): #:: x|(x->*a,x->*b) => *[a,b]
-    first(g1) as $g1
-  | first(g2) as $g2
-  | [$g1, $g2] , parallel(rest(g1);rest(g2))
-;
-
-def parallel(g1; g2; g3): #:: x|(x->*a,x->*b,...) => *[a,b,...]
-    first(g1) as $g1
-  | first(g2) as $g2
-  | first(g3) as $g3
-  | [$g1, $g2, $g3] , parallel(rest(g1);rest(g2);rest(g3))
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

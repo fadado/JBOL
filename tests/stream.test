@@ -116,10 +116,6 @@ include "stream"; [limit(4;range(10))] == [0,1,2,3]
 null
 true
 
-include "stream"; [takeWhile(.<10; range(0;1000))] == [range(0;10)]
-null
-true
-
 include "stream"; drop(5; range(8))
 null
 5
@@ -212,5 +208,9 @@ null
 include "stream";  nth(5; zip(range(5); range(100); range(20;23)))
 null
 [null,5,null]
+
+include "stream";  [distinct(1,2,1,1,2,3,2,1,2,2,3,2,1)]
+null
+[1,2,3]
 
 # vim:ai:sw=2:ts=2:et:syntax=jq

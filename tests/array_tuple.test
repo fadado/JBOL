@@ -37,7 +37,7 @@ include "array/tuple"; [derangements]
 [1,2,3]
 [[2,3,1],[3,1,2]]
 
-include "array/tuple"; [cicles]
+include "array/tuple"; [cycles]
 [1,2,3]
 [[1,2,3],[1,3,2]]
 

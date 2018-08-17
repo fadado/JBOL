@@ -53,7 +53,7 @@ def permutations($k): #:: TUPLE|(number) => *TUPLE
 # Circular permutations (necklaces)
 # Q(n) = n!/n = P(n-1)
 # Q(n,k) = P(n,k)/k (TODO: implement)
-def cicles: #:: TUPLE => *TUPLE
+def cycles: #:: TUPLE => *TUPLE
     .[0:1] + (.[1:]|permutations)
 ;
 

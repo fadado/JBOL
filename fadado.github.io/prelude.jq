@@ -48,7 +48,7 @@ def unless(predicate; action): #:: a|(a->boolean;a->*a) => *a
 # For constructs like:
 #   try (A | possible abortion | B)
 def abort: #:: a => !
-    error("!")
+    error("~!~")
 ;
 
 # One way pass. Usage:
@@ -61,11 +61,11 @@ def fence: #:: a| => a!
 #   try (...) catch _abort_(result)
 #   . as $_ | try (A | possible abortion | B) catch _abort_($_)
 def _abort_(result): #:: string| => a!
-    if . == "!" then result else error end
+    if . == "~!~" then result else error end
 ;
 #   try (...) catch _abort_
 def _abort_: #:: string| => @!
-    if . == "!" then empty else error end
+    if . == "~!~" then empty else error end
 ;
 
 ########################################################################

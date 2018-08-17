@@ -1,22 +1,22 @@
 #!/usr/local/bin/jq -cnRrf
 
 include "fadado.github.io/prelude";
-import "fadado.github.io/object/set" as set;
+import "fadado.github.io/object" as object;
 
 # Database
 
 def biblical_family:
     {
         father: {
-            terach: set::set(["abraham","nachor","haran"]),
-            abraham: set::set(["isaac"]),
-            haran: set::set(["lot","milcah","yiscah"])
+            terach: object::set(["abraham","nachor","haran"]),
+            abraham: object::set(["isaac"]),
+            haran: object::set(["lot","milcah","yiscah"])
         },
         mother: {
-            sarah: set::set(["isaac"])
+            sarah: object::set(["isaac"])
         },
-        male: set::set(["terach","abraham","nachor","haran","isaac","lot"]),
-        female: set::set(["sarah","milcah","yiscah"])
+        male: object::set(["terach","abraham","nachor","haran","isaac","lot"]),
+        female: object::set(["sarah","milcah","yiscah"])
     }
 ;
 
@@ -79,6 +79,6 @@ def grandparent($x; $y):
 # A query
 
 biblical_family |
-succeeds(grandparent("terach"; "isaac"))
+nonempty(grandparent("terach"; "isaac"))
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

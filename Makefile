@@ -135,7 +135,7 @@ $(LogDir)/array_kleene.log: $(ARRAY)/kleene.jq
 $(LogDir)/array_tuple.log: $(ARRAY)/tuple.jq
 
 # Object tests
-$(LogDir)/object_set.log: $(OBJECT)/set.jq $(LIB)/types.jq
+$(LogDir)/object_set.log: $(LIB)/object.jq $(LIB)/types.jq
 
 # Word tests
 $(LogDir)/word.log: $(WORD)/word.jq $(LIB)/prelude.jq $(LIB)/types.jq
@@ -158,9 +158,6 @@ $(LogDir)/music_pitch-class-set.log: $(MUSIC)/pitch-class-set.jq $(MUSIC)/pitch-
 $(LogDir)/music_interval-class-vector.log: $(MUSIC)/interval-class-vector.jq $(MUSIC)/pitch-class.jq $(ARRAY)/array.jq $(MATH)/math.jq $(LIB)/prelude.jq 
 $(LogDir)/music_interval-pattern.log: $(MUSIC)/interval-pattern.jq $(MUSIC)/pitch-class.jq $(LIB)/prelude.jq 
 $(LogDir)/music_interval-table.log: $(MUSIC)/interval-table.jq $(MUSIC)/pitch-class.jq $(ARRAY)/array.jq $(LIB)/prelude.jq 
-
-# x
-$(LogDir)/relations.log: $(XLIB)/rel.jq $(LIB)/stream.jq
 
 ########################################################################
 # Utilities

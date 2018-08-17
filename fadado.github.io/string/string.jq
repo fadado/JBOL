@@ -9,7 +9,7 @@ module {
 };
 
 include "fadado.github.io/prelude";
-import "fadado.github.io/object/set" as set;
+import "fadado.github.io/object" as object;
 import "fadado.github.io/string/ascii" as ascii;
 
 ########################################################################
@@ -74,7 +74,7 @@ def rot13: #:: {string}
 
 # Preserve tables
 def ptable($from; $preserve): #:: (string;string) => {string}
-   set::set($preserve) as $t
+   object::set($preserve) as $t
    | reduce (($from/"") | unique)[] as $c
         ({}; . += (if $t[$c] then null else {($c):""} end))
 ;
