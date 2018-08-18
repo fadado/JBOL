@@ -154,31 +154,31 @@ true
 
 ########################################################################
 
-include "prelude"; [0|limit(10;recurse(.+1))] == [limit(10;traverse_with_stack_leak(0;.+1))]
+include "prelude"; [0|limit(10;recurse(.+1))] == [limit(10;reiterate(0;.+1))]
 0
 true
 
-include "prelude"; [limit(10;recurse(.+1))]   == [limit(10;traverse_with_stack_leak(0;.+1))]
+include "prelude"; [limit(10;recurse(.+1))]   == [limit(10;reiterate(0;.+1))]
 0
 true
 
-include "prelude"; [0|limit(10;recurse(.+1))] == [limit(10;traverse(0;.+1)[])]
+include "prelude"; [0|limit(10;recurse(.+1))] == [limit(10;iterate(0;.+1))]
 0
 true
 
-include "prelude"; [limit(10;recurse(.+1))]   == [limit(10;traverse(0;.+1)[])]
+include "prelude"; [limit(10;recurse(.+1))]   == [limit(10;iterate(0;.+1))]
 0
 true
 
-include "prelude"; [0|limit(10; traverse_with_stack_leak(0;.+1))] == [limit(10; traverse(0;.+1)[])]
+include "prelude"; [0|limit(10; reiterate(0;.+1))] == [limit(10; iterate(0;.+1))]
 0
 true
 
-include "prelude"; [0|limit(10; traverse_with_stack_leak(1;.+2,.*2))] == [limit(10; traverse(1;.+2,.*2)[])]
+include "prelude"; [0|limit(10; reiterate(1;.+2,.*2))] == [limit(10; iterate(1;.+2,.*2))]
 0
 true
 
-include "prelude"; [0|limit(10; traverse_with_stack_leak(range(7);.+2,.*2))] == [limit(10; traverse(range(7);.+2,.*2)[])]
+include "prelude"; [0|limit(10; reiterate(range(7);.+2,.*2))] == [limit(10; iterate(range(7);.+2,.*2))]
 0
 true
 

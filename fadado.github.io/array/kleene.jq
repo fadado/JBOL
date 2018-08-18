@@ -61,7 +61,7 @@ def star: #:: SET => +TUPLE
     then .         # ε
     else
         . as $set
-        | traverse([]; .[length]=$set[])[]
+        | iterate([]; .[length]=$set[])
     end
 # Very slow:
 #   if length == 0 # ∅
@@ -76,7 +76,7 @@ def plus: #:: SET => *TUPLE
     then empty     # ∅
     else
         . as $set
-        | traverse($set[]|[.]; .[length]=$set[])[]
+        | iterate($set[]|[.]; .[length]=$set[])
     end
 # Very slow:
 #   if length == 0 # ∅

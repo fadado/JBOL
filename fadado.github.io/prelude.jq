@@ -128,22 +128,25 @@ def seq($a; $d): #:: (number;$number) => *number
 
 # g⁰ g¹ g² g³ g⁴ g⁵ g⁶ g⁷ g⁸ g⁹…
 # Breadth-first search
-def traverse(base; g): #:: b|(b->*a;a->*a) => +[a]
-    def r: #:: [a] => *a
-         . , (map(g)|select(length > 0)|r)
+def iterate(init; g): #:: a|(a->*b;b->*b) => *b
+    def r: #:: [b]|[b] => +[b]
+         . , ([.[]|g]|select(length > 0)|r)
     ;
-    [base] | r
+    [init] | r[]
 ;
-def traverse(g): #:: a|(a->*a) => +[a]
-    traverse(.; g)
+def iterate(g): #:: a|(a->*a) => +a
+    iterate(.; g)
 ;
 
 # g⁰ g¹ g² g³ g⁴ g⁵ g⁶ g⁷ g⁸ g⁹…
-# Buggy!!!
-def traverse_with_stack_leak(base; g): #:: x|(x->*a;a->*a) => *a
-    def r: #:: a => +a
-        base , (r|g) # only stops if `base` fails
+# Stack leak...
+def reiterate(init; g): #::  a|(a->*a;a->*a) => *a!
+    def r: #:: [a]|[a] => *a
+        init , (r|g) # diverges if `init` fails
     ; r
+;
+def reiterate(g): #:: a|(a->*a) => +a
+    reiterate(.; g)
 ;
 
 #
@@ -171,7 +174,7 @@ def traverse_with_stack_leak(base; g): #:: x|(x->*a;a->*a) => *a
 # Fold opposite
 def unfold(f; $seed): #:: (a->[b,a];a) => *b
     def r:
-        f | .[0] , (.[1]|r)
+        f as [$b,$a] | $b , ($a|r)
     ;
     $seed | r
 ;
