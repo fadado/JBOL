@@ -93,6 +93,10 @@ include "math/sequence"; [limit(.; powers)]
 7
 [1,7,49,343,2401,16807,117649]
 
+include "math/sequence"; [limit(11; powers(2))]==[limit(11; powers2)]
+null
+true
+
 # Factorial
 include "math/sequence"; [limit(6; factorials)]
 null

@@ -129,21 +129,22 @@ def seq($a; $d): #:: (number;$number) => *number
 # g⁰ g¹ g² g³ g⁴ g⁵ g⁶ g⁷ g⁸ g⁹…
 # Breadth-first search
 def iterate(init; g): #:: a|(a->*b;b->*b) => *b
-    def r: #:: [b]|[b] => +[b]
-         . , ([.[]|g]|select(length > 0)|r)
+    def r:
+         .[] , ([.[]|g]|select(length > 0)|r)
     ;
-    [init] | r[]
+    [init] | r
 ;
 def iterate(g): #:: a|(a->*a) => +a
     iterate(.; g)
 ;
 
 # g⁰ g¹ g² g³ g⁴ g⁵ g⁶ g⁷ g⁸ g⁹…
-# Stack leak...
+# Stack leak, diverges if `init` fails, etc.
 def reiterate(init; g): #::  a|(a->*a;a->*a) => *a!
-    def r: #:: [a]|[a] => *a
-        init , (r|g) # diverges if `init` fails
-    ; r
+#   def r: init , (r|g);
+#   r
+    def r(h): h , r(h|g);
+    r(init)
 ;
 def reiterate(g): #:: a|(a->*a) => +a
     reiterate(.; g)
@@ -173,9 +174,7 @@ def reiterate(g): #:: a|(a->*a) => +a
 
 # Fold opposite
 def unfold(f; $seed): #:: (a->[b,a];a) => *b
-    def r:
-        f as [$b,$a] | $b , ($a|r)
-    ;
+    def r: f as [$b,$a] | $b , ($a|r);
     $seed | r
 ;
 
