@@ -51,7 +51,7 @@ def push($x): #:: [a]|(a) => [a]
 ;
 
 def pop: #:: [a] => [a]
-    .[:-1] # [] if empty
+    del(.[-1]) # [] if empty
 ;
 
 def top: #:: [a] => a^null
