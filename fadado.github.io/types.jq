@@ -49,7 +49,7 @@ def isiterable: #:: a => boolean
 def isvoid: #:: a => boolean
     isiterable and length == 0
 ;
-def novoid: #:: a => boolean
+def nonvoid: #:: a => boolean
     isiterable and length > 0
 ;
 
@@ -90,7 +90,7 @@ def isiterable($a): #:: (a) => boolean
 def isvoid($a): #:: (a) => boolean
     $a|isiterable and length == 0
 ;
-def novoid($a): #:: (a) => boolean
+def nonvoid($a): #:: (a) => boolean
     $a|isiterable and length > 0
 ;
 
@@ -110,35 +110,6 @@ def tobool: #:: a => boolean
 ;
 def tobool(a): #:: (a) => boolean
     if first(a)//false then true else false end
-;
-
-# Variation on `with_entries`
-#
-# PAIR: {"name":string, "value":value}
-#
-def mapobj(filter): #:: object|(PAIR->PAIR) => object
-    reduce (keys_unsorted[] as $k
-            | {name: $k, value: .[$k]}
-            | filter
-            | {(.name): .value})
-        as $pair ({}; . + $pair)
-;
-
-# Variation on `walk`
-#
-# JSON: any type
-#
-def mapdoc(filter): #:: JSON|(JSON->JSON) => JSON
-    . as $doc |
-    if isobject then
-        reduce keys_unsorted[] as $k
-            ({}; . + {($k): ($doc[$k] | mapdoc(filter))})
-        | filter
-    elif isarray then
-        map(mapdoc(filter)) | filter
-    else
-        filter
-    end
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

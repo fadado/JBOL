@@ -9,7 +9,6 @@ module {
 };
 
 include "fadado.github.io/prelude";
-include "fadado.github.io/types";
 
 ########################################################################
 # Objects as sets
@@ -38,10 +37,10 @@ include "fadado.github.io/types";
 #
 def set($elements): #:: (string^[a]) => {boolean}
     $elements
-    | if isstring then
+    | if type=="string" then
         reduce ($elements/"")[] as $element
             ({}; . += {($element):true})
-    elif isarray then
+    elif type=="array" then
         reduce $elements[] as $element
             ({}; . += {($element|tostring):true})
     else type | "Type error: expected string or array, not \(.)" | error

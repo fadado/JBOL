@@ -32,6 +32,11 @@ def reject(predicate): #:: a|(a->*boolean) => ?a
     if predicate then empty else . end
 ;
 
+# Strong select
+def guard(predicate): #:: a|(a->boolean) => a!
+    if predicate then . else abort end
+;
+
 # One branch conditionals
 def when(predicate; action): #:: a|(a->boolean;a->*a) => *a
     if predicate then action else . end
@@ -66,22 +71,6 @@ def _abort_(result): #:: string| => a!
 #   try (...) catch _abort_
 def _abort_: #:: string| => @!
     if . == "~!~" then empty else error end
-;
-
-########################################################################
-# Relational "conditionals"
-########################################################################
-
-def accept(action): #:: a|(a->*b) => ?a
-    if isempty(action) then empty else . end
-;
-
-def toggle(action): #:: a|(a->*b) => ?a
-    if isempty(action) then . else empty end
-;
-
-def guard(predicate): #:: a|(a->boolean) => a!
-    if predicate then . else abort end
 ;
 
 ########################################################################
@@ -183,9 +172,39 @@ def unfold(f): #:: a|(a->[b,a]) => *b
 ;
 
 ########################################################################
-# Better versions for builtins, to be removed...
+# Better versions for builtins
 ########################################################################
 
+# Variation on `with_entries`
+#
+# PAIR: {"name":string, "value":value}
+#
+def mapobj(filter): #:: object|(PAIR->PAIR) => object
+    reduce (keys_unsorted[] as $k
+            | {name: $k, value: .[$k]}
+            | filter
+            | {(.name): .value})
+        as $pair ({}; . + $pair)
+;
+
+# Variation on `walk`
+#
+# JSON: any type
+#
+def mapdoc(filter): #:: JSON|(JSON->JSON) => JSON
+    . as $doc |
+    if type=="object" then
+        reduce keys_unsorted[] as $k
+            ({}; . + {($k): ($doc[$k] | mapdoc(filter))})
+        | filter
+    elif type=="array" then
+        map(mapdoc(filter)) | filter
+    else
+        filter
+    end
+;
+
+# to be removed...
 def all(stream; predicate): #:: a|(a->*b;b->boolean) => boolean
     isempty(stream | predicate and empty)
 ;

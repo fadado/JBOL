@@ -22,25 +22,25 @@ length
 0
 
 # Build sets from arrays or strings
-include "object/set"; set(.)
+include "object"; set(.)
 [3,2,1,"k"]
 {"1":true,"2":true,"3":true,"k":true}
 
-include "object/set"; set(.)
+include "object"; set(.)
 "aeiuo"
 {"a":true,"e":true,"i":true,"o":true,"u":true}
 
-include "object/set"; set(.)
+include "object"; set(.)
 "uioaaeiouoaeiouae"
 {"a":true,"e":true,"i":true,"o":true,"u":true}
 
 # Set members as a list
-include "object/set"; set(.) | keys
+include "object"; set(.) | keys
 "aeiuo"
 ["a","e","i","o","u"]
 
 # Set cardinality
-include "object/set"; set(.) | length
+include "object"; set(.) | length
 "aeiuo"
 5
 
@@ -48,35 +48,35 @@ include "object/set"; set(.) | length
 # Adding and deleting members
 #
 
-include "object/set"; set(.) | del(.e)
+include "object"; set(.) | del(.e)
 "aeiuo"
 {"a":true,"i":true,"o":true,"u":true}
 
-include "object/set"; set(.) | del(.e) | .e = true
+include "object"; set(.) | del(.e) | .e = true
 "aeiuo"
 {"a":true,"e":true,"i":true,"o":true,"u":true}
 
-include "object/set"; set(.) | (.o,.u) = true
+include "object"; set(.) | (.o,.u) = true
 "aei"
 {"a":true,"e":true,"i":true,"o":true,"u":true}
 
-include "object/set"; set(.) | del(.e,.a,.u)
+include "object"; set(.) | del(.e,.a,.u)
 "aeiuo"
 {"i":true,"o":true}
 
-include "object/set"; set(.) | del(.e) | . += {e:true}
+include "object"; set(.) | del(.e) | . += {e:true}
 "aeiuo"
 {"a":true,"e":true,"i":true,"o":true,"u":true}
 
-include "object/set"; set(.) | del(.e,.a,.u) | . += {u:true,a:true,e:true}
+include "object"; set(.) | del(.e,.a,.u) | . += {u:true,a:true,e:true}
 "aeiuo"
 {"a":true,"e":true,"i":true,"o":true,"u":true}
 
-include "object/set"; set(.) | del(.e,.a,.u) | (.e,.a,.u) = true
+include "object"; set(.) | del(.e,.a,.u) | (.e,.a,.u) = true
 "aeiuo"
 {"a":true,"e":true,"i":true,"o":true,"u":true}
 
-include "object/set"; set(.) | .x = true
+include "object"; set(.) | .x = true
 "abc"
 {"a":true,"b":true,"c":true,"x":true}
 
@@ -85,7 +85,7 @@ include "object/set"; set(.) | .x = true
 #
 
 # ∋
-include "object/set"; set(.) | has("k")
+include "object"; set(.) | has("k")
 [3,2,1,"k"]
 true
 
@@ -94,12 +94,12 @@ contains(["k"])
 true
 
 # ∋
-include "object/set"; set(.) | .k
+include "object"; set(.) | .k
 [3,2,1,"k"]
 true
 
 # ∋
-include "object/set"; set(.) | has("h")
+include "object"; set(.) | has("h")
 [3,2,1,"k"]
 false
 
@@ -108,17 +108,17 @@ contains(["h"])
 false
 
 # ∋
-include "object/set"; set(.) | if .h then true else false end
+include "object"; set(.) | if .h then true else false end
 [3,2,1,"k"]
 false
 
 # ∋
-include "object/set"; set(.) | .h
+include "object"; set(.) | .h
 [3,2,1,"k"]
 null
 
 # ∌
-include "object/set"; set(.) | .h|not
+include "object"; set(.) | .h|not
 [3,2,1,"k"]
 true
 
@@ -127,12 +127,12 @@ contains(["h"])|not
 true
 
 # ∌
-include "object/set"; set(.) | .h==null
+include "object"; set(.) | .h==null
 [3,2,1,"k"]
 true
 
 # ∈
-include "object/set"; set(.) as $s | "k" | in($s)
+include "object"; set(.) as $s | "k" | in($s)
 [3,2,1,"k"]
 true
 
@@ -141,7 +141,7 @@ inside([3,2,1,"k"])
 true
 
 # ∈
-include "object/set"; set(.) as $s | "h" | in($s)
+include "object"; set(.) as $s | "h" | in($s)
 [3,2,1,"k"]
 false
 
@@ -150,12 +150,12 @@ inside([3,2,1,"k"])
 false
 
 # ∈
-include "object/set"; set(.) as $s | "h" | in($s)
+include "object"; set(.) as $s | "h" | in($s)
 [3,2,1,"k"]
 false
 
 # ∉
-include "object/set"; set(.) as $s | "h" | in($s)|not
+include "object"; set(.) as $s | "h" | in($s)|not
 [3,2,1,"k"]
 true
 
@@ -164,7 +164,7 @@ inside([3,2,1,"k"])|not
 true
 
 # null => false
-include "object/set"; set(.) | .h//false
+include "object"; set(.) | .h//false
 [3,2,1,"k"]
 false
 
@@ -173,36 +173,36 @@ false
 #
 
 # ∪
-include "object/set"; set("aiu") + set("eo")
+include "object"; set("aiu") + set("eo")
 null
 {"a":true,"e":true,"i":true,"o":true,"u":true}
 
 # ∪
-include "object/set"; set("aiu") * set("eo")
+include "object"; set("aiu") * set("eo")
 null
 {"a":true,"e":true,"i":true,"o":true,"u":true}
 
 # ∩
-include "object/set"; set("aeiouxyz") | intersection(set("xyz12345"))
+include "object"; set("aeiouxyz") | intersection(set("xyz12345"))
 null
 {"x":true,"y":true,"z":true}
 
 # ∩ ∅
-include "object/set"; (set("xyz") | intersection(set("abc"))) == {}
+include "object"; (set("xyz") | intersection(set("abc"))) == {}
 null
 true
 
 # ∩ ∪
-include "object/set"; set("aiu") + set("eo") | intersection(set("eo"))
+include "object"; set("aiu") + set("eo") | intersection(set("eo"))
 null
 {"o":true,"e":true}
 
-include "object/set"; set("aeiou") | intersection(set("eo")) + set("aiu")
+include "object"; set("aeiou") | intersection(set("eo")) + set("aiu")
 null
 {"a":true,"e":true,"i":true,"o":true,"u":true}
 
 # –
-include "object/set"; set("aeiou") | difference(set("abc"))
+include "object"; set("aeiou") | difference(set("abc"))
 null
 {"e":true,"i":true,"o":true,"u":true}
 
@@ -211,12 +211,12 @@ null
 ["e","i","o","u"]
 
 # ⊂
-include "object/set"; set("xyz") as $a | set("xyz12345") as $b | $a != $b and ($a | intersection($b)) == $a
+include "object"; set("xyz") as $a | set("xyz12345") as $b | $a != $b and ($a | intersection($b)) == $a
 null
 true
 
 # ⊂
-include "object/set"; set("xyz") | inside(set("xyz12345"))
+include "object"; set("xyz") | inside(set("xyz12345"))
 null
 true
 
@@ -225,11 +225,11 @@ null
 true
 
 # ⊃ 
-include "object/set"; set("xyz123") as $a | set("xyz") as $b | $a != $b and ($a | intersection($b)) == $b
+include "object"; set("xyz123") as $a | set("xyz") as $b | $a != $b and ($a | intersection($b)) == $b
 null
 true
 
-include "object/set"; set(.) | contains(set("k"))
+include "object"; set(.) | contains(set("k"))
 [3,2,1,"k"]
 true
 
@@ -239,12 +239,12 @@ true
 true
 
 # ≡
-include "object/set"; set("xyz") == {"y":true,"x":true,"z":true}
+include "object"; set("xyz") == {"y":true,"x":true,"z":true}
 null
 true
 
 # ≢ ∅
-include "object/set"; set("xyz") != { }
+include "object"; set("xyz") != { }
 null
 true
 
