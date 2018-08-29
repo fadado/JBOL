@@ -108,7 +108,9 @@ def undefined($x): #:: array|(number) => boolean; object|(string) => boolean
 def tobool: #:: a => boolean
     if . then true else false end
 ;
+# coerce also empty to false
 def tobool(a): #:: (a) => boolean
+#   (first(a)|tobool)//false
     if first(a)//false then true else false end
 ;
 

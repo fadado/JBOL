@@ -9,6 +9,19 @@ module {
 };
 
 include "fadado.github.io/prelude";
+include "fadado.github.io/types";
+
+# Variation on `with_entries`
+#
+# PAIR: {"name":string, "value":value}
+#
+def mapobj(filter): #:: object|(PAIR->PAIR) => object
+    reduce (keys_unsorted[] as $k
+            | {name: $k, value: .[$k]}
+            | filter
+            | {(.name): .value})
+        as $pair ({}; . + $pair)
+;
 
 ########################################################################
 # Objects as sets
@@ -37,11 +50,11 @@ include "fadado.github.io/prelude";
 #
 def set($elements): #:: (string^[a]) => {boolean}
     $elements
-    | if type=="string" then
-        reduce ($elements/"")[] as $element
+    | if isstring then
+        reduce (./"")[] as $element
             ({}; . += {($element):true})
-    elif type=="array" then
-        reduce $elements[] as $element
+    elif isarray then
+        reduce .[] as $element
             ({}; . += {($element|tostring):true})
     else type | "Type error: expected string or array, not \(.)" | error
     end

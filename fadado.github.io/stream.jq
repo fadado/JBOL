@@ -41,16 +41,12 @@ def common(stream; t):  #:: a|(*a;*a) => *a
 ;
 
 def sharing(stream; t):  #:: a|(*a;*a) => boolean
-#   some(stream | member(t))
-    nonempty(common(stream; t))
+#   nonempty(common(stream; t))
+    some(stream | member(t))
 ;
 
 # Unique for streams
 def distinct(stream):
-#   reduce stream as $x ({};
-#       ($x|type[0:1]+tostring) as $k
-#       | unless(has($k); .[$k] = $x))
-#   | .[]
     foreach stream as $x (
         {};
         ($x|type[0:1]+tostring) as $k

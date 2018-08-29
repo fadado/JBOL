@@ -175,30 +175,18 @@ def unfold(f): #:: a|(a->[b,a]) => *b
 # Better versions for builtins
 ########################################################################
 
-# Variation on `with_entries`
-#
-# PAIR: {"name":string, "value":value}
-#
-def mapobj(filter): #:: object|(PAIR->PAIR) => object
-    reduce (keys_unsorted[] as $k
-            | {name: $k, value: .[$k]}
-            | filter
-            | {(.name): .value})
-        as $pair ({}; . + $pair)
-;
-
 # Variation on `walk`
 #
 # JSON: any type
 #
 def mapdoc(filter): #:: JSON|(JSON->JSON) => JSON
     . as $doc |
-    if type=="object" then
+    if type=="array" then
+        map(mapdoc(filter)) | filter
+    elif type=="object" then
         reduce keys_unsorted[] as $k
             ({}; . + {($k): ($doc[$k] | mapdoc(filter))})
         | filter
-    elif type=="array" then
-        map(mapdoc(filter)) | filter
     else
         filter
     end
