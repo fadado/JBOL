@@ -56,7 +56,7 @@ def ARBNO(f): #:: a|(a->a) => *a
 # By default SNOBOL tries only once to match, but by default jq tries all
 # alternatives. To restrict evaluation to one value use the function `first` or
 # this construct:
-#   label $fence | P | Q | (NULL , break $fence)
+#   label $pipe | P | Q | (NULL , break $pipe)
 
 ########################################################################
 # Patterns implementation

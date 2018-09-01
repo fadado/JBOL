@@ -72,9 +72,9 @@ def singleton(stream): #:: a|(a->*b) => boolean
 #
 def nth($n; stream): #:: a|(number;a->*b) => ?b
     select($n >= 0) # not defined for n<0 and n>=#stream
-    | label $fence
+    | label $loop
     | foreach stream as $item
-        ($n; .-1; select(. == -1) | $item , break $fence)
+        ($n; .-1; select(. == -1) | $item , break $loop)
 ;
 
 # Produces enumerated items from `stream`.

@@ -14,7 +14,7 @@ module {
 
 # Reverse of `isempty`
 def nonempty(stream): #:: a|(a->*b) => boolean
-    1 == ((label $fence | stream | (1 , break $fence))//0)
+    1 == ((label $pipe | stream | (1 , break $pipe))//0)
 ;
 
 # all(stream; .)
@@ -174,23 +174,6 @@ def unfold(f): #:: a|(a->[b,a]) => *b
 ########################################################################
 # Better versions for builtins
 ########################################################################
-
-# Variation on `walk`
-#
-# JSON: any type
-#
-def mapdoc(filter): #:: JSON|(JSON->JSON) => JSON
-    . as $doc |
-    if type=="array" then
-        map(mapdoc(filter)) | filter
-    elif type=="object" then
-        reduce keys_unsorted[] as $k
-            ({}; . + {($k): ($doc[$k] | mapdoc(filter))})
-        | filter
-    else
-        filter
-    end
-;
 
 # to be removed...
 def all(stream; predicate): #:: a|(a->*b;b->boolean) => boolean

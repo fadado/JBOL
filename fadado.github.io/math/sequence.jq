@@ -210,12 +210,12 @@ def fibonacci: #:: => *number
 # Very fast alternative!
 def primes: #:: => *number
     def isprime(g):
-        label $out
+        label $pipe
         | g as $p
         | if . < ($p*$p)
-          then true , break$out
+          then true , break$pipe
           elif (. % $p) == 0
-          then false , break$out
+          then false , break$pipe
           else empty # next
           end
     ;

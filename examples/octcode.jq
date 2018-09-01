@@ -12,12 +12,12 @@ def octcode:
 ;
 
 def deccode:
-    label $out |
+    label $pipe |
     ("01"|chars) as $d2 |
     ("0123456789"|chars) as $d1 |
     ("0123456789"|chars) as $d0 |
     if $d2 == "1" and $d1 == "2" and $d0 == "8"
-    then break$out
+    then break$pipe
     else $d2+$d1+$d0
     end
 ;

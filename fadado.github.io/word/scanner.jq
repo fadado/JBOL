@@ -121,15 +121,15 @@ def gfactor($u; $i; $j): #:: WORD|(WORD;number;number) => *number
 
 def span(t; $i): #:: WORD|(SYMBOL->boolean;number) => ?number
     select(0 <= $i and $i < length)
-    | label $out
+    | label $pipe
     | range($i; length+1) as $j
     | if $j == length
-      then $j , break$out   # fence
+      then $j , break$pipe  # fence
       elif .[$j:$j+1] | t
       then empty            # next
       elif $j != $i
-      then $j , break$out   # fence
-      else break$out        # abort
+      then $j , break$pipe  # fence
+      else break$pipe       # abort
       end
 ;
 def span(t): #:: WORD|(SYMBOL->boolean) => ?number
@@ -157,12 +157,12 @@ def none($s): #:: WORD|(WORD) => ?number
 
 def skip(t; $i): #:: WORD|(SYMBOL->boolean;number) => ?number
     select(0 <= $i and $i < length)
-    | label $out
+    | label $pipe
     | range($i; length+1) as $j
     | if $j == length
-      then break$out        # abort
+      then break$pipe       # abort
       elif .[$j:$j+1] | t
-      then $j , break$out
+      then $j , break$pipe
       else empty            # next
       end
 ;
