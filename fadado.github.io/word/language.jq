@@ -23,8 +23,7 @@ import "fadado.github.io/array/kleene" as kleene;
 # L, L1 × L2, L1 × L2 × L3, ...
 def concat: #:: [LANGUAGE] => *WORD
     def _concat:
-        if length == 1
-        then
+        if length == 1 then
             .[0][]
         else
             .[0][] as $x

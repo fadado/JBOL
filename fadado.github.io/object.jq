@@ -48,9 +48,8 @@ def mapobj(filter): #:: object|(PAIR->PAIR) => object
 
 # Set construction from strings and arrays
 #
-def set($elements): #:: (string^[a]) => {boolean}
-    $elements
-    | if isstring then
+def set: #:: string^[a]| => {boolean}
+    if isstring then
         reduce (./"")[] as $element
             ({}; . += {($element):true})
     elif isarray then
@@ -58,6 +57,9 @@ def set($elements): #:: (string^[a]) => {boolean}
             ({}; . += {($element|tostring):true})
     else type | "Type error: expected string or array, not \(.)" | error
     end
+;
+def set($elements): #:: (string^[a]) => {boolean}
+    $elements | set
 ;
 
 # Common sets operations

@@ -19,8 +19,7 @@ include "fadado.github.io/prelude";
 # Generates tuples
 def product: #:: [SET] => *TUPLE
     def _product:
-        if length == 1
-        then
+        if length == 1 then
             .[0][] | [.]
         else
             .[0][] as $x

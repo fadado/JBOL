@@ -30,7 +30,7 @@ def SUCCEED: #::a => +a
 ;
 
 def ABORT: #:: a => !
-    error("!")
+    error("~!~")
 ;
 
 def FENCE: #:: a => a!

@@ -175,6 +175,12 @@ def unfold(f): #:: a|(a->[b,a]) => *b
 # Better versions for builtins
 ########################################################################
 
+# Does not diverges with empty parameter
+def repeat(g): #:: a|(a->*b) => *b
+    def r: g , r;
+    reject(isempty(g)) | r
+;
+
 # to be removed...
 def all(stream; predicate): #:: a|(a->*b;b->boolean) => boolean
     isempty(stream | predicate and empty)

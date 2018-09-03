@@ -28,9 +28,10 @@ def power($n): #:: ALPHABET|(number) => *WORD
     then .[0:0] # ε
     elif length == 0 # Σ × ∅
     then empty       # ∅
-    elif isstring
-    then explode|kleene::power($n)|implode
-    else kleene::power($n)
+    elif isstring then
+        explode | kleene::power($n) | implode
+    else # isarray
+        kleene::power($n)
     end
 ;
 
@@ -38,15 +39,12 @@ def power($n): #:: ALPHABET|(number) => *WORD
 def star: #:: ALPHABET => *WORD
     if length == 0 # ∅
     then .         # ε
-    else
-        if isstring
-        then
-            (./"") as $set
-            | iterate(""; .+$set[])
-        else
-            . as $set
-            | iterate([]; .[length]=$set[])
-        end
+    elif isstring then
+        (./"") as $set
+        | iterate(""; .+$set[])
+    else # isarray
+        . as $set
+        | iterate([]; .[length]=$set[])
     end
 # Slow:
 #   if length == 0 # ∅
@@ -60,15 +58,12 @@ def star: #:: ALPHABET => *WORD
 def plus: #:: ALPHABET => *WORD
     if length == 0 # ∅
     then empty     # ∅
-    else
-        if isstring
-        then
-            (./"") as $set
-            | iterate($set[]; .+$set[])
-        else
-            . as $set
-            | iterate($set[]|[.]; .[length]=$set[])
-        end
+    elif isstring then
+        (./"") as $set
+        | iterate($set[]; .+$set[])
+    else # isarray
+        . as $set
+        | iterate($set[]|[.]; .[length]=$set[])
     end
 # Slow:
 #   if length == 0 # ∅

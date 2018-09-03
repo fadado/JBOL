@@ -12,8 +12,8 @@ include "fadado.github.io/prelude";
 
 ########################################################################
 # Types used in declarations:
-#   WORD: [a]^string
-#   SYMBOL: singleton WORD
+#   WORD:       [a]^string
+#   SYMBOL:     singleton WORD
 
 ########################################################################
 # Find symbol(s)

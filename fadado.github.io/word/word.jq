@@ -13,8 +13,8 @@ include "fadado.github.io/types";
 
 ########################################################################
 # Types used in declarations:
-#   WORD: [a]^string
-#   SYMBOL: singleton WORD
+#   WORD:       [a]^string
+#   SYMBOL:     singleton WORD
 
 ########################################################################
 # Generic operations on strings and arrays
@@ -44,7 +44,7 @@ def count($u): #:: WORD|(WORD) => number
 # Generic reverse
 def mirror: #:: WORD => WORD
     if isstring
-    then explode|reverse|implode
+    then explode | reverse | implode
     else reverse
     end
 ;
