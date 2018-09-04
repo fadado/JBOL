@@ -9,6 +9,7 @@ module {
 };
 
 include "fadado.github.io/prelude";
+include "fadado.github.io/types";
 import "fadado.github.io/array/kleene" as kleene;
 
 ########################################################################
@@ -28,52 +29,56 @@ def concat: #:: [LANGUAGE] => *WORD
         else
             .[0][] as $x
             | $x + (.[1:]|_concat)
+            # reverse order: .[0][] + (.[1:]|_concat)
         end
     ;
-    if length == 0
-    then error("language::concat not defined for zero languages")
+    if length == 0 # ×
+    then error("language::concat cannot determine ε for empty languages")
     elif any(.[]; length==0) # L × ∅
-    then empty               # ∅
+    then empty # ∅ of words
     else _concat
     end
 ;
 
 # Lⁿ
-def power($n; $epsilon): #:: LANGUAGE|(number;WORD) => *WORD
+def power($n): #:: LANGUAGE|(number) => *WORD
 # assert $n >= 0
-    if $n == 0 # L⁰
-    then .[0][0:0] // $epsilon # ε
-    elif length == 0 # L × ∅
-    then empty       # ∅
-    else
+    if $n == 0 then # L⁰
+        if length > 0
+        then .[0][0:0] # ε
+        else error("language::power cannot determine ε for empty languages")
+        end
+    elif length == 0 # L = ∅
+    then empty # ∅ of words
+    elif isstring(.[0]) or isarray(.[0]) then
         . as $lang
         | [range($n) | $lang]
         | concat
+    else .[0]|typerror("string or array")
     end
-;
-def power($n): #:: LANGUAGE|(number) => *WORD
-# assert $n >= 0
-    power($n;[]) # empty WORD defaults to array
 ;
 
 # L*
-def star($epsilon): #:: LANGUAGE|(WORD) => *WORD
-# TODO: implement using `iterate`
-    if length == 0 # ∅ (empty language)
-    then .[0][0:0] // $epsilon # ε
-    else power(range(0; infinite))
-    end
-;
 def star: #:: LANGUAGE => *WORD
-    star([]) # empty WORD defaults to array
+    if length == 0 then # ∅ (empty language)
+        error("language::star cannot determine ε for empty languages")
+    elif isstring(.[0]) then
+        . as $lang | iterate(""; .+$lang[])
+    elif isarray(.[0]) then
+        . as $lang | iterate([]; .+$lang[])
+    else .[0]|typerror("string or array")
+    end
 ;
 
 # L⁺
 def plus: #:: LANGUAGE => *WORD
-# TODO: implement using `iterate`
-    if length == 0 # ∅ (empty language)
-    then empty     # ∅
-    else power(range(1; infinite))
+    if length == 0 then # ∅ (empty language)
+        empty # ∅
+    elif isstring(.[0]) then
+        . as $lang | iterate($lang[]; .+$lang[])
+    elif isarray(.[0]) then
+        . as $lang | iterate($lang[]; .+$lang[])
+    else .[0]|typerror("string or array")
     end
 ;
 

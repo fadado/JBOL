@@ -12,11 +12,10 @@ include "fadado.github.io/prelude";
 
 ########################################################################
 # Types used in declarations:
-#   SET: [a]
-#   TUPLE: [a]
+#   SET:    [a]
+#   TUPLE:  [a]
 
 # ×, A ×, A × B, A × B × C, …
-# Generates tuples
 def product: #:: [SET] => *TUPLE
     def _product:
         if length == 1 then
@@ -27,9 +26,9 @@ def product: #:: [SET] => *TUPLE
         end
     ;
     if length == 0 # empty product?
-    then [] # empty tuple
+    then []        # identity element: empty tuple
     elif any(.[]; length==0) # A × ∅
-    then empty               # ∅
+    then empty # ∅ of tuples
     else _product
     end
 ;
@@ -39,9 +38,9 @@ def product: #:: [SET] => *TUPLE
 def power($n): #:: SET|(number) => +TUPLE
 # assert $n >= 0
     if $n == 0 # A⁰
-    then []    # empty tuple
-    elif length == 0 # A × ∅
-    then empty       # ∅
+    then [] # empty tuple
+    elif length == 0 # A = ∅
+    then empty # ∅ of tuples
     else
         . as $set
         | [range($n) | $set]
@@ -57,14 +56,14 @@ def power($n): #:: SET|(number) => +TUPLE
 # A*: A⁰ ∪ A¹ ∪ A² ∪ A³ ∪ A⁴ ∪ A⁵ ∪ A⁶ ∪ A⁷ ∪ A⁸ ∪ A⁹…
 def star: #:: SET => +TUPLE
     if length == 0 # ∅
-    then .         # ε
+    then . # ε
     else
         . as $set
         | iterate([]; .[length]=$set[])
     end
 # Very slow:
-#   if length == 0 # ∅
-#   then .         # ε
+#   if length == 0
+#   then .
 #   else power(range(0; infinite))
 #   end
 ;
@@ -72,14 +71,14 @@ def star: #:: SET => +TUPLE
 # A⁺: A¹ ∪ A² ∪ A³ ∪ A⁴ ∪ A⁵ ∪ A⁶ ∪ A⁷ ∪ A⁸ ∪ A⁹…
 def plus: #:: SET => *TUPLE
     if length == 0 # ∅
-    then empty     # ∅
+    then empty # ∅ of tuples
     else
         . as $set
         | iterate($set[]|[.]; .[length]=$set[])
     end
 # Very slow:
-#   if length == 0 # ∅
-#   then empty     # ∅
+#   if length == 0
+#   then empty
 #   else power(range(1; infinite))
 #   end
 ;

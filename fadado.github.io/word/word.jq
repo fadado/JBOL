@@ -25,8 +25,6 @@ include "fadado.github.io/types";
 # Length of w:                  w|length
 # Alphabet of w (arrays):       w|unique
 # Alphabet of w (strings):      (w/"")|unique|add
-# Reverse of w (arrays):        w|reverse
-# Reverse of w (strings):       w|explode|reverse|implode
 
 # Rotate in both directions
 def rotate($n): #:: WORD|(number) => WORD
@@ -45,7 +43,9 @@ def count($u): #:: WORD|(WORD) => number
 def mirror: #:: WORD => WORD
     if isstring
     then explode | reverse | implode
-    else reverse
+    elif isarray
+    then reverse
+    else typerror
     end
 ;
 
@@ -130,10 +130,19 @@ def fibstr($w; $u): #:: (WORD;WORD) => +WORD
 # Generates wⁿ (one word: w concatenated n times)
 def power($n): #:: WORD|(number) => WORD
 # assert $n >= 0
-    . as $word
-    | if isstring
-    then if $n == 0 then "" else . * $n end
-    else reduce range($n) as $_ ([]; . + $word)
+    if isstring then
+        if $n == 0 or length == 0
+        then ""
+        else . * $n end
+    elif isarray then
+        if $n == 0 or length == 0
+        then []
+        else
+            . as $word
+            | reduce range($n) as $_
+                ([]; . + $word)
+        end
+    else typerror
     end
 ;
 

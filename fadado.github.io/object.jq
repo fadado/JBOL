@@ -55,7 +55,7 @@ def set: #:: string^[a]| => {boolean}
     elif isarray then
         reduce .[] as $element
             ({}; . += {($element|tostring):true})
-    else type | "Type error: expected string or array, not \(.)" | error
+    else typerror("string or array")
     end
 ;
 def set($elements): #:: (string^[a]) => {boolean}

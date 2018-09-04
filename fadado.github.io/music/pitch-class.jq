@@ -37,7 +37,7 @@ def new: #:: <number^string> => PCLASS
             # . must be a note name with octave
             pitch::new % 12
         end
-    else type | "Type error: expected number or string, not \(.)" | error
+    else typerror("number or string")
     end
 ;
 def new($x): #:: (<number^string>) => PCLASS

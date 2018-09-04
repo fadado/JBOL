@@ -43,7 +43,7 @@ def new: #:: <number^string> => PITCH
         else
             "Malformed pitch: \(.)" | error
         end
-    else type | "Type error: expected number or string, not \(.)" | error
+    else typerror("number or string")
     end
 ;
 def new($x): #:: (<number^string>) => PITCH

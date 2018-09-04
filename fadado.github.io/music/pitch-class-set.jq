@@ -41,7 +41,7 @@ def new: #:: <array^string> => PCSET
         else # JSON array
             fromjson
         end
-    else type | "Type error: expected array or string, not \(.)" | error
+    else typerror("array or string")
     end
 ;
 def new($x): #:: (<array^string>) => PCSET

@@ -114,4 +114,16 @@ def tobool(a): #:: (a) => boolean
     if first(a)//false then true else false end
 ;
 
+# Type errors
+
+def typerror:
+    type
+    | "Type error: unexpected \(.)" | error
+;
+
+def typerror($s):
+    type
+    | "Type error: expected" + $s + ", not \(.)" | error
+;
+
 # vim:ai:sw=4:ts=4:et:syntax=jq

@@ -163,7 +163,7 @@ def split($regex; $a): #:: string|(string;number^string) => *string
     then split($regex; ""; $a)     # $a = limit
     elif $a|isstring
     then split($regex; $a; infinite) # $a = flags
-    else $a|type | "Type error: expected number or string, not \(.)" | error
+    else $a|typerror("number or string")
     end
 ;
 
