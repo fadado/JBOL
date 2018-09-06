@@ -135,7 +135,7 @@ $(LogDir)/array_kleene.log: $(ARRAY)/kleene.jq
 $(LogDir)/array_tuple.log: $(ARRAY)/tuple.jq
 
 # Object tests
-$(LogDir)/object_set.log: $(LIB)/object.jq $(LIB)/types.jq
+$(LogDir)/object_set.log: $(OBJECT)/set.jq $(LIB)/prelude.jq $(LIB)/types.jq
 
 # Word tests
 $(LogDir)/word.log: $(WORD)/word.jq $(LIB)/prelude.jq $(LIB)/types.jq

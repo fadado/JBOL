@@ -175,6 +175,18 @@ def unfold(f): #:: a|(a->[b,a]) => *b
 # Better versions for builtins
 ########################################################################
 
+# Variation on `with_entries`
+#
+# PAIR: {"name":string, "value":value}
+#
+def mapobj(filter): #:: object|(PAIR->PAIR) => object
+    reduce (keys_unsorted[] as $k
+            | {name: $k, value: .[$k]}
+            | filter
+            | {(.name): .value})
+        as $pair ({}; . + $pair)
+;
+
 # Does not diverges with empty parameter
 def repeat(g): #:: a|(a->*b) => *b
     def r: g , r;

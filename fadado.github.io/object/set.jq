@@ -11,18 +11,6 @@ module {
 include "fadado.github.io/prelude";
 include "fadado.github.io/types";
 
-# Variation on `with_entries`
-#
-# PAIR: {"name":string, "value":value}
-#
-def mapobj(filter): #:: object|(PAIR->PAIR) => object
-    reduce (keys_unsorted[] as $k
-            | {name: $k, value: .[$k]}
-            | filter
-            | {(.name): .value})
-        as $pair ({}; . + $pair)
-;
-
 ########################################################################
 # Objects as sets
 #

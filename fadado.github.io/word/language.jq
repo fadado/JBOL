@@ -18,6 +18,14 @@ import "fadado.github.io/array/kleene" as kleene;
 #   LANGUAGE:   [WORD]
 #   ε:           "" for string WORD, [] for array WORD
 
+# Fibbonacci strings language
+# fibstr("a"; "b") => "a","b","ab","bab","abbab"…
+def fibstr($w; $u): #:: (WORD;WORD) => +WORD
+    [$w,$u]
+    | recurse([.[-1], .[-2]+.[-1]])
+    | .[-2]
+;
+
 ########################################################################
 # Operations on languages
 
@@ -74,9 +82,7 @@ def star: #:: LANGUAGE => *WORD
 def plus: #:: LANGUAGE => *WORD
     if length == 0 then # ∅ (empty language)
         empty # ∅
-    elif isstring(.[0]) then
-        . as $lang | iterate($lang[]; .+$lang[])
-    elif isarray(.[0]) then
+    elif isstring(.[0]) or isarray(.[0]) then
         . as $lang | iterate($lang[]; .+$lang[])
     else .[0]|typerror("string or array")
     end

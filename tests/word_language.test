@@ -5,6 +5,16 @@
 # Blank lines and lines starting with # are ignored.
 #########################################################################
 
+# fibstr
+include "word/language"; [limit(5; fibstr("a";"b"))]
+null
+["a","b","ab","bab","abbab"]
+
+# fibstr
+include "word/language"; [limit(5; fibstr("a";"b"))]
+null
+["a","b","ab","bab","abbab"]
+
 include "word/language"; power(0)
 [[1,2,3]]
 []

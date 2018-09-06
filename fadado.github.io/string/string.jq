@@ -9,7 +9,7 @@ module {
 };
 
 include "fadado.github.io/prelude";
-import "fadado.github.io/object" as object;
+import "fadado.github.io/object/set" as object;
 import "fadado.github.io/string/ascii" as ascii;
 
 ########################################################################

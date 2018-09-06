@@ -114,14 +114,6 @@ def factors: #:: WORD => *WORD
 #   | .[$j:$i]
 ;
 
-# Fibbonacci strings
-# fibstr("a"; "b") => "a","b","ab","bab","abbab"…
-def fibstr($w; $u): #:: (WORD;WORD) => +WORD
-    [$w,$u]
-    | recurse([.[-1], .[-2]+.[-1]])
-    | .[-2]
-;
-
 ########################################################################
 # Word iteration
 
