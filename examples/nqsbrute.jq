@@ -13,7 +13,7 @@ def queens($n):
     ;
     def all_safe:
         every(
-            range(0; length-1) as $i
+            range(0; length-1) as $i # keys[] as $i
             | .[$i] as $j
             | range($i+1; length) as $k
             | .[$k] as $l

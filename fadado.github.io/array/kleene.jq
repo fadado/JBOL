@@ -64,7 +64,7 @@ def star: #:: SET => +TUPLE
 # Very slow:
 #   if length == 0
 #   then .
-#   else power(range(0; infinite))
+#   else power(seq)
 #   end
 ;
 
@@ -79,7 +79,7 @@ def plus: #:: SET => *TUPLE
 # Very slow:
 #   if length == 0
 #   then empty
-#   else power(range(1; infinite))
+#   else power(seq(1))
 #   end
 ;
 

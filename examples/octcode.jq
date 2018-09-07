@@ -1,6 +1,6 @@
 #!/usr/local/bin/jq -cnRrf
 
-import "fadado.github.io/stream" as stream;
+import "fadado.github.io/array" as array;
 
 def chars: (./"")[];
 
@@ -28,7 +28,6 @@ def hexcode:
     $d1+$d0
 ;
 
-# Fast:
-[ [octcode], [deccode], [hexcode] ] | stream::zip
+[ [octcode], [deccode], [hexcode] ] | array::zip
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

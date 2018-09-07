@@ -8,8 +8,6 @@ module {
     }
 };
 
-include "fadado.github.io/prelude";
-
 ########################################################################
 # Generators as streams
 
@@ -27,12 +25,12 @@ def count(stream): #:: a|(a->*b) => number!
 ;
 
 # . inside?
-def member(stream): #:: a|(*a) => boolean
-    . as $a
-    | any(stream; . == $a)
-;
 def member($a; stream): #:: a|(a;*a) => boolean
-    any(stream; . == $a)
+#   any(stream; . == $a)
+    isempty(stream | . == $a or empty) | not
+;
+def member(stream): #:: a|(*a) => boolean
+    member(.; stream)
 ;
 
 # some common?
@@ -41,8 +39,8 @@ def common(stream; t):  #:: a|(*a;*a) => *a
 ;
 
 def sharing(stream; t):  #:: a|(*a;*a) => boolean
-#   nonempty(common(stream; t))
-    some(stream | member(t))
+#   any(stream | member(t); .)
+    isempty(stream | member(t) or empty) | not
 ;
 
 # Unique for streams
@@ -102,54 +100,6 @@ def drop($n; stream): #:: a|(number;a->*b) => *b
 def slice($i; $j; stream): #:: a|(number;number;a->*b) => *b
     select($i < $j)
     | limit($j-$i; drop($i; stream))
-;
-
-#
-# Not optimized `zip` => def zip(g; h): [[g], [h]] | transpose[]
-#
-
-# Takes two streams and returns a stream of corresponding pairs.
-# If one input list is short, excess elements of the shorter stream are
-# replaced with `null`.
-#
-# Warning: input streams cannot be infinite!
-#
-def zip(g; h): #:: x|(x->*a;x->*b) => *[a,b]
-    [[g], [h]] as $pair
-    | ($pair | map(length) | max) as $longest
-    | range($longest)
-    | [$pair[0][.], $pair[1][.]]
-;
-
-# Generalized `zip` for 2 or more streams.
-#
-def _zip: #:: [[a],[b]...]| => *[a,b,...]
-    . as $in
-    | (map(length) | max) as $longest
-    | length as $n
-    | foreach range($longest) as $j (null;
-        reduce range($n) as $i
-            ([]; . + [$in[$i][$j]]))
-;
-def zip(g1; g2; g3): #:: x|(x->*a;x->*b;...) => *[a,b,...]
-    [[g1], [g2], [g3]]
-    | _zip
-;
-def zip(g1; g2; g3; g4): #:: x|(x->*a;x->*b;...) => *[a,b,...]
-    [[g1], [g2], [g3], [g4]]
-    | _zip
-;
-def zip(g1; g2; g3; g4; g5): #:: x|(x->*a;x->*b;...) => *[a,b,...]
-    [[g1], [g2], [g3], [g4], [g5]]
-    | _zip
-;
-def zip(g1; g2; g3; g4; g5; g6): #:: x|(x->*a;x->*b;...) => *[a,b,...]
-    [[g1], [g2], [g3], [g4], [g5], [g6]]
-    | _zip
-;
-def zip(g1; g2; g3; g4; g5; g6; g7): #:: x|(x->*a;x->*b;...) => *[a,b,...]
-    [[g1], [g2], [g3], [g4], [g5], [g6], [g7]]
-    | _zip
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

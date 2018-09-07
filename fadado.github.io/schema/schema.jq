@@ -262,7 +262,7 @@ def validate($schema; $fatal): #:: a|(SCHEMA;boolean) => boolean
                 else # isarray
                     additionalItems as $additional
                     | every(
-                        range(length) as $i
+                        range(0;length) as $i
                         | if $i|in($items) # $i < ($items|length)
                           then .[$i] | _validate($items[$i]; $fatal)
                           else $additional != null

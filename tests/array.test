@@ -29,4 +29,36 @@ include "array"; sorted
 [1,2,3,4,5]
 true
 
+#
+# zip
+#
+
+include "array";  zip([range(1)]; [range(0)])
+null
+[0,null]
+
+include "array";  zip([range(0)]; [range(0)])
+null
+# empty
+
+include "array";  [] | zip
+null
+# empty
+
+include "array";  first(zip([range(10)]; [range(20;30)]))
+null
+[0,20]
+
+include "array";  last(zip([range(5)]; [range(20;23)]))
+null
+[4,null]
+
+include "array";  last([[range(5)], [range(20;23)]] | zip)
+null
+[4,null]
+
+include "array";  nth(5; [[range(5)], [range(100)], [range(20;23)]] | zip)
+null
+[null,5,null]
+
 # vim:ai:sw=2:ts=2:et:syntax=jq

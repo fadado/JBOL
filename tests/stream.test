@@ -177,38 +177,6 @@ include "stream";  nth(11; enum(split("")[]))
 "abcdefghijklmnopqrstuvwxyz"
 [11,"l"]
 
-#
-# zip
-#
-
-include "stream";  zip(range(1); range(0))
-null
-[0,null]
-
-include "stream";  zip(range(0); range(0))
-null
-# empty
-
-include "stream";  [] | _zip
-null
-# empty
-
-include "stream";  first(zip(range(10); range(20;30)))
-null
-[0,20]
-
-include "stream";  last(zip(range(5); range(20;23)))
-null
-[4,null]
-
-include "stream";  last([[range(5)], [range(20;23)]] | _zip)
-null
-[4,null]
-
-include "stream";  nth(5; zip(range(5); range(100); range(20;23)))
-null
-[null,5,null]
-
 include "stream";  [distinct(1,2,1,1,2,3,2,1,2,2,3,2,1)]
 null
 [1,2,3]

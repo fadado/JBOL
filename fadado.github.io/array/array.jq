@@ -22,7 +22,7 @@ def remove($x): #:: [a]|(a) => [a]
 # Is the array sorted?
 def sorted: #:: [a] => boolean
     every(
-        range(length-1) as $i
+        range(0;length-1) as $i
         | ($i+1) as $j
         | .[$i] <= .[$j])
 ;
@@ -30,7 +30,7 @@ def sorted: #:: [a] => boolean
 # Are all elements equal?
 def uniform: #:: [a] => boolean
     every (
-        range(0; length-1) as $i
+        range(0;length-1) as $i
         | ($i+1) as $j
         | .[$i] == .[$j])
 ;
@@ -38,7 +38,7 @@ def uniform: #:: [a] => boolean
 # Are all elements diferent?
 def different: #:: [a] => boolean
     every(
-        range(0; length-1) as $i
+        range(0;length-1) as $i
         | range($i+1; length) as $j
         | .[$i] != .[$j])
 ;
@@ -56,6 +56,28 @@ def pop: #:: [a] => [a]
 
 def top: #:: [a] => a^null
     .[-1] # null if empty
+;
+
+#
+# Not optimized `zip` => def zip($a; $b): [$a, $b] | transpose[];
+#
+
+#
+def zip($a; $b): #:: ([a];[b]) => *[a,b]
+    [$a, $b] as $pair
+    | ($pair | map(length) | max) as $longest
+    | range($longest) | [$pair[0][.], $pair[1][.]]
+;
+
+# Generalized `zip` for 2 or more arrays.
+#
+def zip: #:: [[a],[b]...]| => *[a,b,...]
+    . as $in
+    | (map(length) | max) as $longest
+    | length as $n
+    | foreach range($longest) as $j (null;
+        reduce range($n) as $i
+            ([]; . + [$in[$i][$j]]))
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

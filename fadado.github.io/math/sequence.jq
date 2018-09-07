@@ -20,7 +20,7 @@ include "fadado.github.io/math";
 #   a(n) = a(n-1)+d
 #
 def arithmetic($a; $d): #:: (number;number) => *number
-#   range($a; infinite; $d)
+#   seq($a; $d)
     $a|recurse(. + $d)
 ;
 
@@ -31,12 +31,12 @@ def arithmetic($a; $d): #:: (number;number) => *number
 #   a(n) = a(n-1)+1
 #
 def naturals: #:: => *number
-#   range(0; infinite; 1)
+#   seq
     arithmetic(0; 1)
 ;
 
 def positives: #:: => *number
-#   range(1; infinite; 1)
+#   seq(1)
     arithmetic(1; 1)
 ;
 
@@ -52,7 +52,7 @@ def negatives: #:: => *number
 #   a(n) = a(n-1)+2
 #
 def odds: #:: => *number
-#   range(1; infinite; 2)
+#   seq(1; 2)
     arithmetic(1; 2)
 ;
 
@@ -63,8 +63,7 @@ def odds: #:: => *number
 #   a(n) = a(n-1)+2
 #
 def evens: #:: => *number
-#   range(0; infinite; 2)
-#   arithmetic(0; 2)
+#   seq(0; 2)
     seq | .+.
 ;
 
@@ -75,11 +74,11 @@ def evens: #:: => *number
 #   a(n) = a(n-1)+n
 #
 def multiples($n): #:: (number) => *number
-#   range(0; infinite; $n)
+#   seq(0; $n)
     arithmetic(0; $n)
 ;
 def multiples: #:: number| => *number
-#   range(0; infinite; .)
+#   seq(0; .)
     multiples(.)
 ;
 

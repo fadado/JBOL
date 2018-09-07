@@ -33,7 +33,7 @@ def new: #:: PCSET => TABLE
         | $pcs[$i]|pc::interval($pcs[$j]) as $c
         | ([$d,$c], [$n-$d,12-$c])
     ;
-    [range(length-2)|[]] as $t
+    [range(0;length-2)|[]] as $t
     | reduce _table as [$d,$c] ($t; .[$d-1] += [$c])
     | map(unique)
 ;

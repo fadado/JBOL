@@ -53,7 +53,7 @@ def notany($s; $i): #:: WORD|(WORD;number) => ?number
 # Positions for all symbols in w satisfying t
 def gsymbol(t): #:: WORD|(SYMBOL->boolean) => *number
     select(length > 0)
-    | range(length) as $j
+    | range(0;length) as $j
     | select(.[$j:$j+1]|t)
     | $j
 ;

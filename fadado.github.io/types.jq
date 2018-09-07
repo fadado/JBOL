@@ -100,7 +100,7 @@ def unknown($x): #:: array|(number) => boolean; object|(string) => boolean
 ;
 
 # is undefined?
-def undefined($x): #:: array|(number) => boolean; object|(string) => boolean
+def missing($x): #:: array|(number) => boolean; object|(string) => boolean
     has($x) | not
 ;
 

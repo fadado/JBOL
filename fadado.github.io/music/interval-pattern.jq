@@ -26,8 +26,8 @@ import "fadado.github.io/music/pitch-class" as pc;
 
 def new: #:: PCSET => PATTERN
     . as $pcset
-    | [range(length), 0] as $ndx
-    | [range(length) as $i | $pcset[$ndx[$i]]|pc::interval($pcset[$ndx[$i+1]])]
+    | [range(0;length), 0] as $ndx
+    | [range(0;length) as $i | $pcset[$ndx[$i]]|pc::interval($pcset[$ndx[$i+1]])]
 #   | assert(add == 12)
 ;
 

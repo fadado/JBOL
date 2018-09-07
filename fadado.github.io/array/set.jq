@@ -118,7 +118,7 @@ def combinations($k): #:: SET|(number) => *SET
 # All subsets, stable
 # S(n) = 2^n
 def powerset: #:: SET => +SET
-    combinations(range(0; length+1))
+    combinations(range(0;length+1))
 ;
 
 # All subsets, unstable output
@@ -155,7 +155,7 @@ def mulsets($k): #:: SET|(number) => *MULSET
 
 # Infinite multisets from a set
 def mulsets: #:: SET => *MULSET
-    mulsets(range(0; infinite))
+    mulsets(seq)
 ;
 
 # Multiset permutations (naïve implementation)

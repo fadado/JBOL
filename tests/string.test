@@ -153,4 +153,14 @@ include "string"; [ord("€"), char(8364)]
 null
 [8364, "€"]
 
+#
+
+include "string"; concat
+["a","b"]
+"ab"
+
+include "string"; join(";")
+["a","b"]
+"a;b"
+
 # vim:ai:sw=2:ts=2:et:syntax=jq

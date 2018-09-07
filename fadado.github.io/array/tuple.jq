@@ -17,7 +17,7 @@ include "fadado.github.io/prelude";
 # Permutations
 # P(n) = n!
 def permutations: #:: TUPLE => *TUPLE
-    def choose: range(0; length);
+    def choose: range(0;length);
     #
     if length == 0
     then []
@@ -35,7 +35,7 @@ def permutations: #:: TUPLE => *TUPLE
 # V(n,n) = P(n)
 def permutations($k): #:: TUPLE|(number) => *TUPLE
     def _perm($k):
-        def choose: range(0; length);
+        def choose: range(0;length);
         #
         if $k == 1
         then
@@ -61,7 +61,7 @@ def cycles: #:: TUPLE => *TUPLE
 # TODO: formula?
 def derangements: #:: TUPLE => *TUPLE
     def choose($i): #:: [a]|(number) => [[number,a]]
-        range(length) as $j
+        range(0;length) as $j
         | select(.[$j][0] != $i)
         | [$j, .[$j][1]]
     ;
@@ -77,7 +77,7 @@ def derangements: #:: TUPLE => *TUPLE
     ;
     select(length >= 2) # no derangements for less than 2 elements
     # . (dot) for _derange has still available enumerated elements
-    | [range(length) as $i | [$i,.[$i]]]
+    | [range(0;length) as $i | [$i,.[$i]]]
     | _derange(0)
 ;
 

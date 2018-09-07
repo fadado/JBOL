@@ -106,10 +106,10 @@ def suffixes: #:: WORD => *WORD
 def factors: #:: WORD => *WORD
 # length order:
     range(1;length+1) as $j
-    | range(length-$j+1) as $i
+    | range(0;length-$j+1) as $i
     | .[$i:$i+$j]
 # different order:
-#   range(length+1) as $j
+#   range(0;length+1) as $j
 #   | range($j+1; length+1) as $i
 #   | .[$j:$i]
 ;

@@ -102,13 +102,13 @@ def assert(predicate; $message): #:: a|(a->boolean;string) => a!
 
 # Generate ℕ
 def seq: #:: => *number
-    0|recurse(.+1) # range(1; infinite; 1)
+    0|recurse(.+1) # seq(1)
 ;
 def seq($a): #:: (number) => *number
-    $a|recurse(.+1) # range($a; infinite; 1)
+    $a|recurse(.+1) # seq($a)
 ;
 def seq($a; $d): #:: (number;$number) => *number
-    $a|recurse(.+$d) # range($a; infinite; $d)
+    $a|recurse(.+$d) # seq($a; $d)
 ;
 
 #
@@ -156,10 +156,10 @@ def reiterate(g): #:: a|(a->*a) => +a
 #    $a|scan(f; generator)
 #;
 
-#def mapcat(f; $id):
-#    reduce (.[] | f) as $x
-#        ($id; . + $x)
-#;
+def mapcat(f):
+    reduce (.[] | f) as $x
+        (null; . + $x)
+;
 
 # Fold opposite
 def unfold(f; $seed): #:: (a->[b,a];a) => *b

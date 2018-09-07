@@ -108,7 +108,7 @@ def remove($s): #:: string|(string) => string
 
 def _lndx(predicate): # left index or empty if not found
     label $fence
-    | range(length-1) as $i
+    | range(0;length-1) as $i
     | reject(.[$i:$i+1] | predicate)
     | ($i , break $fence)
 ;
@@ -160,7 +160,7 @@ def rtrim: #:: string| => string
 
 # Fast add, only for string arrays
 def concat: #:: [string] => string
-    reduce .[] as $s (""; sep + $s)
+    reduce .[] as $s (""; . + $s)
 ;
 
 # Fast join, only for string arrays
