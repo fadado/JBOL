@@ -2,20 +2,20 @@
 
 # Output all intersections between two words
 
-import "fadado.github.io/word" as word;
+import "fadado.github.io/word/scanner" as scanner;
 
 def chars:
     (./"")[]
 ;
 
 def lpad($n):
-    (" "*$n) + .
+    " "*$n + .
 ;
 
 # Produces a stream of intersections between two words
 def cross($word1; $word2):
-    ($word1|word::upto($word2)) as $i |
-    ($word2|word::upto($word1[$i:$i+1])) as $j |
+    ($word1|scanner::upto($word2)) as $i |
+    ($word2|scanner::upto($word1[$i:$i+1])) as $j |
     [
         ($word2[0:$j]  | chars | lpad($i)),
         $word1,
