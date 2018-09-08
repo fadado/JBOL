@@ -1,6 +1,6 @@
 module {
     name: "types",
-    description: "Type predicates",
+    description: "Type predicates and utilities",
     namespace: "fadado.github.io",
     author: {
         name: "Joan Josep Ordinas Rosa",
@@ -101,7 +101,7 @@ def unknown($x): #:: array|(number) => boolean; object|(string) => boolean
 
 # is undefined?
 def missing($x): #:: array|(number) => boolean; object|(string) => boolean
-    has($x) | not
+    false == has($x)
 ;
 
 # coerce to bool (exactly true or false)

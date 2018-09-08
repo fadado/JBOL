@@ -42,10 +42,10 @@ def anyone($s; $i): #:: WORD|(WORD;number) => ?number
 
 # Icon `notany`
 def notany($s): #:: WORD|(WORD) => ?number
-    symbol(inside($s)|not)
+    symbol(false==inside($s))
 ;
 def notany($s; $i): #:: WORD|(WORD;number) => ?number
-    symbol(inside($s)|not; $i)
+    symbol(false==inside($s); $i)
 ;
 
 ########################################################################
@@ -146,10 +146,10 @@ def many($s): #:: WORD|(WORD) => ?number
 
 # Complementary of `many`
 def none($s; $i): #:: WORD|(WORD;number) => ?number
-    span(inside($s)|not; $i)
+    span(false==inside($s); $i)
 ;
 def none($s): #:: WORD|(WORD) => ?number
-    span(inside($s)|not; 0)
+    span(false==inside($s); 0)
 ;
 
 ########################################################################

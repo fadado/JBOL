@@ -41,7 +41,7 @@ def positives: #:: => *number
 ;
 
 def negatives: #:: => *number
-#   range(-1; 0-infinite; -1)
+#   seq(-1;-1)
     arithmetic(-1; -1)
 ;
 

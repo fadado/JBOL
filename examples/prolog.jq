@@ -1,7 +1,7 @@
 #!/usr/local/bin/jq -cnRrf
 
 include "fadado.github.io/prelude";
-import "fadado.github.io/object" as object;
+import "fadado.github.io/object/set" as object;
 
 # Database
 

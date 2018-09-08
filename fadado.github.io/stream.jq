@@ -1,6 +1,6 @@
 module {
     name: "stream",
-    description: "Common operations on generators considered as streams",
+    description: "Operations on generators considered as streams",
     namespace: "fadado.github.io",
     author: {
         name: "Joan Josep Ordinas Rosa",
@@ -27,7 +27,7 @@ def count(stream): #:: a|(a->*b) => number!
 # . inside?
 def member($a; stream): #:: a|(a;*a) => boolean
 #   any(stream; . == $a)
-    isempty(stream | . == $a or empty) | not
+    false==isempty(stream | . == $a or empty)
 ;
 def member(stream): #:: a|(*a) => boolean
     member(.; stream)
@@ -40,7 +40,7 @@ def common(stream; t):  #:: a|(*a;*a) => *a
 
 def sharing(stream; t):  #:: a|(*a;*a) => boolean
 #   any(stream | member(t); .)
-    isempty(stream | member(t) or empty) | not
+    false==isempty(stream | member(t) or empty)
 ;
 
 # Unique for streams

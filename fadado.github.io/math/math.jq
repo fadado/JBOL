@@ -53,10 +53,10 @@ def div($m; $n): #:: (number;number) => number
 ;
 
 def sign($n): #:: (number) => number
-    $n|if isnan or (isnumber|not) then nan
-    elif . > 0                    then 1
-    elif . == 0                   then 0
-                                  else -1
+    $n|if isnan or (false==isnumber) then nan
+    elif . > 0  then 1
+    elif . == 0 then 0
+                else -1
     end
 ;
 

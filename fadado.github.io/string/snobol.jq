@@ -222,7 +222,7 @@ def DIFFER($s): #:: CURSOR|(string;string) => CURSOR
 def INTEGER($a): #:: CURSOR|(a) => CURSOR
     def _integer:
         (isnumber and . == trunc)
-        or (tonumber? // false) and (contains(".")|not)
+        or (tonumber? // false) and (false==contains("."))
     ;
     select($a|_integer)
 ;
@@ -292,7 +292,7 @@ def ANY($s): #:: CURSOR|(string) => CURSOR
 def NOTANY($s): #:: CURSOR|(string) => CURSOR
     assert($s!=""; "NOTANY requires a non empty string as argument")
     | select(.position != .slen)
-    | select(.subject[.position:.position+1] | inside($s) | not)
+    | select(.subject[.position:.position+1] | false==inside($s))
     | .start = .position
     | .position += 1
 ;

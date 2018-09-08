@@ -1,6 +1,6 @@
 module {
     name: "prelude",
-    description: "Common services",
+    description: "Flow control services",
     namespace: "fadado.github.io",
     author: {
         name: "Joan Josep Ordinas Rosa",
@@ -14,7 +14,8 @@ module {
 
 # Reverse of `isempty`
 def nonempty(stream): #:: a|(a->*b) => boolean
-    1 == ((label $pipe | stream | (1 , break $pipe))//0)
+    (label $pipe | stream | (true , break $pipe))
+    // false
 ;
 
 # all(stream; .)
@@ -156,11 +157,6 @@ def reiterate(g): #:: a|(a->*a) => +a
 #    $a|scan(f; generator)
 #;
 
-def mapcat(f):
-    reduce (.[] | f) as $x
-        (null; . + $x)
-;
-
 # Fold opposite
 def unfold(f; $seed): #:: (a->[b,a];a) => *b
     def r: f as [$b,$a] | $b , ($a|r);
@@ -174,6 +170,23 @@ def unfold(f): #:: a|(a->[b,a]) => *b
 ########################################################################
 # Better versions for builtins
 ########################################################################
+
+# Renamed map_values
+def mapval(f):
+    .[] |= f
+;
+
+# map and add in one pass
+def mapadd(f):
+    reduce (.[] | f) as $x
+        (null; . + $x)
+;
+
+# Split string, map characters and concat results
+def mapstr(f):
+    reduce ((./"")[] | f) as $s
+        (""; . + $s)
+;
 
 # Variation on `with_entries`
 #
