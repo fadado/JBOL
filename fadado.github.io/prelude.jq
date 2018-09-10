@@ -144,17 +144,17 @@ def reiterate(g): #:: a|(a->*a) => +a
 # Fold/unfold family of patterns
 #
 
-#def fold(f; $a; generator): #:: x|([a,b]->a;a;x->*b) => a
-#    reduce generator as $b
+#def fold(f; $a; g): #:: x|([a,b]->a;a;x->*b) => a
+#    reduce g as $b
 #        ($a; [.,$b]|f)
 #;
 
-#def scan(f; generator): #:: x|([a,b]->a;x->*b) => *a
-#    foreach generator as $b
+#def scan(f; g): #:: x|([a,b]->a;x->*b) => *a
+#    foreach g as $b
 #        (.; [.,$b]|f; .)
 #;
-#def scan(f; $a; generator): #:: x|([a,b]->a;a;x->*b) => *a
-#    $a|scan(f; generator)
+#def scan(f; $a; g): #:: x|([a,b]->a;a;x->*b) => *a
+#    $a|scan(f; g)
 #;
 
 # Fold opposite

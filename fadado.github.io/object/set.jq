@@ -36,7 +36,7 @@ include "fadado.github.io/types";
 
 # Set construction from strings and arrays
 #
-def set: #:: string^[a]| => {boolean}
+def new: #:: string^[a]| => {boolean}
     if isstring then
         reduce (./"")[] as $element
             ({}; . += {($element):true})
@@ -46,8 +46,8 @@ def set: #:: string^[a]| => {boolean}
     else typerror("string or array")
     end
 ;
-def set($elements): #:: (string^[a]) => {boolean}
-    $elements | set
+def new($elements): #:: (string^[a]) => {boolean}
+    $elements | new
 ;
 
 # Common sets operations

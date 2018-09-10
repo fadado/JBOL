@@ -144,7 +144,7 @@ $(LogDir)/word_alphabet.log: $(WORD)/alphabet.jq $(ARRAY)/kleene.jq $(LIB)/prelu
 $(LogDir)/word_language.log: $(WORD)/language.jq $(ARRAY)/kleene.jq $(LIB)/prelude.jq
 
 # String tests
-$(LogDir)/string.log: $(STR)/string.jq $(LIB)/prelude.jq $(STR)/ascii.jq $(STR)/ascii.json
+$(LogDir)/string.log: $(STR)/string.jq $(LIB)/prelude.jq $(STR)/ascii.jq $(STR)/ascii.json $(OBJECT)/set.jq 
 $(LogDir)/string_ascii.log: $(STR)/ascii.jq $(STR)/ascii.json $(LIB)/prelude.jq
 $(LogDir)/string_latin1.log: $(STR)/latin1.jq $(STR)/latin1.json $(LIB)/prelude.jq
 $(LogDir)/string_regexp.log: $(STR)/regexp.jq $(LIB)/prelude.jq $(STR)/string.jq $(LIB)/types.jq

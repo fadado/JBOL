@@ -1,22 +1,22 @@
 #!/usr/local/bin/jq -cnRrf
 
 include "fadado.github.io/prelude";
-import "fadado.github.io/object/set" as object;
+import "fadado.github.io/object/set" as set;
 
 # Database
 
 def biblical_family:
     {
         father: {
-            terach: object::set(["abraham","nachor","haran"]),
-            abraham: object::set(["isaac"]),
-            haran: object::set(["lot","milcah","yiscah"])
+            terach: set::new(["abraham","nachor","haran"]),
+            abraham: set::new(["isaac"]),
+            haran: set::new(["lot","milcah","yiscah"])
         },
         mother: {
-            sarah: object::set(["isaac"])
+            sarah: set::new(["isaac"])
         },
-        male: object::set(["terach","abraham","nachor","haran","isaac","lot"]),
-        female: object::set(["sarah","milcah","yiscah"])
+        male: set::new(["terach","abraham","nachor","haran","isaac","lot"]),
+        female: set::new(["sarah","milcah","yiscah"])
     }
 ;
 

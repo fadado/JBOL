@@ -155,7 +155,7 @@ null
 
 #
 
-include "string"; concat
+include "string"; join
 ["a","b"]
 "ab"
 

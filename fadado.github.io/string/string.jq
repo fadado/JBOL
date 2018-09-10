@@ -9,8 +9,26 @@ module {
 };
 
 include "fadado.github.io/prelude";
-import "fadado.github.io/object/set" as object;
 import "fadado.github.io/string/ascii" as ascii;
+import "fadado.github.io/object/set" as set;
+
+########################################################################
+# Fast iconcat and join only for string arrays
+
+def join: #:: [string] => string
+    reduce .[] as $s (""; . + $s)
+;
+
+def join($separator): #:: [string]|(string) => string
+    def sep:
+        if . == null
+        then ""
+        else .+$separator
+        end
+    ;
+    reduce .[] as $s (null; sep + $s)
+        // ""
+;
 
 ########################################################################
 # Conversions code <=> character
@@ -68,13 +86,12 @@ def table($from; $to): #:: (string;string) => {string}
 def rot13: #:: {string}
     def rotate: .[13:] + .[:13];
     table(ascii::ALPHA;
-        (ascii::upper|rotate)
-            + (ascii::lower|rotate))
+          (ascii::upper|rotate) + (ascii::lower|rotate))
 ;
 
 # Preserve tables
 def ptable($from; $preserve): #:: (string;string) => {string}
-   object::set($preserve) as $t
+   set::new($preserve) as $t
    | reduce (($from/"") | unique)[] as $c
         ({}; . += (if $t[$c] then null else {($c):""} end))
 ;
@@ -82,7 +99,7 @@ def ptable($from; $preserve): #:: (string;string) => {string}
 # Translate characters in input string using translation table
 def translate($table): #:: string|({string}) => string
     [ (./"")[] | $table[.]//. ]
-    | join("")
+    | join
 ;
 
 def translate($from; $to): #:: string|(string;string) => string
@@ -97,10 +114,8 @@ def translate($from; $to): #:: string|(string;string) => string
 # preserve: s|translate(s|translate("to preserve"; "")); "")
 # preserve: s|translate(ptable(s; "to preserve"))
 
-# TODO: compare with translate version
 def remove($s): #:: string|(string) => string
-    reduce ((./"")[] | reject(inside($s))) as $c
-        (""; . + $c)
+    mapstr(reject(inside($s)))
 ;
 
 ########################################################################
@@ -154,25 +169,6 @@ def ltrim: #:: string| => string
 ;
 def rtrim: #:: string| => string
     rstrip(" \t\r\n\f")
-;
-
-########################################################################
-
-# Fast add, only for string arrays
-def concat: #:: [string] => string
-    reduce .[] as $s (""; . + $s)
-;
-
-# Fast join, only for string arrays
-def join($separator): #:: [string]|(string) => string
-    def sep:
-        if . == null
-        then ""
-        else .+$separator
-        end
-    ;
-    reduce .[] as $s (null; sep + $s)
-        // ""
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

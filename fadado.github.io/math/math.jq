@@ -87,25 +87,25 @@ def frombase($base): #:: string|(number) => number
 ;
 
 ########################################################################
-# Reductions
+# Reductions on streams
 
-def sum(generator): #:: a|(a->*number) => number
-    reduce generator as $item
+def sum(stream): #:: a|(a->*number) => number
+    reduce stream as $item
         (0; . + $item)
 ;
 
-def product(generator): #:: a|(a->*number) => number
-    reduce generator as $item
+def mul(stream): #:: a|(a->*number) => number
+    reduce stream as $item
         (1; . * $item)
 ;
 
-def maximum(generator): #:: a|(a->*number) => number
-    reduce generator as $item
+def max(stream): #:: a|(a->*number) => number
+    reduce stream as $item
         (0-infinite; fmax($item; .))
 ;
 
-def minimum(generator): #:: a|(a->*number) => number
-    reduce generator as $item
+def min(stream): #:: a|(a->*number) => number
+    reduce stream as $item
         (infinite; fmin($item; .))
 ;
 

@@ -52,17 +52,10 @@ def mirror: #:: WORD => WORD
 ########################################################################
 # Match one word
 
-# Matches u at the beggining of w?
-# DUPLICATED at scanner.jq!
-def factor($u): #:: WORD|(WORD) => ?number
-    ($u|length) as $j
-    | select($j <= length and .[0:$j] == $u)
-    | $j
-;
-
 # Prefix?
 def prefix($u): #:: WORD|(WORD) => boolean
-    nonempty(factor($u))
+    ($u|length) as $j
+    | $j <= length and .[0:$j] == $u
 ;
 
 # Suffix?

@@ -101,7 +101,7 @@ def unknown($x): #:: array|(number) => boolean; object|(string) => boolean
 
 # is undefined?
 def missing($x): #:: array|(number) => boolean; object|(string) => boolean
-    false == has($x)
+    false==has($x)
 ;
 
 # coerce to bool (exactly true or false)

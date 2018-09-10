@@ -95,31 +95,31 @@ include "math"; [range(.)]|add == sum(range(10))
 10
 true
 
-include "math"; product(range(.)) == 1
+include "math"; mul(range(.)) == 1
 0
 true
 
-include "math"; product(range(.m;.n)) == (2*3*4*5*6*7*8*9)
+include "math"; mul(range(.m;.n)) == (2*3*4*5*6*7*8*9)
 {"m":2,"n":10}
 true
 
-include "math"; minimum(empty) == infinite
+include "math"; min(empty) == infinite
 null
 true
 
-include "math"; maximum(empty) == 0-infinite
+include "math"; max(empty) == 0-infinite
 null
 true
 
-include "math"; maximum(range(.m;.n)) == 9
+include "math"; max(range(.m;.n)) == 9
 {"m":2,"n":10}
 true
 
-include "math"; maximum(-1,-2,-3) == -1
+include "math"; max(-1,-2,-3) == -1
 null
 true
 
-include "math"; maximum(0-infinite, 9) == 9
+include "math"; max(0-infinite, 9) == 9
 null
 true
 
