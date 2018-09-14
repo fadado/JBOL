@@ -33,10 +33,10 @@ def symbol(t; $i): #:: WORD|(SYMBOL->boolean;number) => ?number
 ;
 
 # Icon `any`
-def anyone($s): #:: WORD|(WORD) => ?number
+def any($s): #:: WORD|(WORD) => ?number
     symbol(inside($s))
 ;
-def anyone($s; $i): #:: WORD|(WORD;number) => ?number
+def any($s; $i): #:: WORD|(WORD;number) => ?number
     symbol(inside($s); $i)
 ;
 
@@ -87,12 +87,12 @@ def upto($u; $i; $j): #:: WORD|(WORD;number;number) => *number
 # Find word(s)
 
 # Matches u at the beggining of w?
-def factor($u): #:: WORD|(WORD) => ?number
+def match($u): #:: WORD|(WORD) => ?number
     ($u|length) as $j
     | select($j <= length and .[0:$j] == $u)
     | $j
 ;
-def factor($u; $i): #:: WORD|(WORD;number) => ?number
+def match($u; $i): #:: WORD|(WORD;number) => ?number
     select(0 <= $i and $i < length)
     | ($u|length) as $j
     | select($i+$j <= length and .[$i:$i+$j] == $u)
@@ -102,15 +102,15 @@ def factor($u; $i): #:: WORD|(WORD;number) => ?number
 ########################################################################
 
 # Global search factor (Icon `find`)
-def gfactor($u): #:: WORD|(WORD) => *number
+def find($u): #:: WORD|(WORD) => *number
     indices($u)[]
 ;
-def gfactor($u; $i): #:: WORD|(WORD;number) => *number
+def find($u; $i): #:: WORD|(WORD;number) => *number
     select(0 <= $i)
     | .[$i:]
     | indices($u)[]
 ;
-def gfactor($u; $i; $j): #:: WORD|(WORD;number;number) => *number
+def find($u; $i; $j): #:: WORD|(WORD;number;number) => *number
     select(0 <= $i and $i < $j and $j <= length)
     | .[$i:$j]
     | indices($u)[]
