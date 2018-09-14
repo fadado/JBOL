@@ -8,50 +8,49 @@ module {
     }
 };
 
-include "fadado.github.io/prelude";
-
 ########################################################################
 # Types used in declarations:
 #   WORD:       [a]^string
 #   SYMBOL:     singleton WORD
+#   POS:        number
 
 ########################################################################
 # Find symbol(s)
 
 # Do satisfies the first symbol in w the predicate t?
-def symbol(t): #:: WORD|(SYMBOL->boolean) => ?number
+def symbol(t): #:: WORD|(SYMBOL->boolean) => ?POS
     select(length > 0)
     | select(.[0:1]|t)
     | 1
 ;
 
 # Do satisfies the symbol at i in w the predicate t?
-def symbol(t; $i): #:: WORD|(SYMBOL->boolean;number) => ?number
+def symbol(t; $i): #:: WORD|(SYMBOL->boolean;POS) => ?POS
     select(0 <= $i and $i < length)
     | select(.[$i:$i+1]|t)
     | $i+1
 ;
 
 # Icon `any`
-def any($s): #:: WORD|(WORD) => ?number
+def any($s): #:: WORD|(WORD) => ?POS
     symbol(inside($s))
 ;
-def any($s; $i): #:: WORD|(WORD;number) => ?number
+def any($s; $i): #:: WORD|(WORD;POS) => ?POS
     symbol(inside($s); $i)
 ;
 
 # Icon `notany`
-def notany($s): #:: WORD|(WORD) => ?number
+def notany($s): #:: WORD|(WORD) => ?POS
     symbol(false==inside($s))
 ;
-def notany($s; $i): #:: WORD|(WORD;number) => ?number
+def notany($s; $i): #:: WORD|(WORD;POS) => ?POS
     symbol(false==inside($s); $i)
 ;
 
 ########################################################################
 
 # Positions for all symbols in w satisfying t
-def gsymbol(t): #:: WORD|(SYMBOL->boolean) => *number
+def gsymbol(t): #:: WORD|(SYMBOL->boolean) => *POS
     select(length > 0)
     | range(0;length) as $j
     | select(.[$j:$j+1]|t)
@@ -59,58 +58,56 @@ def gsymbol(t): #:: WORD|(SYMBOL->boolean) => *number
 ;
 
 # Positions for all symbols in w[i:] satisfying t
-def gsymbol(t; $i): #:: WORD|(SYMBOL->boolean;number) => *number
+def gsymbol(t; $i): #:: WORD|(SYMBOL->boolean;POS) => *POS
     select(0 <= $i and $i < length)
     | .[$i:]
     | gsymbol(t)+$i
 ;
 
 # Positions for all symbols in w[i:j] satisfying t
-def gsymbol(t; $i; $j): #:: WORD|(SYMBOL->boolean;number;number) => *number
+def gsymbol(t; $i; $j): #:: WORD|(SYMBOL->boolean;POS;POS) => *POS
     select(0 <= $i and $i < $j and $j <= length)
     | .[$i:$j]
     | gsymbol(t)+$i
 ;
 
 # Icon `upto`
-def upto($u): #:: WORD|(WORD) => *number
+def upto($u): #:: WORD|(WORD) => *POS
     gsymbol(inside($u))
 ;
-def upto($u; $i): #:: WORD|(WORD;number) => *number
+def upto($u; $i): #:: WORD|(WORD;POS) => *POS
     gsymbol(inside($u); $i)
 ;
-def upto($u; $i; $j): #:: WORD|(WORD;number;number) => *number
+def upto($u; $i; $j): #:: WORD|(WORD;POS;POS) => *POS
     gsymbol(inside($u); $i; $j)
 ;
 
 ########################################################################
 # Find word(s)
 
-# Matches u at the beggining of w?
-def match($u): #:: WORD|(WORD) => ?number
+# Matches u at the beggining of w? (Icon `match`)
+def match($u): #:: WORD|(WORD) => ?POS
     ($u|length) as $j
     | select($j <= length and .[0:$j] == $u)
     | $j
 ;
-def match($u; $i): #:: WORD|(WORD;number) => ?number
+def match($u; $i): #:: WORD|(WORD;POS) => ?POS
     select(0 <= $i and $i < length)
     | ($u|length) as $j
     | select($i+$j <= length and .[$i:$i+$j] == $u)
     | $i+$j
 ;
 
-########################################################################
-
 # Global search factor (Icon `find`)
-def find($u): #:: WORD|(WORD) => *number
+def find($u): #:: WORD|(WORD) => *POS
     indices($u)[]
 ;
-def find($u; $i): #:: WORD|(WORD;number) => *number
+def find($u; $i): #:: WORD|(WORD;POS) => *POS
     select(0 <= $i)
     | .[$i:]
     | indices($u)[]
 ;
-def find($u; $i; $j): #:: WORD|(WORD;number;number) => *number
+def find($u; $i; $j): #:: WORD|(WORD;POS;POS) => *POS
     select(0 <= $i and $i < $j and $j <= length)
     | .[$i:$j]
     | indices($u)[]
@@ -119,7 +116,7 @@ def find($u; $i; $j): #:: WORD|(WORD;number;number) => *number
 ########################################################################
 # Generalized Icon `many` or SNOBOL SPAN
 
-def span(t; $i): #:: WORD|(SYMBOL->boolean;number) => ?number
+def span(t; $i): #:: WORD|(SYMBOL->boolean;POS) => ?POS
     select(0 <= $i and $i < length)
     | label $pipe
     | range($i; length+1) as $j
@@ -132,50 +129,57 @@ def span(t; $i): #:: WORD|(SYMBOL->boolean;number) => ?number
       else break$pipe       # abort
       end
 ;
-def span(t): #:: WORD|(SYMBOL->boolean) => ?number
+def span(t): #:: WORD|(SYMBOL->boolean) => ?POS
     span(t; 0)
 ;
 
 # Icon `many`
-def many($s; $i): #:: WORD|(WORD;number) => ?number
+def many($s; $i): #:: WORD|(WORD;POS) => ?POS
     span(inside($s); $i)
 ;
-def many($s): #:: WORD|(WORD) => ?number
+def many($s): #:: WORD|(WORD) => ?POS
     span(inside($s); 0)
 ;
 
 # Complementary of `many`
-def none($s; $i): #:: WORD|(WORD;number) => ?number
+def none($s; $i): #:: WORD|(WORD;POS) => ?POS
     span(false==inside($s); $i)
 ;
-def none($s): #:: WORD|(WORD) => ?number
+def none($s): #:: WORD|(WORD) => ?POS
     span(false==inside($s); 0)
 ;
 
 ########################################################################
 # Generalized SNOBOL BREAK
 
-def skip(t; $i): #:: WORD|(SYMBOL->boolean;number) => ?number
+def terminate(t; $i): #:: WORD|(SYMBOL->boolean;POS) => ?POS
     select(0 <= $i and $i < length)
     | label $pipe
     | range($i; length+1) as $j
     | if $j == length
       then break$pipe       # abort
       elif .[$j:$j+1] | t
-      then $j , break$pipe
+      then $j , break$pipe  # fence
       else empty            # next
       end
 ;
-def skip(t): #:: WORD|(SYMBOL->boolean) => ?number
-    skip(t; 0)
+def terminate(t): #:: WORD|(SYMBOL->boolean) => ?POS
+    terminate(t; 0)
 ;
 
-# Not in Icon but...
-def stop($s; $i): #:: WORD|(WORD;number) => ?number
-    skip(inside($s); $i)
+# SNOBOL `BREAK`
+def stop($s; $i): #:: WORD|(WORD;POS) => ?POS
+    terminate(inside($s); $i)
 ;
-def stop($s): #:: WORD|(WORD) => ?number
-    skip(inside($s); 0)
+def stop($s): #:: WORD|(WORD) => ?POS
+    terminate(inside($s); 0)
+;
+
+def skip($s; $i): #:: WORD|(WORD;POS) => ?POS
+    terminate(false==inside($s); $i)
+;
+def skip($s): #:: WORD|(WORD) => ?POS
+    terminate(false==inside($s); 0)
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

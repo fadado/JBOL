@@ -8,8 +8,6 @@ module {
     },
 };
 
-include "fadado.github.io/prelude";
-
 ########################################################################
 # Types used in declarations:
 #   TUPLE: [a]

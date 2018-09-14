@@ -8,7 +8,6 @@ module {
     }
 };
 
-include "fadado.github.io/prelude";
 import "fadado.github.io/math" as math;
 
 # Inspired in https://www.rosettacode.org/wiki/URL_decoding#jq

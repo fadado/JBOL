@@ -46,9 +46,17 @@ include "word/scanner"; none("aeiou")
 "xxoops"
 2
 
+include "word/scanner"; stop("aeiou")
+"xxoops"
+2
+
 include "word/scanner"; none("aeiou")
 "axixo"
 # empty
+
+include "word/scanner"; stop("aeiou")
+"axixo"
+0
 
 include "word/scanner"; many("aeiou")
 "oops"
@@ -97,6 +105,7 @@ include "word/scanner"; match([1])
 include "word/scanner"; match([3,4,2])
 []
 # empty
+
 include "word/scanner"; find([3,4,2])
 [1,2, 3,4,2, 5]
 2
