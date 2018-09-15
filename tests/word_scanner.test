@@ -42,7 +42,7 @@ include "word/scanner"; any("aeiou")
 "Asperger"
 # empty
 
-include "word/scanner"; none("aeiou")
+include "word/scanner"; many_c("aeiou")
 "xxoops"
 2
 
@@ -50,7 +50,7 @@ include "word/scanner"; stop("aeiou")
 "xxoops"
 2
 
-include "word/scanner"; none("aeiou")
+include "word/scanner"; many_c("aeiou")
 "axixo"
 # empty
 

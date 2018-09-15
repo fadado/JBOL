@@ -33,11 +33,6 @@ def rotate: #:: WORD => WORD
     .[1:] + .[:1]
 ;
 
-# Number of u's in w
-def count($u): #:: WORD|(WORD) => number
-    indices($u) | length
-;
-
 # Generic reverse
 def mirror: #:: WORD => WORD
     if isstring
@@ -46,6 +41,11 @@ def mirror: #:: WORD => WORD
     then reverse
     else typerror
     end
+;
+
+# Number of u's in w
+def count($u): #:: WORD|(WORD) => number
+    indices($u) | length
 ;
 
 ########################################################################
@@ -61,6 +61,12 @@ def prefix($u): #:: WORD|(WORD) => boolean
 def suffix($u): #:: WORD|(WORD) => boolean
     ($u|length) as $j
     | $j == 0 or $j <= length and .[-$j:] == $u
+;
+
+# Factor?
+def factor($u): #:: WORD|(WORD) => boolean
+    ($u|length) as $j
+    | 0 < $j and contains($u)
 ;
 
 # Proper prefix?
@@ -84,14 +90,12 @@ def pfactor($u): #:: WORD|(WORD) => boolean
 
 # Sets of prefixes (without the empty word)
 def prefixes: #:: WORD => *WORD
-    range(1;length+1) as $i
-    | .[:$i]
+    .[:range(1;length+1)]
 ;
 
 # Sets of suffixes (without the empty word)
 def suffixes: #:: WORD => *WORD
-    range(length-1;-1;-1) as $i
-    | .[$i:]
+    .[range(length-1;-1;-1):]
 ;
 
 # Sets of factors, (without the empty word)

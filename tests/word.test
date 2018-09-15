@@ -72,6 +72,10 @@ include "word"; mirror
 
 ########################################################################
 
+include "word"; factor("a")
+"lae"
+true
+
 include "word"; pfactor([])
 [1,2, 3,4,2, 5]
 false

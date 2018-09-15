@@ -20,14 +20,14 @@ module {
 # Do satisfies the first symbol in w the predicate t?
 def symbol(t): #:: WORD|(SYMBOL->boolean) => ?POS
     select(length > 0)
-    | select(.[0:1]|t)
+    | select(.[0:1] | t)
     | 1
 ;
 
 # Do satisfies the symbol at i in w the predicate t?
 def symbol(t; $i): #:: WORD|(SYMBOL->boolean;POS) => ?POS
     select(0 <= $i and $i < length)
-    | select(.[$i:$i+1]|t)
+    | select(.[$i:$i+1] | t)
     | $i+1
 ;
 
@@ -50,36 +50,46 @@ def notany($s; $i): #:: WORD|(WORD;POS) => ?POS
 ########################################################################
 
 # Positions for all symbols in w satisfying t
-def gsymbol(t): #:: WORD|(SYMBOL->boolean) => *POS
+def locate(t): #:: WORD|(SYMBOL->boolean) => *POS
     select(length > 0)
     | range(0;length) as $j
-    | select(.[$j:$j+1]|t)
+    | select(.[$j:$j+1] | t)
     | $j
 ;
 
 # Positions for all symbols in w[i:] satisfying t
-def gsymbol(t; $i): #:: WORD|(SYMBOL->boolean;POS) => *POS
+def locate(t; $i): #:: WORD|(SYMBOL->boolean;POS) => *POS
     select(0 <= $i and $i < length)
     | .[$i:]
-    | gsymbol(t)+$i
+    | locate(t)+$i
 ;
 
 # Positions for all symbols in w[i:j] satisfying t
-def gsymbol(t; $i; $j): #:: WORD|(SYMBOL->boolean;POS;POS) => *POS
+def locate(t; $i; $j): #:: WORD|(SYMBOL->boolean;POS;POS) => *POS
     select(0 <= $i and $i < $j and $j <= length)
     | .[$i:$j]
-    | gsymbol(t)+$i
+    | locate(t)+$i
 ;
 
 # Icon `upto`
 def upto($u): #:: WORD|(WORD) => *POS
-    gsymbol(inside($u))
+    locate(inside($u))
 ;
 def upto($u; $i): #:: WORD|(WORD;POS) => *POS
-    gsymbol(inside($u); $i)
+    locate(inside($u); $i)
 ;
 def upto($u; $i; $j): #:: WORD|(WORD;POS;POS) => *POS
-    gsymbol(inside($u); $i; $j)
+    locate(inside($u); $i; $j)
+;
+
+def upto_c($u): #:: WORD|(WORD) => *POS
+    locate(false==inside($u))
+;
+def upto_c($u; $i): #:: WORD|(WORD;POS) => *POS
+    locate(false==inside($u); $i)
+;
+def upto_c($u; $i; $j): #:: WORD|(WORD;POS;POS) => *POS
+    locate(false==inside($u); $i; $j)
 ;
 
 ########################################################################
@@ -142,17 +152,17 @@ def many($s): #:: WORD|(WORD) => ?POS
 ;
 
 # Complementary of `many`
-def none($s; $i): #:: WORD|(WORD;POS) => ?POS
+def many_c($s; $i): #:: WORD|(WORD;POS) => ?POS
     span(false==inside($s); $i)
 ;
-def none($s): #:: WORD|(WORD) => ?POS
+def many_c($s): #:: WORD|(WORD) => ?POS
     span(false==inside($s); 0)
 ;
 
 ########################################################################
 # Generalized SNOBOL BREAK
 
-def terminate(t; $i): #:: WORD|(SYMBOL->boolean;POS) => ?POS
+def axe(t; $i): #:: WORD|(SYMBOL->boolean;POS) => ?POS
     select(0 <= $i and $i < length)
     | label $pipe
     | range($i; length+1) as $j
@@ -163,23 +173,23 @@ def terminate(t; $i): #:: WORD|(SYMBOL->boolean;POS) => ?POS
       else empty            # next
       end
 ;
-def terminate(t): #:: WORD|(SYMBOL->boolean) => ?POS
-    terminate(t; 0)
+def axe(t): #:: WORD|(SYMBOL->boolean) => ?POS
+    axe(t; 0)
 ;
 
 # SNOBOL `BREAK`
 def stop($s; $i): #:: WORD|(WORD;POS) => ?POS
-    terminate(inside($s); $i)
+    axe(inside($s); $i)
 ;
 def stop($s): #:: WORD|(WORD) => ?POS
-    terminate(inside($s); 0)
+    axe(inside($s); 0)
 ;
 
-def skip($s; $i): #:: WORD|(WORD;POS) => ?POS
-    terminate(false==inside($s); $i)
+def stop_c($s; $i): #:: WORD|(WORD;POS) => ?POS
+    axe(false==inside($s); $i)
 ;
-def skip($s): #:: WORD|(WORD) => ?POS
-    terminate(false==inside($s); 0)
+def stop_c($s): #:: WORD|(WORD) => ?POS
+    axe(false==inside($s); 0)
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

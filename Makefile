@@ -216,12 +216,13 @@ prototypes:
 
 .PHONY: bogussort cross cut dice newton nondet nqbrute nqsmart octcode \
 	script seconds sendmoremoney series shuffle nqsbrute triple \
-	prolog
+	prolog isid
 
 bogussort: ; $(JQ) -cnRrf examples/$@.jq
 cross: ; $(JQ) -nRrf examples/$@.jq
 cut: ; $(JQ) -cnRrf examples/$@.jq
 dice: ; $(JQ) -cnRrf examples/$@.jq
+isid: ; $(JQ) -cnRrf examples/$@.jq
 newton: ; $(JQ) -cnRrf examples/$@.jq
 nqbrute: ; $(JQ) -cnRrf examples/$@.jq
 nqsmart: ; $(JQ) -cnRrf examples/$@.jq
