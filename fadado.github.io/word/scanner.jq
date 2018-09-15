@@ -1,6 +1,6 @@
 module {
     name: "word/scanner",
-    description: "Icon scanner operations on words",
+    description: "Icon style scanner operations on words",
     namespace: "fadado.github.io",
     author: {
         name: "Joan Josep Ordinas Rosa",
@@ -85,7 +85,7 @@ def upto($u; $i; $j): #:: WORD|(WORD;POS;POS) => *POS
 ########################################################################
 # Find word(s)
 
-# Matches u at the beggining of w? (Icon `match`)
+# Matches u at the begining of w? (Icon `match`)
 def match($u): #:: WORD|(WORD) => ?POS
     ($u|length) as $j
     | select($j <= length and .[0:$j] == $u)

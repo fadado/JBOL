@@ -256,7 +256,8 @@ include "string/snobol"; def parens: G(L("(") | parens | L(")") | parens), NULL;
 "()"
 "()"
 
-include "string/snobol"; U | BAL | M
+#include "string/snobol"; U | BAL | M
+include "string/snobol"; U | BAL("(";")") | M
 "((A+(B*C))+D)"
 "((A+(B*C))+D)"
 "(A+(B*C))"

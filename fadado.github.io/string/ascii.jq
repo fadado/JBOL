@@ -95,13 +95,11 @@ def isword: #:: string| => boolean
 ;
 
 def tolower: #:: string| => string
-    [(./"")[] | $C::C[0].tolower[.]//.]
-    | join("")
+    mapstr($C::C[0].tolower[.]//.)
 ;
 
 def toupper: #:: string| => string
-    [(./"")[] | $C::C[0].toupper[.]//.]
-    | join("")
+    mapstr($C::C[0].toupper[.]//.)
 ;
 
 # Translation tables

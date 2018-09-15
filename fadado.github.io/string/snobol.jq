@@ -405,12 +405,11 @@ def TRIM($s): #:: (string) => string
 #
 
 def BAL($lhs; $rhs): #:: CURSOR|(string;string) => *CURSOR
-    def _bal($parens):
-        NOTANY($parens)
+    def _bal:
+        NOTANY($lhs+$rhs)
         , (L($lhs) | ARBNO(_bal) | L($rhs))
     ;
-    ($lhs+$rhs) as $s
-    | G(_bal($s) | ARBNO(_bal($s)))
+    G(_bal | ARBNO(_bal))
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq
