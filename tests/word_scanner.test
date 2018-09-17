@@ -5,11 +5,11 @@
 # Blank lines and lines starting with # are ignored.
 #########################################################################
 
-include "word/scanner"; symbol(.==[9])
+include "word/scanner"; g_sym(.==[9])
 [11,9,2,3]
 # empty
 
-include "word/scanner"; symbol(.==[9])
+include "word/scanner"; g_sym(.==[9])
 [9,2,3]
 1
 
@@ -46,7 +46,7 @@ include "word/scanner"; many_c("aeiou")
 "xxoops"
 2
 
-include "word/scanner"; stop("aeiou")
+include "word/scanner"; axe("aeiou")
 "xxoops"
 2
 
@@ -54,7 +54,7 @@ include "word/scanner"; many_c("aeiou")
 "axixo"
 # empty
 
-include "word/scanner"; stop("aeiou")
+include "word/scanner"; axe("aeiou")
 "axixo"
 0
 

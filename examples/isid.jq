@@ -6,7 +6,7 @@ import "fadado.github.io/string/ascii" as ascii;
 def isid:
    length > 0
    and scan::many("_"+ascii::alnum) == length
-   and scan::symbol(false==ascii::isdigit)
+   and scan::g_sym(false==ascii::isdigit)
    // false
 ;
 def isid($s):

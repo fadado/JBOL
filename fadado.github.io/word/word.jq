@@ -22,8 +22,6 @@ include "fadado.github.io/types";
 # Empty word:                   [] or ""
 # Concatenate:                  w + u
 # Length of w:                  w|length
-# Alphabet of w (arrays):       w|unique
-# Alphabet of w (strings):      (w/"")|unique|add
 
 # Rotate in both directions
 def rotate($n): #:: WORD|(number) => WORD
@@ -39,6 +37,16 @@ def mirror: #:: WORD => WORD
     then explode | reverse | implode
     elif isarray
     then reverse
+    else typerror
+    end
+;
+
+# Generic alphabet
+def alphabet: #:: WORD => WORD
+    if isstring
+    then explode | unique | implode
+    elif isarray
+    then unique
     else typerror
     end
 ;
@@ -66,7 +74,7 @@ def suffix($u): #:: WORD|(WORD) => boolean
 # Factor?
 def factor($u): #:: WORD|(WORD) => boolean
     ($u|length) as $j
-    | 0 < $j and contains($u)
+    | 0 < $j and index($u)!=null
 ;
 
 # Proper prefix?
@@ -82,7 +90,7 @@ def psuffix($u): #:: WORD|(WORD) => boolean
 # Proper factor?
 def pfactor($u): #:: WORD|(WORD) => boolean
     ($u|length) as $j
-    | 0 < $j and $j < length and contains($u)
+    | 0 < $j and $j < length and index($u)!=null
 ;
 
 ########################################################################

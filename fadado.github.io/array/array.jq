@@ -15,8 +15,8 @@ include "fadado.github.io/prelude";
 # Remove all x from array
 # Use set::remove/1 to remove one `x`
 def remove($x): #:: [a]|(a) => [a]
-    indices($x) as $ix
-    | when($ix != []; del(.[$ix[]]))
+    index($x) as $ix
+    | when($ix!=null; del(.[$ix[]]))
 ;
 
 # Is the array sorted?

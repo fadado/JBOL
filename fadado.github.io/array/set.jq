@@ -28,13 +28,13 @@ include "fadado.github.io/prelude";
 
 # s + e (add element to set)
 def insert($x): #:: SET|(a) => SET
-    when(indices($x) == []; .[length] = $x)
+    when(index($x)==null; .[length] = $x)
 ;
 
 # s – e (remove one element from set)
 # Use array::remove/1 to remove all `x`
 def remove($x): #:: SET|(a) => SET
-    indices($x)[0] as $i
+    index($x) as $i
     | when($i != null; del(.[$i]))
 ;
 
