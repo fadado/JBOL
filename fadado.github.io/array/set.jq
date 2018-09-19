@@ -34,7 +34,7 @@ def insert($x): #:: SET|(a) => SET
 # s – e (remove one element from set)
 # Use array::remove/1 to remove all `x`
 def remove($x): #:: SET|(a) => SET
-    index($x) as $i
+    indices($x)[0] as $i
     | when($i != null; del(.[$i]))
 ;
 

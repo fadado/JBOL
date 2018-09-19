@@ -1,7 +1,7 @@
 # Called from the `jval` Bash script
 
 include "fadado.github.io/types";
-import "fadado.github.io/schema" as schema;
+import "fadado.github.io/json/schema" as schema;
 
 # SCHEMA parameter is provided by the calling script
 $SCHEMA[0] as $schema |

@@ -1,6 +1,6 @@
 # Called from the `jgen` Bash script
 
-import "fadado.github.io/schema" as schema;
+import "fadado.github.io/json/schema" as schema;
 
 # Metadata header
 def metadata:

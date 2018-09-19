@@ -29,6 +29,30 @@ include "array"; sorted
 [1,2,3,4,5]
 true
 
+include "array"; unknown(2)
+[1]
+false
+
+include "array"; false==has(2)
+[1]
+true
+
+include "array"; unknown(2)
+[1,3,null,4]
+true
+
+include "array"; false==has(2)
+[1,3,null,4]
+false
+
+include "array"; remove(2)
+[5,4,3]
+[5,4,3]
+
+include "array"; remove(2)
+[5,2,4,3,2,2]
+[5,4,3]
+
 #
 # zip
 #

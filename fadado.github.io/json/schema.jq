@@ -256,7 +256,7 @@ def validate($schema; $fatal): #:: a|(SCHEMA;boolean) => boolean
                     then $schema.additionalItems
                     else null end
                 ;
-                ($schema.items//{}) as $items
+                ($schema.items // {}) as $items
                 | if ($items | isobject) then
                     every(.[] | _validate($items; $fatal))
                 else # isarray
@@ -286,8 +286,8 @@ def validate($schema; $fatal): #:: a|(SCHEMA;boolean) => boolean
                 or $schema.additionalProperties == true
                 or ($schema.additionalProperties | isobject)
                 or false==$schema.additionalProperties
-                and ($schema.properties//{}) as $p
-                    | ($schema.patternProperties//{}) as $pp
+                and ($schema.properties // {}) as $p
+                    | ($schema.patternProperties // {}) as $pp
                     | [ keys_unsorted[]
                         | reject(in($p))
                         | reject(some(test($pp | keys_unsorted[]))) ]
@@ -303,8 +303,8 @@ def validate($schema; $fatal): #:: a|(SCHEMA;boolean) => boolean
                     else null end
                 ;
                 additionalProperties as $additional
-                | ($schema.properties//{}) as $p
-                | ($schema.patternProperties//{}) as $pp
+                | ($schema.properties // {}) as $p
+                | ($schema.patternProperties // {}) as $pp
                 | every(
                     keys_unsorted[] as $m
                     | [ (select($m | in($p))

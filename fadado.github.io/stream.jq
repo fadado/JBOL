@@ -33,11 +33,12 @@ def member(stream): #:: a|(*a) => boolean
     member(.; stream)
 ;
 
-# some common?
-def common(stream; t):  #:: a|(*a;*a) => *a
+# common content
+def intersect(stream; t):  #:: a|(*a;*a) => *a
     stream | select(member(t))
 ;
 
+# are the streams sharing contents?
 def sharing(stream; t):  #:: a|(*a;*a) => boolean
 #   any(stream | member(t); .)
     false==isempty(stream | member(t) or empty)

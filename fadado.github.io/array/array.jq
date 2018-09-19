@@ -13,10 +13,10 @@ include "fadado.github.io/prelude";
 ########################################################################
 
 # Remove all x from array
-# Use set::remove/1 to remove one `x`
+# Use set::remove/1 to remove only one `x`
 def remove($x): #:: [a]|(a) => [a]
-    index($x) as $ix
-    | when($ix!=null; del(.[$ix[]]))
+    indices($x) as $ix
+    | when($ix != []; del(.[$ix[]]))
 ;
 
 # Is the array sorted?
@@ -41,6 +41,11 @@ def different: #:: [a] => boolean
         range(0;length-1) as $i
         | range($i+1; length) as $j
         | .[$i] != .[$j])
+;
+
+# unknown value for index?
+def unknown($x): #:: array|(number) => boolean
+    has($x) and .[$x] == null
 ;
 
 ########################################################################

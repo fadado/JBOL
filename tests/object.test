@@ -1,0 +1,20 @@
+#########################################################################
+# Object
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+#########################################################################
+
+include "object"; unknown("x")
+{"a":1,"b":2}
+false
+
+include "object"; unknown("x")
+{"x":1,"b":2}
+false
+
+include "object"; unknown("x")
+{"x":null,"b":2}
+true
+
+# vim:ai:sw=2:ts=2:et:syntax=jq

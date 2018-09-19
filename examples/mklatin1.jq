@@ -2,6 +2,8 @@
 
 include "fadado.github.io/prelude";
 include "fadado.github.io/string";
+import "fadado.github.io/string/table" as table;
+import "fadado.github.io/object/set" as set;
 
 ([range(32),127]|implode) as $cntrl             |
 " \t\r\n\f\u000b " as $space                    |
@@ -34,22 +36,22 @@ include "fadado.github.io/string";
     "print":  $print,
 
 # character sets
-    "iscntrl":  set($cntrl),
-    "isspace":  set($space),
-    "isupper":  set($upper),
-    "islower":  set($lower),
-    "isdigit":  set($digit),
-    "isxdigit": set($xdigit),
-    "ispunct":  set($punct),
-#   "isblank":  set($blank),
-#   "isalpha":  set($alpha),
-#   "isalnum":  set($alnum),
-#   "isgraph":  set($graph),
-#   "isprint":  set($print),
+    "iscntrl":  set::new($cntrl),
+    "isspace":  set::new($space),
+    "isupper":  set::new($upper),
+    "islower":  set::new($lower),
+    "isdigit":  set::new($digit),
+    "isxdigit": set::new($xdigit),
+    "ispunct":  set::new($punct),
+#   "isblank":  set::new($blank),
+#   "isalpha":  set::new($alpha),
+#   "isalnum":  set::new($alnum),
+#   "isgraph":  set::new($graph),
+#   "isprint":  set::new($print),
 
 # translation tables
-    "tolower":  table($upper; $lower),
-    "toupper":  table($lower; $upper),
+    "tolower":  table::new($upper; $lower),
+    "toupper":  table::new($lower; $upper),
 }
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

@@ -111,14 +111,14 @@ def tolist: #:: MATCH| => [string]
 def tostr: #:: MATCH| => string
     (.captures|length) as $len
     | if $len == 0
-      then .string//""
-      else (
+      then .string
+      else 
         label $fence
         | range($len) as $i
         | select(.captures[$i].string) # not null
         | (.captures[$i].string , break $fence)
-      )//""
       end
+      // ""
 ;
 
 ########################################################################

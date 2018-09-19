@@ -94,24 +94,14 @@ def nonvoid($a): #:: (a) => boolean
     $a|isiterable and length > 0
 ;
 
-# is unknown?
-def unknown($x): #:: array|(number) => boolean; object|(string) => boolean
-    has($x) and .[$x] == null
-;
-
-# is undefined?
-def missing($x): #:: array|(number) => boolean; object|(string) => boolean
-    false==has($x)
-;
-
 # coerce to bool (exactly true or false)
 def tobool: #:: a => boolean
     if . then true else false end
 ;
 # coerce also empty to false
 def tobool(a): #:: (a) => boolean
-#   (first(a)|tobool)//false
-    if first(a)//false then true else false end
+#   (first(a)|tobool) // false
+    if first(a) // false then true else false end
 ;
 
 # Type errors

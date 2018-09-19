@@ -21,13 +21,9 @@ include "array/set"; insert(2) | insert(1)
 [5,4,3]
 [5,4,3,2,1]
 
-include "array"; remove(2)
-[5,4,3]
-[5,4,3]
-
-include "array"; remove(2)
+include "array/set"; remove(2)
 [5,2,4,3,2,2]
-[5,4,3]
+[5,4,3,2,2]
 
 include "array/set"; remove(2)
 [5,4,3]

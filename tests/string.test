@@ -39,47 +39,6 @@ include "string"; right(10)
 "AEIOU"
 "AEIOU     "
 
-#
-# translate
-#
-
-
-include "string"; import "string/ascii" as ascii; translate(ascii::ttupper)
-"kaleidoscope"
-"KALEIDOSCOPE"
-
-include "string"; import "string/ascii" as ascii; translate(ascii::ttlower)
-"KALEIDOSCOPE"
-"kaleidoscope"
-
-# rot13
-include "string"; import "string/ascii" as ascii; def R: translate(rot13); . == (R|R)
-"Joan"
-true
-
-# flip
-include "string"; import "string/ascii" as ascii; translate(table(ascii::alpha; ascii::ALPHA))
-"Una Casa"
-"uNA cASA"
-
-# remove
-include "string"; translate("01234567890"; "")
-"asdhaisd867asd876asiduhakjdshads8a08d60asdioahsdasd89a0sd"
-"asdhaisdasdasiduhakjdshadsadasdioahsdasdasd"
-
-include "string"; import "string/ascii" as ascii; translate(ascii::cntrl; "")
-"a\ne\rg\tl"
-"aegl"
-
-# preserve
-include "string"; import "string/ascii" as ascii; translate(ptable(.; ascii::lower))
-"XXa\nUUe\rg\tlZZ"
-"aegl"
-
-include "string"; import "string/ascii" as ascii; translate(translate(ascii::lower; ""); "")
-"XXa\nUUe\rg\tlZZ"
-"aegl"
-
 # trim
 include "string"; ltrim
 ""

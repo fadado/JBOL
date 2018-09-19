@@ -1,0 +1,28 @@
+#########################################################################
+# JSON
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+#########################################################################
+
+include "json"; isid
+"Legal"
+true
+
+include "json"; isid
+"_Legal_"
+true
+
+include "json"; isid
+"_Legal123"
+true
+
+include "json"; isid
+"1Legal"
+false
+
+include "json"; isid
+"  Legal"
+false
+
+# vim:ai:sw=2:ts=2:et:syntax=jq
