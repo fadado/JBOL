@@ -44,8 +44,8 @@ def different: #:: [a] => boolean
 ;
 
 # unknown value for index?
-def unknown($x): #:: array|(number) => boolean
-    has($x) and .[$x] == null
+def unknown($i): #:: array|(number) => boolean
+    has($i) and .[$i] == null
 ;
 
 ########################################################################
