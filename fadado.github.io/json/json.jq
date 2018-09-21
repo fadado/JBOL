@@ -21,6 +21,29 @@ def isid($s):
     $s | isid
 ;
 
+def xml_token_type:
+    "[_:A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\\x{00010000}-\\x{000EFFFF}]"
+        as $NameStartChar |
+    ("(:?" + $NameStartChar + "|" + "[-.·0-9\u0300-\u036F\u203F-\u2040])")
+        as $NameChar |
+    ("^" + $NameStartChar + $NameChar + "*" + "$") as $Name |
+    ("^" + $NameChar + "+" + "$") as $Nmtoken |
+    if test($Name)
+    then 1
+    elif test($Nmtoken)
+    then 2
+    else 0
+    end
+;
+
+def xml_name:
+    xml_token_type == 1
+;
+
+def xml_nmtoken:
+    xml_token_type == 2
+;
+
 #
 def xmldoc($root; $item; $tab; $doctype):
     def toxml($name; $margin):

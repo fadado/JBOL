@@ -2,16 +2,16 @@
   "cntrl": "\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000b\f\r\u000e\u000f\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u0018\u0019\u001a\u001b\u001c\u001d\u001e\u001f\u007f",
   "space": " \t\r\n\f\u000b ",
   "blank": " \t ",
-  "upper": "ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝÞÐ___",
-  "lower": "abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïñòóôõöøùúûüýþ_ÿßð",
-  "alpha": "abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïñòóôõöøùúûüýþ_ÿßðABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝÞÐ___",
-  "ALPHA": "ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝÞÐ___abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïñòóôõöøùúûüýþ_ÿßð",
+  "upper": "ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝÞÐ",
+  "lower": "abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïñòóôõöøùúûüýþÿßð",
+  "alpha": "abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïñòóôõöøùúûüýþÿßðABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝÞÐ",
+  "ALPHA": "ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝÞÐabcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïñòóôõöøùúûüýþÿßð",
   "digit": "0123456789",
   "xdigit": "0123456789abcdefABCDEF",
   "punct": "(<)=[*>\\!+?]{\",@^|#-_}$.`~%/&:';¡¢£¤¥¦§¨©ª«­®¯°´µ¶¸º»¿¬±×÷¼½¾¹²³",
-  "alnum": "abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïñòóôõöøùúûüýþ_ÿßðABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝÞÐ___0123456789",
-  "graph": "ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝÞÐ___abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïñòóôõöøùúûüýþ_ÿßð0123456789(<)=[*>\\!+?]{\",@^|#-_}$.`~%/&:';¡¢£¤¥¦§¨©ª«­®¯°´µ¶·¸º»¿¬±×÷¼½¾¹²³",
-  "print": " \t ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝÞÐ___abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïñòóôõöøùúûüýþ_ÿßð0123456789(<)=[*>\\!+?]{\",@^|#-_}$.`~%/&:';¡¢£¤¥¦§¨©ª«­®¯°´µ¶·¸º»¿¬±×÷¼½¾¹²³",
+  "alnum": "abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïñòóôõöøùúûüýþÿßðABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝÞÐ0123456789",
+  "graph": "ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝÞÐabcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïñòóôõöøùúûüýþ_ÿßð0123456789(<)=[*>\\!+?]{\",@^|#-_}$.`~%/&:';¡¢£¤¥¦§¨©ª«­®¯°´µ¶·¸º»¿¬±×÷¼½¾¹²³",
+  "print": " \t ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝÞÐabcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïñòóôõöøùúûüýþ_ÿßð0123456789(<)=[*>\\!+?]{\",@^|#-_}$.`~%/&:';¡¢£¤¥¦§¨©ª«­®¯°´µ¶·¸º»¿¬±×÷¼½¾¹²³",
   "iscntrl": {
     "\u0000": true,
     "\u0001": true,
@@ -112,8 +112,7 @@
     "Ü": true,
     "Ý": true,
     "Þ": true,
-    "Ð": true,
-    "_": true
+    "Ð": true
   },
   "islower": {
     "a": true,
@@ -171,7 +170,6 @@
     "ü": true,
     "ý": true,
     "þ": true,
-    "_": true,
     "ÿ": true,
     "ß": true,
     "ð": true
@@ -334,9 +332,7 @@
     "Û": "û",
     "Ü": "ü",
     "Ý": "ý",
-    "Þ": "þ",
-    "Ð": "_",
-    "_": "ð"
+    "Þ": "þ"
   },
   "toupper": {
     "a": "A",
@@ -393,10 +389,6 @@
     "û": "Û",
     "ü": "Ü",
     "ý": "Ý",
-    "þ": "Þ",
-    "_": "Ð",
-    "ÿ": "_",
-    "ß": "_",
-    "ð": "_"
+    "þ": "Þ"
   }
 }
