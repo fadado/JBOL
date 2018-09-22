@@ -26,6 +26,14 @@ include "fadado.github.io/prelude";
 # S ⊃ T     S|contains(T)
 # S – T     S - T
 
+# Are all elements diferent?
+def unlike: #:: [a] => boolean
+    every(
+        range(0;length-1) as $i
+        | range($i+1; length) as $j
+        | .[$i] != .[$j])
+;
+
 # s + e (add element to set)
 def insert($x): #:: SET|(a) => SET
     when(index($x)==null; .[length] = $x)

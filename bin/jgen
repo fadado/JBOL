@@ -63,7 +63,7 @@ function usage {
     message <<EOF
 Unknown option: $1
 Usage: ${SELF} [-h | --help | -v | --version]
-       ${SELF} [options] [file]
+       ${SELF} [options...] [files...]
 EOF
     exit 1
 }

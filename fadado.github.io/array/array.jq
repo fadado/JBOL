@@ -36,14 +36,6 @@ def uniform: #:: [a] => boolean
         | .[$i] == .[$j])
 ;
 
-# Are all elements diferent?
-def isunique: #:: [a] => boolean
-    every(
-        range(0;length-1) as $i
-        | range($i+1; length) as $j
-        | .[$i] != .[$j])
-;
-
 # unknown value for index?
 def unknown($i): #:: array|(number) => boolean
     has($i) and .[$i] == null

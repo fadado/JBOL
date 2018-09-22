@@ -172,18 +172,18 @@ def unfold(f): #:: a|(a->[b,a]) => *b
 ########################################################################
 
 # Renamed map_values
-def mapval(f):
+def mapval(f): #:: <a>|(a->*b) => <b>
     .[] |= f
 ;
 
-# map and add in one pass
-def mapadd(f):
+# map and add in one pass (catenable: x+x)
+def mapadd(f): #:: <a>|(a->*b) => null^b
     reduce (.[] | f) as $x
         (null; . + $x)
 ;
 
-# Split string, map characters and concat results
-def mapstr(f):
+# Split string, map characters (length one strings) and concat results
+def mapstr(f): #:: string|(char->*char) => string
     reduce ((./"")[] | f) as $s
         (""; . + $s)
 ;

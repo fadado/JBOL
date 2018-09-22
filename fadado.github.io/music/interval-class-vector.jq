@@ -9,7 +9,7 @@ module {
 };
 
 include "fadado.github.io/prelude";
-import "fadado.github.io/array" as array;
+import "fadado.github.io/array/set" as set;
 import "fadado.github.io/math" as math;
 import "fadado.github.io/music/pitch-class" as pc;
 
@@ -67,7 +67,7 @@ def multiplicity($i): #:: VECTOR|(IC) => number
 
 #  Deep scale property
 def deep_scale: #:: VECTOR => boolean
-    array::isunique
+    set::unlike
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq
