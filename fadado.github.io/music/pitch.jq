@@ -11,6 +11,7 @@ module {
 include "fadado.github.io/prelude";
 include "fadado.github.io/types";
 import "fadado.github.io/string/regexp" as re;
+import "fadado.github.io/math" as math;
 
 ########################################################################
 # Names used in type declarations
@@ -63,7 +64,7 @@ def name: #:: PITCH => string
 
 # Produces the note octave
 def octave: #:: PITCH => number
-    ./12|trunc
+    math::div(.;12)
 ;
 
 # Formats a pitch (C0..G10)

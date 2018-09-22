@@ -114,7 +114,7 @@ def tostr: #:: MATCH| => string
       then .string
       else 
         label $fence
-        | range($len) as $i
+        | range(0;$len) as $i
         | select(.captures[$i].string) # not null
         | (.captures[$i].string , break $fence)
       end

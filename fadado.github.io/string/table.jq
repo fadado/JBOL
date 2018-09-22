@@ -20,7 +20,7 @@ import "fadado.github.io/object/set" as set;
 def new($from; $to): #:: (string;string) => {string}
    ($from/"") as $s
    | ($to/"") as $t
-   | reduce range($s|length) as $i
+   | reduce range(0;$s|length) as $i
         ({}; . += {($s[$i]):($t[$i] // "")})
 ;
 

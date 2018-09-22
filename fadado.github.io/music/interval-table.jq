@@ -27,7 +27,7 @@ def new: #:: PCSET => TABLE
     def _table:
         . as $pcs
         | length as $n
-        | range($n-1) as $i
+        | range(0; $n-1) as $i
         | range($i+1; $n) as $j
         | ($j - $i) as $d
         | $pcs[$i]|pc::interval($pcs[$j]) as $c

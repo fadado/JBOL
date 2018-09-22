@@ -9,6 +9,7 @@ module {
 };
 
 include "fadado.github.io/prelude";
+import "fadado.github.io/math" as math;
 
 #
 def remove($s): #:: string|(string) => string
@@ -65,7 +66,7 @@ def right($n): #:: string|(number) => string
 
 def center($n; $t): #:: string|(number;string) => string
     when($n > length;
-        ((($n-length)/2) | trunc) as $i
+        math::div($n-length; 2) as $i
         | ($t*$i) + . + ($t*$i)
         | when(length != $n; .+$t)
     )
@@ -86,7 +87,7 @@ def _lndx(predicate): # left index or empty if not found
 
 def _rndx(predicate): # rigth index or empty if not found
     label $fence
-    | range(length-1; 0; -1) as $i
+    | range(length-1;0;-1) as $i
     | reject(.[$i:$i+1] | predicate)
     | ($i+1 , break $fence)
 ;

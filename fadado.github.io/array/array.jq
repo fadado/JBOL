@@ -9,6 +9,7 @@ module {
 };
 
 include "fadado.github.io/prelude";
+import "fadado.github.io/math" as math;
 
 ########################################################################
 
@@ -29,14 +30,14 @@ def sorted: #:: [a] => boolean
 
 # Are all elements equal?
 def uniform: #:: [a] => boolean
-    every (
+    every(
         range(0;length-1) as $i
         | ($i+1) as $j
         | .[$i] == .[$j])
 ;
 
 # Are all elements diferent?
-def different: #:: [a] => boolean
+def isunique: #:: [a] => boolean
     every(
         range(0;length-1) as $i
         | range($i+1; length) as $j
@@ -46,6 +47,16 @@ def different: #:: [a] => boolean
 # unknown value for index?
 def unknown($i): #:: array|(number) => boolean
     has($i) and .[$i] == null
+;
+
+# Select elements with even indices
+def evens:
+    [.[range(0;length) | select(math::even(.))]]
+;
+
+# Select elements with odd indices
+def odds:
+    [.[range(0;length) | select(math::odd(.))]]
 ;
 
 ########################################################################
@@ -71,7 +82,8 @@ def top: #:: [a] => a^null
 def zip($a; $b): #:: ([a];[b]) => *[a,b]
     [$a, $b] as $pair
     | ($pair | map(length) | max) as $longest
-    | range($longest) | [$pair[0][.], $pair[1][.]]
+    | range(0;$longest)
+    | [$pair[0][.], $pair[1][.]]
 ;
 
 # Generalized `zip` for 2 or more arrays.
@@ -80,8 +92,8 @@ def zip: #:: [[a],[b]...]| => *[a,b,...]
     . as $in
     | (map(length) | max) as $longest
     | length as $n
-    | foreach range($longest) as $j (null;
-        reduce range($n) as $i
+    | foreach range(0;$longest) as $j (null;
+        reduce range(0;$n) as $i
             ([]; . + [$in[$i][$j]]))
 ;
 

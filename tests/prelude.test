@@ -186,4 +186,12 @@ include "prelude"; [limit(6; seq|pow(.;2))]
 null
 [0,1,4,9,16,25]
 
+include "prelude"; [range(0;10;2)]
+null
+[0,2,4,6,8]
+
+include "prelude"; [range(10;0;-2)]
+null
+[10,8,6,4,2]
+
 # vim:ai:sw=2:ts=2:et:syntax=jq

@@ -95,7 +95,7 @@ def invert($i): #:: PCSET|(PCI) => PCSET
 # ~p
 def complement: #:: PCSET => PCSET
     . as $pcset
-    | [ range(12) | reject([.]|inside($pcset)) ]
+    | [ range(0;12) | reject([.]|inside($pcset)) ]
 ;
 
 ########################################################################
@@ -113,7 +113,7 @@ def normal: #:: PCSET => PCSET
         | (length-1) as $last
 
         # build rotations
-        | [ . , foreach range($last) as $_
+        | [ . , foreach range(0;$last) as $_
                     (.; word::rotate | .[$last] += 12) ]
 
         # get minimal distance in all rotations

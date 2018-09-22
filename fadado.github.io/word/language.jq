@@ -60,7 +60,7 @@ def power($n): #:: LANGUAGE|(number) => *WORD
     then empty # ∅ of words
     elif isstring(.[0]) or isarray(.[0]) then
         . as $lang
-        | [range($n) | $lang]
+        | [range(0;$n) | $lang]
         | concat
     else .[0]|typerror("string or array")
     end

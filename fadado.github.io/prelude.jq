@@ -59,7 +59,7 @@ def abort: #:: a => !
 
 # One way pass. Usage:
 #   try (A | fence | B)
-def fence: #:: a| => a!
+def fence: #:: a => a!
     (. , abort)
 ;
 
@@ -200,7 +200,7 @@ def mapobj(filter): #:: object|(PAIR->PAIR) => object
         as $pair ({}; . + $pair)
 ;
 
-# Does not diverges with empty parameter
+# Does not diverge with empty parameter
 def repeat(g): #:: a|(a->*b) => *b
     def r: g , r;
     reject(isempty(g)) | r
@@ -225,6 +225,18 @@ def any: #:: [boolean]| => boolean
 ;
 def any(predicate): #:: [a]|(a->boolean) => boolean
     nonempty(.[] | predicate or empty)
+;
+
+# Clearer `range/3`
+def range($init; $upto; $by): #:: (number;number;number) => *number
+    label $out
+    | ($by>0) as $inc
+    | ($by<0) as $dec
+    | $init|recurse(.+$by)
+    | if $inc and . < $upto or $dec and . > $upto # in range?
+      then .
+      else break$out
+      end
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

@@ -29,6 +29,10 @@ include "array"; sorted
 [1,2,3,4,5]
 true
 
+include "array"; isunique
+[1,2,3,4,5]
+true
+
 include "array"; unknown(2)
 [1]
 false
@@ -52,6 +56,14 @@ include "array"; remove(2)
 include "array"; remove(2)
 [5,2,4,3,2,2]
 [5,4,3]
+
+include "array"; evens
+[0,1,2,3,4,5,6,7,8,9]
+[0,2,4,6,8]
+
+include "array"; odds
+[0,1,2,3,4,5,6,7,8,9]
+[1,3,5,7,9]
 
 #
 # zip

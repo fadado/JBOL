@@ -8,6 +8,7 @@ module {
     }
 };
 
+include "fadado.github.io/prelude";
 include "fadado.github.io/types";
 
 ########################################################################
@@ -34,9 +35,9 @@ def rotate: #:: WORD => WORD
 # Generic reverse
 def mirror: #:: WORD => WORD
     if isstring
-    then explode | reverse | implode
+    then explode | [.[length-1-range(0;length)]] | implode
     elif isarray
-    then reverse
+    then [.[length-1-range(0;length)]]
     else typerror
     end
 ;
@@ -94,7 +95,7 @@ def pfactor($u): #:: WORD|(WORD) => boolean
 ;
 
 ########################################################################
-# Word sequences
+# Word streams
 
 # Sets of prefixes (without the empty word)
 def prefixes: #:: WORD => *WORD
@@ -135,7 +136,7 @@ def power($n): #:: WORD|(number) => WORD
         then []
         else
             . as $word
-            | reduce range($n) as $_
+            | reduce range(0;$n) as $_
                 ([]; . + $word)
         end
     else typerror

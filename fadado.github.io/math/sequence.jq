@@ -244,7 +244,7 @@ def leibniz: #:: => *number
 # Inspired in https://rosettacode.org/wiki/Proper_divisors#jq
 def divisors($n):
     select($n > 1)
-    | 1 , (range(2; 1 + ($n|sqrt|trunc)) as $i
+    | 1 , (range(2; 1+($n|sqrt|trunc)) as $i
             | select(($n % $i) == 0)
             | $i , (($n / $i) | select(. != $i)))
 ;
@@ -252,7 +252,7 @@ def divisors($n):
 # without 1
 def divisors1($n):
     select($n > 1)
-    | range(2; 1 + ($n|sqrt|trunc)) as $i
+    | range(2; 1+($n|sqrt|trunc)) as $i
     | select(($n % $i) == 0)
     | $i , (($n / $i) | select(. != $i))
 ;

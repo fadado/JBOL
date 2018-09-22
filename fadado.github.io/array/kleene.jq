@@ -43,7 +43,7 @@ def power($n): #:: SET|(number) => +TUPLE
     then empty # ∅ of tuples
     else
         . as $set
-        | [range($n) | $set]
+        | [range(0;$n) | $set]
         | product
     end
 ;

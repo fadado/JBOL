@@ -26,7 +26,7 @@ def new: #:: PCSET => VECTOR
     def _tally:
         . as $pcs
         | length as $n
-        | range($n-1) as $i
+        | range(0; $n-1) as $i
         | range($i+1; $n) as $j
         | $pcs[$i]|pc::interval_class($pcs[$j])
     ;
@@ -67,7 +67,7 @@ def multiplicity($i): #:: VECTOR|(IC) => number
 
 #  Deep scale property
 def deep_scale: #:: VECTOR => boolean
-    array::different
+    array::isunique
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

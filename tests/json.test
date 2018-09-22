@@ -25,4 +25,20 @@ include "json"; isid
 "  Legal"
 false
 
+include "json"; xname
+"Legal:name"
+true
+
+include "json"; xname
+"  NoLegal"
+false
+
+include "json"; xname
+"$NoLegal"
+false
+
+include "json"; xtoken
+"·Legal"
+true
+
 # vim:ai:sw=2:ts=2:et:syntax=jq
