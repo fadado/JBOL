@@ -52,7 +52,7 @@ def print: #:: string
 ;
 
 def isascii: #:: string| => boolean
-    every(explode[] | . <= 127)
+    every(explode[] <= 127)
 ;
 def iscntrl: #:: string| => boolean
     every((./"")[] | $C::C[0].iscntrl[.]//false)

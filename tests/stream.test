@@ -5,6 +5,18 @@
 # Blank lines and lines starting with # are ignored.
 #########################################################################
 
+include "stream"; singleton(range(10))
+null
+false
+
+include "stream"; singleton(empty)
+null
+false
+
+include "stream"; singleton(range(1))
+null
+true
+
 include "stream"; member(range(10))
 6
 true

@@ -8,6 +8,8 @@ module {
     }
 };
 
+include "fadado.github.io/prelude";
+
 ########################################################################
 # Generators as streams
 
@@ -26,8 +28,7 @@ def count(stream): #:: a|(a->*b) => number!
 
 # . inside?
 def member($a; stream): #:: a|(a;*a) => boolean
-#   any(stream; . == $a)
-    false==isempty(stream | . == $a or empty)
+    some(stream == $a)
 ;
 def member(stream): #:: a|(*a) => boolean
     member(.; stream)
@@ -40,8 +41,7 @@ def intersect(stream; t):  #:: a|(*a;*a) => *a
 
 # are the streams sharing contents?
 def sharing(stream; t):  #:: a|(*a;*a) => boolean
-#   any(stream | member(t); .)
-    false==isempty(stream | member(t) or empty)
+    some(stream | member(t))
 ;
 
 # Unique for streams
@@ -64,7 +64,11 @@ def rest(stream): #:: a|(a->*b) => *b
 
 # One result?
 def singleton(stream): #:: a|(a->*b) => boolean
-    isempty(rest(stream))
+#   nonempty(stream) and isempty(rest(stream))
+    [   label $out |
+        foreach stream as $item
+            (2; if . >= 1 then .-1 else break$out end; null)
+    ] | length == 1
 ;
 
 # Extract the nth element of a stream.

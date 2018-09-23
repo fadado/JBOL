@@ -226,7 +226,7 @@ def validate($schema; $fatal): #:: a|(SCHEMA;boolean) => boolean
             and imply($schema | has("minLength");
                 length >= $schema.minLength)
             and imply($schema | has("pattern");
-                test($schema.pattern))
+                re::test($schema.pattern))
             and imply($schema | has("format");
                 ({  "date-time": "^[0-9]{4}-(?:0[0-9]|1[0-2])-[0-9]{2}[tT ][0-9]{2}:[0-9]{2}:[0-9]{2}(?:[.][0-9]+)?(?:[zZ]|[+-][0-9]{2}:[0-9]{2})$",
                     "email": "^[^ \t\r\n]+@[^ \t\r\n]+$",
@@ -235,7 +235,7 @@ def validate($schema; $fatal): #:: a|(SCHEMA;boolean) => boolean
                     "uri": "^[A-Za-z][0-9A-Za-z+-.]*:[^ \t\r\n]*"
                 }[$schema.format]
                     // "^.") as $re # any non empty string as default
-                | test($re))
+                | re::test($re))
         ;
         def c_array: # array constraints
             def valid_array:
@@ -290,7 +290,7 @@ def validate($schema; $fatal): #:: a|(SCHEMA;boolean) => boolean
                     | ($schema.patternProperties // {}) as $pp
                     | [ keys_unsorted[]
                         | reject(in($p))
-                        | reject(some(test($pp | keys_unsorted[]))) ]
+                        | reject(some(re::test($pp | keys_unsorted[]))) ]
                     | length == 0
             ;
             def valid_members:
@@ -310,7 +310,7 @@ def validate($schema; $fatal): #:: a|(SCHEMA;boolean) => boolean
                     | [ (select($m | in($p))
                          | $p[$m])
                         , (($pp | keys_unsorted[]) as $re
-                            | select($m | test($re))
+                            | select($m | re::test($re))
                             | $pp[$re])
                       ] as $s
                     | if ($s | length) > 0

@@ -194,4 +194,8 @@ include "prelude"; [range(10;0;-2)]
 null
 [10,8,6,4,2]
 
+include "prelude"; mapstr(select(.!="g"))
+"agogico"
+"aoico"
+
 # vim:ai:sw=2:ts=2:et:syntax=jq

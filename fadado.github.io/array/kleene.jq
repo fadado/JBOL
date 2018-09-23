@@ -27,7 +27,7 @@ def product: #:: [SET] => *TUPLE
     ;
     if length == 0 # empty product?
     then []        # identity element: empty tuple
-    elif any(.[]; length==0) # A × ∅
+    elif some(.[] | length==0) # A × ∅
     then empty # ∅ of tuples
     else _product
     end

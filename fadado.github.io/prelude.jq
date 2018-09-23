@@ -20,12 +20,12 @@ def nonempty(stream): #:: a|(a->*b) => boolean
 
 # all(stream; .)
 def every(stream): #:: a|(a->*boolean) => boolean
-    isempty(stream | . and empty)
+    isempty(stream and empty)
 ;
 
 # any(stream; .)
 def some(stream): #:: a|(a->*boolean) => boolean
-    nonempty(stream | . or empty)
+    nonempty(stream or empty)
 ;
 
 # Complement of select
@@ -211,7 +211,7 @@ def all(stream; predicate): #:: a|(a->*b;b->boolean) => boolean
     isempty(stream | predicate and empty)
 ;
 def all: #:: [boolean]| => boolean
-    isempty(.[] | . and empty)
+    isempty(.[] and empty)
 ;
 def all(predicate): #:: [a]|(a->boolean) => boolean
     isempty(.[] | predicate and empty)
@@ -221,7 +221,7 @@ def any(stream; predicate): #:: a|(a->*b;b->boolean) => boolean
     nonempty(stream | predicate or empty)
 ;
 def any: #:: [boolean]| => boolean
-    nonempty(.[] | . or empty)
+    nonempty(.[] or empty)
 ;
 def any(predicate): #:: [a]|(a->boolean) => boolean
     nonempty(.[] | predicate or empty)

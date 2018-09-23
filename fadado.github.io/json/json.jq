@@ -11,9 +11,9 @@ module {
 include "fadado.github.io/prelude";
 include "fadado.github.io/types";
 import "fadado.github.io/string/ascii" as ascii;
-import "fadado.github.io/string/regexp" as regexp;
+import "fadado.github.io/string/regexp" as re;
 
-# Is JQ syntactic identifier?
+# Is a JQ syntactic correct identifier?
 def isid: #:: string => boolean
    length > 0
    and ascii::isword
@@ -23,6 +23,10 @@ def isid($s): #:: string => boolean
     $s | isid
 ;
 
+########################################################################
+# JSON to XML rendering
+
+# kind of XML token: Name (1), Nmtoken (2), other (0)
 def _xtok: #:: string => number
     "[_:A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\\x{00010000}-\\x{000EFFFF}]"
         as $NameStartChar |
@@ -31,12 +35,13 @@ def _xtok: #:: string => number
     ("^"+$NameChar+"+"+"$")
         as $Nmtoken |
 #   ("^"+$NameStartChar+$NameChar+"*"+"$") as $Name |
-    if regexp::test($Nmtoken)
-    then if regexp::test("^"+$NameStartChar) then 1 else 2 end
+    if re::test($Nmtoken)
+    then if re::test("^"+$NameStartChar) then 1 else 2 end
     else 0
     end
 ;
 
+# Is an XML Name?
 def xname: #:: string => boolean
     _xtok == 1
 ;
@@ -44,6 +49,7 @@ def xname($s): #:: (string) => boolean
     $s | _xtok == 1
 ;
 
+# Is an XML Nmtoken?
 def xtoken: #:: string => boolean
     _xtok == 2
 ;
@@ -51,7 +57,7 @@ def xtoken($s): #:: (string) => boolean
     $s | _xtok == 2
 ;
 
-#
+# JSON to XML
 def xmldoc($root; $element; $tab; $doctype): #:: JSON|(string;string;string;string^null) => XML
     # construct a valid XML name
     def name($x):
@@ -60,8 +66,8 @@ def xmldoc($root; $element; $tab; $doctype): #:: JSON|(string;string;string;stri
         ($NameStartChar+"-.·0-9\u0300-\u036F\u203F-\u2040")
             as $NameChar |
         $x
-        | regexp::gsub("[^"+$NameChar+"]"; "_")
-        | unless(regexp::test("^["+$NameStartChar+"]"); "_"+.[1:])
+        | re::gsub("[^"+$NameChar+"]"; "_")
+        | unless(re::test("^["+$NameStartChar+"]"); "_"+.[1:])
     ;
     # recurse document
     def toxml($name; $margin):

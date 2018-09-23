@@ -43,12 +43,17 @@ def unknown($i): #:: array|(number) => boolean
 
 # Select elements with even indices
 def evens:
-    [.[range(0;length) | select(math::even(.))]]
+    [.[range(0;length;2)]]
 ;
 
 # Select elements with odd indices
 def odds:
-    [.[range(0;length) | select(math::odd(.))]]
+    [.[range(1;length;2)]]
+;
+
+# Copy here builtin
+def reverse:
+    [.[length-1-range(0;length)]]
 ;
 
 ########################################################################
@@ -72,17 +77,15 @@ def top: #:: [a] => a^null
 
 #
 def zip($a; $b): #:: ([a];[b]) => *[a,b]
-    [$a, $b] as $pair
-    | ($pair | map(length) | max) as $longest
-    | range(0;$longest)
-    | [$pair[0][.], $pair[1][.]]
+    range(0; math::max($a,$b | length))
+    | [$a[.], $b[.]]
 ;
 
 # Generalized `zip` for 2 or more arrays.
 #
 def zip: #:: [[a],[b]...]| => *[a,b,...]
     . as $in
-    | (map(length) | max) as $longest
+    | math::max(.[] | length) as $longest
     | length as $n
     | foreach range(0;$longest) as $j (null;
         reduce range(0;$n) as $i

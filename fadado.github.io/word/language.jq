@@ -42,7 +42,7 @@ def concat: #:: [LANGUAGE] => *WORD
     ;
     if length == 0 # ×
     then error("language::concat cannot determine ε for empty languages")
-    elif any(.[]; length==0) # L × ∅
+    elif some(.[] | length==0) # L × ∅
     then empty # ∅ of words
     else _concat
     end

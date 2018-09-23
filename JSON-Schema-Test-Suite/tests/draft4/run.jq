@@ -1,6 +1,6 @@
 # Called from the `jval` Bash script
 
-import "fadado.github.io/schema" as schema;
+import "fadado.github.io/json/schema" as schema;
 
 def report($schema):
     if (.data | schema::valid($schema)) == .valid

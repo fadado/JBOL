@@ -52,7 +52,7 @@ def print: #:: string
 ;
 
 def isascii: #:: string| => boolean
-    every(explode[] | . <= 127)
+    every(explode[] <= 127)
 ;
 def islatin1: #:: string| => boolean
     every(explode[] | . > 159 and . < 256)

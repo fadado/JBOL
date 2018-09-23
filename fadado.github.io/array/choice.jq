@@ -47,14 +47,11 @@ def take($k; $seed): #:: [a]|(number;number) => *a
     #     }
     def _take($a; $r; $m):
         def t($n; $k):
-            if $n < 1
-            then empty
-            else
-                ($m-$n) as $i
-                | if $r[$i] < ($k/$n)
-                then $a[$i] , t($n-1; $k-1)
-                else t($n-1; $k)
-                end
+            select($n >= 1)
+            | ($m-$n) as $i
+            | if $r[$i] < ($k/$n)
+            then $a[$i] , t($n-1; $k-1)
+            else t($n-1; $k)
             end
         ;
         t($m; $k)

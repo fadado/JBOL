@@ -140,14 +140,15 @@ def cubes: #:: => *number
 
 #
 def reciprocals(g): #:: (a->*number) => *number
-    g | 1/.
+    1/g
 ;
 
 # CF:
 #   a(n) = 1/n
 #
 def harmonic: #:: => *number
-    reciprocals(positives)
+#   reciprocals(positives)
+    1/positives
 ;
 
 # CF:

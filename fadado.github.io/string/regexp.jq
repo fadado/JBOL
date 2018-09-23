@@ -57,7 +57,7 @@ def test($regex; $flags): #:: string|(string;string) => boolean
     _match_impl($regex; $flags; true)
 ;
 def test($regex): #:: string|(string) => boolean
-    test($regex; null)
+    _match_impl($regex; null; true)
 ;
 
 ########################################################################
@@ -141,7 +141,7 @@ def split($regex; $flags; $limit): #:: string|(string;string;number) => *string
         | [ 0, # first index
             (label $loop
                 | foreach match($regex; $flags+"g") as $m
-                    ($limit; .-1; # init and update
+                    ($limit; .-1; # init; update;
                      # yield if conditions are ok
                      if . < 0
                      then break$loop
@@ -207,10 +207,7 @@ def sub($regex; template; $flags): #:: string|(string;string;string) => string
         _sub1
     ;
     ($flags|contains("g")) as $gs
-    | ($flags
-       | if $gs
-         then [explode[] | select(. != 103)] | implode  # ord("g") == 103
-         else . end) as $fs
+    | ($flags | when($gs; mapstr(select(.!="g")))) as $fs
     | sub1($fs; $gs)
 ;
 
