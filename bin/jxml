@@ -1,0 +1,119 @@
+#!/bin/bash
+#
+# jxml -- Transforms JSON to XML
+#
+# Joan Ordinas <jordinas@gmail.com>
+
+# Script version
+declare -r VERSION='0.1'
+
+# This script name
+declare -r SELF="${0##*/}"
+
+# JQ script
+declare -r JQ="${0}.jq"
+
+# Data and modules directory: edit if necessary
+declare -r JBOL='/usr/local/share/jbol'
+
+########################################################################
+
+# Bash options
+set -o errexit -o noglob -o nounset -o pipefail
+shopt -s expand_aliases
+
+# Print text on screen
+alias print='echo 1>&2 -e'
+alias message='cat 1>&2'
+
+# Abort with message
+function fatal {
+    print "Error: $*"
+    exit 1
+}
+
+# Show help
+function help {
+    message <<EOF
+${SELF} -- Transforms JSON to XML
+
+Usage: ${SELF} [-h | --help | -v | --version]
+       ${SELF} [options...] file
+
+${SELF} transforms JSON values to XML documents.
+
+Options:
+    -h, --help              Show this help
+    -r, --root              Set the root element name
+    -e, --element           Set the array elements name
+    -t, --tab=size          Set the whitespace string for indentation
+    -v, --version           Print version information
+EOF
+    exit $(( $# == 0 ))
+}
+
+# Print usage message and exit
+function usage {
+    message <<EOF
+Unknown option: $1
+Usage: ${SELF} [-h | --help | -v | --version]
+       ${SELF} [options...] file
+EOF
+    exit 1
+}
+
+# Print version and exit
+function version {
+    print "${SELF} ${VERSION}"
+    exit 0
+}
+
+########################################################################
+
+function main {
+    local root="root" element="element" tab="  "
+
+    local opt
+    while getopts :hvr:e:t:-: opt; do
+        case $opt in
+            h) help ;;
+            r) root=$OPTARG ;;
+            e) element=$OPTARG ;;
+            t) tab=$OPTARG ;;
+            v) version ;;
+            -) case $OPTARG in
+                   help) help ;;
+                   root=*)root=${OPTARG#root=} ;;
+                   element=*)root=${OPTARG#element=} ;;
+                   tab=*)root=${OPTARG#tab=} ;;
+                   version) version ;;
+                   *) usage "--${OPTARG}";;
+               esac
+               ;;
+            ?) usage "-${OPTARG}";;
+        esac
+    done
+    # TODO: validar args
+    # TODO: acceptar - con stdin
+
+    shift $((OPTIND-1))
+    (( $# == 1 )) || help
+
+    # TODO: validar file ($1): exists?
+
+    jq  -L $JBOL                        \
+        --from-file $JQ                 \
+        --raw-output                    \
+        --arg opt_root "$root"          \
+        --arg opt_element "$element"    \
+        --arg opt_tab "$tab"            \
+        "$1" 2>&1
+
+}
+
+# Call main and exit
+main "$@"
+
+exit
+
+# vim:syntax=sh:ai:sw=4:ts=4:et
