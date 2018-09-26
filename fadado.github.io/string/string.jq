@@ -25,7 +25,7 @@ def join: #:: [string] => string
 
 def join($separator): #:: [string]|(string) => string
     def sep:
-        if . == null
+        if .==null
         then ""
         else .+$separator
         end

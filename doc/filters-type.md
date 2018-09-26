@@ -13,7 +13,7 @@ Type anotation				Parameter		Value
 Places                                      Value->Stream'1        boolean
     Output                              Output                     number
     => Output                               Stream                 string
-    Input| => Output                        !'2                    array
+    Input => Output                         !'2                    array
     (Parameters) => Output              Stream                     object
     Input|(Parameters) => Output            @'3                    [Value]
 Parameters                                  Value                  {Value}

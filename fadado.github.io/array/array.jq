@@ -38,7 +38,7 @@ def uniform: #:: [a] => boolean
 
 # unknown value for index?
 def unknown($i): #:: array|(number) => boolean
-    has($i) and .[$i] == null
+    has($i) and .[$i]==null
 ;
 
 # Select elements with even indices

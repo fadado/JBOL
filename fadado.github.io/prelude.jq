@@ -177,9 +177,10 @@ def mapval(f): #:: <a>|(a->*b) => <b>
 ;
 
 # map and add in one pass (catenable: x+x)
-def mapadd(f): #:: <a>|(a->*b) => null^b
+def mapadd(f): #:: <a>|(a->*b) => ?b
     reduce (.[] | f) as $x
         (null; . + $x)
+    // empty
 ;
 
 # Split string, map characters (length one strings) and concat results

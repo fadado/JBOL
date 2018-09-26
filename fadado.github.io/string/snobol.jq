@@ -300,7 +300,7 @@ def NOTANY($s): #:: CURSOR|(string) => CURSOR
 def SPAN($s): #:: CURSOR|(string) => CURSOR
     assert($s!=""; "SPAN requires a non empty string as argument")
     | select(.position != .slen)
-    | G(last(ANY($s)|ARBNO(ANY($s))) // FAIL)  # fail if last == null
+    | G(last(ANY($s)|ARBNO(ANY($s))) // FAIL)  # fail if last==null
 ;
 
 def BREAK($s): #:: CURSOR|(string) => CURSOR

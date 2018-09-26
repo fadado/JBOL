@@ -10,7 +10,7 @@ module {
 
 # unknown value for index?
 def unknown($k): #:: object|(string) => boolean
-    has($k) and .[$k] == null
+    has($k) and .[$k]==null
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq
