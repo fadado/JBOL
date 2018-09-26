@@ -77,6 +77,7 @@ In your **JQ** scripts include or import modules with directives like
 
 ```jq
 import "fadado.github.io/string" as str;
+import "fadado.github.io/string/table" as table;
 import "fadado.github.io/string/regexp" as re;
 ```
 
@@ -84,7 +85,7 @@ and then use the modules services in your code:
 
 ```jq
 def remove_digits($s):
-    $s | str::translate("01234567890"; "")
+    $s | table::translate("01234567890"; "")
 ;
 def normalize_space($s):
     $s | [re::split] | str::join(" ")

@@ -13,6 +13,8 @@ include "fadado.github.io/prelude";
 ########################################################################
 # Generators as streams
 
+# Primitives: `first`, `last`, `limit`, `nth`
+
 # id:          id x           x | .
 # concat:      g ++ h         g , h
 # map:         map f g        g | f
@@ -20,31 +22,25 @@ include "fadado.github.io/prelude";
 # apply:       f a            a | f
 # filter:      filter p g     g | select(p)
 
-# Count stream items.
-#
-def count(stream): #:: a|(a->*b) => number!
-    reduce stream as $_ (0; .+1)
-;
-
-# . inside?
+# Is `.` inside?
 def member($a; stream): #:: a|(a;*a) => boolean
-    some(stream == $a)
+    some($a == stream)
 ;
 def member(stream): #:: a|(*a) => boolean
     member(.; stream)
 ;
 
-# common content
-def intersect(stream; t):  #:: a|(*a;*a) => *a
-    stream | select(member(t))
+# Select common content.
+def intersect(s; t):  #:: a|(*a;*a) => *a
+    s as $a | select(some($a == t))
 ;
 
-# are the streams sharing contents?
-def sharing(stream; t):  #:: a|(*a;*a) => boolean
-    some(stream | member(t))
+# Are the streams (`s` and `t`) sharing contents?
+def sharing(s; t):  #:: a|(*a;*a) => boolean
+    some(s == t)
 ;
 
-# Unique for streams
+# Unique for streams.
 def distinct(stream):
     foreach stream as $x (
         {};
@@ -56,7 +52,6 @@ def distinct(stream):
 ;
 
 # Remove the first element of a stream.
-#
 def rest(stream): #:: a|(a->*b) => *b
     foreach stream as $item
         (1; .-1; select(. < 0) | $item)
@@ -64,32 +59,24 @@ def rest(stream): #:: a|(a->*b) => *b
 
 # One result?
 def singleton(stream): #:: a|(a->*b) => boolean
-#   nonempty(stream) and isempty(rest(stream))
-    [   label $out |
-        foreach stream as $item
-            (2; if . >= 1 then .-1 else break$out end; null)
-    ] | length == 1
-;
-
-# Extract the nth element of a stream.
-#
-def nth($n; stream): #:: a|(number;a->*b) => ?b
-    select($n >= 0) # not defined for n<0 and n>=#stream
-    | label $loop
-    | foreach stream as $item
-        ($n; .-1; select(. == -1) | $item , break $loop)
+    nonempty(stream) and isempty(rest(stream))
 ;
 
 # Produces enumerated items from `stream`.
-#
 def enum(stream): #:: a|(a->*b) => *[number,b]
     foreach stream as $item
         (-1; .+1; [.,$item])
 ;
 
+# Take from `stream` while `predicate` is true
+def take(stream; predicate): #:: a|(a->*b;b->boolean) => *b
+    label $out
+    | stream
+    | unless(predicate; break$out)
+;
+
 # Returns the suffix of `stream` after the first `n` elements, or
 # `empty` after all elements are dropped
-#
 def drop($n; stream): #:: a|(number;a->*b) => *b
     select($n >= 0) # not defined for n < 0 or n >= #stream
     | if $n == 0
@@ -100,8 +87,7 @@ def drop($n; stream): #:: a|(number;a->*b) => *b
     end
 ;
 
-# Analogous to array[start; stop] applied to streams.
-#
+# Analogous to `array[start; stop]` applied to streams.
 def slice($i; $j; stream): #:: a|(number;number;a->*b) => *b
     select($i < $j)
     | limit($j-$i; drop($i; stream))

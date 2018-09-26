@@ -89,6 +89,11 @@ def frombase($base): #:: string|(number) => number
 ########################################################################
 # Reductions on streams
 
+def count(stream): #:: a|(a->*b) => number!
+    reduce stream as $_
+        (0; . + 1)
+;
+
 def sum(stream): #:: a|(a->*number) => number
     reduce stream as $item
         (0; . + $item)

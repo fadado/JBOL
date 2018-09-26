@@ -123,6 +123,26 @@ include "math"; max(0-infinite, 9) == 9
 null
 true
 
+include "math"; count(empty) == 0
+null
+true
+
+include "math"; count(range(3)) == 3
+null
+true
+
+include "math"; count(empty) == 0
+null
+true
+
+include "math"; count(range(3;10)) == 9-3+1
+null
+true
+
+include "math"; count(range(8), range(4;11)) == count(range(8)) + count(range(4;11))
+null
+true
+
 # reverse implemented using reduce
 def rev: reduce .[] as $x ([]; [$x] + .); (.|rev) == (.|reverse)
 [1,2,3,4,5]

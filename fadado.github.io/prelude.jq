@@ -207,37 +207,4 @@ def repeat(g): #:: a|(a->*b) => *b
     reject(isempty(g)) | r
 ;
 
-# to be removed...
-def all(stream; predicate): #:: a|(a->*b;b->boolean) => boolean
-    isempty(stream | predicate and empty)
-;
-def all: #:: [boolean]| => boolean
-    isempty(.[] and empty)
-;
-def all(predicate): #:: [a]|(a->boolean) => boolean
-    isempty(.[] | predicate and empty)
-;
-
-def any(stream; predicate): #:: a|(a->*b;b->boolean) => boolean
-    nonempty(stream | predicate or empty)
-;
-def any: #:: [boolean]| => boolean
-    nonempty(.[] or empty)
-;
-def any(predicate): #:: [a]|(a->boolean) => boolean
-    nonempty(.[] | predicate or empty)
-;
-
-# Clearer `range/3`
-def range($init; $upto; $by): #:: (number;number;number) => *number
-    label $out
-    | ($by>0) as $inc
-    | ($by<0) as $dec
-    | $init|recurse(.+$by)
-    | if $inc and . < $upto or $dec and . > $upto # in range?
-      then .
-      else break$out
-      end
-;
-
 # vim:ai:sw=4:ts=4:et:syntax=jq
