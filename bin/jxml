@@ -38,7 +38,7 @@ function help {
 ${SELF} -- Transforms JSON to XML
 
 Usage: ${SELF} [-h | --help | -v | --version]
-       ${SELF} [options...] file
+       ${SELF} [options...] [file]
 
 ${SELF} transforms JSON values to XML documents.
 
@@ -57,7 +57,7 @@ function usage {
     message <<EOF
 Unknown option: $1
 Usage: ${SELF} [-h | --help | -v | --version]
-       ${SELF} [options...] file
+       ${SELF} [options...] [file]
 EOF
     exit 1
 }
@@ -93,13 +93,8 @@ function main {
             ?) usage "-${OPTARG}";;
         esac
     done
-    # TODO: validar args
-    # TODO: acceptar - con stdin
 
     shift $((OPTIND-1))
-    (( $# == 1 )) || help
-
-    # TODO: validar file ($1): exists?
 
     jq  -L $JBOL                        \
         --from-file $JQ                 \
@@ -107,7 +102,7 @@ function main {
         --arg opt_root "$root"          \
         --arg opt_element "$element"    \
         --arg opt_tab "$tab"            \
-        "$1" 2>&1
+        "$@" 2>&1
 
 }
 

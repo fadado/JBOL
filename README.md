@@ -38,6 +38,10 @@ Some of the `jval` limitations are:
 * Some checks for the `format` keyword are not very accurate or consider valid any non empty string.
 * Errors cannot reference exactly the line where are produced.
 
+### jxml
+
+`jxml` transforms JSON values to XML documents.
+
 ## Installation
 
 If you have the latests _GNU Make_ tool in your system run this command:
@@ -140,6 +144,23 @@ Options:
     -s, --schema            Validates a JSON schema against the Schema meta-schema
     -v, --version           Print version information
     -y, --hyper             Validates a JSON schema against the Hyper-Schema meta-schema
+```
+
+```
+$ jxml --help
+jxml -- Transforms JSON to XML
+
+Usage: jxml [-h | --help | -v | --version]
+       jxml [options...] file
+
+jxml transforms JSON values to XML documents.
+
+Options:
+    -h, --help              Show this help
+    -r, --root              Set the root element name
+    -e, --element           Set the array elements name
+    -t, --tab=size          Set the whitespace string for indentation
+    -v, --version           Print version information
 ```
 
 ## Tests end examples
