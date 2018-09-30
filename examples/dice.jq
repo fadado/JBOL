@@ -1,7 +1,6 @@
 #!/usr/local/bin/jq -cnRrf
 
 import "fadado.github.io/math" as math;
-import "fadado.github.io/stream" as stream;
 import "fadado.github.io/math/chance" as chance;
 
 def dice:
@@ -11,7 +10,7 @@ def dice:
 # test
 def main($N):
     def average(g):
-        math::sum(g) / stream::count(g)
+        math::sum(g) / math::count(g)
     ;
     range(4) |
     average(limit($N; dice))

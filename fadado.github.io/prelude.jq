@@ -157,14 +157,10 @@ def reiterate(g): #:: a|(a->*a) => +a
 #    $a|scan(f; g)
 #;
 
-# Fold opposite
-def unfold(f; $seed): #:: (a->[b,a];a) => *b
-    def r: f as [$b,$a] | $b , ($a|r);
-    $seed | r
-;
-
+# Fold _opposite_
 def unfold(f): #:: a|(a->[b,a]) => *b
-    unfold(f; .)
+    def r: f as [$b,$a] | $b , ($a|r);
+    r
 ;
 
 ########################################################################
