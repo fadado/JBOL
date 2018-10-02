@@ -28,7 +28,21 @@ def some(stream): #:: a|(a->*boolean) => boolean
     nonempty(stream or empty)
 ;
 
-# Complement of select
+# Enhanced `select`
+def select(predicate; action): #:: a|(a->*boolean;a->*b) => *b
+    if predicate then action else empty end
+;
+
+# Accept only productive streams
+def accept(stream): #:: a|(a->*b) => ?a
+    if nonempty(stream) then . else empty end
+;
+
+def accept(stream; action): #:: a|(a->*c;a->*b) => *b
+    if nonempty(stream) then action else empty end
+;
+
+# Complement of `select`
 def reject(predicate): #:: a|(a->*boolean) => ?a
     if predicate then empty else . end
 ;
@@ -120,7 +134,8 @@ def seq($a; $d): #:: (number;$number) => *number
 # Breadth-first search
 def iterate(init; g): #:: a|(a->*b;b->*b) => *b
     def r:
-         .[] , ([.[]|g]|select(length > 0)|r)
+#        .[] , (map(g) | accept(.[]; r))
+         .[] , ([.[]|g] | select(length > 0; r))
     ;
     [init] | r
 ;
@@ -200,7 +215,7 @@ def mapobj(filter): #:: object|(PAIR->PAIR) => object
 # Does not diverge with empty parameter
 def repeat(g): #:: a|(a->*b) => *b
     def r: g , r;
-    reject(isempty(g)) | r
+    accept(g; r)
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq
