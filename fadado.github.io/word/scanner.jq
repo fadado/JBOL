@@ -8,6 +8,8 @@ module {
     }
 };
 
+include "fadado.github.io/prelude";
+
 ########################################################################
 # Types used in declarations:
 #   WORD:       [a]^string
@@ -36,7 +38,7 @@ def any($wset; $i): #:: WORD|(WORD;POS) => ?POS
     meets(inside($wset); $i)
 ;
 def any($wset): #:: WORD|(WORD) => ?POS
-    meets(inside($wset))
+    meets(inside($wset); 0)
 ;
 
 # Icon `notany`
@@ -44,7 +46,7 @@ def notany($wset; $i): #:: WORD|(WORD;POS) => ?POS
     meets(false==inside($wset); $i)
 ;
 def notany($wset): #:: WORD|(WORD) => ?POS
-    meets(false==inside($wset))
+    meets(false==inside($wset); 0)
 ;
 
 ########################################################################
@@ -61,12 +63,12 @@ def locus(t; $i; $j): #:: WORD|(SYMBOL->boolean;POS;POS) => *POS
 
 # Positions for all symbols in `.[i:]` satisfying `t`
 def locus(t; $i): #:: WORD|(SYMBOL->boolean;POS) => *POS
-    locus(t;$i;length)
+    locus(t; $i; length)
 ;
 
 # Positions for all symbols in `.` satisfying `t`
 def locus(t): #:: WORD|(SYMBOL->boolean) => *POS
-    locus(t;0;length)
+    locus(t; 0; length)
 ;
 
 # Icon `upto`
@@ -74,20 +76,20 @@ def upto($wset; $i; $j): #:: WORD|(WORD;POS;POS) => *POS
     locus(inside($wset); $i; $j)
 ;
 def upto($wset; $i): #:: WORD|(WORD;POS) => *POS
-    locus(inside($wset); $i)
+    locus(inside($wset); $i; length)
 ;
 def upto($wset): #:: WORD|(WORD) => *POS
-    locus(inside($wset))
+    locus(inside($wset); 0; length)
 ;
 
 def upto_c($wset; $i; $j): #:: WORD|(WORD;POS;POS) => *POS
     locus(false==inside($wset); $i; $j)
 ;
 def upto_c($wset; $i): #:: WORD|(WORD;POS) => *POS
-    locus(false==inside($wset); $i)
+    locus(false==inside($wset); $i; length)
 ;
 def upto_c($wset): #:: WORD|(WORD) => *POS
-    locus(false==inside($wset))
+    locus(false==inside($wset); 0; length)
 ;
 
 ########################################################################
@@ -98,14 +100,15 @@ def upto_c($wset): #:: WORD|(WORD) => *POS
 def span(t; $i): #:: WORD|(SYMBOL->boolean;POS) => ?POS
     select(0 <= $i and $i < length)
     | label $pipe
+    # for $j=$i to length+1 (off-value used as a flag)
     | range($i; length+1) as $j
-    | if $j == length
-      then $j , break$pipe  # fence
-      elif .[$j:$j+1] | t
-      then empty            # next
-      elif $j != $i
-      then $j , break$pipe  # fence
-      else break$pipe       # abort
+    | if $j == length       # if past end, all matched
+      then $j , break$pipe  # then return $j
+      elif .[$j:$j+1] | t   # if match at $j
+      then empty            # then continue loop
+      elif $j > $i          # if moved at least one forward
+      then $j , break$pipe  # then return $j
+      else break$pipe       # abort, none match!
       end
 ;
 def span(t): #:: WORD|(SYMBOL->boolean) => ?POS
@@ -135,14 +138,10 @@ def many_c($wset): #:: WORD|(WORD) => ?POS
 # Generalized SNOBOL `BREAK`
 def axe(t; $i): #:: WORD|(SYMBOL->boolean;POS) => ?POS
     select(0 <= $i and $i < length)
-    | label $pipe
-    | range($i; length+1) as $j
-    | if $j == length
-      then break$pipe       # abort
-      elif .[$j:$j+1] | t
-      then $j , break$pipe  # fence
-      else empty            # next
-      end
+    | label $fence
+    | range($i; length) as $j
+    | select(.[$j:$j+1] | t)
+    | $j , break$fence
 ;
 def axe(t): #:: WORD|(SYMBOL->boolean) => ?POS
     axe(t; 0)
@@ -195,5 +194,32 @@ def find($u; $i): #:: WORD|(WORD;POS) => *POS
 def find($u): #:: WORD|(WORD) => *POS
     indices($u)[]
 ;
+
+########################################################################
+# Tokenize word
+########################################################################
+
+def tokens($sep; $i): #:: WORD|(WORD;number) => *WORD
+    def _tokens($str):
+        def tok:
+            . as $i
+            | $str  # set subject
+            | select($i < length)       # exhausted subject? abort!
+            | brk_c($sep; $i) as $j     # break to [^separator]
+            | many_c($sep; $j) as $k    # span [^separator]
+            | [.[$j:$k], $k]            # [ token, next $i ]
+        ;
+        $i | unfold(tok)
+    ;
+    _tokens(.)
+;
+
+def tokens($sep): #:: WORD|(WORD) => *WORD
+    tokens($sep; 0)
+;
+
+#def words:
+#    tokens(" \t\r\n")
+#;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq
