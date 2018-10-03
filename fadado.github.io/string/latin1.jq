@@ -51,60 +51,60 @@ def print: #:: string
     $C::C[0].print
 ;
 
-def isascii: #:: string| => boolean
+def isascii: #:: string => boolean
     every(explode[] <= 127)
 ;
-def islatin1: #:: string| => boolean
+def islatin1: #:: string => boolean
     every(explode[] | . > 159 and . < 256)
 ;
-def isvacant: #:: string| => boolean
+def isvacant: #:: string => boolean
     every(explode[] | . > 127 and . < 160)
 ;
-def iscntrl: #:: string| => boolean
-    every((./"")[] | $C::C[0].iscntrl[.]//false)
+def iscntrl: #:: string => boolean
+    every($C::C[0].iscntrl[(./"")[]]//false)
 ;
-def isspace: #:: string| => boolean
-    every((./"")[] | $C::C[0].isspace[.]//false)
+def isspace: #:: string => boolean
+    every($C::C[0].isspace[(./"")[]]//false)
 ;
-def isblank: #:: string| => boolean
+def isblank: #:: string => boolean
     every((./"")[] | . == " " or . == "\t" or . == "\u00a0")
 ;
-def isupper: #:: string| => boolean
-    every((./"")[] | $C::C[0].isupper[.]//false)
+def isupper: #:: string => boolean
+    every($C::C[0].isupper[(./"")[]]//false)
 ;
-def islower: #:: string| => boolean
-    every((./"")[] | $C::C[0].islower[.]//false)
+def islower: #:: string => boolean
+    every($C::C[0].islower[(./"")[]]//false)
 ;
-def isdigit: #:: string| => boolean
-    every((./"")[] | $C::C[0].isdigit[.]//false)
+def isdigit: #:: string => boolean
+    every($C::C[0].isdigit[(./"")[]]//false)
 ;
-def isxdigit: #:: string| => boolean
-    every((./"")[] | $C::C[0].isxdigit[.]//false)
+def isxdigit: #:: string => boolean
+    every($C::C[0].isxdigit[(./"")[]]//false)
 ;
-def ispunct: #:: string| => boolean
-    every((./"")[] | $C::C[0].ispunct[.]//false)
+def ispunct: #:: string => boolean
+    every($C::C[0].ispunct[(./"")[]]//false)
 ;
-def isalpha: #:: string| => boolean
+def isalpha: #:: string => boolean
     every((./"")[] | $C::C[0].isupper[.]//false or $C::C[0].islower[.]//false)
 ;
-def isalnum: #:: string| => boolean
+def isalnum: #:: string => boolean
     every((./"")[] | $C::C[0].isupper[.]//false or $C::C[0].islower[.]//false or $C::C[0].isdigit[.]//false)
 ;
-def isgraph: #:: string| => boolean
+def isgraph: #:: string => boolean
     every((./"")[] | $C::C[0].isupper[.]//false or $C::C[0].islower[.]//false or $C::C[0].isdigit[.]//false or $C::C[0].ispunct[.]//false)
 ;
-def isprint: #:: string| => boolean
+def isprint: #:: string => boolean
     every((./"")[] | $C::C[0].isupper[.]//false or $C::C[0].islower[.]//false or $C::C[0].isdigit[.]//false or $C::C[0].ispunct[.]//false or . == " " or . == "\t" or . == "\u00a0")
 ;
-def isword: #:: string| => boolean
+def isword: #:: string => boolean
     every((./"")[] | $C::C[0].isupper[.]//false or $C::C[0].islower[.]//false or $C::C[0].isdigit[.]//false or . == "_" or . == "·")
 ;
 
-def tolower: #:: string| => string
+def tolower: #:: string => string
     mapstr($C::C[0].tolower[.]//.)
 ;
 
-def toupper: #:: string| => string
+def toupper: #:: string => string
     mapstr($C::C[0].toupper[.]//.)
 ;
 

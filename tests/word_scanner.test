@@ -46,17 +46,9 @@ include "word/scanner"; many_c("aeiou")
 "xxoops"
 2
 
-include "word/scanner"; brk("aeiou")
-"xxoops"
-2
-
 include "word/scanner"; many_c("aeiou")
 "axixo"
 # empty
-
-include "word/scanner"; brk("aeiou")
-"axixo"
-0
 
 include "word/scanner"; many("aeiou")
 "oops"
@@ -141,6 +133,10 @@ include "word/scanner"; [tokens(" \t")]
 include "word/scanner"; [tokens(" \t")]
 "         \t   "
 []
+
+include "word/scanner"; [tokens_c("aeiou")]
+"a e ae io aeiou o "
+["a","e","ae","io","aeiou","o"]
 
 ########################################################################
 

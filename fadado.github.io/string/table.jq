@@ -9,7 +9,6 @@ module {
 };
 
 include "fadado.github.io/prelude";
-import "fadado.github.io/string" as str;
 import "fadado.github.io/string/ascii" as ascii;
 import "fadado.github.io/object/set" as set;
 
@@ -32,7 +31,7 @@ def rot13: #:: {string}
 ;
 
 # Preserve tables
-def ptable($from; $preserve): #:: (string;string) => {string}
+def preserve($from; $preserve): #:: (string;string) => {string}
    set::new($preserve) as $t
    | reduce (($from/"") | unique)[] as $c
         ({}; . += (if $t[$c] then null else {($c):""} end))
@@ -40,8 +39,8 @@ def ptable($from; $preserve): #:: (string;string) => {string}
 
 # Translate characters in input string using translation table
 def translate($table): #:: string|({string}) => string
-    [ (./"")[] | $table[.] // . ]
-    | str::join
+    reduce ((./"")[] | $table[.]//.) as $s
+        (""; . + $s)
 ;
 
 def translate($from; $to): #:: string|(string;string) => string
@@ -54,6 +53,6 @@ def translate($from; $to): #:: string|(string;string) => string
 # toggle:   s|translate(new(ascii::ALPHA; ascii::alpha))
 # remove:   s|translate("to delete"; "")
 # preserve: s|translate(s|translate("to preserve"; "")); "")
-# preserve: s|translate(ptable(s; "to preserve"))
+# preserve: s|translate(preserve(s; "to preserve"))
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

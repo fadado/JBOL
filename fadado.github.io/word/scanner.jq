@@ -8,8 +8,6 @@ module {
     }
 };
 
-include "fadado.github.io/prelude";
-
 ########################################################################
 # Types used in declarations:
 #   WORD:       [a]^string
@@ -97,70 +95,47 @@ def upto_c($wset): #:: WORD|(WORD) => *POS
 ########################################################################
 
 # Generalized Icon `many`, SNOBOL `SPAN`, C `strspn`, Haskell `span`
-def span(t; $i): #:: WORD|(SYMBOL->boolean;POS) => ?POS
-    select(0 <= $i and $i < length)
+def span(t; $i; $j): #:: WORD|(SYMBOL->boolean;POS;POS) => ?POS
+    select(0 <= $i and $i < $j)
     | label $pipe
-    # for $j=$i to length+1 (off-value used as a flag)
-    | range($i; length+1) as $j
-    | if $j == length       # if past end, all matched
-      then $j , break$pipe  # then return $j
-      elif .[$j:$j+1] | t   # if match at $j
+    # for $k=$i to $j+1 (off-value used as a flag)
+    | range($i; $j+1) as $k
+    | if $k == length       # if past end, all matched
+      then $k , break$pipe  # then return $k
+      elif .[$k:$k+1] | t   # if match at $k
       then empty            # then continue loop
-      elif $j > $i          # if moved at least one forward
-      then $j , break$pipe  # then return $j
+      elif $k > $i          # if moved at least one forward
+      then $k , break$pipe  # then return $k
       else break$pipe       # abort, none match!
       end
 ;
+def span(t; $i): #:: WORD|(SYMBOL->boolean;POS) => ?POS
+    span(t; $i; length)
+;
 def span(t): #:: WORD|(SYMBOL->boolean) => ?POS
-    span(t; 0)
+    span(t; 0; length)
 ;
 
 # Icon `many`
+def many($wset; $i; $j): #:: WORD|(WORD;POS;POS) => ?POS
+    span(inside($wset); $i; $j)
+;
 def many($wset; $i): #:: WORD|(WORD;POS) => ?POS
-    span(inside($wset); $i)
+    span(inside($wset); $i; length)
 ;
 def many($wset): #:: WORD|(WORD) => ?POS
-    span(inside($wset); 0)
+    span(inside($wset); 0; length)
 ;
 
 # Complementary of `many`
+def many_c($wset; $i; $j): #:: WORD|(WORD;POS;POS) => ?POS
+    span(false==inside($wset); $i; $j)
+;
 def many_c($wset; $i): #:: WORD|(WORD;POS) => ?POS
-    span(false==inside($wset); $i)
+    span(false==inside($wset); $i; length)
 ;
 def many_c($wset): #:: WORD|(WORD) => ?POS
-    span(false==inside($wset); 0)
-;
-
-########################################################################
-# axe
-########################################################################
-
-# Generalized SNOBOL `BREAK`
-def axe(t; $i): #:: WORD|(SYMBOL->boolean;POS) => ?POS
-    select(0 <= $i and $i < length)
-    | label $fence
-    | range($i; length) as $j
-    | select(.[$j:$j+1] | t)
-    | $j , break$fence
-;
-def axe(t): #:: WORD|(SYMBOL->boolean) => ?POS
-    axe(t; 0)
-;
-
-# SNOBOL `BREAK`
-def brk($wset; $i): #:: WORD|(WORD;POS) => ?POS
-    axe(inside($wset); $i)
-;
-def brk($wset): #:: WORD|(WORD) => ?POS
-    axe(inside($wset); 0)
-;
-
-# `brk` complementary
-def brk_c($wset; $i): #:: WORD|(WORD;POS) => ?POS
-    axe(false==inside($wset); $i)
-;
-def brk_c($wset): #:: WORD|(WORD) => ?POS
-    axe(false==inside($wset); 0)
+    span(false==inside($wset); 0; length)
 ;
 
 ########################################################################
@@ -196,30 +171,37 @@ def find($u): #:: WORD|(WORD) => *POS
 ;
 
 ########################################################################
-# Tokenize word
+# Tokenize words
 ########################################################################
 
-def tokens($sep; $i): #:: WORD|(WORD;number) => *WORD
-    def _tokens($str):
-        def tok:
+# Produce tokens delimited by `$wset` symbols
+def tokens($wset): #:: WORD|(WORD) => *WORD
+    def _tokens_c($str):
+        def r:
             . as $i
-            | $str  # set subject
-            | select($i < length)       # exhausted subject? abort!
-            | brk_c($sep; $i) as $j     # break to [^separator]
-            | many_c($sep; $j) as $k    # span [^separator]
-            | [.[$j:$k], $k]            # [ token, next $i ]
+            | $str # set subject
+            | first(upto_c($wset; $i)) as $j # [delimiters]*(?=[^delimiters])
+            | many_c($wset; $j) as $k        # [^delimiters]+
+            | $str[$j:$k], ($k|r)
         ;
-        $i | unfold(tok)
+        0 | r
     ;
-    _tokens(.)
+    _tokens_c(.)
 ;
 
-def tokens($sep): #:: WORD|(WORD) => *WORD
-    tokens($sep; 0)
+# Produce tokens consisting in `$wset` symbols
+def tokens_c($wset): #:: WORD|(WORD) => *WORD
+    def _words($str):
+        def r:
+            . as $i
+            | $str # set subject
+            | first(upto($wset; $i)) as $j # [^consisting]*(?=[consisting])
+            | many($wset; $j) as $k        # [consisting]+
+            | $str[$j:$k], ($k|r)
+        ;
+        0 | r
+    ;
+    _words(.)
 ;
-
-#def words:
-#    tokens(" \t\r\n")
-#;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

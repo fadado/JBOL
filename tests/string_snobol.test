@@ -5,6 +5,10 @@
 # Blank lines and lines starting with # are ignored.
 #########################################################################
 
+include "string/snobol"; REPLACE(.;"a";"@")
+"mi mama me mima"
+"mi m@m@ me mim@"
+
 include "string/snobol"; [limit(10; SUCCEED)] == [limit(10; recurse(.))]
 0
 true

@@ -11,6 +11,7 @@ module {
 include "fadado.github.io/prelude";
 include "fadado.github.io/types";
 import "fadado.github.io/string" as str;
+import "fadado.github.io/string/table" as table;
 
 ########################################################################
 # Patterns concerned with control of the matching process 
@@ -236,7 +237,7 @@ def DUPL($s; $n): #:: (string;number) => string
     | $s*$n // ""
 ;
 def REPLACE($s; $t; $u): #:: (string;string;string) => string
-    $s|str::translate($t; $u)
+    $s|table::translate($t; $u)
 ;
 def SIZE($s): #:: (string) => number
     $s|length
