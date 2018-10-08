@@ -72,9 +72,6 @@ $ sudo cp bin/* /usr/local/bin
 $ sudo cp -r schemata /usr/local/share/jbol
 ```
 
-**Warning**: if you do not use `/usr/local/bin` for the script some harcoded
-pathnames must be edited!
-
 ## Usage
 
 In your **JQ** scripts include or import modules with directives like
@@ -171,14 +168,12 @@ the execution, again, of previously successful tests.
 
 Several **JQ** scripts are included in the `examples` directory.  The `Makefile` has
 rules to help you run the examples, but you should study first the code to know
-how each example works. Warning: the scripts expect `jq` to be at `/usr/local/bin`.
+how each example works. 
 
-As an example, this script generates in a smart way the solutions for the
-classical _8 queens_ problem:
+As an example, calling 'make nqsmart` runs this script generating in a smart
+way the solutions for the classical _8 queens_ problem:
 
 ```
-#!/usr/local/bin/jq -cnRrf
-
 include "fadado.github.io/prelude";
 import "fadado.github.io/array" as array;
 
@@ -210,6 +205,14 @@ def queens($n; $columns):
 8 as $N | queens($N; [range($N)])
 
 # vim:ai:sw=4:ts=4:et:syntax=jq
+```
+
+To run the examples and tests the `Makefile` puts the `jq` binary full pathname
+in the macro `JQ` (defined by default as `/usr/local/bin/jq`). You can modify
+this macro definition when calling `make` using this syntax:
+
+```
+make nqsmart JQ=/usr/bin/jq
 ```
 
 <!--

@@ -2,9 +2,6 @@
 
 project := jbol
 
-# jq used to run tests and examples if called from this makefile.
-JQ=/usr/local/bin/jq
-
 ########################################################################
 # Prerequisites
 ########################################################################
@@ -20,6 +17,10 @@ endif
 # Parameters (redefine as you like)
 ########################################################################
 
+# jq binary used to run tests and examples.
+JQ ?= /usr/local/bin/jq
+
+# Used when (un)installing.
 prefix	?= /usr/local
 datadir	?= $(prefix)/share
 bindir	?= $(prefix)/bin
@@ -30,11 +31,12 @@ bindir	?= $(prefix)/bin
 
 ifeq (,$(filter install uninstall,$(MAKECMDGOALS)))
 ifeq (0,$(shell id --user))
-$(error  Root only can make "(un)install" targets)
+$(error Root only can make "(un)install" targets)
 endif
-SUDO := 
 else
-SUDO := sudo
+ifneq (0,$(shell id --user))
+$(error Only root can make "(un)install" targets)
+endif
 endif
 
 ########################################################################
@@ -167,7 +169,7 @@ $(LogDir)/music_interval-table.log: $(MUSIC)/interval-table.jq $(MUSIC)/pitch-cl
 # Utilities
 ########################################################################
 
-.PHONY: clean clobber check help install uninstall prototypes
+.PHONY: clean clobber check help install uninstall #prototypes
 
 clean:
 	rm --force -- $(LogDir)/*.log
@@ -178,18 +180,18 @@ clobber: clean
 check: clean all
 
 install:
-	test -d $(datadir)/$(project) || $(SUDO) mkdir -v --parents $(datadir)/$(project)
-	test -d $(bindir) || $(SUDO) mkdir -v --parents $(bindir)
-	$(SUDO) cp -v -u -r fadado.github.io/ $(datadir)/$(project)
-	$(SUDO) cp -v -u -r schemata/ $(datadir)/$(project)
-	$(SUDO) install --verbose --compare --mode 555 bin/{jgen,jval,jxml} $(bindir)
-	$(SUDO) install --verbose --compare --mode 644 bin/{jgen,jval,jxml}.jq $(bindir)
+	test -d $(datadir)/$(project) || mkdir -v --parents $(datadir)/$(project)
+	test -d $(bindir) || mkdir -v --parents $(bindir)
+	cp -v -u -r fadado.github.io/ $(datadir)/$(project)
+	cp -v -u -r schemata/ $(datadir)/$(project)
+	install --verbose --compare --mode 555 bin/{jgen,jval,jxml} $(bindir)
+	install --verbose --compare --mode 644 bin/{jgen,jval,jxml}.jq $(bindir)
 
 uninstall:
 	test -d $(datadir)/$(project)					  \
-	&& $(SUDO) rm --verbose --force --recursive $(datadir)/$(project) \
+	&& rm --verbose --force --recursive $(datadir)/$(project) \
 	|| true
-	$(SUDO) rm -f $(bindir)/{jgen,jval,jxml}* 
+	rm -f $(bindir)/{jgen,jval,jxml}* 
 
 # Show targets
 help:
@@ -201,18 +203,19 @@ help:
 	| sed 's/:\+$$//'					\
 	| pr --omit-pagination --indent=4 --width=80 --columns=4
 
-define make_prototypes
-  find fadado.github.io -name '*.jq' -print | while read m; do	\
-    M=$${m##*/};						\
-    P=$${M%.jq};						\
-    <$$m grep '^def  *[^_].*\#::'	 			\
-    | sed -e 's/^def  *//' -e 's/:  *\#/ /'			\
-    | sort >|/tmp/$$P.md ;					\
-  done
-endef
-
-prototypes:
-	$(call make_prototypes)
+# BUG: truncate duplicated module names!
+#define make_prototypes
+#  find fadado.github.io -name '*.jq' -print | while read m; do	\
+#    M=$${m##*/};						\
+#    P=$${M%.jq};						\
+#    <$$m grep '^def  *[^_].*\#::'	 			\
+#    | sed -e 's/^def  *//' -e 's/:  *\#/ /'			\
+#    | sort >|/tmp/$$P.md ;					\
+#  done
+#endef
+#
+#prototypes:
+#	$(call make_prototypes)
 
 ########################################################################
 # Examples
