@@ -76,19 +76,8 @@ def upto_c($w; $wset): #:: POS|(WORD;WORD) => *POS
 def span($w; t; $j): #:: POS|(WORD;TEST;POS) => ?POS
     . as $i
     | select(0 <= $i and $i < $j)
-    | last(meets($w; t; $j) | recurse(meets($w; t; $j)))
+    | last(meets($w; t) | recurse(meets($w; t)))
       // empty
-#   | label $pipe
-#   # for $k=$i to $j+1 (off-value used as a flag)
-#   | range($i; $j+1) as $k
-#   | if $k == $j           # if past end, all matched
-#     then $k , break$pipe  # then return $k
-#     elif $w[$k:$k+1] | t  # if match at $k
-#     then empty            # then continue loop
-#     elif $k > $i          # if moved at least one forward
-#     then $k , break$pipe  # then return $k
-#     else break$pipe       # abort, none match!
-#     end
 ;
 def span($w; t): #:: POS|(WORD;TEST) => ?POS
     span($w; t; $w|length)
