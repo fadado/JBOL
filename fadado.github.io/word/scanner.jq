@@ -13,81 +13,59 @@ module {
 #   WORD:       [a]^string
 #   SYMBOL:     singleton WORD
 #   POS:        number
+#   TEST:       SYMBOL->boolean
 
 ########################################################################
 # Match one symbol
 
-# Do satisfies the symbol at `i` in `.` the predicate `t`?
-def meets(t; $i): #:: WORD|(SYMBOL->boolean;POS) => ?POS
-    select(0 <= $i and $i < length)
-    | select(.[$i:$i+1] | t)
-    | $i+1
-;
-
-# Do satisfies the first symbol in `.` the predicate `t`?
-def meets(t): #:: WORD|(SYMBOL->boolean) => ?POS
-    select(length > 0)
-    | select(.[0:1] | t)
-    | 1
+# Do satisfies the symbol at `.` in `$w` the predicate `t`?
+def meets($w; t): #:: POS|(WORD;TEST) => ?POS
+    select(0 <= . and . < ($w|length))
+    | select($w[.:.+1] | t)
+    | .+1
 ;
 
 # Icon `any`
-def any($wset; $i): #:: WORD|(WORD;POS) => ?POS
-    meets(inside($wset); $i)
-;
-def any($wset): #:: WORD|(WORD) => ?POS
-    meets(inside($wset); 0)
+def any($w; $wset): #:: POS|(WORD;WORD;POS) => ?POS
+    meets($w; inside($wset))
 ;
 
 # Icon `notany`
-def notany($wset; $i): #:: WORD|(WORD;POS) => ?POS
-    meets(false==inside($wset); $i)
-;
-def notany($wset): #:: WORD|(WORD) => ?POS
-    meets(false==inside($wset); 0)
+def notany($w; $wset): #:: POS|(WORD;WORD) => ?POS
+    meets($w; false==inside($wset))
 ;
 
 ########################################################################
 # upto
 ########################################################################
 
-# Positions for all symbols in `.[i:j]` satisfying `t`
-def locus(t; $i; $j): #:: WORD|(SYMBOL->boolean;POS;POS) => *POS
-    select(0 <= $i and $i < $j and $j <= length)
+# Positions for all symbols in `$w[.:j]` satisfying `t`
+def locus($w; t; $j): #:: POS|(WORD;TEST;POS) => *POS
+    . as $i
+    | select(0 <= $i and $i < $j and $j <= ($w|length))
     | range($i;$j) as $k
-    | select(.[$k:$k+1] | t)
+    | select($w[$k:$k+1] | t)
     | $k
 ;
 
-# Positions for all symbols in `.[i:]` satisfying `t`
-def locus(t; $i): #:: WORD|(SYMBOL->boolean;POS) => *POS
-    locus(t; $i; length)
-;
-
-# Positions for all symbols in `.` satisfying `t`
-def locus(t): #:: WORD|(SYMBOL->boolean) => *POS
-    locus(t; 0; length)
+# Positions for all symbols in `$w[.:]` satisfying `t`
+def locus($w; t): #:: POS|(WORD;TEST) => *POS
+    locus($w; t; $w|length)
 ;
 
 # Icon `upto`
-def upto($wset; $i; $j): #:: WORD|(WORD;POS;POS) => *POS
-    locus(inside($wset); $i; $j)
+def upto($w; $wset; $j): #:: POS|(WORD;WORD;POS) => *POS
+    locus($w; inside($wset); $j)
 ;
-def upto($wset; $i): #:: WORD|(WORD;POS) => *POS
-    locus(inside($wset); $i; length)
-;
-def upto($wset): #:: WORD|(WORD) => *POS
-    locus(inside($wset); 0; length)
+def upto($w; $wset): #:: POS|(WORD;WORD) => *POS
+    locus($w; inside($wset); $w|length)
 ;
 
-def upto_c($wset; $i; $j): #:: WORD|(WORD;POS;POS) => *POS
-    locus(false==inside($wset); $i; $j)
+def upto_c($w; $wset; $j): #:: POS|(WORD;WORD;POS) => *POS
+    locus($w; false==inside($wset); $j)
 ;
-def upto_c($wset; $i): #:: WORD|(WORD;POS) => *POS
-    locus(false==inside($wset); $i; length)
-;
-def upto_c($wset): #:: WORD|(WORD) => *POS
-    locus(false==inside($wset); 0; length)
+def upto_c($w; $wset): #:: POS|(WORD;WORD) => *POS
+    locus($w; false==inside($wset); $w|length)
 ;
 
 ########################################################################
@@ -95,47 +73,39 @@ def upto_c($wset): #:: WORD|(WORD) => *POS
 ########################################################################
 
 # Generalized Icon `many`, SNOBOL `SPAN`, C `strspn`, Haskell `span`
-def span(t; $i; $j): #:: WORD|(SYMBOL->boolean;POS;POS) => ?POS
-    select(0 <= $i and $i < $j)
+def span($w; t; $j): #:: POS|(WORD;TEST;POS) => ?POS
+    . as $i
+    | select(0 <= $i and $i < $j)
     | label $pipe
     # for $k=$i to $j+1 (off-value used as a flag)
     | range($i; $j+1) as $k
-    | if $k == length       # if past end, all matched
+    | if $k == $j           # if past end, all matched
       then $k , break$pipe  # then return $k
-      elif .[$k:$k+1] | t   # if match at $k
+      elif $w[$k:$k+1] | t  # if match at $k
       then empty            # then continue loop
       elif $k > $i          # if moved at least one forward
       then $k , break$pipe  # then return $k
       else break$pipe       # abort, none match!
       end
 ;
-def span(t; $i): #:: WORD|(SYMBOL->boolean;POS) => ?POS
-    span(t; $i; length)
-;
-def span(t): #:: WORD|(SYMBOL->boolean) => ?POS
-    span(t; 0; length)
+def span($w; t): #:: POS|(WORD;TEST) => ?POS
+    span($w; t; $w|length)
 ;
 
 # Icon `many`
-def many($wset; $i; $j): #:: WORD|(WORD;POS;POS) => ?POS
-    span(inside($wset); $i; $j)
+def many($w; $wset; $j): #:: POS|(WORD;WORD;POS;POS) => ?POS
+    span($w; inside($wset); $j)
 ;
-def many($wset; $i): #:: WORD|(WORD;POS) => ?POS
-    span(inside($wset); $i; length)
-;
-def many($wset): #:: WORD|(WORD) => ?POS
-    span(inside($wset); 0; length)
+def many($w; $wset): #:: POS|(WORD;WORD) => ?POS
+    span($w; inside($wset); $w|length)
 ;
 
 # Complementary of `many`
-def many_c($wset; $i; $j): #:: WORD|(WORD;POS;POS) => ?POS
-    span(false==inside($wset); $i; $j)
+def many_c($w; $wset; $j): #:: POS|(WORD;WORD;POS;POS) => ?POS
+    span($w; false==inside($wset); $j)
 ;
-def many_c($wset; $i): #:: WORD|(WORD;POS) => ?POS
-    span(false==inside($wset); $i; length)
-;
-def many_c($wset): #:: WORD|(WORD) => ?POS
-    span(false==inside($wset); 0; length)
+def many_c($w; $wset): #:: POS|(WORD;WORD) => ?POS
+    span($w; false==inside($wset); $w|length)
 ;
 
 ########################################################################
@@ -143,31 +113,23 @@ def many_c($wset): #:: WORD|(WORD) => ?POS
 ########################################################################
 
 # Matches u at the begining of w? (Icon `match`)
-def match($u; $i): #:: WORD|(WORD;POS) => ?POS
-    select(0 <= $i and $i < length)
-    | ($u|length) as $j
-    | select($i+$j <= length and .[$i:$i+$j] == $u)
-    | $i+$j
+def match($w; $u; $j): #:: POS|(WORD;WORD;POS)=> ?POS
+    select(0 <= . and . < $j)
+    | ($u|length) as $n
+    | select(.+$n <= $j and $w[.:.+$n] == $u)
+    | .+$n
 ;
-def match($u): #:: WORD|(WORD) => ?POS
-    ($u|length) as $j
-    | select($j <= length and .[0:$j] == $u)
-    | $j
+def match($w; $u): #:: POS|(WORD;WORD)=> ?POS
+    match($w; $u; $w|length)
 ;
 
 # Global search factor (Icon `find`)
-def find($u; $i; $j): #:: WORD|(WORD;POS;POS) => *POS
-    select(0 <= $i and $i < $j and $j <= length)
-    | .[$i:$j]
-    | indices($u)[]
+def find($w; $u; $j): #:: POS|(WORD;WORD;POS) => *POS
+    select(0 <= . and . < $j and $j <= ($w|length))
+    | $w[.:$j] | indices($u)[]
 ;
-def find($u; $i): #:: WORD|(WORD;POS) => *POS
-    select(0 <= $i)
-    | .[$i:]
-    | indices($u)[]
-;
-def find($u): #:: WORD|(WORD) => *POS
-    indices($u)[]
+def find($w; $u): #:: POS|(WORD;WORD) => *POS
+    find($w; $u; $w|length)
 ;
 
 ########################################################################
@@ -175,33 +137,31 @@ def find($u): #:: WORD|(WORD) => *POS
 ########################################################################
 
 # Produce tokens delimited by `$wset` symbols
-def tokens($wset): #:: WORD|(WORD) => *WORD
-    def _tokens_c($str):
-        def r:
-            . as $i
-            | $str # set subject
-            | first(upto_c($wset; $i)) as $j # [delimiters]*(?=[^delimiters])
-            | many_c($wset; $j) as $k        # [^delimiters]+
-            | $str[$j:$k], ($k|r)
-        ;
-        0 | r
+def tokens($w; $wset; $j): #:: POS|(WORD;WORD;POS) => *WORD
+    def r:
+        first(upto_c($w; $wset; $j))    # [delimiters]*(?=[^delimiters])
+        | . as $i
+        | many_c($w; $wset; $j)         # [^delimiters]+
+        | $w[$i:.], r
     ;
-    _tokens_c(.)
+    r
+;
+def tokens($w; $wset): #:: POS|(WORD;WORD) => *WORD
+    tokens($w; $wset; $w|length)
 ;
 
 # Produce tokens consisting in `$wset` symbols
-def tokens_c($wset): #:: WORD|(WORD) => *WORD
-    def _words($str):
-        def r:
-            . as $i
-            | $str # set subject
-            | first(upto($wset; $i)) as $j # [^consisting]*(?=[consisting])
-            | many($wset; $j) as $k        # [consisting]+
-            | $str[$j:$k], ($k|r)
-        ;
-        0 | r
+def tokens_c($w; $wset; $j): #:: POS|(WORD;WORD;POS) => *WORD
+    def r:
+        first(upto($w; $wset; $j))  # [^consisting]*(?=[consisting])
+        | . as $i
+        | many($w; $wset; $j)       # [consisting]+
+        | $w[$i:.], r
     ;
-    _words(.)
+    r
+;
+def tokens_c($w; $wset): #:: POS|(WORD;WORD) => *WORD
+    tokens_c($w; $wset; $w|length)
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

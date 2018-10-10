@@ -5,139 +5,137 @@
 # Blank lines and lines starting with # are ignored.
 #########################################################################
 
-include "word/scanner"; meets(.==[9])
-[11,9,2,3]
+include "word/scanner"; meets([11,9,2,3]; .==[9])
+0
 # empty
 
-include "word/scanner"; meets(.==[9])
-[9,2,3]
+include "word/scanner"; meets([9,2,3]; .==[9])
+0
 1
 
-include "word/scanner"; match([9])
-[9,2,3]
+include "word/scanner"; match([9,2,3]; [9])
+0
 1
 
-include "word/scanner"; [upto("on")]
-"one motion is optional"
+include "word/scanner"; [upto("one motion is optional"; "on")]
+0
 [0, 1, 5, 8, 9, 14, 18, 19]
 
-include "word/scanner"; [upto("aeiou")]
-"kaleidoscope"
+include "word/scanner"; [upto("kaleidoscope"; "aeiou")]
+0
 [1, 3, 4, 6, 9, 11]
 
 
-include "word/scanner"; notany("aeiou")
-"Asperger"
+include "word/scanner"; notany("Asperger"; "aeiou")
+0
 1
 
-include "word/scanner"; notany("aeiou")
-"Asperger"
+include "word/scanner"; notany("Asperger"; "aeiou")
+0
 1
 
-include "word/scanner"; any("aeiou")
-"asperger"
+include "word/scanner"; any("asperger"; "aeiou")
+0
 1
 
-include "word/scanner"; any("aeiou")
-"Asperger"
+include "word/scanner"; any("Asperger"; "aeiou")
+0
 # empty
 
-include "word/scanner"; many_c("aeiou")
-"xxoops"
+include "word/scanner"; many_c("xxoops"; "aeiou")
+0
 2
 
-include "word/scanner"; many_c("aeiou")
-"axixo"
+include "word/scanner"; many_c("axixo"; "aeiou")
+0
 # empty
 
-include "word/scanner"; many("aeiou")
-"oops"
+include "word/scanner"; many("oops"; "aeiou")
+0
 2
 
-include "word/scanner"; many("aeiou")
-"xixo"
+include "word/scanner"; many("xixo"; "aeiou")
+0
 # empty
 
 #########################################################################
 
-include "word/scanner"; [find("on")]
-"one motion is optional"
+include "word/scanner"; [find("one motion is optional"; "on")]
+0
 [0, 8, 18]
 
-include "word/scanner"; [find("ma")]
-"mi mama me mima"
+include "word/scanner"; [find("mi mama me mima"; "ma")]
+0
 [3, 5, 13]
 
-include "word/scanner"; [find("ab")]
-"abaabbaaabbbaaaabbbb" 
+include "word/scanner"; [find("abaabbaaabbbaaaabbbb" ; "ab")]
+0
 [0, 3, 8, 15]
 
-include "word/scanner"; [find("o")]
-"kaleidoscope"
+include "word/scanner"; [find("kaleidoscope"; "o")]
+0
 [6, 9]
 
 # Factor, proper factor?
 
-include "word/scanner"; match("mi ma")
-"mi mama me mima"
+include "word/scanner"; match("mi mama me mima"; "mi ma")
+0
 5
 
-include "word/scanner"; match("mi ma"; 9)
-"no se si mi mama me mima"
+include "word/scanner"; match("no se si mi mama me mima"; "mi ma")
+9
 14
 
-include "word/scanner"; match([])
-[1,2, 3,4,2, 5]
+include "word/scanner"; match([1,2, 3,4,2, 5]; [])
+0
 0
 
-include "word/scanner"; match([1])
-[1,2, 3,4,2, 5]
+include "word/scanner"; match([1,2, 3,4,2, 5]; [1])
+0
 1
 
-include "word/scanner"; match([3,4,2])
-[]
+include "word/scanner"; match([]; [3,4,2])
+0
 # empty
 
-include "word/scanner"; find([3,4,2])
-[1,2, 3,4,2, 5]
+include "word/scanner"; find([1,2, 3,4,2, 5]; [3,4,2])
+0
 2
 
-include "word/scanner"; match([3,4,2])
-[3,4,2,1,2]
+include "word/scanner"; match([3,4,2,1,2]; [3,4,2])
+0
 3
 
-include "word/scanner"; find([3,4,2])
-[2,1,3,3,4,2]
+include "word/scanner"; find([2,1,3,3,4,2]; [3,4,2])
+0
 3
 
-include "word/scanner"; [tokens(" \t")]
-"Hi there"
+include "word/scanner"; [tokens("Hi there"; " \t")]
+0
 ["Hi", "there"]
 
-include "word/scanner"; [tokens(" \t")]
-"Hi there         "
+include "word/scanner"; [tokens("Hi there         "; " \t")]
+0
 ["Hi", "there"]
 
-include "word/scanner"; [tokens(" \t")]
-"          Hi there"
+include "word/scanner"; [tokens("          Hi there"; " \t")]
+0
 ["Hi", "there"]
 
-include "word/scanner"; [tokens(" \t")]
-"\t        Hi \t       there      "
+include "word/scanner"; [tokens("\t        Hi \t       there      "; " \t")]
+0
 ["Hi", "there"]
 
-include "word/scanner"; [tokens(" \t")]
-"a e i o u"
+include "word/scanner"; [tokens("a e i o u"; " \t")]
+0
 ["a","e","i","o","u"]
 
-include "word/scanner"; [tokens(" \t")]
-"         \t   "
+include "word/scanner"; [tokens("         \t   "; " \t")]
+0
 []
 
-include "word/scanner"; [tokens_c("aeiou")]
-"a e ae io aeiou o "
+include "word/scanner"; [tokens_c("a e ae io aeiou o "; "aeiou")]
+0
 ["a","e","ae","io","aeiou","o"]
-
-########################################################################
 
 # vim:ai:sw=2:ts=2:et:syntax=jq
