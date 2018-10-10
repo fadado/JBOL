@@ -12,26 +12,26 @@ module {
 # Types used in declarations:
 #   WORD:       [a]^string
 #   SYMBOL:     singleton WORD
-#   POS:        number
+#   POSITION:   number
 #   TEST:       SYMBOL->boolean
 
 ########################################################################
 # Match one symbol
 
 # Do satisfies the symbol at `.` in `$w` the predicate `t`?
-def meets($w; t): #:: POS|(WORD;TEST) => ?POS
+def meets($w; t): #:: POSITION|(WORD;TEST) => ?POSITION
     select(0 <= . and . < ($w|length))
     | select($w[.:.+1] | t)
     | .+1
 ;
 
 # Icon `any`
-def any($w; $wset): #:: POS|(WORD;WORD;POS) => ?POS
+def any($w; $wset): #:: POSITION|(WORD;WORD) => ?POSITION
     meets($w; inside($wset))
 ;
 
 # Icon `notany`
-def notany($w; $wset): #:: POS|(WORD;WORD) => ?POS
+def notany($w; $wset): #:: POSITION|(WORD;WORD) => ?POSITION
     meets($w; false==inside($wset))
 ;
 
@@ -39,33 +39,22 @@ def notany($w; $wset): #:: POS|(WORD;WORD) => ?POS
 # upto
 ########################################################################
 
-# Positions for all symbols in `$w[.:j]` satisfying `t`
-def locus($w; t; $j): #:: POS|(WORD;TEST;POS) => *POS
-    . as $i
-    | select(0 <= $i and $i < $j and $j <= ($w|length))
-    | range($i;$j) as $k
+# Positions for all symbols in `$w[.:]` satisfying `t`
+def locus($w; t): #:: POSITION|(WORD;TEST) => *POSITION
+    ($w|length) as $j
+    | select(0 <= . and . < $j)
+    | range(.;$j) as $k
     | select($w[$k:$k+1] | t)
     | $k
 ;
 
-# Positions for all symbols in `$w[.:]` satisfying `t`
-def locus($w; t): #:: POS|(WORD;TEST) => *POS
-    locus($w; t; $w|length)
-;
-
 # Icon `upto`
-def upto($w; $wset; $j): #:: POS|(WORD;WORD;POS) => *POS
-    locus($w; inside($wset); $j)
-;
-def upto($w; $wset): #:: POS|(WORD;WORD) => *POS
-    locus($w; inside($wset); $w|length)
+def upto($w; $wset): #:: POSITION|(WORD;WORD) => *POSITION
+    locus($w; inside($wset))
 ;
 
-def upto_c($w; $wset; $j): #:: POS|(WORD;WORD;POS) => *POS
-    locus($w; false==inside($wset); $j)
-;
-def upto_c($w; $wset): #:: POS|(WORD;WORD) => *POS
-    locus($w; false==inside($wset); $w|length)
+def upto_c($w; $wset): #:: POSITION|(WORD;WORD) => *POSITION
+    locus($w; false==inside($wset))
 ;
 
 ########################################################################
@@ -73,30 +62,20 @@ def upto_c($w; $wset): #:: POS|(WORD;WORD) => *POS
 ########################################################################
 
 # Generalized Icon `many`, SNOBOL `SPAN`, C `strspn`, Haskell `span`
-def span($w; t; $j): #:: POS|(WORD;TEST;POS) => ?POS
-    . as $i
-    | select(0 <= $i and $i < $j)
+def span($w; t): #:: POSITION|(WORD;TEST) => ?POSITION
+    select(0 <= . and . < ($w|length))
     | last(meets($w; t) | recurse(meets($w; t)))
       // empty
 ;
-def span($w; t): #:: POS|(WORD;TEST) => ?POS
-    span($w; t; $w|length)
-;
 
 # Icon `many`
-def many($w; $wset; $j): #:: POS|(WORD;WORD;POS;POS) => ?POS
-    span($w; inside($wset); $j)
-;
-def many($w; $wset): #:: POS|(WORD;WORD) => ?POS
-    span($w; inside($wset); $w|length)
+def many($w; $wset): #:: POSITION|(WORD;WORD) => ?POSITION
+    span($w; inside($wset))
 ;
 
 # Complementary of `many`
-def many_c($w; $wset; $j): #:: POS|(WORD;WORD;POS;POS) => ?POS
-    span($w; false==inside($wset); $j)
-;
-def many_c($w; $wset): #:: POS|(WORD;WORD) => ?POS
-    span($w; false==inside($wset); $w|length)
+def many_c($w; $wset): #:: POSITION|(WORD;WORD) => ?POSITION
+    span($w; false==inside($wset))
 ;
 
 ########################################################################
@@ -104,23 +83,19 @@ def many_c($w; $wset): #:: POS|(WORD;WORD) => ?POS
 ########################################################################
 
 # Matches u at the begining of w? (Icon `match`)
-def match($w; $u; $j): #:: POS|(WORD;WORD;POS)=> ?POS
-    select(0 <= . and . < $j)
+def match($w; $u): #:: POSITION|(WORD;WORD)=> ?POSITION
+    ($w|length) as $j
+    | select(0 <= . and . < $j)
     | ($u|length) as $n
     | select(.+$n <= $j and $w[.:.+$n] == $u)
     | .+$n
 ;
-def match($w; $u): #:: POS|(WORD;WORD)=> ?POS
-    match($w; $u; $w|length)
-;
 
 # Global search factor (Icon `find`)
-def find($w; $u; $j): #:: POS|(WORD;WORD;POS) => *POS
-    select(0 <= . and . < $j and $j <= ($w|length))
-    | $w[.:$j] | indices($u)[]
-;
-def find($w; $u): #:: POS|(WORD;WORD) => *POS
-    find($w; $u; $w|length)
+def find($w; $u): #:: POSITION|(WORD;WORD) => *POSITION
+    select(0 <= . and . < ($w|length))
+    | $w[.:]
+    | indices($u)[]
 ;
 
 ########################################################################
@@ -128,31 +103,24 @@ def find($w; $u): #:: POS|(WORD;WORD) => *POS
 ########################################################################
 
 # Produce tokens delimited by `$wset` symbols
-def tokens($w; $wset; $j): #:: POS|(WORD;WORD;POS) => *WORD
+def tokens($w; $wset): #:: POSITION|(WORD;WORD) => *WORD
     def r:
-        first(upto_c($w; $wset; $j))    # [delimiters]*(?=[^delimiters])
+        first(upto_c($w; $wset))    # [delimiters]*(?=[^delimiters])
         | . as $i
-        | many_c($w; $wset; $j)         # [^delimiters]+
+        | many_c($w; $wset)         # [^delimiters]+
         | $w[$i:.], r
     ;
     r
 ;
-def tokens($w; $wset): #:: POS|(WORD;WORD) => *WORD
-    tokens($w; $wset; $w|length)
-;
-
 # Produce tokens consisting in `$wset` symbols
-def tokens_c($w; $wset; $j): #:: POS|(WORD;WORD;POS) => *WORD
+def tokens_c($w; $wset): #:: POSITION|(WORD;WORD) => *WORD
     def r:
-        first(upto($w; $wset; $j))  # [^consisting]*(?=[consisting])
+        first(upto($w; $wset))  # [^consisting]*(?=[consisting])
         | . as $i
-        | many($w; $wset; $j)       # [consisting]+
+        | many($w; $wset)       # [consisting]+
         | $w[$i:.], r
     ;
     r
-;
-def tokens_c($w; $wset): #:: POS|(WORD;WORD) => *WORD
-    tokens_c($w; $wset; $w|length)
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

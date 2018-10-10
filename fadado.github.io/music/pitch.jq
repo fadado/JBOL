@@ -26,7 +26,7 @@ def new: #:: <number^string> => PITCH
     if isnumber then
         if 0 <= . and . <= 127 # . is a pitch in the range 0..127
         then .
-        else "Pitch out of range: \(.)" | error
+        else error("Pitch out of range: \(.)")
         end
     elif isstring then
         if test("^[A-G][♯♭]?(?:[0-9]|10)$") # . is a note name with octave
@@ -42,7 +42,7 @@ def new: #:: <number^string> => PITCH
               else $n
               end
         else
-            "Malformed pitch: \(.)" | error
+            error("Malformed pitch: \(.)")
         end
     else typerror("number or string")
     end
@@ -78,7 +78,7 @@ def format: #:: PITCH => string
 def transpose($i): #:: PITCH|(PI) => PITCH
     . + $i
     | unless(0 <= . and . <= 127;
-        "Pitch out of range: \(.)" | error)
+        error("Pitch out of range: \(.)"))
 ;
 
 # Produces the pitch interval (-127..127) between two pitches

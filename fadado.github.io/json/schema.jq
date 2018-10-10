@@ -333,7 +333,7 @@ def validate($schema; $fatal): #:: a|(SCHEMA;boolean) => boolean
         #
         def check(constraint):
             constraint
-            or $fatal and ({ instance: ., schema: $schema } | error)
+            or $fatal and error({ instance: ., schema: $schema })
         ;
         $schema == null
         or $schema == {}

@@ -107,13 +107,11 @@ def tobool(a): #:: (a) => boolean
 # Type errors
 
 def typerror:
-    type
-    | "Type error: unexpected \(.)" | error
+    type | error("Type error: unexpected \(.)")
 ;
 
 def typerror($s):
-    type
-    | "Type error: expected" + $s + ", not \(.)" | error
+    type | error("Type error: expected" + $s + ", not \(.)")
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

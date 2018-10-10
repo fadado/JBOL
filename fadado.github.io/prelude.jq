@@ -81,11 +81,11 @@ def fence: #:: a => a!
 #   try (...) catch _abort_(result)
 #   . as $_ | try (A | possible abortion | B) catch _abort_($_)
 def _abort_(result): #:: string| => a!
-    if . == "~!~" then result else error end
+    if . == "~!~" then result else error(.) end
 ;
 #   try (...) catch _abort_
 def _abort_: #:: string| => @!
-    if . == "~!~" then empty else error end
+    if . == "~!~" then empty else error(.) end
 ;
 
 ########################################################################
@@ -96,16 +96,14 @@ def assert(predicate; $location; $message): #:: a|(a->boolean;LOCATION;string) =
     if predicate then .
     else
         $location
-        | "Assertion failed: "+$message+", file \(.file), line \(.line)"
-        | error
+        | error("Assertion failed: "+$message+", file \(.file), line \(.line)")
     end
 ;
 
 def assert(predicate; $message): #:: a|(a->boolean;string) => a!
     if predicate then .
     else
-        "Assertion failed: "+$message
-        | error
+        error("Assertion failed: "+$message)
     end
 ;
 
