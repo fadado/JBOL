@@ -46,19 +46,26 @@ Some of the `jval` limitations are:
 
 If you have the latests _GNU Make_ tool in your system run this command:
 
-```
+```zsh
 $ sudo make install
 ```
 
 This will install modules and other data files to `/usr/local/share/jbol`, and
 tools to `/usr/local/bin`.
 
+If you don’t like to install into the `/usr/local` system directory you
+can change the destination directory:
+
+```zsh
+$ sudo make install prefix=/your/installation/path
+```
+
 ### Manual installation
 
 All provided modules are in the `fadado.github.io` directory. Copy this
 directory to the top-level **JQ** modules path with commands equivalent to:
 
-```sh
+```zsh
 $ sudo mkdir -p /usr/local/share/jbol
 $ sudo cp -r fadado.github.io /usr/local/share/jbol
 ```
@@ -66,7 +73,7 @@ $ sudo cp -r fadado.github.io /usr/local/share/jbol
 The tools and related schema files can be installed with commands equivalent
 to:
 
-```sh
+```zsh
 $ sudo mkdir -p /usr/local/bin
 $ sudo cp bin/* /usr/local/bin
 $ sudo cp -r schemata /usr/local/share/jbol
@@ -95,7 +102,7 @@ def normalize_space($s):
 
 Finally, run your script with the `jq` appropriated `-L` option:
 
-```sh
+```zsh
 $ jq -L/usr/local/share/jbol -f script.jq
 ```
 
@@ -173,7 +180,7 @@ how each example works.
 As an example, calling 'make nqsmart` runs this script generating in a smart
 way the solutions for the classical _8 queens_ problem:
 
-```
+```jq
 include "fadado.github.io/prelude";
 import "fadado.github.io/array" as array;
 
@@ -211,8 +218,8 @@ To run the examples and tests the `Makefile` puts the `jq` binary full pathname
 in the macro `JQ` (defined by default as `/usr/local/bin/jq`). You can modify
 this macro definition when calling `make` using this syntax:
 
-```
-make nqsmart JQ=/usr/bin/jq
+```zsh
+$ make nqsmart JQ=/usr/bin/jq
 ```
 
 <!--

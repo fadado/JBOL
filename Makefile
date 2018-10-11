@@ -143,8 +143,9 @@ $(LogDir)/object.log: $(OBJECT)/object.jq
 $(LogDir)/object_set.log: $(OBJECT)/set.jq $(LIB)/prelude.jq $(LIB)/types.jq
 
 # Word tests
-$(LogDir)/word.log: $(WORD)/word.jq $(LIB)/prelude.jq $(LIB)/types.jq
-$(LogDir)/word_scanner.log: $(WORD)/scanner.jq $(LIB)/prelude.jq
+$(LogDir)/word.log: $(WORD)/word.jq $(LIB)/types.jq
+$(LogDir)/word_scanner.log: $(WORD)/scanner.jq
+$(LogDir)/word_factor.log: $(WORD)/factor.jq $(WORD)/scanner.jq
 $(LogDir)/word_alphabet.log: $(WORD)/alphabet.jq $(ARRAY)/kleene.jq $(LIB)/prelude.jq $(LIB)/types.jq
 $(LogDir)/word_language.log: $(WORD)/language.jq $(ARRAY)/kleene.jq $(LIB)/prelude.jq
 
@@ -203,19 +204,22 @@ help:
 	| sed 's/:\+$$//'					\
 	| pr --omit-pagination --indent=4 --width=80 --columns=4
 
-# BUG: truncate duplicated module names!
-#define make_prototypes
-#  find fadado.github.io -name '*.jq' -print | while read m; do	\
-#    M=$${m##*/};						\
-#    P=$${M%.jq};						\
-#    <$$m grep '^def  *[^_].*\#::'	 			\
-#    | sed -e 's/^def  *//' -e 's/:  *\#/ /'			\
-#    | sort >|/tmp/$$P.md ;					\
-#  done
-#endef
-#
-#prototypes:
-#	$(call make_prototypes)
+# Generate type declarations
+define make_prototypes
+  find fadado.github.io -name '*.jq' -print | while read m; do	\
+    M=$${m##*/};						\
+    P=$${M%.jq};						\
+    X=$${m#*fadado.github.io/};					\
+    X=$${X%/$$M}_;						\
+    [[ $$X == *.jq_ ]] && X='';					\
+    <$$m grep '^def  *[^_].*\#::'	 			\
+    | sed -e 's/^def  *//' -e 's/:  *\#/ /'			\
+    | sort >|/tmp/$${X}$${P}.txt ;				\
+  done
+endef
+
+prototypes:
+	$(call make_prototypes)
 
 ########################################################################
 # Examples

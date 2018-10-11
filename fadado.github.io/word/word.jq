@@ -8,7 +8,6 @@ module {
     }
 };
 
-include "fadado.github.io/prelude";
 include "fadado.github.io/types";
 
 ########################################################################
@@ -55,68 +54,6 @@ def alphabet: #:: WORD => WORD
 # Number of u's in w
 def count($u): #:: WORD|(WORD) => number
     indices($u) | length
-;
-
-########################################################################
-# Match one word
-
-# Prefix?
-def isprefix($u): #:: WORD|(WORD) => boolean
-    ($u|length) as $j
-    | $j <= length and .[0:$j] == $u
-;
-
-# Suffix?
-def issuffix($u): #:: WORD|(WORD) => boolean
-    ($u|length) as $j
-    | $j == 0 or $j <= length and .[-$j:] == $u
-;
-
-# Factor?
-def isfactor($u): #:: WORD|(WORD) => boolean
-    ($u|length) as $j
-    | 0 < $j and index($u)!=null
-;
-
-# Proper prefix?
-def ispprefix($u): #:: WORD|(WORD) => boolean
-    length > ($u|length) and isprefix($u)
-;
-
-# Proper suffix?
-def ispsuffix($u): #:: WORD|(WORD) => boolean
-    length > ($u|length) and issuffix($u)
-;
-
-# Proper factor?
-def ispfactor($u): #:: WORD|(WORD) => boolean
-    ($u|length) as $j
-    | 0 < $j and $j < length and index($u)!=null
-;
-
-########################################################################
-# Word streams
-
-# Sets of prefixes (without the empty word)
-def prefixes: #:: WORD => *WORD
-    .[:range(1;length+1)]
-;
-
-# Sets of suffixes (without the empty word)
-def suffixes: #:: WORD => *WORD
-    .[range(length-1;-1;-1):]
-;
-
-# Sets of factors, (without the empty word)
-def factors: #:: WORD => *WORD
-# length order:
-    range(1;length+1) as $j
-    | range(0;length-$j+1) as $i
-    | .[$i:$i+$j]
-# different order:
-#   range(0;length+1) as $j
-#   | range($j+1; length+1) as $i
-#   | .[$j:$i]
 ;
 
 ########################################################################

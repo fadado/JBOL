@@ -70,50 +70,6 @@ include "word"; mirror
 "aeiou"
 "uoiea"
 
-########################################################################
-
-include "word"; isfactor([1,2])
-[2,3,1,2,3]
-true
-
-include "word"; isfactor("a")
-"lae"
-true
-
-include "word"; ispfactor([])
-[1,2, 3,4,2, 5]
-false
-
-include "word"; ispfactor([3,4,2])
-[]
-false
-
-include "word"; ispfactor([3,4,2])
-[3,4,2]
-false
-
-include "word"; ispfactor([3,4,2])
-[1,2, 3,4,2, 5]
-true
-
-include "word"; ispfactor("342")
-"123425"
-true
-
-########################################################################
-
-include "word"; [prefixes]
-"abcd"
-["a", "ab", "abc", "abcd"]
-
-include "word"; [suffixes]
-"abcd"
-["d", "cd", "bcd", "abcd"]
-
-include "word"; [factors]
-"abcd"
-["a","b","c","d","ab","bc","cd","abc","bcd","abcd"]
-
 
 ########################################################################
 
@@ -188,19 +144,5 @@ true
 include "word"; [[limit(13;star)][1:],[limit(12;plus)]] | .[0]==.[1]
 "abc"
 true
-
-########################################################################
-
-include "word"; [prefixes]
-"abcd"
-["a", "ab", "abc", "abcd"]
-
-include "word"; [suffixes]
-"abcd"
-["d", "cd", "bcd", "abcd"]
-
-include "word"; [factors]
-"abcd"
-["a","b","c","d","ab","bc","cd","abc","bcd","abcd"]
 
 # vim:ai:sw=2:ts=2:et:syntax=jq

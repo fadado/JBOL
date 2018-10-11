@@ -1,0 +1,91 @@
+#########################################################################
+# Combinatorics on Words
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+#########################################################################
+
+include "word/factor"; isfactor([1,2])
+[2,3,1,2,3]
+true
+
+include "word/factor"; isfactor("a")
+"lae"
+true
+
+include "word/factor"; ispfactor([])
+[1,2, 3,4,2, 5]
+false
+
+include "word/factor"; ispfactor([3,4,2])
+[]
+false
+
+include "word/factor"; ispfactor([3,4,2])
+[3,4,2]
+false
+
+include "word/factor"; ispfactor([3,4,2])
+[1,2, 3,4,2, 5]
+true
+
+include "word/factor"; ispfactor("342")
+"123425"
+true
+
+########################################################################
+
+include "word/factor"; [prefixes]
+"abcd"
+["a", "ab", "abc", "abcd"]
+
+include "word/factor"; [suffixes]
+"abcd"
+["d", "cd", "bcd", "abcd"]
+
+include "word/factor"; [factors]
+"abcd"
+["a","b","c","d","ab","bc","cd","abc","bcd","abcd"]
+
+
+include "word/factor"; [prefixes]
+"abcd"
+["a", "ab", "abc", "abcd"]
+
+include "word/factor"; [suffixes]
+"abcd"
+["d", "cd", "bcd", "abcd"]
+
+include "word/factor"; [factors]
+"abcd"
+["a","b","c","d","ab","bc","cd","abc","bcd","abcd"]
+
+include "word/factor"; [tokens("Hi there"; " \t")]
+0
+["Hi", "there"]
+
+include "word/factor"; [tokens("Hi there         "; " \t")]
+0
+["Hi", "there"]
+
+include "word/factor"; [tokens("          Hi there"; " \t")]
+0
+["Hi", "there"]
+
+include "word/factor"; [tokens("\t        Hi \t       there      "; " \t")]
+0
+["Hi", "there"]
+
+include "word/factor"; [tokens("a e i o u"; " \t")]
+0
+["a","e","i","o","u"]
+
+include "word/factor"; [tokens("         \t   "; " \t")]
+0
+[]
+
+include "word/factor"; [tokens_c("a e ae io aeiou o "; "aeiou")]
+0
+["a","e","ae","io","aeiou","o"]
+
+# vim:ai:sw=2:ts=2:et:syntax=jq

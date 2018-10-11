@@ -120,29 +120,4 @@ def find($w; $u): #:: POSITION|(WORD;WORD) => *POSITION
     | indices($u)[]
 ;
 
-########################################################################
-# Tokenize words
-########################################################################
-
-# Produce tokens delimited by `$wset` symbols
-def tokens($w; $wset): #:: POSITION|(WORD;WORD) => *WORD
-    def r:
-        upto1_c($w; $wset)      # [delimiters]*(?=[^delimiters])
-        | . as $i
-        | many_c($w; $wset)     # [^delimiters]+
-        | $w[$i:.], r
-    ;
-    r
-;
-# Produce tokens consisting in `$wset` symbols
-def tokens_c($w; $wset): #:: POSITION|(WORD;WORD) => *WORD
-    def r:
-        upto1($w; $wset)    # [^consisting]*(?=[consisting])
-        | . as $i
-        | many($w; $wset)   # [consisting]+
-        | $w[$i:.], r
-    ;
-    r
-;
-
 # vim:ai:sw=4:ts=4:et:syntax=jq
