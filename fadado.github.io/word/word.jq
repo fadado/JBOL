@@ -61,35 +61,35 @@ def count($u): #:: WORD|(WORD) => number
 # Match one word
 
 # Prefix?
-def prefix($u): #:: WORD|(WORD) => boolean
+def isprefix($u): #:: WORD|(WORD) => boolean
     ($u|length) as $j
     | $j <= length and .[0:$j] == $u
 ;
 
 # Suffix?
-def suffix($u): #:: WORD|(WORD) => boolean
+def issuffix($u): #:: WORD|(WORD) => boolean
     ($u|length) as $j
     | $j == 0 or $j <= length and .[-$j:] == $u
 ;
 
 # Factor?
-def factor($u): #:: WORD|(WORD) => boolean
+def isfactor($u): #:: WORD|(WORD) => boolean
     ($u|length) as $j
     | 0 < $j and index($u)!=null
 ;
 
 # Proper prefix?
-def pprefix($u): #:: WORD|(WORD) => boolean
-    length > ($u|length) and prefix($u)
+def ispprefix($u): #:: WORD|(WORD) => boolean
+    length > ($u|length) and isprefix($u)
 ;
 
 # Proper suffix?
-def psuffix($u): #:: WORD|(WORD) => boolean
-    length > ($u|length) and suffix($u)
+def ispsuffix($u): #:: WORD|(WORD) => boolean
+    length > ($u|length) and issuffix($u)
 ;
 
 # Proper factor?
-def pfactor($u): #:: WORD|(WORD) => boolean
+def ispfactor($u): #:: WORD|(WORD) => boolean
     ($u|length) as $j
     | 0 < $j and $j < length and index($u)!=null
 ;

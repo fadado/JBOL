@@ -72,31 +72,31 @@ include "word"; mirror
 
 ########################################################################
 
-include "word"; factor([1,2])
+include "word"; isfactor([1,2])
 [2,3,1,2,3]
 true
 
-include "word"; factor("a")
+include "word"; isfactor("a")
 "lae"
 true
 
-include "word"; pfactor([])
+include "word"; ispfactor([])
 [1,2, 3,4,2, 5]
 false
 
-include "word"; pfactor([3,4,2])
+include "word"; ispfactor([3,4,2])
 []
 false
 
-include "word"; pfactor([3,4,2])
+include "word"; ispfactor([3,4,2])
 [3,4,2]
 false
 
-include "word"; pfactor([3,4,2])
+include "word"; ispfactor([3,4,2])
 [1,2, 3,4,2, 5]
 true
 
-include "word"; pfactor("342")
+include "word"; ispfactor("342")
 "123425"
 true
 

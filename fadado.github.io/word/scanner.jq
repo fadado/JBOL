@@ -52,9 +52,15 @@ def locus($w; t): #:: POSITION|(WORD;TEST) => *POSITION
 def upto($w; $wset): #:: POSITION|(WORD;WORD) => *POSITION
     locus($w; inside($wset))
 ;
+def upto1($w; $wset): #:: POSITION|(WORD;WORD) => *POSITION
+    first(locus($w; inside($wset)))
+;
 
 def upto_c($w; $wset): #:: POSITION|(WORD;WORD) => *POSITION
     locus($w; false==inside($wset))
+;
+def upto1_c($w; $wset): #:: POSITION|(WORD;WORD) => *POSITION
+    first(locus($w; false==inside($wset)))
 ;
 
 ########################################################################
@@ -63,9 +69,25 @@ def upto_c($w; $wset): #:: POSITION|(WORD;WORD) => *POSITION
 
 # Generalized Icon `many`, SNOBOL `SPAN`, C `strspn`, Haskell `span`
 def span($w; t): #:: POSITION|(WORD;TEST) => ?POSITION
-    select(0 <= . and . < ($w|length))
-    | last(meets($w; t) | recurse(meets($w; t)))
-      // empty
+# Pure declarative:
+#   select(0 <= . and . < ($w|length))
+#   | last(meets($w; t) | recurse(meets($w; t)))
+#     // empty
+# Old school:
+    . as $i
+    | ($w|length) as $j
+    | select(0 <= $i and $i < $j)
+    | label $pipe
+    # for $k=. to $j+1 (off-value used as a flag)
+    | range(.; $j+1) as $k
+    | if $k == $j           # if past end, all matched
+      then $k , break$pipe  # then return $k
+      elif $w[$k:$k+1] | t  # if match at $k
+      then empty            # then continue loop
+      elif $k > $i          # if moved at least one forward
+      then $k , break$pipe  # then return $k
+      else break$pipe       # abort, none match!
+      end
 ;
 
 # Icon `many`
@@ -105,9 +127,9 @@ def find($w; $u): #:: POSITION|(WORD;WORD) => *POSITION
 # Produce tokens delimited by `$wset` symbols
 def tokens($w; $wset): #:: POSITION|(WORD;WORD) => *WORD
     def r:
-        first(upto_c($w; $wset))    # [delimiters]*(?=[^delimiters])
+        upto1_c($w; $wset)      # [delimiters]*(?=[^delimiters])
         | . as $i
-        | many_c($w; $wset)         # [^delimiters]+
+        | many_c($w; $wset)     # [^delimiters]+
         | $w[$i:.], r
     ;
     r
@@ -115,9 +137,9 @@ def tokens($w; $wset): #:: POSITION|(WORD;WORD) => *WORD
 # Produce tokens consisting in `$wset` symbols
 def tokens_c($w; $wset): #:: POSITION|(WORD;WORD) => *WORD
     def r:
-        first(upto($w; $wset))  # [^consisting]*(?=[consisting])
+        upto1($w; $wset)    # [^consisting]*(?=[consisting])
         | . as $i
-        | many($w; $wset)       # [consisting]+
+        | many($w; $wset)   # [consisting]+
         | $w[$i:.], r
     ;
     r
