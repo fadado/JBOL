@@ -52,15 +52,9 @@ def locus($w; t): #:: POSITION|(WORD;TEST) => *POSITION
 def upto($w; $wset): #:: POSITION|(WORD;WORD) => *POSITION
     locus($w; inside($wset))
 ;
-def upto1($w; $wset): #:: POSITION|(WORD;WORD) => *POSITION
-    first(locus($w; inside($wset)))
-;
 
 def upto_c($w; $wset): #:: POSITION|(WORD;WORD) => *POSITION
     locus($w; false==inside($wset))
-;
-def upto1_c($w; $wset): #:: POSITION|(WORD;WORD) => *POSITION
-    first(locus($w; false==inside($wset)))
 ;
 
 ########################################################################
@@ -101,6 +95,32 @@ def many_c($w; $wset): #:: POSITION|(WORD;WORD) => ?POSITION
 ;
 
 ########################################################################
+# Tokenize words
+
+def tokens($w; t): #:: POSITION|(WORD;TEST) => [POSITION,POSITION]
+    def r:
+        first(locus($w; t))
+        | . as $i
+        | span($w; t)
+        | [$i, .]
+          , r
+    ;
+    r
+;
+
+# Produce words consisting in `$wset` symbols
+def words($w; $wset): #:: POSITION|(WORD;WORD) => *WORD
+    tokens($w; inside($wset)) as [$i,$j]
+    | $w[$i:$j]
+;
+
+# Produce words delimited by `$wset` symbols
+def words_c($w; $wset): #:: POSITION|(WORD;WORD) => *WORD
+    tokens($w; false==inside($wset)) as [$i,$j]
+    | $w[$i:$j]
+;
+
+########################################################################
 # Match/find word(s)
 ########################################################################
 
@@ -118,6 +138,21 @@ def find($w; $u): #:: POSITION|(WORD;WORD) => *POSITION
     select(0 <= . and . < ($w|length))
     | $w[.:]
     | indices($u)[]
+;
+
+########################################################################
+# Balanced tokens
+########################################################################
+
+def bal($w; $lhs; $rhs): #:: POSITION|(string;string;string) => *POSITION
+    def _bal($braces):
+        def gbal:
+            notany($w; $braces)
+            , (match($w; $lhs) | recurse(gbal) | match($w; $rhs))
+        ;
+        gbal | recurse(gbal)
+    ;
+    _bal($lhs+$rhs)
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

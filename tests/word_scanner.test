@@ -110,4 +110,55 @@ include "word/scanner"; find([2,1,3,3,4,2]; [3,4,2])
 0
 3
 
+
+include "word/scanner"; . as $s | range(0;$s|length) | . as $i | bal($s; "("; ")") | . as $j | $s[$i:$j]
+"((A+(B*C))+D)"
+"((A+(B*C))+D)"
+"(A+(B*C))"
+"(A+(B*C))+"
+"(A+(B*C))+D"
+"A"
+"A+"
+"A+(B*C)"
+"+"
+"+(B*C)"
+"(B*C)"
+"B"
+"B*"
+"B*C"
+"*"
+"*C"
+"C"
+"+"
+"+D"
+"D"
+
+include "word/scanner"; [words_c("Hi there"; " \t")]
+0
+["Hi", "there"]
+
+include "word/scanner"; [words_c("Hi there         "; " \t")]
+0
+["Hi", "there"]
+
+include "word/scanner"; [words_c("          Hi there"; " \t")]
+0
+["Hi", "there"]
+
+include "word/scanner"; [words_c("\t        Hi \t       there      "; " \t")]
+0
+["Hi", "there"]
+
+include "word/scanner"; [words_c("a e i o u"; " \t")]
+0
+["a","e","i","o","u"]
+
+include "word/scanner"; [words_c("         \t   "; " \t")]
+0
+[]
+
+include "word/scanner"; [words("a e ae io aeiou o "; "aeiou")]
+0
+["a","e","ae","io","aeiou","o"]
+
 # vim:ai:sw=2:ts=2:et:syntax=jq

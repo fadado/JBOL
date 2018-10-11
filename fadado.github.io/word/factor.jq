@@ -8,12 +8,9 @@ module {
     }
 };
 
-import "fadado.github.io/word/scanner" as scan;
-
 ########################################################################
 # Types used in declarations:
 #   WORD:       [a]^string
-#   POSITION:   number
 
 ########################################################################
 # Match one word
@@ -75,30 +72,6 @@ def factors: #:: WORD => *WORD
 #   range(0;length+1) as $i
 #   | range($i+1; length+1) as $j
 #   | .[$i:$j]
-;
-
-########################################################################
-# Tokenize words
-
-# Produce tokens delimited by `$wset` symbols
-def tokens($w; $wset): #:: POSITION|(WORD;WORD) => *WORD
-    def r:
-        scan::upto1_c($w; $wset)      # [delimiters]*(?=[^delimiters])
-        | . as $i
-        | scan::many_c($w; $wset)     # [^delimiters]+
-        | $w[$i:.], r
-    ;
-    r
-;
-# Produce tokens consisting in `$wset` symbols
-def tokens_c($w; $wset): #:: POSITION|(WORD;WORD) => *WORD
-    def r:
-        scan::upto1($w; $wset)    # [^consisting]*(?=[consisting])
-        | . as $i
-        | scan::many($w; $wset)   # [consisting]+
-        | $w[$i:.], r
-    ;
-    r
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq
