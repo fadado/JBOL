@@ -123,7 +123,7 @@ $(LogDir)/types.log: $(LIB)/types.jq
 $(LogDir)/stream.log: $(LIB)/stream.jq
 
 # JSON tests
-$(LogDir)/json.log: $(JSON)/json.jq $(WORD)/scanner.jq $(STRING)/ascii.jq
+$(LogDir)/json.log: $(JSON)/json.jq $(LIB)/prelude.jq $(LIB)/types.jq $(STRING)/ascii.jq $(STRING)/regexp.jq
 $(LogDir)/json_schema.log: $(JSON)/schema.jq $(LIB)/prelude.jq $(LIB)/types.jq $(STRING)/url.jq $(STRING)/regexp.jq $(LIB)/stream.jq
 
 # Math tests
@@ -145,7 +145,7 @@ $(LogDir)/object_set.log: $(OBJECT)/set.jq $(LIB)/prelude.jq $(LIB)/types.jq
 # Word tests
 $(LogDir)/word.log: $(WORD)/word.jq $(LIB)/types.jq
 $(LogDir)/word_scanner.log: $(WORD)/scanner.jq
-$(LogDir)/word_factor.log: $(WORD)/factor.jq $(WORD)/scanner.jq
+$(LogDir)/word_factor.log: $(WORD)/factor.jq
 $(LogDir)/word_alphabet.log: $(WORD)/alphabet.jq $(ARRAY)/kleene.jq $(LIB)/prelude.jq $(LIB)/types.jq
 $(LogDir)/word_language.log: $(WORD)/language.jq $(ARRAY)/kleene.jq $(LIB)/prelude.jq
 

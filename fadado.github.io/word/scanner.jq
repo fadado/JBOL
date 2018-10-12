@@ -134,9 +134,9 @@ def bal($w; $lhs; $rhs): #:: POSITION|(string;string;string) => *POSITION
 ########################################################################
 # Tokenize words
 
-def tokens($w; begin; token): #:: POSITION|(WORD;PATTERN;PATTERN) => *SLICE
+def tokens($w; next; token): #:: POSITION|(WORD;PATTERN;PATTERN) => *SLICE
     def r:
-        begin
+        next
         | . as $i
         | token
         | [$i, .]
@@ -151,14 +151,12 @@ def tokens($w; t): #:: POSITION|(WORD;TEST) => *SLICE
 
 # Produce words consisting in `$alphabet` symbols
 def words($w; $alphabet): #:: POSITION|(WORD;WORD) => *WORD
-#   tokens($w; first(upto($w;$alphabet)); many($w;$alphabet)) as [$i,$j]
     tokens($w; inside($alphabet)) as [$i,$j]
     | $w[$i:$j]
 ;
 
 # Produce words delimited by `$alphabet` symbols
 def words_c($w; $alphabet): #:: POSITION|(WORD;WORD) => *WORD
-#   tokens($w; first(upto_c($w;$alphabet)); many_c($w;$alphabet)) as [$i,$j]
     tokens($w; false==inside($alphabet)) as [$i,$j]
     | $w[$i:$j]
 ;
@@ -166,8 +164,8 @@ def words_c($w; $alphabet): #:: POSITION|(WORD;WORD) => *WORD
 # Extract numbers
 def numbers($w): #:: POSITION|(WORD) => *number
     def opt(p): first(p , .);
+    def next:   first(upto($w;"+-0123456789"));
     def sign:   opt(any($w;"+-"));
-    def start:  first(upto($w;"+-0123456789"));
     def digits: many($w;"0123456789");
 #1
     def number: sign | digits | opt((match($w;".") | opt(digits)));
@@ -176,7 +174,7 @@ def numbers($w): #:: POSITION|(WORD) => *number
 #3  def real: digits | match($w;".") | opt(digits);
 #3  def number: sign | first(real , integer);
 
-    tokens($w; start; number) as [$i,$j]
+    tokens($w; next; number) as [$i,$j]
     | $w[$i:$j]
     | tonumber
 ;

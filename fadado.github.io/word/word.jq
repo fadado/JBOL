@@ -58,11 +58,32 @@ def count($u): #:: WORD|(WORD) => number
 
 # Splice word: replace or delete slice
 def splice($i; $j; $u): #:: WORD|(number;number;WORD) => WORD
-    select($i <= $j and $j <= length)
-    | .[:$i] + $u + .[$j:]  # with $u == null delete!
+    if $i > $j or $j > length
+    then . # cannot splice
+    else.[:$i] + $u + .[$j:]  # with $u == null: delete!
+    end
 ;
 def splice($w; $i; $j; $u): #:: (WORD;number;number;WORD) => WORD
     $w|splice($i;$j;$u)
+;
+
+# Replace sub-words
+def sub($s; $r): #:: WORD|(WORD;WORD) => WORD
+    ($s|length) as $n
+    | if length == 0 or $n == 0
+      then .
+      else index($s) as $i | splice($i; $i+$n; $r)
+      end
+;
+
+def gsub($s; $r): #:: WORD|(WORD;WORD) => WORD
+    ($s|length) as $n
+    | if length == 0 or $n == 0
+      then .
+      else
+        reduce (indices($s)|reverse[]) as $i
+            (.; splice($i; $i+$n; $r))
+      end
 ;
 
 ########################################################################

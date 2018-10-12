@@ -165,4 +165,25 @@ include "word"; splice(1;2;null)
 "aeiou"
 "aiou"
 
+include "word"; gsub("a";"x")
+"mi mama me mima"
+"mi mxmx me mimx"
+
+include "word"; gsub("a";"")
+"mi mama me mima"
+"mi mm me mim"
+
+include "word"; gsub("";"ignored")
+"mi mama me mima"
+"mi mama me mima"
+
+include "word"; gsub("ignored";"ignored")
+""
+""
+
+include "word"; sub("a";"x")
+"mi mama me mima"
+"mi mxma me mima"
+
+
 # vim:ai:sw=2:ts=2:et:syntax=jq
