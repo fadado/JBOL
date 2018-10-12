@@ -12,8 +12,9 @@ module {
 # Types used in declarations:
 #   WORD:       [a]^string
 #   SYMBOL:     singleton WORD
-#   POSITION:   number
 #   TEST:       SYMBOL->boolean
+#   POSITION:   number
+#   PATTERN:    POSITION->POSITION
 
 ########################################################################
 # Match one symbol
@@ -95,32 +96,6 @@ def many_c($w; $wset): #:: POSITION|(WORD;WORD) => ?POSITION
 ;
 
 ########################################################################
-# Tokenize words
-
-def tokens($w; t): #:: POSITION|(WORD;TEST) => [POSITION,POSITION]
-    def r:
-        first(locus($w; t))
-        | . as $i
-        | span($w; t)
-        | [$i, .]
-          , r
-    ;
-    r
-;
-
-# Produce words consisting in `$wset` symbols
-def words($w; $wset): #:: POSITION|(WORD;WORD) => *WORD
-    tokens($w; inside($wset)) as [$i,$j]
-    | $w[$i:$j]
-;
-
-# Produce words delimited by `$wset` symbols
-def words_c($w; $wset): #:: POSITION|(WORD;WORD) => *WORD
-    tokens($w; false==inside($wset)) as [$i,$j]
-    | $w[$i:$j]
-;
-
-########################################################################
 # Match/find word(s)
 ########################################################################
 
@@ -153,6 +128,54 @@ def bal($w; $lhs; $rhs): #:: POSITION|(string;string;string) => *POSITION
         gbal | recurse(gbal)
     ;
     _bal($lhs+$rhs)
+;
+
+########################################################################
+# Tokenize words
+
+def tokens($w; begin; more): #:: POSITION|(WORD;PATTERN;PATTERN) => [POSITION,POSITION]
+    def r:
+        begin
+        | . as $i
+        | more  # . as $j
+        | [$i, .]
+          , r
+    ;
+    r
+;
+
+def tokens($w; t): #:: POSITION|(WORD;TEST) => [POSITION,POSITION]
+    tokens($w; first(locus($w;t)); span($w;t))
+;
+
+# Produce words consisting in `$wset` symbols
+def words($w; $wset): #:: POSITION|(WORD;WORD) => *WORD
+    tokens($w; first(upto($w;$wset)); many($w;$wset)) as [$i,$j]
+    | $w[$i:$j]
+;
+
+# Produce words delimited by `$wset` symbols
+def words_c($w; $wset): #:: POSITION|(WORD;WORD) => *WORD
+    tokens($w; first(upto_c($w;$wset)); many_c($w;$wset)) as [$i,$j]
+    | $w[$i:$j]
+;
+
+# Extract numbers
+def numbers($w): #:: POSITION|(WORD) => *number
+    def opt(p): first(p, .);
+    def sign: opt(any($w; "+-"));
+    def begin:  first(upto($w;"+-0123456789"));
+    def digits: many($w;"0123456789");
+#1
+    def number: sign | digits | opt((match($w;".") | opt(digits)));
+#2  def number: sign | first((digits | match($w;".") | opt(digits)), digits);
+#3  def integer: digits;
+#3  def real: digits | match($w; ".") | opt(digits);
+#3  def number: sign | first(real, integer);
+
+    tokens($w; begin; number) as [$i,$j]
+    | $w[$i:$j]
+    | tonumber
 ;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

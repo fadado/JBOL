@@ -161,4 +161,8 @@ include "word/scanner"; [words("a e ae io aeiou o "; "aeiou")]
 0
 ["a","e","ae","io","aeiou","o"]
 
+include "word/scanner"; [numbers("1000 lala 12 be 13.2 so 7. 7.77 lele10lolo-33.33")]
+0
+[1e3, 12, 13.2, 7.0, 7.77, 10, -33.33]
+
 # vim:ai:sw=2:ts=2:et:syntax=jq
