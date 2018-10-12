@@ -14,7 +14,8 @@ module {
 #   SYMBOL:     singleton WORD
 #   TEST:       SYMBOL->boolean
 #   POSITION:   number
-#   PATTERN:    POSITION->POSITION
+#   PATTERN:    POSITION->?POSITION
+#   SLICE:      [POSITION,POSITION]
 
 ########################################################################
 # Match one symbol
@@ -27,13 +28,13 @@ def meets($w; t): #:: POSITION|(WORD;TEST) => ?POSITION
 ;
 
 # Icon `any`
-def any($w; $wset): #:: POSITION|(WORD;WORD) => ?POSITION
-    meets($w; inside($wset))
+def any($w; $alphabet): #:: POSITION|(WORD;WORD) => ?POSITION
+    meets($w; inside($alphabet))
 ;
 
 # Icon `notany`
-def notany($w; $wset): #:: POSITION|(WORD;WORD) => ?POSITION
-    meets($w; false==inside($wset))
+def notany($w; $alphabet): #:: POSITION|(WORD;WORD) => ?POSITION
+    meets($w; false==inside($alphabet))
 ;
 
 ########################################################################
@@ -50,12 +51,12 @@ def locus($w; t): #:: POSITION|(WORD;TEST) => *POSITION
 ;
 
 # Icon `upto`
-def upto($w; $wset): #:: POSITION|(WORD;WORD) => *POSITION
-    locus($w; inside($wset))
+def upto($w; $alphabet): #:: POSITION|(WORD;WORD) => *POSITION
+    locus($w; inside($alphabet))
 ;
 
-def upto_c($w; $wset): #:: POSITION|(WORD;WORD) => *POSITION
-    locus($w; false==inside($wset))
+def upto_c($w; $alphabet): #:: POSITION|(WORD;WORD) => *POSITION
+    locus($w; false==inside($alphabet))
 ;
 
 ########################################################################
@@ -86,13 +87,13 @@ def span($w; t): #:: POSITION|(WORD;TEST) => ?POSITION
 ;
 
 # Icon `many`
-def many($w; $wset): #:: POSITION|(WORD;WORD) => ?POSITION
-    span($w; inside($wset))
+def many($w; $alphabet): #:: POSITION|(WORD;WORD) => ?POSITION
+    span($w; inside($alphabet))
 ;
 
 # Complementary of `many`
-def many_c($w; $wset): #:: POSITION|(WORD;WORD) => ?POSITION
-    span($w; false==inside($wset))
+def many_c($w; $alphabet): #:: POSITION|(WORD;WORD) => ?POSITION
+    span($w; false==inside($alphabet))
 ;
 
 ########################################################################
@@ -133,47 +134,49 @@ def bal($w; $lhs; $rhs): #:: POSITION|(string;string;string) => *POSITION
 ########################################################################
 # Tokenize words
 
-def tokens($w; begin; more): #:: POSITION|(WORD;PATTERN;PATTERN) => [POSITION,POSITION]
+def tokens($w; begin; token): #:: POSITION|(WORD;PATTERN;PATTERN) => *SLICE
     def r:
         begin
         | . as $i
-        | more  # . as $j
+        | token
         | [$i, .]
           , r
     ;
     r
 ;
 
-def tokens($w; t): #:: POSITION|(WORD;TEST) => [POSITION,POSITION]
+def tokens($w; t): #:: POSITION|(WORD;TEST) => *SLICE
     tokens($w; first(locus($w;t)); span($w;t))
 ;
 
-# Produce words consisting in `$wset` symbols
-def words($w; $wset): #:: POSITION|(WORD;WORD) => *WORD
-    tokens($w; first(upto($w;$wset)); many($w;$wset)) as [$i,$j]
+# Produce words consisting in `$alphabet` symbols
+def words($w; $alphabet): #:: POSITION|(WORD;WORD) => *WORD
+#   tokens($w; first(upto($w;$alphabet)); many($w;$alphabet)) as [$i,$j]
+    tokens($w; inside($alphabet)) as [$i,$j]
     | $w[$i:$j]
 ;
 
-# Produce words delimited by `$wset` symbols
-def words_c($w; $wset): #:: POSITION|(WORD;WORD) => *WORD
-    tokens($w; first(upto_c($w;$wset)); many_c($w;$wset)) as [$i,$j]
+# Produce words delimited by `$alphabet` symbols
+def words_c($w; $alphabet): #:: POSITION|(WORD;WORD) => *WORD
+#   tokens($w; first(upto_c($w;$alphabet)); many_c($w;$alphabet)) as [$i,$j]
+    tokens($w; false==inside($alphabet)) as [$i,$j]
     | $w[$i:$j]
 ;
 
 # Extract numbers
 def numbers($w): #:: POSITION|(WORD) => *number
-    def opt(p): first(p, .);
-    def sign: opt(any($w; "+-"));
-    def begin:  first(upto($w;"+-0123456789"));
+    def opt(p): first(p , .);
+    def sign:   opt(any($w;"+-"));
+    def start:  first(upto($w;"+-0123456789"));
     def digits: many($w;"0123456789");
 #1
     def number: sign | digits | opt((match($w;".") | opt(digits)));
-#2  def number: sign | first((digits | match($w;".") | opt(digits)), digits);
+#2  def number: sign | first((digits | match($w;".") | opt(digits)) , digits);
 #3  def integer: digits;
-#3  def real: digits | match($w; ".") | opt(digits);
-#3  def number: sign | first(real, integer);
+#3  def real: digits | match($w;".") | opt(digits);
+#3  def number: sign | first(real , integer);
 
-    tokens($w; begin; number) as [$i,$j]
+    tokens($w; start; number) as [$i,$j]
     | $w[$i:$j]
     | tonumber
 ;

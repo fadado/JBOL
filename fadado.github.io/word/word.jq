@@ -56,6 +56,15 @@ def count($u): #:: WORD|(WORD) => number
     indices($u) | length
 ;
 
+# Splice word: replace or delete slice
+def splice($i; $j; $u): #:: WORD|(number;number;WORD) => WORD
+    select($i <= $j and $j <= length)
+    | .[:$i] + $u + .[$j:]  # with $u == null delete!
+;
+def splice($w; $i; $j; $u): #:: (WORD;number;number;WORD) => WORD
+    $w|splice($i;$j;$u)
+;
+
 ########################################################################
 # Word iteration
 

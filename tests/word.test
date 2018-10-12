@@ -145,4 +145,24 @@ include "word"; [[limit(13;star)][1:],[limit(12;plus)]] | .[0]==.[1]
 "abc"
 true
 
+include "word"; splice(5;5;"xyz")
+"aeiou"
+"aeiouxyz"
+
+include "word"; splice(0;0;"xyz")
+"aeiou"
+"xyzaeiou"
+
+include "word"; splice(1;1;"xyz")
+"aeiou"
+"axyzeiou"
+
+include "word"; splice(1;2;"xyz")
+"aeiou"
+"axyziou"
+
+include "word"; splice(1;2;null)
+"aeiou"
+"aiou"
+
 # vim:ai:sw=2:ts=2:et:syntax=jq
