@@ -216,4 +216,11 @@ def repeat(g): #:: a|(a->*b) => *b
     accept(g; r)
 ;
 
+#def all(generator; condition): isempty(generator | condition and empty);
+#def all: isempty(.[] and empty);
+#def all(condition): isempty(.[] | condition and empty);
+#def any(generator; condition): nonempty(generator | condition or empty);
+#def any: nonempty(.[] or empty);
+#def any(condition): nonempty(.[] | condition or empty);
+
 # vim:ai:sw=4:ts=4:et:syntax=jq

@@ -17,6 +17,11 @@ module {
 #   PATTERN:    POSITION->?POSITION
 #   SLICE:      [POSITION,POSITION]
 
+# Choose p if not fails
+def opt(p):
+    first(p , .)
+;
+
 ########################################################################
 # Match one symbol
 
@@ -50,13 +55,29 @@ def locus($w; t): #:: POSITION|(WORD;TEST) => *POSITION
     | $k
 ;
 
+# Just the first position
+def locus1($w; t): #:: POSITION|(WORD;TEST) => ?POSITION
+    first(locus($w;t))
+;
+
 # Icon `upto`
 def upto($w; $alphabet): #:: POSITION|(WORD;WORD) => *POSITION
     locus($w; inside($alphabet))
 ;
 
+# Just the first position
+def upto1($w; $alphabet): #:: POSITION|(WORD;WORD) => ?POSITION
+    first(locus($w; inside($alphabet)))
+;
+
+# Complementary class to search
 def upto_c($w; $alphabet): #:: POSITION|(WORD;WORD) => *POSITION
     locus($w; false==inside($alphabet))
+;
+
+# Just the position
+def upto1_c($w; $alphabet): #:: POSITION|(WORD;WORD) => ?POSITION
+    first(locus($w; false==inside($alphabet)))
 ;
 
 ########################################################################
@@ -112,8 +133,14 @@ def match($w; $u): #:: POSITION|(WORD;WORD)=> ?POSITION
 # Global search factor (Icon `find`)
 def find($w; $u): #:: POSITION|(WORD;WORD) => *POSITION
     select(0 <= . and . < ($w|length))
-    | $w[.:]
-    | indices($u)[]
+    | . as $i
+    | if $i == 0 then $w else $w[$i:] end
+    | $i + indices($u)[]
+;
+
+# Just the first word position
+def find1($w; $u): #:: POSITION|(WORD;WORD) => ?POSITION
+    first(find($w; $u))
 ;
 
 ########################################################################
@@ -146,7 +173,7 @@ def tokens($w; next; token): #:: POSITION|(WORD;PATTERN;PATTERN) => *SLICE
 ;
 
 def tokens($w; t): #:: POSITION|(WORD;TEST) => *SLICE
-    tokens($w; first(locus($w;t)); span($w;t))
+    tokens($w; locus1($w;t); span($w;t))
 ;
 
 # Produce words consisting in `$alphabet` symbols
@@ -163,18 +190,16 @@ def words_c($w; $alphabet): #:: POSITION|(WORD;WORD) => *WORD
 
 # Extract numbers
 def numbers($w): #:: POSITION|(WORD) => *number
-    def opt(p): first(p , .);
-    def next:   first(upto($w;"+-0123456789"));
     def sign:   opt(any($w;"+-"));
     def digits: many($w;"0123456789");
-#1
+#1 solution:
     def number: sign | digits | opt((match($w;".") | opt(digits)));
 #2  def number: sign | first((digits | match($w;".") | opt(digits)) , digits);
 #3  def integer: digits;
 #3  def real: digits | match($w;".") | opt(digits);
 #3  def number: sign | first(real , integer);
 
-    tokens($w; next; number) as [$i,$j]
+    tokens($w; upto1($w;"+-0123456789"); number) as [$i,$j]
     | $w[$i:$j]
     | tonumber
 ;

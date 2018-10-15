@@ -8,6 +8,7 @@ module {
     }
 };
 
+include "fadado.github.io/prelude";
 include "fadado.github.io/types";
 
 ########################################################################
@@ -57,10 +58,10 @@ def count($u): #:: WORD|(WORD) => number
 ;
 
 # Splice word: replace or delete slice
-def splice($i; $j; $u): #:: WORD|(number;number;WORD) => WORD
+def splice($i; $j; $u): #:: WORD|(number;number;WORD^null) => WORD
     if $i > $j or $j > length
     then . # cannot splice
-    else.[:$i] + $u + .[$j:]  # with $u == null: delete!
+    else .[:$i] + $u + .[$j:]  # with $u == null: delete!
     end
 ;
 def splice($w; $i; $j; $u): #:: (WORD;number;number;WORD) => WORD
@@ -72,7 +73,9 @@ def sub($s; $r): #:: WORD|(WORD;WORD) => WORD
     ($s|length) as $n
     | if length == 0 or $n == 0
       then .
-      else index($s) as $i | splice($i; $i+$n; $r)
+      else
+        index($s) as $i
+        | when($i != null; splice($i; $i+$n; $r))
       end
 ;
 
