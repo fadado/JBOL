@@ -8,7 +8,6 @@ module {
     }
 };
 
-include "fadado.github.io/prelude";
 include "fadado.github.io/types";
 
 ########################################################################
@@ -75,7 +74,9 @@ def sub($s; $r): #:: WORD|(WORD;WORD) => WORD
       then .
       else
         index($s) as $i
-        | when($i != null; splice($i; $i+$n; $r))
+        | if $i == null
+          then .
+          else splice($i; $i+$n; $r) end
       end
 ;
 

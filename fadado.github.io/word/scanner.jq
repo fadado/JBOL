@@ -8,6 +8,8 @@ module {
     }
 };
 
+include "fadado.github.io/prelude";
+
 ########################################################################
 # Types used in declarations:
 #   WORD:       [a]^string
@@ -18,7 +20,7 @@ module {
 #   SLICE:      [POSITION,POSITION]
 
 # Choose p if not fails
-def opt(p):
+def optional(p):
     first(p , .)
 ;
 
@@ -87,24 +89,24 @@ def upto1_c($w; $alphabet): #:: POSITION|(WORD;WORD) => ?POSITION
 # Generalized Icon `many`, SNOBOL `SPAN`, C `strspn`, Haskell `span`
 def span($w; t): #:: POSITION|(WORD;TEST) => ?POSITION
 # Pure declarative:
-#   select(0 <= . and . < ($w|length))
-#   | last(meets($w; t) | recurse(meets($w; t)))
-#     // empty
+    select(0 <= . and . < ($w|length))
+    | last(chain(meets($w; t)))
+      // empty
 # Old school:
-    . as $i
-    | ($w|length) as $j
-    | select(0 <= $i and $i < $j)
-    | label $pipe
-    # for $k=. to $j+1 (off-value used as a flag)
-    | range(.; $j+1) as $k
-    | if $k == $j           # if past end, all matched
-      then $k , break$pipe  # then return $k
-      elif $w[$k:$k+1] | t  # if match at $k
-      then empty            # then continue loop
-      elif $k > $i          # if moved at least one forward
-      then $k , break$pipe  # then return $k
-      else break$pipe       # abort, none match!
-      end
+#   . as $i
+#   | ($w|length) as $j
+#   | select(0 <= $i and $i < $j)
+#   | label $pipe
+#   # for $k=. to $j+1 (off-value used as a flag)
+#   | range(.; $j+1) as $k
+#   | if $k == $j           # if past end, all matched
+#     then $k , break$pipe  # then return $k
+#     elif $w[$k:$k+1] | t  # if match at $k
+#     then empty            # then continue loop
+#     elif $k > $i          # if moved at least one forward
+#     then $k , break$pipe  # then return $k
+#     else break$pipe       # abort, none match!
+#     end
 ;
 
 # Icon `many`
@@ -153,7 +155,7 @@ def bal($w; $lhs; $rhs): #:: POSITION|(string;string;string) => *POSITION
             notany($w; $braces)
             , (match($w; $lhs) | recurse(gbal) | match($w; $rhs))
         ;
-        gbal | recurse(gbal)
+        chain(gbal)
     ;
     _bal($lhs+$rhs)
 ;
@@ -190,13 +192,13 @@ def words_c($w; $alphabet): #:: POSITION|(WORD;WORD) => *WORD
 
 # Extract numbers
 def numbers($w): #:: POSITION|(WORD) => *number
-    def sign:   opt(any($w;"+-"));
+    def sign:   optional(any($w;"+-"));
     def digits: many($w;"0123456789");
 #1 solution:
-    def number: sign | digits | opt((match($w;".") | opt(digits)));
-#2  def number: sign | first((digits | match($w;".") | opt(digits)) , digits);
+    def number: sign | digits | optional((match($w;".") | optional(digits)));
+#2  def number: sign | first((digits | match($w;".") | optional(digits)) , digits);
 #3  def integer: digits;
-#3  def real: digits | match($w;".") | opt(digits);
+#3  def real: digits | match($w;".") | optional(digits);
 #3  def number: sign | first(real , integer);
 
     tokens($w; upto1($w;"+-0123456789"); number) as [$i,$j]

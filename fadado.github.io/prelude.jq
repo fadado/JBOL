@@ -125,8 +125,14 @@ def seq($a; $d): #:: (number;$number) => *number
 ;
 
 #
-# Stream of relation powers
+# Iteration
 #
+
+# f|recurse(f)
+def chain(f): #:: a|(a->*a) => *a
+    def r: ., (f|r);
+    f|r
+;
 
 # g⁰ g¹ g² g³ g⁴ g⁵ g⁶ g⁷ g⁸ g⁹…
 # Breadth-first search
