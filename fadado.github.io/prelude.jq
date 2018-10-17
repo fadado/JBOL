@@ -33,13 +33,14 @@ def select(predicate; action): #:: a|(a->*boolean;a->*b) => *b
     if predicate then action else empty end
 ;
 
-# Accept only productive streams
-def accept(stream): #:: a|(a->*b) => ?a
+# Do `stream` produces?
+def query(stream): #:: a|(a->*b) => ?a
     if nonempty(stream) then . else empty end
 ;
 
-def accept(stream; action): #:: a|(a->*c;a->*b) => *b
-    if nonempty(stream) then action else empty end
+# Complement for `query`
+def deny(stream): #:: a|(a->*b) => ?a
+    if isempty(stream) then . else empty end
 ;
 
 # Complement of `select`
@@ -138,7 +139,7 @@ def chain(f): #:: a|(a->*a) => *a
 # Breadth-first search
 def iterate(init; g): #:: a|(a->*b;b->*b) => *b
     def r:
-#        .[] , (map(g) | accept(.[]; r))
+#        .[] , (map(g) | query(.[]) | r)
          .[] , ([.[]|g] | select(length > 0; r))
     ;
     [init] | r
@@ -219,7 +220,7 @@ def mapobj(filter): #:: object|(PAIR->PAIR) => object
 # Does not diverge with empty parameter
 def repeat(g): #:: a|(a->*b) => *b
     def r: g , r;
-    accept(g; r)
+    query(g) | r
 ;
 
 #def all(generator; condition): isempty(generator | condition and empty);

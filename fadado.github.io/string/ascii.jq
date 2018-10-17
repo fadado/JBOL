@@ -55,7 +55,7 @@ def isascii: #:: string => boolean
     every(explode[] <= 127)
 ;
 def iscntrl: #:: string => boolean
-    every($C::C[0].iscntrl[(./"")[]]//false)
+    every(explode[] | . < 32 or . == 127)
 ;
 def isspace: #:: string => boolean
     every($C::C[0].isspace[(./"")[]]//false)
