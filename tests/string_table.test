@@ -46,4 +46,17 @@ include "string/table"; import "string/ascii" as ascii; translate(translate(asci
 "XXa\nUUe\rg\tlZZ"
 "aegl"
 
+# TODO: move to roman.jq
+include "string/table"; roman_encode
+11
+"XI"
+
+include "string/table"; roman_encode
+1961
+"MCMLXI"
+
+include "string/table"; roman_encode
+3999
+"MMMCMXCIX"
+
 # vim:ai:sw=2:ts=2:et:syntax=jq
