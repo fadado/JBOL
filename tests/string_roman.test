@@ -1,0 +1,28 @@
+#########################################################################
+# Roman numerals
+#
+# Tests are groups of three lines: program, input, expected output.
+# Blank lines and lines starting with # are ignored.
+#########################################################################
+
+include "string/roman"; encode
+11
+"XI"
+
+include "string/roman"; encode
+1961
+"MCMLXI"
+
+include "string/roman"; encode
+3999
+"MMMCMXCIX"
+
+include "string/roman"; [ (1666, 1990, 2008, 2016, 2018) | encode]
+null
+["MDCLXVI", "MCMXC", "MMVIII", "MMXVI", "MMXVIII"]
+
+include "string/roman"; [ ("MDCLXVI", "MCMXC", "MMVIII", "MMXVI", "MMXVIII") | decode]
+null
+[1666, 1990, 2008, 2016, 2018]
+
+# vim:ai:sw=2:ts=2:et:syntax=jq

@@ -104,10 +104,10 @@ def toupper: #:: string => string
 
 # Translation tables
 #
-def ttlower: #:: {string}
+def tt_tolower: #:: {string}
     $C::C[0].tolower
 ;
-def ttupper: #:: {string}
+def tt_toupper: #:: {string}
     $C::C[0].toupper
 ;
 

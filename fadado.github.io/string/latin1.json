@@ -3,9 +3,9 @@
   "space": " \t\r\n\f\u000b\u00a0",
   "blank": " \t\u00a0",
   "upper": "ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝÞÐ",
-  "lower": "abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïñòóôõöøùúûüýþÿßð",
-  "alpha": "abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïñòóôõöøùúûüýþÐÿßðABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝ",
-  "ALPHA": "ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝÞÐÿßðabcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïñòóôõöøùúûüý",
+  "lower": "abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïñòóôõöøùúûüýþð",
+  "alpha": "abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïñòóôõöøùúûüýþðABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝÐ",
+  "ALPHA": "ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝÞÐabcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïñòóôõöøùúûüýð",
   "digit": "0123456789",
   "xdigit": "0123456789abcdefABCDEF",
   "punct": "(<)=[*>\\!+?]{\",@^|#-_}$.`~%/&:';¡¢£¤¥¦§¨©ª«­®¯°´µ¶¸º»¿¬±×÷¼½¾¹²³",
@@ -297,7 +297,8 @@
     "Û": "û",
     "Ü": "ü",
     "Ý": "ý",
-    "Þ": "þ"
+    "Þ": "þ",
+    "Ð": "ð"
   },
   "toupper": {
     "a": "A",
@@ -354,6 +355,7 @@
     "û": "Û",
     "ü": "Ü",
     "ý": "Ý",
-    "þ": "Þ"
+    "þ": "Þ",
+    "ð": "Ð"
   }
 }

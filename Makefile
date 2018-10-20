@@ -155,6 +155,7 @@ $(LogDir)/string_table.log: $(STRING)/table.jq $(LIB)/prelude.jq $(STRING)/strin
 $(LogDir)/string_ascii.log: $(STRING)/ascii.jq $(STRING)/ascii.json $(LIB)/prelude.jq
 $(LogDir)/string_latin1.log: $(STRING)/latin1.jq $(STRING)/latin1.json $(LIB)/prelude.jq
 $(LogDir)/string_regexp.log: $(STRING)/regexp.jq $(LIB)/prelude.jq $(STRING)/string.jq $(LIB)/types.jq
+$(LogDir)/string_roman.log: $(STRING)/roman.jq $(LIB)/prelude.jq
 $(LogDir)/string_snobol.log: $(STRING)/snobol.jq $(LIB)/prelude.jq  $(STRING)/string.jq $(LIB)/types.jq
 $(LogDir)/string_url.log: $(STRING)/url.jq $(MATH)/math.jq
 

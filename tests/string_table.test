@@ -10,11 +10,19 @@
 #
 
 
-include "string/table"; import "string/ascii" as ascii; translate(ascii::ttupper)
+include "string/table"; import "string/ascii" as ascii; ascii::toupper == translate(ascii::tt_toupper)
+"kaleidoscope"
+true
+
+include "string/table"; import "string/ascii" as ascii; translate(ascii::tt_toupper)
 "kaleidoscope"
 "KALEIDOSCOPE"
 
-include "string/table"; import "string/ascii" as ascii; translate(ascii::ttlower)
+include "string/table"; import "string/ascii" as ascii; ascii::tolower == translate(ascii::tt_tolower)
+"KALEIDOSCOPE"
+true
+
+include "string/table"; import "string/ascii" as ascii; translate(ascii::tt_tolower)
 "KALEIDOSCOPE"
 "kaleidoscope"
 
@@ -45,18 +53,5 @@ include "string/table"; import "string/ascii" as ascii; translate(preserve(.; as
 include "string/table"; import "string/ascii" as ascii; translate(translate(ascii::lower; ""); "")
 "XXa\nUUe\rg\tlZZ"
 "aegl"
-
-# TODO: move to roman.jq
-include "string/table"; roman_encode
-11
-"XI"
-
-include "string/table"; roman_encode
-1961
-"MCMLXI"
-
-include "string/table"; roman_encode
-3999
-"MMMCMXCIX"
 
 # vim:ai:sw=2:ts=2:et:syntax=jq
