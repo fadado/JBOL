@@ -17,17 +17,17 @@ import "fadado.github.io/object/set" as set;
 
 # Translate/remove tables
 def new($from; $to): #:: (string;string) => {string}
-   ($from/"") as $s
+   ($from/"") as $f
    | ($to/"") as $t
-   | reduce range(0;$s|length) as $i
-        ({}; . += {($s[$i]):($t[$i]//"")})
+   | reduce range(0;$f|length) as $i
+        ({}; . += {($f[$i]):($t[$i]//"")})
 ;
 
 # Preserve tables
 def preserve($from; $preserve): #:: (string;string) => {string}
-   set::new($preserve) as $t
-   | reduce (($from/"") | unique)[] as $c
-        ({}; . += (if $t[$c] then null else {($c):""} end))
+   set::new($preserve) as $p
+   | reduce ($from/"")[] as $f
+        ({}; . += (if $p[$f] then null else {($f):""} end))
 ;
 
 # Translate characters in input string using translation table
@@ -36,7 +36,8 @@ def translate($table): #:: string|({string}) => string
 ;
 
 def translate($from; $to): #:: string|(string;string) => string
-    translate(new($from; $to))
+    new($from; $to) as $table
+    | mapstr($table[.]//.)
 ;
 
 # Translation table to rotate by 13 places

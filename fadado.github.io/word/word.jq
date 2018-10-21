@@ -9,6 +9,7 @@ module {
 };
 
 include "fadado.github.io/types";
+import "fadado.github.io/math" as math;
 
 ########################################################################
 # Types used in declarations:
@@ -23,12 +24,32 @@ include "fadado.github.io/types";
 # Concatenate:                  w + u
 # Length of w:                  w|length
 
-# Rotate in both directions
-def rotate($n): #:: WORD|(number) => WORD
-    .[$n:] + .[:$n]
+# Generic alphabet
+def alphabet: #:: WORD => WORD
+    if isstring
+    then explode | unique | implode
+    elif isarray
+    then unique
+    else typerror
+    end
 ;
-def rotate: #:: WORD => WORD
-    .[1:] + .[:1]
+
+# Merge two words pairwise
+def blend($x; $y): #:: (string;string) => string
+    if isstring($x) then
+        ($x/"") as $x | ($y/"") as $y |
+        reduce range(0; math::max($x,$y | length)) as $i
+            (""; .+$x[$i]+$y[$i])
+    elif isarray then
+        reduce range(0; math::max($x,$y | length)) as $i
+            ([]; .+$x[$i]+$y[$i])
+    else typerror
+    end
+;
+
+# Number of u's in w
+def count($u): #:: WORD|(WORD) => number
+    indices($u) | length
 ;
 
 # Generic reverse
@@ -41,19 +62,12 @@ def mirror: #:: WORD => WORD
     end
 ;
 
-# Generic alphabet
-def alphabet: #:: WORD => WORD
-    if isstring
-    then explode | unique | implode
-    elif isarray
-    then unique
-    else typerror
-    end
+# Rotate in both directions
+def rotate($n): #:: WORD|(number) => WORD
+    .[$n:] + .[:$n]
 ;
-
-# Number of u's in w
-def count($u): #:: WORD|(WORD) => number
-    indices($u) | length
+def rotate: #:: WORD => WORD
+    .[1:] + .[:1]
 ;
 
 # Splice word: replace or delete slice
