@@ -37,23 +37,23 @@ def uniform: #:: [a] => boolean
 ;
 
 # unknown value for index?
-def unknown($i): #:: array|(number) => boolean
+def unknown($i): #:: [a]|(number) => boolean
     has($i) and .[$i]==null
 ;
 
 # Select elements with even indices
-def evens:
-    [.[range(0;length;2)]]
+def evens: #:: [a] => [a]
+    when(length > 0; [.[range(0;length;2)]])
 ;
 
 # Select elements with odd indices
-def odds:
-    [.[range(1;length;2)]]
+def odds: #:: [a] => [a]
+    when(length > 0; [.[range(1;length;2)]])
 ;
 
 # Copy here builtin
-def reverse:
-    [.[length-1-range(0;length)]]
+def reverse: #:: [a] => [a]
+    when(length > 0; [.[length-1-range(0;length)]])
 ;
 
 ########################################################################

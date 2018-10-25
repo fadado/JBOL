@@ -229,5 +229,14 @@ def repeat(g): #:: a|(a->*b) => *b
 #def any(generator; condition): nonempty(generator | condition or empty);
 #def any: nonempty(.[] or empty);
 #def any(condition): nonempty(.[] | condition or empty);
+#def range($init; $upto; $by): #:: (number;number;number) => *number
+#    select($by != 0)
+#    | label $out
+#    | if $by > 0
+#      then $init|recurse(.+$by) | when(. >= $upto; break$out)
+#      else $init|recurse(.+$by) | when(. <= $upto; break$out)
+#      end
+#    end
+#; 
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

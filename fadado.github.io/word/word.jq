@@ -35,14 +35,15 @@ def alphabet: #:: WORD => WORD
 ;
 
 # Merge two words pairwise
-def blend($x; $y): #:: (string;string) => string
+def blend($x; $y): #:: (WORD;WORD) => WORD
+    def _blend($a; $b; $e):
+        reduce range(0; math::max($x,$y | length)) as $i
+            ($e; .+$x[$i]+$y[$i])
+    ;
     if isstring($x) then
-        ($x/"") as $x | ($y/"") as $y |
-        reduce range(0; math::max($x,$y | length)) as $i
-            (""; .+$x[$i]+$y[$i])
+        _blend($x/""; $y/""; "")
     elif isarray then
-        reduce range(0; math::max($x,$y | length)) as $i
-            ([]; .+$x[$i]+$y[$i])
+        _blend($x; $y; [])
     else typerror
     end
 ;
@@ -54,7 +55,9 @@ def count($u): #:: WORD|(WORD) => number
 
 # Generic reverse
 def mirror: #:: WORD => WORD
-    if isstring
+    if length == 0
+    then .
+    elif isstring
     then explode | [.[length-1-range(0;length)]] | implode
     elif isarray
     then [.[length-1-range(0;length)]]
