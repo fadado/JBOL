@@ -27,7 +27,7 @@ def member($a; stream): #:: a|(a;*a) => boolean
     some($a == stream)
 ;
 def member(stream): #:: a|(*a) => boolean
-    member(.; stream)
+    . as $a | some($a == stream)
 ;
 
 # Select common content.

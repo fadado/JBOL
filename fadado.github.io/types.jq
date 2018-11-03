@@ -104,6 +104,17 @@ def tobool(a): #:: (a) => boolean
     if first(a) // false then true else false end
 ;
 
+# Path expressions
+def ispath(x):
+    try (isempty(path(x)) or true)
+    catch false
+;
+
+def isvalue(x):
+    try (path(x)//null | false)
+    catch true
+;
+
 # Type errors
 
 def typerror:

@@ -223,13 +223,13 @@ def repeat(g): #:: a|(a->*b) => *b
     query(g) | r
 ;
 
-#def all(generator; condition): isempty(generator | condition and empty);
-#def all: isempty(.[] and empty);
-#def all(condition): isempty(.[] | condition and empty);
 #def any(generator; condition): nonempty(generator | condition or empty);
 #def any: nonempty(.[] or empty);
 #def any(condition): nonempty(.[] | condition or empty);
-#def range($init; $upto; $by): #:: (number;number;number) => *number
+#def all(generator; condition): isempty(generator | condition and empty);
+#def all: isempty(.[] and empty);
+#def all(condition): isempty(.[] | condition and empty);
+#def range($init; $upto; $by):
 #    select($by != 0)
 #    | label $out
 #    | if $by > 0
@@ -238,5 +238,8 @@ def repeat(g): #:: a|(a->*b) => *b
 #      end
 #    end
 #; 
+
+# Generic swap
+#def swap(p; q): p as $t | p=q | q=$t;
 
 # vim:ai:sw=4:ts=4:et:syntax=jq

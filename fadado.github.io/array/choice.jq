@@ -19,6 +19,7 @@ def shuffle($seed): #:: [a]|(number) => [a]
         when($i != $j;
              .[$i] as $t | .[$i]=.[$j] | .[$j]=$t)
     ;
+    # Shuffle
     . as $array
     | length as $len
     | [limit($len; chance::rand($seed))] as $r
@@ -29,7 +30,7 @@ def shuffle($seed): #:: [a]|(number) => [a]
         ($array;
          # j ← random integer such that 0 ≤ j ≤ i
          ($r[$i] % ($i+1)) as $j
-         # exchange a[j] and a[i]
+         # exchange a[i] and a[j]
          | swap($i; $j))
 ;
 def shuffle: #:: [a] => [a]

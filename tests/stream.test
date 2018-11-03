@@ -25,7 +25,15 @@ include "stream"; member(range(10))
 6
 true
 
+IN(range(10))
+66
+false
+
 include "stream"; member(range(10))
+6
+true
+
+IN(range(10))
 66
 false
 
@@ -38,6 +46,10 @@ null
 false
 
 include "stream"; sharing((33,7,44); range(10))
+null
+true
+
+IN((33,7,44); range(10))
 null
 true
 

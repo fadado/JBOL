@@ -134,6 +134,7 @@ $(LogDir)/math_bitwise.log: $(MATH)/bitwise.jq
 
 # Arrays tests
 $(LogDir)/array.log: $(ARRAY)/array.jq
+$(LogDir)/array_choice.log: $(ARRAY)/choice.jq $(LIB)/prelude.jq $(MATH)/chance.jq 
 $(LogDir)/array_set.log: $(ARRAY)/set.jq
 $(LogDir)/array_kleene.log: $(ARRAY)/kleene.jq
 $(LogDir)/array_tuple.log: $(ARRAY)/tuple.jq

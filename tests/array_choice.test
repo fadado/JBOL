@@ -1,0 +1,4 @@
+
+include "array/choice"; shuffle(222) != []
+[1,2,3]
+true
