@@ -172,13 +172,15 @@ $(LogDir)/music_interval-table.log: $(MUSIC)/interval-table.jq $(MUSIC)/pitch-cl
 # Utilities
 ########################################################################
 
-.PHONY: clean clobber check help install uninstall #prototypes
+.PHONY: clean distclean check list install uninstall #prototypes
 
 clean:
 	rm --force -- $(LogDir)/*.log
 
-clobber: clean
+distclean: clean
 	test -d $(LogDir) && rmdir --parents $(LogDir) || true
+
+clober: distclean
 
 check: clean all
 
@@ -197,7 +199,7 @@ uninstall:
 	rm -f $(bindir)/{jgen,jval,jxml}* 
 
 # Show targets
-help:
+list:
 	echo 'Targets:';					\
 	$(MAKE) --print-data-base --just-print 2>&1		\
 	| grep -v '^[mM]akefile'				\
@@ -205,6 +207,10 @@ help:
 	| sort --unique						\
 	| sed 's/:\+$$//'					\
 	| pr --omit-pagination --indent=4 --width=80 --columns=4
+	echo 'Default parameters:';				\
+	echo '    prefix    = $(prefix)';			\
+	echo '    bindir    = $(bindir)';			\
+	echo '    datadir   = $(datadir)';			\
 
 # Generate type declarations
 define make_prototypes
