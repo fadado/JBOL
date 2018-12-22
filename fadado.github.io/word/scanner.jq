@@ -8,8 +8,6 @@ module {
     }
 };
 
-include "fadado.github.io/prelude";
-
 ########################################################################
 # Types used in declarations:
 #   WORD:       [a]^string
@@ -90,7 +88,7 @@ def upto1_c($w; $alphabet): #:: POSITION|(WORD;WORD) => ?POSITION
 def span($w; t): #:: POSITION|(WORD;TEST) => ?POSITION
 # Pure declarative:
     select(0 <= . and . < ($w|length))
-    | last(chain(meets($w; t)))
+    | last(meets($w; t)|recurse(meets($w; t)))
       // empty
 # Old school:
 #   . as $i
@@ -155,7 +153,7 @@ def bal($w; $lhs; $rhs): #:: POSITION|(string;string;string) => *POSITION
             notany($w; $braces)
             , (match($w; $lhs) | recurse(gbal) | match($w; $rhs))
         ;
-        chain(gbal)
+        gbal|recurse(gbal)
     ;
     _bal($lhs+$rhs)
 ;
