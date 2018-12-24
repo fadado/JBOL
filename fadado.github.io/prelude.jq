@@ -9,6 +9,34 @@ module {
 };
 
 ########################################################################
+# Stolen from SNOBOL: ABORT and FENCE
+########################################################################
+
+# Breaks out the current filter
+# For constructs like:
+#   try (A | possible abortion | B)
+def abort: #:: a => !
+    error("~!~")
+;
+
+# One way pass. Usage:
+#   try (A | fence | B)
+def fence: #:: a => a!
+    (. , abort)
+;
+
+# Catch helpers. Usage:
+#   try (...) catch _abort_(result)
+#   . as $_ | try (A | possible abortion | B) catch _abort_($_)
+def _abort_(result): #:: string| => a!
+    if . == "~!~" then result else error(.) end
+;
+#   try (...) catch _abort_
+def _abort_: #:: string| => @!
+    if . == "~!~" then empty else error(.) end
+;
+
+########################################################################
 # Variations on some JQ primitives
 ########################################################################
 
@@ -59,34 +87,6 @@ def when(predicate; action): #:: a|(a->boolean;a->*a) => *a
 ;
 def unless(predicate; action): #:: a|(a->boolean;a->*a) => *a 
     if predicate then . else action end
-;
-
-########################################################################
-# Stolen from SNOBOL: ABORT and FENCE
-########################################################################
-
-# Breaks out the current filter
-# For constructs like:
-#   try (A | possible abortion | B)
-def abort: #:: a => !
-    error("~!~")
-;
-
-# One way pass. Usage:
-#   try (A | fence | B)
-def fence: #:: a => a!
-    (. , abort)
-;
-
-# Catch helpers. Usage:
-#   try (...) catch _abort_(result)
-#   . as $_ | try (A | possible abortion | B) catch _abort_($_)
-def _abort_(result): #:: string| => a!
-    if . == "~!~" then result else error(.) end
-;
-#   try (...) catch _abort_
-def _abort_: #:: string| => @!
-    if . == "~!~" then empty else error(.) end
 ;
 
 ########################################################################

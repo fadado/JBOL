@@ -198,4 +198,16 @@ include "prelude"; mapstr(select(.!="g"))
 "agogico"
 "aoico"
 
+include "prelude"; [0|while(.<10;.+1)] == [0|recurse(.+1;select(.<10))]
+null
+true
+
+include "prelude"; [0|while(.<10;.+1)] == [0|try(recurse(.+1)|guard(.<10))]
+null
+true
+
+include "prelude"; [0|until(.>10;.+1)] == [0|try(recurse(.+1) | select(.>10) | fence)]
+null
+true
+
 # vim:ai:sw=2:ts=2:et:syntax=jq
