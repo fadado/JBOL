@@ -235,9 +235,10 @@ prototypes:
 
 .PHONY: bogussort cross cut dice newton nondet nqbrute nqsmart octcode \
 	script seconds sendmoremoney series shuffle nqsbrute triple \
-	prolog
+	prolog closure
 
 bogussort: ; $(JQ) -cnRrf examples/$@.jq
+closure: ; $(JQ) -cnRrf examples/$@.jq
 cross: ; $(JQ) -nRrf examples/$@.jq
 cut: ; $(JQ) -cnRrf examples/$@.jq
 dice: ; $(JQ) -cnRrf examples/$@.jq

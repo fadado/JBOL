@@ -139,25 +139,12 @@ def chain(f): #:: a|(a->*a) => *a
 # Breadth-first search
 def iterate(init; g): #:: a|(a->*b;b->*b) => *b
     def r:
-#        .[] , (map(g) | query(.[]) | r)
-         .[] , ([.[]|g] | select(length > 0; r))
+         .[] , (map(g) | select(length > 0; r))
     ;
     [init] | r
 ;
 def iterate(g): #:: a|(a->*a) => +a
     iterate(.; g)
-;
-
-# g⁰ g¹ g² g³ g⁴ g⁵ g⁶ g⁷ g⁸ g⁹…
-# Stack leak, diverges if `init` fails, etc.
-def reiterate(init; g): #::  a|(a->*a;a->*a) => *a!
-#   def r: init , (r|g);
-#   r
-    def r(h): h , r(h|g);
-    r(init)
-;
-def reiterate(g): #:: a|(a->*a) => +a
-    reiterate(.; g)
 ;
 
 #
