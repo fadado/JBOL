@@ -72,21 +72,21 @@ def deny(stream): #:: a|(a->*b) => ?a
 ;
 
 # Complement of `select`
-def reject(predicate): #:: a|(a->*boolean) => ?a
+def reject(predicate): #:: a|(a->?boolean) => ?a
     if predicate then empty else . end
 ;
 
 # Strong select
-def guard(predicate): #:: a|(a->boolean) => a!
-    if predicate then . else abort end
+def guard(predicate): #:: a|(a->?boolean) => a!
+    if predicate//null then . else abort end
 ;
 
 # One branch conditionals
-def when(predicate; action): #:: a|(a->boolean;a->*a) => *a
-    if predicate then action else . end
+def when(predicate; action): #:: a|(a->?boolean;a->*b) => a^*b
+    if predicate//null then action else . end
 ;
-def unless(predicate; action): #:: a|(a->boolean;a->*a) => *a 
-    if predicate then . else action end
+def unless(predicate; action): #:: a|(a->?boolean;a->*a) => a^*b
+    if predicate//null then . else action end
 ;
 
 ########################################################################

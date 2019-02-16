@@ -193,7 +193,7 @@ install:
 	install --verbose --compare --mode 644 bin/{jgen,jval,jxml}.jq $(bindir)
 
 uninstall:
-	test -d $(datadir)/$(project)					  \
+	test -d $(datadir)/$(project)				  \
 	&& rm --verbose --force --recursive $(datadir)/$(project) \
 	|| true
 	rm -f $(bindir)/{jgen,jval,jxml}* 
