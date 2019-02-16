@@ -57,17 +57,17 @@ def some(stream): #:: a|(a->*boolean) => boolean
 ;
 
 # Enhanced `select`
-def select(predicate; action): #:: a|(a->*boolean;a->*b) => *b
+def select(predicate; action): #:: a|(a->?boolean;a->*b) => *b
     if predicate then action else empty end
 ;
 
 # Do `stream` produces?
-def query(stream): #:: a|(a->*b) => ?a
+def top(stream): #:: a|(a->*b) => ?a
     if nonempty(stream) then . else empty end
 ;
 
-# Complement for `query`
-def deny(stream): #:: a|(a->*b) => ?a
+# Complement for `top`
+def bot(stream): #:: a|(a->*b) => ?a
     if isempty(stream) then . else empty end
 ;
 
@@ -82,11 +82,11 @@ def guard(predicate): #:: a|(a->?boolean) => a!
 ;
 
 # One branch conditionals
-def when(predicate; action): #:: a|(a->?boolean;a->*b) => a^*b
-    if predicate//null then action else . end
+def when(predicate; action): #:: a|(a->?boolean;a->*b) => @^a^*b
+    if predicate then action else . end
 ;
-def unless(predicate; action): #:: a|(a->?boolean;a->*a) => a^*b
-    if predicate//null then . else action end
+def unless(predicate; action): #:: a|(a->?boolean;a->*b) => @^a^*b
+    if predicate then . else action end
 ;
 
 ########################################################################
@@ -94,7 +94,7 @@ def unless(predicate; action): #:: a|(a->?boolean;a->*a) => a^*b
 ########################################################################
 
 def assert(predicate; $location; $message): #:: a|(a->boolean;LOCATION;string) => a!
-    if predicate then .
+    if predicate//null then .
     else
         $location
         | error("Assertion failed: "+$message+", file \(.file), line \(.line)")
@@ -102,7 +102,7 @@ def assert(predicate; $location; $message): #:: a|(a->boolean;LOCATION;string) =
 ;
 
 def assert(predicate; $message): #:: a|(a->boolean;string) => a!
-    if predicate then .
+    if predicate//null then .
     else
         error("Assertion failed: "+$message)
     end
@@ -207,12 +207,12 @@ def mapobj(filter): #:: object|(PAIR->PAIR) => object
 # Does not diverge with empty parameter
 def repeat(g): #:: a|(a->*b) => *b
     def r: g , r;
-    query(g) | r
+    top(g) | r
 ;
 
-#def any(generator; condition): nonempty(generator | condition or empty);
-#def any: nonempty(.[] or empty);
-#def any(condition): nonempty(.[] | condition or empty);
+#def any(generator; condition): false==isempty(generator | condition or empty);
+#def any: false==isempty(.[] or empty);
+#def any(condition): false==isempty(.[] | condition or empty);
 #def all(generator; condition): isempty(generator | condition and empty);
 #def all: isempty(.[] and empty);
 #def all(condition): isempty(.[] | condition and empty);
@@ -220,8 +220,8 @@ def repeat(g): #:: a|(a->*b) => *b
 #    select($by != 0)
 #    | label $out
 #    | if $by > 0
-#      then $init|recurse(.+$by) | when(. >= $upto; break$out)
-#      else $init|recurse(.+$by) | when(. <= $upto; break$out)
+#      then $init|recurse(.+$by) | if . >= $upto then break$out else . end)
+#      else $init|recurse(.+$by) | if . <= $upto then break$out else . end)
 #      end
 #    end
 #; 
