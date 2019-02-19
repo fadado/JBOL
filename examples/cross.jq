@@ -14,8 +14,8 @@ def lpad($n):
 
 # Produces a stream of intersections between two words
 def cross($word1; $word2):
-    ($word1|scanner::upto($word2)) as $i |
-    ($word2|scanner::upto($word1[$i:$i+1])) as $j |
+    (0|scanner::upto($word1;$word2)) as $i |
+    (0|scanner::upto($word2;$word1[$i:$i+1])) as $j |
     [
         ($word2[0:$j]  | chars | lpad($i)),
         $word1,
