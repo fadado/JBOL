@@ -16,8 +16,8 @@ import "fadado.github.io/math/chance" as chance;
 def shuffle($seed): #:: [a]|(number) => [a]
     # Swaps two array positions
     def swap($i; $j):
-        when($i != $j;
-             .[$i] as $t | .[$i]=.[$j] | .[$j]=$t)
+        if $i != $j
+        then .[$i] as $t | .[$i]=.[$j] | .[$j]=$t end
     ;
     # Shuffle
     . as $array

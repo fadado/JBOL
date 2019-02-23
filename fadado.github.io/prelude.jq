@@ -42,7 +42,7 @@ def _abort_: #:: string| => @!
 
 # Reverse of `isempty`
 def nonempty(stream): #:: a|(a->*b) => boolean
-    (label $pipe | stream | (true , break $pipe))
+    (label $xit | stream | (true , break$xit))
     // false
 ;
 
@@ -79,14 +79,6 @@ def reject(predicate): #:: a|(a->?boolean) => ?a
 # Strong select
 def guard(predicate): #:: a|(a->?boolean) => a!
     if predicate//null then . else abort end
-;
-
-# One branch conditionals
-def when(predicate; action): #:: a|(a->?boolean;a->*b) => @^a^*b
-    if predicate then action else . end
-;
-def unless(predicate; action): #:: a|(a->?boolean;a->*b) => @^a^*b
-    if predicate then . else action end
 ;
 
 ########################################################################
@@ -218,10 +210,10 @@ def repeat(g): #:: a|(a->*b) => *b
 #def all(condition): isempty(.[] | condition and empty);
 #def range($init; $upto; $by):
 #    select($by != 0)
-#    | label $out
+#    | label $xit
 #    | if $by > 0
-#      then $init|recurse(.+$by) | if . >= $upto then break$out else . end)
-#      else $init|recurse(.+$by) | if . <= $upto then break$out else . end)
+#      then $init|recurse(.+$by) | if . >= $upto then break$xit end)
+#      else $init|recurse(.+$by) | if . <= $upto then break$xit end)
 #      end
 #    end
 #; 

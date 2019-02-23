@@ -69,7 +69,7 @@ def transpose($i): #:: PCLASS|(PCI) => PCLASS
 
 # Inverts a pitch-class
 def invert: #:: PCLASS => PCLASS
-    when(. != 0; 12 - .)
+    if . != 0 then 12 - . end
 ;
 def invert($i): #:: PCLASS|(PCI) => PCLASS
     math::mod($i - .; 12)
@@ -85,12 +85,12 @@ def interval($pc): #:: PCLASS|(PCLASS) => PCI
 
 # Produces the interval-class (0..6) for a pitch-class interval
 def iclass: #:: PCI => IC
-    when(. > 6; 12 - .)     # . > tritone?
+    if . > 6 then 12 - . end     # . > tritone?
 ;
 
 # Produces the interval-class (0..6) between two pitch-classes
 def interval_class($pc): #:: PCLASS|(PCLASS) => IC
-    math::mod($pc - .; 12) | when(. > 6; 12 - .)
+    math::mod($pc - .; 12) | if . > 6 then 12 - . end
 #   interval($pc) | iclass
 #   math::mod(fmin($pc - .; . - $pc); 12)
 ;

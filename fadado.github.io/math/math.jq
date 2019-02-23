@@ -45,7 +45,8 @@ def gcd($m; $n): #:: (number;number) => number
 
 def mod($m; $n): #:: (number;number) => number
     ($m % $n)
-    | when(. < 0; . + $n)
+    | if . < 0
+      then . + $n end
 ;
 
 def div($m; $n): #:: (number;number) => number
@@ -73,7 +74,7 @@ def tobase($b): #:: number|(number) => ?string
 # Inspired in https://www.rosettacode.org/wiki/URL_decoding#jq
 def frombase($base): #:: string|(number) => number
     def downcase:
-        when(65 <= . and . <= 90; . + 32)
+        if 65 <= . and . <= 90 then . + 32 end
     ;
     def toint: # "a" ~ 97 => 10 ~ 87
         if . > 96  then . - 87 else . - 48 end

@@ -36,14 +36,16 @@ def unlike: #:: [a] => boolean
 
 # s + e (add element to set)
 def insert($x): #:: SET|(a) => SET
-    when(index($x)==null; .[length] = $x)
+    if index($x)==null
+    then .[length] = $x end
 ;
 
 # s – e (remove one element from set)
 # Use array::remove/1 to remove all `x`
 def remove($x): #:: SET|(a) => SET
     indices($x)[0] as $i
-    | when($i != null; del(.[$i]))
+    | if $i != null
+      then del(.[$i]) end
 ;
 
 # x ∈ S (x is element of S?)

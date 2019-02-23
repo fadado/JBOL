@@ -129,8 +129,8 @@ def tostr: #:: MATCH| => string
 
 def split($regex; $flags; $limit): #:: string|(string;string;number) => *string
     def nwise: # n = 3
-        when(length > 3;
-             .[0:3] , (.[3:] | nwise))
+        if length > 3
+        then .[0:3] , (.[3:] | nwise) end
     ;
     if $limit < 0
     then empty
@@ -207,7 +207,7 @@ def sub($regex; template; $flags): #:: string|(string;string;string) => string
         _sub1
     ;
     ($flags|contains("g")) as $gs
-    | ($flags | when($gs; mapstr(select(.!="g")))) as $fs
+    | ($flags | if $gs then mapstr(select(.!="g")) end) as $fs
     | sub1($fs; $gs)
 ;
 

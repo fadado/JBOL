@@ -160,7 +160,7 @@ def harmonic: #:: => *number
 def moduli($m): #:: (number) => *number
 #   seq | (. % $m)
 #   repeat(range(0; $m))
-    0|recurse(.+1 | when(. == $m; 0))
+    0|recurse(.+1 | if . == $m then 0 end)
 ;
 def moduli: #:: number| => *number
     moduli(.)
@@ -210,12 +210,12 @@ def fibonacci: #:: => *number
 # Very fast alternative!
 def primes: #:: => *number
     def isprime(g):
-        label $pipe
+        label $xit
         | g as $p
         | if . < ($p*$p)
-          then true , break$pipe
+          then true , break$xit
           elif (. % $p) == 0
-          then false , break$pipe
+          then false , break$xit
           else empty # next
           end
     ;

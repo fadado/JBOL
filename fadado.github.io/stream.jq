@@ -70,9 +70,9 @@ def enum(stream): #:: a|(a->*b) => *[number,b]
 
 # Take from `stream` while `predicate` is true
 def take(stream; predicate): #:: a|(a->*b;b->boolean) => *b
-    label $out
+    label $xit
     | stream
-    | unless(predicate; break$out)
+    | if predicate then . else break$xit end
 ;
 
 # Returns the suffix of `stream` after the first `n` elements, or
@@ -80,11 +80,11 @@ def take(stream; predicate): #:: a|(a->*b;b->boolean) => *b
 def drop($n; stream): #:: a|(number;a->*b) => *b
     select($n >= 0) # not defined for n < 0 or n >= #stream
     | if $n == 0
-    then stream
-    else
-        foreach stream as $item
-            ($n; .-1; select(. < 0) | $item)
-    end
+      then stream
+      else
+          foreach stream as $item
+              ($n; .-1; select(. < 0) | $item)
+      end
 ;
 
 # Analogous to `array[start; stop]` applied to streams.

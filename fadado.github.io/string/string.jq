@@ -49,27 +49,27 @@ def char($n): #:: (number) => string
 # Pad strings
 
 def left($n; $t): #:: string|(number;string) => string
-    when($n > length;
-        ($t*($n-length)) + .)
+    if $n > length
+    then ($t*($n-length)) + . end
 ;
 def left($n): #:: string|(number) => string
     left($n; " ")
 ;
 
 def right($n; $t): #:: string|(number;string) => string
-    when($n > length;
-         . + ($t*($n-length)))
+    if $n > length
+    then . + ($t*($n-length)) end
 ;
 def right($n): #:: string|(number) => string
     right($n; " ")
 ;
 
 def center($n; $t): #:: string|(number;string) => string
-    when($n > length;
+    if $n > length then
         math::div($n-length; 2) as $i
         | ($t*$i) + . + ($t*$i)
-        | when(length != $n; .+$t)
-    )
+        | if length != $n then .+$t end
+    end
 ;
 def center($n): #:: string|(number) => string
     center($n; " ")
@@ -93,21 +93,21 @@ def _rndx(predicate): # rigth index or empty if not found
 ;
 
 def lstrip($s): #:: string|(string) => string
-    when(length != 0 and (.[0:1] | inside($s));
+    if length != 0 and (.[0:1] | inside($s)) then
         (_lndx(inside($s)) // -1) as $i |
         if $i < 0 then "" else .[$i:] end
-    )
+    end
 ;
 
 def rstrip($s): #:: string|(string) => string
-    when(length != 0 and (.[-1:length] | inside($s));
+    if length != 0 and (.[-1:length] | inside($s)) then
         (_rndx(inside($s)) // -1) as $i |
         if $i < 0 then "" else .[0:$i] end
-    )
+    end
 ;
 
 def strip($s): #:: string|(string) => string
-    when(length != 0 and ((.[0:1] | inside($s)) or (.[-1:length] | inside($s)));
+    if length != 0 and ((.[0:1] | inside($s)) or (.[-1:length] | inside($s))) then
         (_lndx(inside($s)) // -1) as $i |
         (_rndx(inside($s)) // -1) as $j |
         if $i < 0 and $j < 0 then ""
@@ -115,7 +115,7 @@ def strip($s): #:: string|(string) => string
         elif $i < 0          then .[:$j]
                              else .[$i:$j]
         end
-    )
+    end
 ;
 
 def trim: #:: string| => string

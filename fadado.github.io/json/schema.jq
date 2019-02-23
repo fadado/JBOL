@@ -159,7 +159,7 @@ def validate($schema; $fatal): #:: a|(SCHEMA;boolean) => boolean
             $schema
             | [($s[2:] / "/")[] | unescape as $x | try tonumber catch $x] as $p
             | getpath($p)
-            | when(isnull; error("Cannot dereference path: \($p)"))
+            | if isnull then error("Cannot dereference path: \($p)") end
         end
     ;
     def _validate($schema; $fatal):

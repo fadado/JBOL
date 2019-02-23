@@ -148,10 +148,6 @@ include "prelude"; [recurse(.+1;.<7)] == [label $x | recurse(.+1) | if .<7 then 
 0
 true
 
-include "prelude"; [while(.<7;.+1)] == [try(recurse(.+1) | unless(.<7; abort))]
-0
-true
-
 ########################################################################
 
 include "prelude"; [0|limit(10;recurse(.+1))] == [limit(10;iterate(0;.+1))]

@@ -67,7 +67,8 @@ def xmldoc($root; $element; $tab; $doctype): #:: JSON|(string;string;string;stri
             as $NameChar |
         $x
         | re::gsub("[^"+$NameChar+"]"; "_")
-        | unless(re::test("^["+$NameStartChar+"]"); "_"+.[1:])
+        | if false==re::test("^["+$NameStartChar+"]")
+          then "_"+.[1:] end
     ;
     # recurse document
     def toxml($name; $margin):

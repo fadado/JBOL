@@ -57,7 +57,7 @@ def ARBNO(f): #:: a|(a->a) => *a
 # By default SNOBOL tries only once to match, but by default jq tries all
 # alternatives. To restrict evaluation to one value use the function `first` or
 # this construct:
-#   label $pipe | P | Q | (NULL , break $pipe)
+#   label $fence | P | Q | (NULL , break $fence)
 
 ########################################################################
 # Patterns implementation
@@ -308,7 +308,8 @@ def BREAK($s): #:: CURSOR|(string) => CURSOR
     assert($s!=""; "BREAK requires a non empty string as argument")
     | select(.position != .slen)
     | G(last(ARBNO(NOTANY($s))))
-    | when(.position == .slen; FAIL)
+    | if .position == .slen
+      then FAIL end
 ;
 
 #
@@ -346,7 +347,8 @@ def REM: #:: CURSOR => CURSOR
 def BREAKX($s): #:: CURSOR|(string) => *CURSOR
     def _breakx:
         G(last(ARBNO(NOTANY($s))))
-        | when(.position == .slen; FAIL)
+        | if .position == .slen
+          then FAIL end
         | . , (.position += 1 | _breakx)
     ;
     assert($s!=""; "BREAKX requires a non empty string as argument")

@@ -17,7 +17,8 @@ import "fadado.github.io/math" as math;
 # Use set::remove/1 to remove only one `x`
 def remove($x): #:: [a]|(a) => [a]
     indices($x) as $ix
-    | when($ix != []; del(.[$ix[]]))
+    | if $ix != []
+      then del(.[$ix[]]) end
 ;
 
 # Is the array sorted?
@@ -43,17 +44,20 @@ def unknown($i): #:: [a]|(number) => boolean
 
 # Select elements with even indices
 def evens: #:: [a] => [a]
-    when(length > 0; [.[range(0;length;2)]])
+    if length > 0
+    then [.[range(0;length;2)]] end
 ;
 
 # Select elements with odd indices
 def odds: #:: [a] => [a]
-    when(length > 0; [.[range(1;length;2)]])
+    if length > 0
+    then [.[range(1;length;2)]] end
 ;
 
 # Copy here builtin
 def reverse: #:: [a] => [a]
-    when(length > 0; [.[length-1-range(0;length)]])
+    if length > 0
+    then [.[length-1-range(0;length)]] end
 ;
 
 ########################################################################

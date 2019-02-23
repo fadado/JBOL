@@ -94,16 +94,16 @@ def span($w; t): #:: POSITION|(WORD;TEST) => ?POSITION
 #   . as $i
 #   | ($w|length) as $j
 #   | select(0 <= $i and $i < $j)
-#   | label $pipe
+#   | label $xit
 #   # for $k=. to $j+1 (off-value used as a flag)
 #   | range(.; $j+1) as $k
 #   | if $k == $j           # if past end, all matched
-#     then $k , break$pipe  # then return $k
+#     then $k , break$xit   # then return $k
 #     elif $w[$k:$k+1] | t  # if match at $k
 #     then empty            # then continue loop
 #     elif $k > $i          # if moved at least one forward
-#     then $k , break$pipe  # then return $k
-#     else break$pipe       # abort, none match!
+#     then $k , break$xit   # then return $k
+#     else break$xit        # abort, none match!
 #     end
 ;
 

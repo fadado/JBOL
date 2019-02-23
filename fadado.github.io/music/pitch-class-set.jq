@@ -147,7 +147,8 @@ def normal: #:: PCSET => PCSET
 # proto prime
 def proto_: #:: PCSET => PCSET
     # assume . is in normal form
-    when(.[0] != 0; transpose((12-.[0])))
+    if .[0] != 0
+    then transpose((12-.[0])) end
 ;
 def proto: #:: PCSET => PCSET
     normal | proto_

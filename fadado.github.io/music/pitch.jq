@@ -77,8 +77,8 @@ def format: #:: PITCH => string
 ## Add a directed pitch interval to the pitch
 def transpose($i): #:: PITCH|(PI) => PITCH
     . + $i
-    | unless(0 <= . and . <= 127;
-        error("Pitch out of range: \(.)"))
+    | if false==(0 <= . and . <= 127)
+      then error("Pitch out of range: \(.)") end
 ;
 
 # Produces the pitch interval (-127..127) between two pitches
