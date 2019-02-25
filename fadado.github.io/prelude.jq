@@ -42,8 +42,8 @@ def _abort_: #:: string| => @!
 
 # Reverse of `isempty`
 def nonempty(stream): #:: a|(a->*b) => boolean
-    (label $xit | stream | (true , break$xit))
-    // false
+#   (label $xit | stream | (true , break$xit)) // false
+    first((stream|true) , false)
 ;
 
 # all(stream; .)
@@ -63,7 +63,8 @@ def select(predicate; action): #:: a|(a->?boolean;a->*b) => *b
 
 # Do `stream` produces?
 def top(stream): #:: a|(a->*b) => ?a
-    if nonempty(stream) then . else empty end
+#   if nonempty(stream) then . else empty end
+    first(. as $t | stream | $t)
 ;
 
 # Complement for `top`
