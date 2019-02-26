@@ -28,7 +28,7 @@ def fence: #:: a => a!
 # Catch helpers. Usage:
 #   try (...) catch _abort_(result)
 #   . as $_ | try (A | possible abortion | B) catch _abort_($_)
-def _abort_(result): #:: string| => a!
+def _abort_(result): #:: string|(*a) => *a!
     if . == "~!~" then result else error(.) end
 ;
 #   try (...) catch _abort_
@@ -69,12 +69,15 @@ def top(stream): #:: a|(a->*b) => ?a
 
 # Complement for `top`
 def bot(stream): #:: a|(a->*b) => ?a
-    if isempty(stream) then . else empty end
+    if nonempty(stream) then empty end
 ;
 
 # Complement of `select`
 def reject(predicate): #:: a|(a->?boolean) => ?a
     if predicate then empty else . end
+;
+def reject(predicate; action): #:: a|(a->?boolean;a->*b) => *b
+    if predicate then empty else action end
 ;
 
 # Strong select

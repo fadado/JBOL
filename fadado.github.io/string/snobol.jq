@@ -41,11 +41,11 @@ def FENCE: #:: a => a!
 # select(p): if p then NULL else FAIL end
 
 def NOT(g): #:: a|(a->*b) => ?a
-    select(isempty(g))
+    first((g|false) , true)
 ;
 
 def IF(g): #:: a|(a->*b) => ?a
-    select(nonempty(g))
+    first((g|true) , false)
 ;
 
 def ARBNO(f): #:: a|(a->a) => *a
