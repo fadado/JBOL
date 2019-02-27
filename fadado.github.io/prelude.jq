@@ -12,29 +12,29 @@ module {
 # Stolen from SNOBOL: ABORT and FENCE
 ########################################################################
 
-# Breaks out the current filter
-# For constructs like:
-#   try (A | possible abortion | B)
-def abort: #:: a => !
-    error("~!~")
-;
-
-# One way pass. Usage:
-#   try (A | fence | B)
-def fence: #:: a => a!
-    (. , abort)
-;
-
-# Catch helpers. Usage:
-#   try (...) catch _abort_(result)
-#   . as $_ | try (A | possible abortion | B) catch _abort_($_)
-def _abort_(result): #:: string|(*a) => *a!
-    if . == "~!~" then result else error(.) end
-;
-#   try (...) catch _abort_
-def _abort_: #:: string| => @!
-    if . == "~!~" then empty else error(.) end
-;
+## Breaks out the current filter
+## For constructs like:
+##   try (A | possible abortion | B)
+#def abort: #:: a => !
+#    error("~!~")
+#;
+#
+## One way pass. Usage:
+##   try (A | fence | B)
+#def fence: #:: a => a!
+#    (. , abort)
+#;
+#
+## Catch helpers. Usage:
+##   try (...) catch _abort_(result)
+##   . as $_ | try (A | possible abortion | B) catch _abort_($_)
+#def _abort_(result): #:: string|(*a) => *a!
+#    if . == "~!~" then result else error(.) end
+#;
+##   try (...) catch _abort_
+#def _abort_: #:: string| => @!
+#    if . == "~!~" then empty else error(.) end
+#;
 
 ########################################################################
 # Variations on some JQ primitives
@@ -80,10 +80,10 @@ def reject(predicate; action): #:: a|(a->?boolean;a->*b) => *b
     if predicate then empty else action end
 ;
 
-# Strong select
-def guard(predicate): #:: a|(a->?boolean) => a!
-    if predicate//null then . else abort end
-;
+## Strong select
+#def guard(predicate): #:: a|(a->?boolean) => a!
+#    if predicate//null then . else abort end
+#;
 
 ########################################################################
 # Assertions
@@ -206,12 +206,6 @@ def repeat(g): #:: a|(a->*b) => *b
     top(g) | r
 ;
 
-#def any(generator; condition): false==isempty(generator | condition or empty);
-#def any: false==isempty(.[] or empty);
-#def any(condition): false==isempty(.[] | condition or empty);
-#def all(generator; condition): isempty(generator | condition and empty);
-#def all: isempty(.[] and empty);
-#def all(condition): isempty(.[] | condition and empty);
 #def range($init; $upto; $by):
 #    select($by != 0)
 #    | label $xit
