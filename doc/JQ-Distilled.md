@@ -1,11 +1,13 @@
 # _jq_ Distilled
 
-
 This text tries to be the briefest possible description of the essential
 characteristics of the jq language; it is therefore incomplete by definition.
 It should also be noted that the author&rsquo;s mother tongue is not English, and
 that any help received to improve the wording of the text will be well
 received.
+
+
+## `jq` and _jq_
 
 The `jq` command-line processor transforms streams of input JSON values using one
 or more combined filters written in the _jq_ language. The input may also consist
@@ -28,16 +30,20 @@ Object constructors offer several syntactic extensions respect to JSON
 literals, as the following equivalences show:
 
 ```none
-{foo: bar}        ≡ {"foo": bar}
-{foo}             ≡ {"foo": .foo}
-{$foo}            ≡ {"foo": $foo}
-{("fo"+"o"): bar} ≡ {"foo": bar}
+    {foo: bar}         ≡  {"foo": bar}
+    {foo}              ≡  {"foo": .foo}
+    {$foo}             ≡  {"foo": $foo}
+    {("fo"+"o"): bar}  ≡  {"foo": bar}
 ```
 
-_jq_ evaluation model is better understood adding two non assignable &ldquo;values&rdquo;
-denoted by `@` (the _empty stream_) and `!` (the _non-termination_ symbol). New filters
-are built using operators and special constructs. In increasing order of
-priority the operators are:
+### Operators
+
+JSON values are the only _jq_ values, but _jq_ evaluation model is better
+understood adding two non assignable &ldquo;values&rdquo; denoted in this
+document by `@` (the _empty stream_) and `!` (the _non-termination_ symbol).
+New filters are built using operators and special constructs.
+
+#### Operators in increasing order of priority
 
 | Operator | Associativity | Description |
 | -------- | ------------- | ----------- |
@@ -56,41 +62,47 @@ priority the operators are:
 | `?//` | nonassoc | destructuring alternative operator |
 
 
-The `as` construct binds variable names and supports array and object
-destructuring. Binding of variables and sequencing and alternation of filters
-can be described with the following equivalences:
-
-```none
-(a₁,a₂,…,aₙ) as $a | f($a)  ≡  f(a₁),f(a₂),…,f(aₙ)
-(a₁,a₂,…,aₙ) | f            ≡  (a₁|f),(a₂|f),…,(aₙ|f)
-(a₁,a₂,…,aₙ) , (b₁,b₂,…,bₙ) ≡  a₁,a₂,…,aₙ,b₁,b₂,…,bₙ
-```
-
+### Special constructs
 
 The special constructs `if`, `reduce`, `foreach`, `label` and `try` extend _jq_
 control flow capabilities. The postfix operator `?` is syntactic sugar for the
 `try` special construct.
 
+#### Schematic syntax for special constructs
+
 ```none
-def name: expression;
-def name(parameters): expression;
-term as pattern { ?// pattern }| expression
-if expression then expr end
-if expression then expr else expr end
-if expression then expr { elif expr then expr } else expr end
-reduce term as pattern (init; update) # init, update and extract are expr.
-foreach term as pattern (init; update)
-foreach term as pattern (init; update; extract)
-label $name | {expression |} break $name
-try expression
-try expression catch expression
+    def Name: Expression;
+    def Name(Parameters): Expression;
+    Term as Pattern { ?// Pattern }| Expression
+    if Expression then Expr end
+    if Expression then Expr else Expr end
+    if Expression then Expr { elif Expr then Expr } else Expr end
+    reduce Term as Pattern (Init; Update) # Init, Update and Extract are Expr.
+    foreach Term as Pattern (Init; Update)
+    foreach Term as Pattern (Init; Update; Extract)
+    label $Name | {Expression |} break $Name
+    try Expression
+    try Expression catch Expression
 ```
 
+The `as` construct binds variable names and supports array and object
+destructuring. Binding of variables and sequencing and alternation of filters
+can be described with the following equivalences:
+
+```none
+    (a₁,a₂,…,aₙ) as $a | f($a)  ≡  f(a₁),f(a₂),…,f(aₙ)
+    (a₁,a₂,…,aₙ) | f            ≡  (a₁|f),(a₂|f),…,(aₙ|f)
+    (a₁,a₂,…,aₙ) , (b₁,b₂,…,bₙ) ≡  a₁,a₂,…,aₙ,b₁,b₂,…,bₙ
+```
+
+### Filters
 
 New filters can be defined with the `def` construct. Filters consume one input
 value, can have extra parameters and produce zero or more output values.
 Parameters are passed by name, or by value if prefixed with the character `$` in
-the filter definition. Selected core predefined filters:
+the filter definition.
+
+#### Core filters
 
 | Filter | Description |
 | ------ | ----------- |
@@ -114,31 +126,39 @@ the filter definition. Selected core predefined filters:
 | `error`, `error(value)` | signals an error aborting the current filter (_produces_ `!`); can be caught |
 | `halt`, `halt_error(status)` | exits the program |
 
+#### Algebraic laws
+
 After parameter instantiation _jq_ filters are like mathematical relations on
-JSON values, and follow several algebraic laws (in the following table `^` stands
-for `select/1`):
+JSON values, and follow several algebraic laws:
 
 ```none
-@ , A  ≡  A  ≡  A , @
-. | A  ≡  A  ≡  A | .
-@ | A  ≡  @  ≡  A | @
+    @ , A  ≡  A  ≡  A , @
+    . | A  ≡  A  ≡  A | .
+    @ | A  ≡  @  ≡  A | @
 
-A , (B , C)  ≡  (A , B) , C
-A | (B | C)  ≡  (A | B) | C
-(A , B) | C  ≡  (A | C) , (B | C)
+    A , (B , C)  ≡  (A , B) , C
+    A | (B | C)  ≡  (A | B) | C
+    (A , B) | C  ≡  (A | C) , (B | C)
 
-(A , B) | ^(p) ≡ (A | ^(p)) , (B | ^(p))
-^(p) | ^(q)    ≡ ^(q) | ^(p)
-^(p) | ^(p)    ≡ ^(p)
+    (A , B) | select(p)    ≡  (A | select(p)) , (B | select(p))
+    select(p) | select(q)  ≡  select(q) | select(p)
+    select(p) | select(p)  ≡  select(p)
+    A | B | select(p)      ≡  A | select(B | p)
 
-A | B | ^(p) ≡ A | ^(B | p)
-! | A  ≡  !  ≡  A | !
+    ! | A  ≡  !  ≡  A | !
 ```
 
-## Type of filters
+## Filters type
 
-JQ has a dynamic type system but, to better understand filters behavior, is
-advisable to add type signatures as comments.
+_jq_ has a dynamic type system but, to better understand filters behavior, is
+advisable to add type signatures as comments. 
+
+### Type signatures
+
+Type signatures are a condensed syntax to specify filters input, output and
+parameters type.
+
+#### Proposed grammar for filter type signatures
 
 ```none
 Type anotation                          Parameter              Value
@@ -153,7 +173,7 @@ Parameters                                  Value                  {Value}
     Parameter                               ?Value⁴                <Value>⁶
     Parameter; Parameters                   *Value                 Value^Value⁷
 Input                                       +Value                 Letter⁸
-    Value                                   stream!⁵               Name⁹
+    Value                                   Stream!⁵               Name⁹
 ```
 
 Notes:
@@ -170,6 +190,10 @@ Notes:
    value types.
 9. Named object (construct only with the underscore character and uppercase
    letters).
+
+### Type signature examples
+
+Those are the type signatures for some _jq_ builtins:
 
 ```none
 # empty      :: a => @
