@@ -135,7 +135,7 @@ def chain(f): #:: a|(a->*a) => *a
 # Breadth-first search
 def iterate(init; g): #:: a|(a->*b;b->*b) => *b
     def r:
-         .[] , (map(g) | select(length > 0; r))
+         .[] , (map(g) | select(length > 0) | r)
     ;
     [init] | r
 ;
@@ -198,12 +198,6 @@ def mapobj(filter): #:: object|(PAIR->PAIR) => object
             | filter
             | {(.name): .value})
         as $pair ({}; . + $pair)
-;
-
-# Does not diverge with empty parameter
-def repeat(g): #:: a|(a->*b) => *b
-    def r: g , r;
-    top(g) | r
 ;
 
 #def range($init; $upto; $by):

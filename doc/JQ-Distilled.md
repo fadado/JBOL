@@ -13,7 +13,47 @@ The `jq` command-line processor transforms streams of input JSON values using on
 or more combined filters written in the _jq_ language. The input may also consist
 on UTF-8 text lines or a single big UTF-8 string. Filters are parameterized
 generators that for each consumed JSON value produce a stream of zero or more
-output [JSON values](https://json.org).
+output JSON values.
+
+### JSON values
+
+JSON values are the only _jq_ values.
+
+#### JSON grammar
+
+```none
+    Object                    Char
+        {}                        any Unicode character except "
+        { Members }                 or \ or control character
+    Members                     \"
+        Pair                    \\ \/
+        Pair , Members          \b \f 
+    Pair                        \n \r \t
+        String : Value          \ufour-hex-digits
+    Array                     Number
+        []                        Int
+        [ Elements ]              Int Frac
+    Elements                      Int Exp
+        Value                     Int Frac Exp
+        Value , Elements      Int
+    Value                         Digit
+        String                    Digit1-9 Digits 
+        Number                    - Digit
+        Object                    - Digit1-9 Digits
+        Array                 Frac
+        true                      . Digits
+        false                 Exp
+        null                      Ex Digits
+                              Digits
+    String                        Digit
+        ""                        Digit Digits
+        " Chars "             Ex
+    Chars                         e e+ e- E E+ E-
+        Char
+        Char Chars
+```
+
+#### _jq_ values
 
 In the _jq_ language the constants `null`, `false` and `true`, number and string
 literals and array and object constructors define JSON values; no other kind of
@@ -38,10 +78,10 @@ literals, as the following equivalences show:
 
 ### Operators
 
-JSON values are the only _jq_ values, but _jq_ evaluation model is better
-understood adding two non assignable &ldquo;values&rdquo; denoted in this
-document by `@` (the _empty stream_) and `!` (the _non-termination_ symbol).
-New filters are built using operators and special constructs.
+_jq_ evaluation model is better understood adding to JSON values two non
+assignable &ldquo;values&rdquo; denoted in this document by `@` (the _empty
+stream_) and `!` (the _non-termination_ symbol).  New filters are built using
+operators and special constructs.
 
 #### Operators in increasing order of priority
 
@@ -148,6 +188,7 @@ JSON values, and follow several algebraic laws:
     ! | A  ≡  !  ≡  A | !
 ```
 
+
 ## Filters type
 
 _jq_ has a dynamic type system but, to better understand filters behavior, is
@@ -196,14 +237,59 @@ Notes:
 Those are the type signatures for some _jq_ builtins:
 
 ```none
-# empty      :: a => @
-# .          :: a => a
-# error      :: a => !
-# first(g)   :: a|(a->*b) => ?b
-# isempty(g) :: a|(a->*b) => boolean
-# select(p)  :: a|(a->boolean) => ?a
-# recurse(f) :: a|(a->?a) => +a
-# while(p;f) :: a|(a->boolean;a->?a) => *a
-# until(p;f) :: a|(a->boolean;a->?a) => a!
-# map(f)     :: [a]|(a->*b) => [b]
+    # empty      :: a => @
+    # .          :: a => a
+    # error      :: a => !
+    # first(g)   :: a|(a->*b) => ?b
+    # isempty(g) :: a|(a->*b) => boolean
+    # select(p)  :: a|(a->boolean) => ?a
+    # recurse(f) :: a|(a->?a) => +a
+    # while(p;f) :: a|(a->boolean;a->?a) => *a
+    # until(p;f) :: a|(a->boolean;a->?a) => a!
+    # map(f)     :: [a]|(a->*b) => [b]
 ```
+
+
+## Path expressions
+
+Path expressions play an important role in _jq_, and are dificult
+to explain briefly.
+
+### Grammar for path expressions
+
+Very simplified grammar, not the actual grammar!
+
+```none
+    PathExpr:
+        ('empty' | '.' | Route | Cond | Call) ('|' PathExpr)*
+    Cond:
+        a JQ conditional evaluating to a path expression
+    Call:
+        a JQ function call evaluating to a path expression
+    Route:
+        Step Step*
+    Step:
+        '.' (name | string | Bracket) Bracket*
+    Bracket:
+        Iterator | Slice | ASubscript | OSubscript
+    Iterator:
+        '[' ']'
+    Slice:
+        '[' index ':' index | index ':' | ':' index ']'
+    ASubscript:
+        '[' index (',' index)* ']'
+    OSubscript:
+        '[' string (',' string)* ']'
+    name:
+        a JQ identifier: [A-Za-z_][A-Za-z_0-9]*
+    string:
+        expression producing a JQ/JSON string
+    index:
+        expression producing a JQ array index (JSON integer)
+```
+
+### Array representation format
+
+Paths are represented by arrays of array indices, object keys
+and slice objects with the form `{"start":number,"end":number}`.
+
