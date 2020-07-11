@@ -377,9 +377,9 @@ include "string/snobol"; INTEGER(.) | true
 123
 true
 
-include "string/snobol"; INTEGER(.) | true
-"kk"
-# Failure
+##include "string/snobol"; INTEGER(.) | true
+##"kk"
+### Failure
 
 # pairs
 include "string/snobol"; U | LEN(1) | N as $x | L($x) | M
